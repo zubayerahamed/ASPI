@@ -1,0 +1,1287 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-footer">
+			<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded">
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/AD20?tabId=tab1&xtrnnum=RESET'" class="nav-link tab-link rounded-start" th:classappend="${tabId eq 'tab1' ? 'active' : ''}">Money Receipt</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/AD20?tabId=tab2&xtrnnum=RESET'" class="nav-link tab-link" th:classappend="${tabId eq 'tab2' ? 'active' : ''}">Customer Adjustment</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/AD20?tabId=tab3&xtrnnum=RESET'" class="nav-link tab-link" th:classappend="${tabId eq 'tab3' ? 'active' : ''}">Sales Invoice</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/AD20?tabId=tab4&xtrnnum=RESET'" class="nav-link tab-link" th:classappend="${tabId eq 'tab4' ? 'active' : ''}">Sales Return</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/AD20?tabId=tab5&xtrnnum=RESET'" class="nav-link tab-link" th:classappend="${tabId eq 'tab5' ? 'active' : ''}">Open Order</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/AD20?tabId=tab6&xtrnnum=RESET'" class="nav-link tab-link" th:classappend="${tabId eq 'tab6' ? 'active' : ''}">Open Invoice</a>
+				</li>
+			</ul>
+
+			<div class="mt-3">
+				<div class="tables-fragments-container">
+					<div th:remove="tag" th:include="pages/AD20/AD20-fragments :: tab1-table"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('a.tab-link').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('a.tab-link').removeClass('active');
+				$(this).addClass('active');
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+		})
+	</script>
+</div>
+
+
+<div th:fragment="tab1-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD20/store/tab1}" th:object="${arhed}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${not #strings.isEmpty(arhed.xtrnnum)}" th:field="*{xtrnnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Receipt Number</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xtrnnum"
+										th:value="${arhed.xtrnnum ne null ? arhed.xtrnnum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LFA31/3?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xtrnnum',
+										data-mainscreen=true,
+										data-mainreloadurl='/AD20?tabId=tab1&xtrnnum=',
+										data-mainreloadid='tables-fragments-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Collection Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${arhed.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Bank Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateact" 
+										id="xdateact" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${arhed.xdateact == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdateact, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xcus"
+										required="required"
+										th:value="${arhed.xcus != null ? arhed.xcus + ' - ' + arhed.customer : ''}">
+								<input 	type="hidden" class="search-val" name="xcus" th:value="*{xcus}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD14/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xcus',
+										data-mainscreen=false,
+										data-mainreloadurl='/FA31/xcusfield?xcus=',
+										data-mainreloadid='xcus-field-container',
+										data-extrafieldcontroller='FA31'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Bank</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xbank"
+										required="required"
+										th:value="${arhed.xbank != null ? arhed.xbank + ' - ' + arhed.bank : ''}">
+								<input 	type="hidden" class="search-val" name="xbank" th:value="*{xbank}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD15/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xbank',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD16?xarea=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Receipt Amount</label>
+							<input type="text" class="form-control numeric-only" th:field="*{xprime}" min="0" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD20?tabId=tab1&xtrnnum=RESET', data-reloadid='tables-fragments-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xstatus eq 'Confirmed'}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-x me-2"></i> Dismiss</button>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xscreen eq 'FA31' and arhed.xstatus eq 'Confirmed'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${arhed.xtrnnum ne null}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${arhed.xtrnnum ne null and arhed.xstatus eq 'Confirmed'}">
+				<input type="hidden" name="screenId" value="FA31"/>
+				<input type="hidden" name="transactionId" th:value="${arhed.xtrnnum}"/>
+				<input type="hidden" name="mainreloadid" value="tables-fragments-container"/>
+				<input type="hidden" name="mainreloadurl" value="/AD20?tabId=tab1&xtrnnum="/>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Title</label>
+							<input type="text" class="form-control" name="title">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Description</label>
+							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group mb-3">
+							<label class="form-label">File</label>
+							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
+							<!-- <div class="form-text text-muted">Accepted: png, jpg. Max file size 2Mb</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-doc-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								Action
+							</th>
+							<th>Title</th>
+							<th>Description</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+							</td>
+							<td th:text="${x.xtitle}"></td>
+							<td th:text="${x.xdesc}"></td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="dismissModalMR" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<form id="dismissform">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reason</label>
+							<textarea rows="10" cols="" class="form-control" id="modalxreason" name="modalxreason" required="required"></textarea>
+							<span>Max 200 Characters</span>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-light" data-bs-dismiss="modal">Back</button>
+					<button type="button" class="btn btn-primary modal-btn-confirm" th:attr="data-url=@{/AD20/tab1}">Confirm</button>
+				</div>
+
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$('.modal-btn-confirm').off('click').on('click', function(e){
+							e.preventDefault();
+							if(!$('#dismissform').smkValidate()) return;
+
+							var xreason = $('#modalxreason').val();
+							$('#dismissModalMR').modal('hide');
+							var xtrnnum = $('#xtrnnum').val();
+							deleteRequest($(this).data('url'), {
+								'xtrnnum' : xtrnnum,
+								'xreason' : xreason,
+							});
+						});
+					})
+				</script>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#dismissModalMR').modal('show');
+			});
+
+			$('.btn-docupload').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#docupload').trigger('click');
+			});
+
+			$('.btn-doc-submit').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var files = $('#fileuploader').get(0).files;
+				if(files.length == 0){
+					showMessage('error', "File selection required");
+					return;
+				}
+
+				submitMainForm(null, $('form#documentform'));
+			});
+
+			$('.btn-doc-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+
+				var data = {
+					'mainreloadid' : $(this).data("mainreloadid"),
+					'mainreloadurl' : $(this).data("mainreloadurl")
+				}
+				deleteRequest($(this).data('url'), data);
+			});
+		})
+	</script>
+</div>
+
+
+
+<div th:fragment="tab2-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD20/store/tab2}" th:object="${arhed}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${not #strings.isEmpty(arhed.xtrnnum)}" th:field="*{xtrnnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Number</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xtrnnum"
+										th:value="${arhed.xtrnnum ne null ? arhed.xtrnnum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LFA32/1?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xtrnnum',
+										data-mainscreen=true,
+										data-mainreloadurl='/AD20?tabId=tab2&xtrnnum=',
+										data-mainreloadid='tables-fragments-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${arhed.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Bank Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateact" 
+										id="xdateact" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${arhed.xdateact == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdateact, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xcus"
+										required="required"
+										th:value="${arhed.xcus != null ? arhed.xcus + ' - ' + arhed.customer : ''}">
+								<input 	type="hidden" class="search-val" name="xcus" th:value="*{xcus}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD14/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xcus',
+										data-mainscreen=false,
+										data-mainreloadurl='/FA31/xcusfield?xcus=',
+										data-mainreloadid='xcus-field-container',
+										data-extrafieldcontroller='FA31'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Bank</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xbank"
+										required="required"
+										th:value="${arhed.xbank != null ? arhed.xbank + ' - ' + arhed.bank : ''}">
+								<input 	type="hidden" class="search-val" name="xbank" th:value="*{xbank}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD15/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xbank',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD16?xarea=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Amount</label>
+							<input type="text" class="form-control numeric-only" th:field="*{xprime}" min="0" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD20?tabId=tab2&xtrnnum=RESET', data-reloadid='tables-fragments-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xstatus eq 'Confirmed'}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-x me-2"></i> Dismiss</button>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xscreen eq 'FA32' and arhed.xstatus eq 'Confirmed'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${arhed.xtrnnum ne null}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${arhed.xtrnnum ne null and arhed.xstatus eq 'Confirmed'}">
+				<input type="hidden" name="screenId" value="FA32"/>
+				<input type="hidden" name="transactionId" th:value="${arhed.xtrnnum}"/>
+				<input type="hidden" name="mainreloadid" value="tables-fragments-container"/>
+				<input type="hidden" name="mainreloadurl" value="/AD20?tabId=tab2&xtrnnum="/>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Title</label>
+							<input type="text" class="form-control" name="title">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Description</label>
+							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group mb-3">
+							<label class="form-label">File</label>
+							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
+							<!-- <div class="form-text text-muted">Accepted: png, jpg. Max file size 2Mb</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-doc-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								Action
+							</th>
+							<th>Title</th>
+							<th>Description</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+							</td>
+							<td th:text="${x.xtitle}"></td>
+							<td th:text="${x.xdesc}"></td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="dismissModalCAD" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<form id="dismissform">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reason</label>
+							<textarea rows="10" cols="" class="form-control" id="modalxreason" name="modalxreason" required="required"></textarea>
+							<span>Max 200 Characters</span>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-light" data-bs-dismiss="modal">Back</button>
+					<button type="button" class="btn btn-primary modal-btn-confirm" th:attr="data-url=@{/AD20/tab2}">Confirm</button>
+				</div>
+
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$('.modal-btn-confirm').off('click').on('click', function(e){
+							e.preventDefault();
+							if(!$('#dismissform').smkValidate()) return;
+
+							var xreason = $('#modalxreason').val();
+							$('#dismissModalCAD').modal('hide');
+							var xtrnnum = $('#xtrnnum').val();
+							deleteRequest($(this).data('url'), {
+								'xtrnnum' : xtrnnum,
+								'xreason' : xreason,
+							});
+						});
+					})
+				</script>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#dismissModalCAD').modal('show');
+			});
+
+			$('.btn-docupload').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#docupload').trigger('click');
+			});
+
+			$('.btn-doc-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				
+				var files = $('#fileuploader').get(0).files;
+				if(files.length == 0){
+					showMessage('error', "File selection required");
+					return;
+				}
+
+				submitMainForm(null, $('form#documentform'));
+			});
+
+			$('.btn-doc-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+
+				var data = {
+					'mainreloadid' : $(this).data("mainreloadid"),
+					'mainreloadurl' : $(this).data("mainreloadurl")
+				}
+				deleteRequest($(this).data('url'), data);
+			});
+		})
+	</script>
+</div>
+
+
+<div th:fragment="tab3-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD20/store/tab3}" th:object="${arhed}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${not #strings.isEmpty(arhed.xtrnnum)}" th:field="*{xtrnnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Transaction Number</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xtrnnum"
+										th:value="${arhed.xtrnnum ne null ? arhed.xtrnnum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LFA36/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xtrnnum',
+										data-mainscreen=true,
+										data-mainreloadurl='/AD20?tabId=tab3&xtrnnum=',
+										data-mainreloadid='tables-fragments-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Ledger Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${arhed.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Inventory Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateact" 
+										id="xdateact" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										disabled="disabled"
+										th:value="${arhed.xdateact == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdateact, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<input type="text" class="form-control" th:value="${arhed.xcus != null ? arhed.xcus + ' - ' + arhed.customer : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Bank</label>
+							<input type="text" class="form-control" th:value="${arhed.xbank != null ? arhed.xbank + ' - ' + arhed.bank : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Invoice Amount</label>
+							<input type="text" class="form-control numeric-only" th:field="*{xprime}" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Invoice Number</label>
+							<input type="text" class="form-control" th:field="*{xdocnum}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD20?tabId=tab3&xtrnnum=RESET', data-reloadid='tables-fragments-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xscreen eq 'FA36' and arhed.xstatus eq 'Confirmed'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${arhed.xtrnnum ne null}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${arhed.xtrnnum ne null and arhed.xstatus eq 'Confirmed'}">
+				<input type="hidden" name="screenId" value="SO17"/>
+				<input type="hidden" name="transactionId" th:value="${arhed.xtrnnum}"/>
+				<input type="hidden" name="mainreloadid" value="tables-fragments-container"/>
+				<input type="hidden" name="mainreloadurl" value="/AD20?tabId=tab3&xtrnnum="/>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Title</label>
+							<input type="text" class="form-control" name="title">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Description</label>
+							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group mb-3">
+							<label class="form-label">File</label>
+							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
+							<!-- <div class="form-text text-muted">Accepted: png, jpg. Max file size 2Mb</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-doc-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								Action
+							</th>
+							<th>Title</th>
+							<th>Description</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+							</td>
+							<td th:text="${x.xtitle}"></td>
+							<td th:text="${x.xdesc}"></td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-docupload').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#docupload').trigger('click');
+			});
+
+			$('.btn-doc-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				
+				var files = $('#fileuploader').get(0).files;
+				if(files.length == 0){
+					showMessage('error', "File selection required");
+					return;
+				}
+				
+				submitMainForm(null, $('form#documentform'));
+			});
+
+			$('.btn-doc-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+
+				var data = {
+					'mainreloadid' : $(this).data("mainreloadid"),
+					'mainreloadurl' : $(this).data("mainreloadurl")
+				}
+				deleteRequest($(this).data('url'), data);
+			});
+		})
+	</script>
+</div>
+
+
+<div th:fragment="tab4-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD20/store/tab4}" th:object="${arhed}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${not #strings.isEmpty(arhed.xtrnnum)}" th:field="*{xtrnnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Transaction Number</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xtrnnum"
+										th:value="${arhed.xtrnnum ne null ? arhed.xtrnnum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LFA37/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xtrnnum',
+										data-mainscreen=true,
+										data-mainreloadurl='/AD20?tabId=tab4&xtrnnum=',
+										data-mainreloadid='tables-fragments-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Ledger Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${arhed.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Inventory Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateact" 
+										id="xdateact" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										disabled="disabled"
+										th:value="${arhed.xdateact == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdateact, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<input type="text" class="form-control" th:value="${arhed.xcus != null ? arhed.xcus + ' - ' + arhed.customer : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Bank</label>
+							<input type="text" class="form-control" th:value="${arhed.xbank != null ? arhed.xbank + ' - ' + arhed.bank : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Receipt Amount</label>
+							<input type="text" class="form-control numeric-only" th:field="*{xprime}" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Sales Return Number</label>
+							<input type="text" class="form-control" th:field="*{xdocnum}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD20?tabId=tab4&xtrnnum=RESET', data-reloadid='tables-fragments-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xscreen eq 'FA37' and arhed.xstatus eq 'Confirmed'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${arhed.xtrnnum ne null}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${arhed.xtrnnum ne null and arhed.xstatus eq 'Confirmed'}">
+				<input type="hidden" name="screenId" value="SO19"/>
+				<input type="hidden" name="transactionId" th:value="${arhed.xtrnnum}"/>
+				<input type="hidden" name="mainreloadid" value="tables-fragments-container"/>
+				<input type="hidden" name="mainreloadurl" value="/AD20?tabId=tab4&xtrnnum="/>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Title</label>
+							<input type="text" class="form-control" name="title">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Description</label>
+							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group mb-3">
+							<label class="form-label">File</label>
+							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
+							<!-- <div class="form-text text-muted">Accepted: png, jpg. Max file size 2Mb</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-doc-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								Action
+							</th>
+							<th>Title</th>
+							<th>Description</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+							</td>
+							<td th:text="${x.xtitle}"></td>
+							<td th:text="${x.xdesc}"></td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-docupload').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#docupload').trigger('click');
+			});
+
+			$('.btn-doc-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				
+				var files = $('#fileuploader').get(0).files;
+				if(files.length == 0){
+					showMessage('error', "File selection required");
+					return;
+				}
+				
+				submitMainForm(null, $('form#documentform'));
+			});
+
+			$('.btn-doc-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+
+				var data = {
+					'mainreloadid' : $(this).data("mainreloadid"),
+					'mainreloadurl' : $(this).data("mainreloadurl")
+				}
+				deleteRequest($(this).data('url'), data);
+			});
+		})
+	</script>
+</div>
+
+
+<div th:fragment="tab5-table" xmlns:th="http://www.thymeleaf.org">
+	<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opordinv'" type="button" class="btn btn-light btn-sm btn-print my-2"><i class="ph-printer me-2"></i> Invoices</button>
+
+	<div class="card">
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD20/store/tab5}" th:object="${opordheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:if="${not #strings.isEmpty(opordheader.xordernum)}" th:field="*{xordernum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order No.</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xordernum"
+										th:value="${opordheader.xordernum ne null ? opordheader.xordernum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LSO14/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xordernum',
+										data-mainscreen=true,
+										data-mainreloadurl='/AD20?tabId=tab5&xtrnnum=',
+										data-mainreloadid='tables-fragments-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										disabled="disabled"
+										th:value="${opordheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opordheader.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<input type="text" class="form-control" th:value="${opordheader.xcus != null ? opordheader.xcus + ' - ' + opordheader.customer : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Type</label>
+							<input type="text" class="form-control" th:value="${xitemtype}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Store/Warehouse</label>
+							<input type="text" class="form-control" th:value="${opordheader.xwh != null ? opordheader.xwh + ' - ' + opordheader.store : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Sub Total</label>
+							<input type="text" class="form-control" th:value="${xlineamt}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">DD Commission (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp}" min="0" max="100" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Special Discount (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp1}" min="0" max="100" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Additional Discount (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp2}" min="0" max="100" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Amount</label>
+							<input type="number" class="form-control" th:field="*{xtotamt}" min="0" step="1" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Status</label>
+							<input type="text" class="form-control" th:value="${opordheader.xstatus}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Status</label>
+							<input type="text" class="form-control" th:value="${opordheader.xstatusord}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition Number</label>
+							<input type="text" class="form-control" th:value="${opordheader.xdoreqnum}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD20?tabId=tab5&xtrnnum=RESET', data-reloadid='tables-fragments-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(opordheader.xordernum) and opordheader.xstatus eq 'Confirmed' and (opordheader.xstatusord eq 'Dismissed' or opordheader.xstatusord eq 'Invoice Created & Dismissed')}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Open Order</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+		})
+	</script>
+</div>
+
+
+
+<div th:fragment="tab6-table" xmlns:th="http://www.thymeleaf.org">
+
+	<div class="card">
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD20/store/tab6}" method="POST">
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Invoice Number</label>
+							<input type="text" class="form-control numeric-only" name="xdornum" th:value="${opdoheader.xdornum}" required>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD20?tabId=tab5&xtrnnum=RESET', data-reloadid='tables-fragments-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Confirm</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+		})
+	</script>
+</div>

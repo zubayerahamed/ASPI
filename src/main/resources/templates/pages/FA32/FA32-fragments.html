@@ -1,0 +1,331 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:if="${not #strings.isEmpty(arhed.xtrnnum)}" class="card-header d-sm-flex align-items-sm-center p-0">
+			<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xstatus eq 'Open'}" th:attr="data-url=@{/FA32/confirm?xtrnnum=} + ${arhed.xtrnnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 mx-3"><i class="ph-check me-2"></i> Confirm</button>
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/FA32/store}" th:object="${arhed}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${not #strings.isEmpty(arhed.xtrnnum)}" th:field="*{xtrnnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Number</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xtrnnum"
+										th:value="${arhed.xtrnnum ne null ? arhed.xtrnnum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LFA32/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xtrnnum',
+										data-mainscreen=true,
+										data-mainreloadurl='/FA32?xtrnnum=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${arhed.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(arhed.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xcus"
+										th:value="${arhed.xcus != null ? arhed.xcus + ' - ' + arhed.customer : ''}">
+								<input 	type="hidden" class="search-val" name="xcus" th:value="*{xcus}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD14/1?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xcus',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD14?xcus=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Bank</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xbank"
+										th:value="${arhed.xbank != null ? arhed.xbank + ' - ' + arhed.bank : ''}">
+								<input 	type="hidden" class="search-val" name="xbank" th:value="*{xbank}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD15/1?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xbank',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD16?xarea=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Amount</label>
+							<input type="text" class="form-control numeric-only" th:field="*{xprime}" min="0" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Category</label>
+							<select class="form-control select" th:field="*{xbranch}" required="required">
+								<option value="">-- Select --</option>
+								<option th:each= "adc : ${adjustmetCategories}" th:value="${adc.xcode}" th:text="${adc.xcode}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Adjustment Type</label>
+							<select class="form-control select" th:field="*{xtypeobj}" required="required">
+								<option value="Credit">Credit</option>
+								<option value="Debit">Debit</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reference</label>
+							<input type="text" class="form-control" th:field="*{xref}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Status</label>
+							<input type="text" class="form-control" th:value="${arhed.xstatus}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/FA32?xtrnnum=RESET', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xstatus eq 'Open'}" th:attr="data-url=@{/FA32?xtrnnum=} + ${arhed.xtrnnum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${not #strings.isEmpty(arhed.xtrnnum) and arhed.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${#strings.isEmpty(arhed.xtrnnum)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${arhed.xtrnnum ne null}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${arhed.xtrnnum ne null and arhed.xstatus eq 'Open'}">
+				<input type="hidden" name="screenId" value="FA32"/>
+				<input type="hidden" name="transactionId" th:value="${arhed.xtrnnum}"/>
+				<input type="hidden" name="mainreloadid" value="main-form-container"/>
+				<input type="hidden" name="mainreloadurl" value="/FA32?xtrnnum="/>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Title</label>
+							<input type="text" class="form-control" name="title">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Description</label>
+							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group mb-3">
+							<label class="form-label">File</label>
+							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
+							<!-- <div class="form-text text-muted">Accepted: png, jpg. Max file size 2Mb</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-doc-submit" th:attr="data-transactionid=${arhed.xtrnnum}"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								Action
+							</th>
+							<th>Title</th>
+							<th>Description</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+								<button th:if="${arhed.xtrnnum ne null and arhed.xstatus eq 'Open'}"
+										th:attr="
+											data-transactionid=${arhed.xtrnnum},
+											data-url=@{/AD21/delete/} + ${x.xdocid}, 
+											data-mainreloadid='main-form-container',
+											data-mainreloadurl='/FA32?xtrnnum='" 
+										type="button" 
+										class="btn btn-danger btn-sm btn-doc-delete">
+									<i class="ph-trash"></i>
+								</button>
+							</td>
+							<td th:text="${x.xtitle}"></td>
+							<td th:text="${x.xdesc}"></td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.btn-confirm').off('click').on('click', function(e){
+				e.preventDefault();
+				actionPostRequest($(this).data('url'));
+			});
+
+			$('.btn-docupload').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#docupload').trigger('click');
+			});
+
+			$('.btn-doc-submit').off('click').on('click', function(e){
+				e.preventDefault();
+
+				loadingMask2.show();
+				$.ajax({
+					type : "GET",
+					url : getBasepath() + "/FA32/statuscheck?xtrnnum=" + $(this).data("transactionid"),
+					success : function(rdata) {
+						loadingMask2.hide();
+
+						if(rdata == null || "Open" != rdata.xstatus){
+							showMessage("error", "Status not open");
+							return;
+						} else {
+							var files = $('#fileuploader').get(0).files;
+							if(files.length == 0){
+								showMessage('error', "File selection required");
+								return;
+							}
+
+							submitMainForm(null, $('form#documentform'));
+						}
+					},
+					error : function(jqXHR, status, errorThrown){
+						showMessage(status, "Something went wrong .... ");
+						loadingMask2.hide();
+					}
+				});
+			});
+
+			$('.btn-doc-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+
+				var data = {
+					'mainreloadid' : $(this).data("mainreloadid"),
+					'mainreloadurl' : $(this).data("mainreloadurl")
+				}
+				var deleteUrl = $(this).data('url');
+
+				loadingMask2.show();
+				$.ajax({
+					type : "GET",
+					url : getBasepath() + "/FA32/statuscheck?xtrnnum=" + $(this).data("transactionid"),
+					success : function(rdata) {
+						loadingMask2.hide();
+
+						if(rdata == null || "Open" != rdata.xstatus){
+							showMessage("error", "Status not open");
+							return;
+						} else {
+							deleteRequest(deleteUrl, data);
+						}
+					},
+					error : function(jqXHR, status, errorThrown){
+						showMessage(status, "Something went wrong .... ");
+						loadingMask2.hide();
+					}
+				});
+			});
+		})
+	</script>
+</div>

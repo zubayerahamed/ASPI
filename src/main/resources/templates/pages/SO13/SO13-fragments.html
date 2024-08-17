@@ -1,0 +1,465 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/SO13/store}" th:object="${searchParam}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">From Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="fromXdate" 
+										id="fromXdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${searchParam.fromXdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.fromXdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">To Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="toXdate" 
+										id="toXdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${searchParam.toXdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.toXdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Type</label>
+							<select class="form-control select" th:field="*{xitemtype}">
+								<option value="">-- Select --</option>
+								<option value="Regular">Regular</option>
+								<option value="Customized">Customized</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xcus">
+								<input 	type="hidden" class="search-val" name="xcus" th:value="*{xcus}"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD14/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xcus',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD14?xcus=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Store</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xwh">
+								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD11/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xwh',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD11?xwh=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition By</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xstaff">
+								<input 	type="hidden" class="search-val" name="xstaff" th:value="*{xstaff}"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD12/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xstaff',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD12?xstaff=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Status</label>
+							<select class="form-control select" th:field="*{xstatusreq}">
+								<option value="">-- Select --</option>
+								<option value="Open">Open</option>
+								<option value="Dismissed">Dismissed</option>
+								<option value="SO Created">SO Created</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SO13', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:attr="
+									data-url=@{/report/print}, 
+									data-rptcode='opreqtoord'" 
+								type="button" 
+								class="btn btn-light btn-sm btn-custom-print my-2 me-2"><i class="ph-printer me-2"></i> Print</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-magnifying-glass me-2"></i> Search</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var targettedForm = $('form#mainform');
+				if(!targettedForm.smkValidate()) return;
+
+				sectionReloadAjaxPostReq({
+					id : 'header-table-container',
+					url : '/SO13/header-table'
+				},{
+					"fromXdate" : $('#fromXdate').val(),
+					"toXdate" : $('#toXdate').val(),
+					"xcus" : $('input[name="xcus"]').val(),
+					"xstaff" : $('input[name="xstaff"]').val(),
+					"xwh" : $('input[name="xwh"]').val(),
+					"xstatusreq" : $('#xstatusreq').val(),
+					"xitemtype" :  $('#xitemtype').val(),
+				});
+			});
+			
+			
+			$('.btn-custom-print').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+				params.param2 = $('#fromXdate').val();
+				params.param3 = $('#toXdate').val();
+				params.param4 = $('#xitemtype').val();
+				params.param5 = $('input[name="xcus"]').val();
+				params.param6 = $('input[name="xwh"]').val();
+				params.param7 = $('input[name="xstaff"]').val();
+				params.param8 = $('#xstatusreq').val();
+
+				generateOnScreenReport($(this).data('url'), params);
+			});
+		})
+	</script>
+</div>
+
+<div th:fragment="dismiss-modal-content" xmlns:th="http://www.thymeleaf.org">
+	<form id="dismissform">
+		<input type="hidden" name="xdoreqnum" id="searchxdoreqnum" th:value="${xdoreqnum}"/>
+		<input type="hidden" id="searchfromXdate" th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.fromXdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.fromXdate, df)}"/>
+		<input type="hidden" id="searchtoXdate"  th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.toXdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.toXdate, df)}"/>
+		<input type="hidden" id="searchxcus" th:value="${searchParam.xcus}"/>
+		<input type="hidden" id="searchxwh" th:value="${searchParam.xwh}"/>
+		<input type="hidden" id="searchxstaff" th:value="${searchParam.xstaff}"/>
+		<input type="hidden" id="searchxstatusreq" th:value="${searchParam.xstatusreq}"/>
+		<input type="hidden" id="searchxitemtype" th:value="${searchParam.xitemtype}"/>
+	
+		<div class="modal-body">
+			<div class="mb-3 form-group">
+				<label class="form-label">Status</label>
+				<select class="form-control select" name="xreasontype" id="xreasontype" required="required">
+					<option value="">-- Select --</option>
+					<option value="Open" th:each="reason : ${reasonTypes}" th:text="${reason.xcode}" th:value="${reason.xcode}"></option>
+				</select>
+			</div>
+			<div class="mb-3 form-group">
+				<label class="form-label">Reason</label>
+				<textarea rows="10" cols="" class="form-control" id="modalxreason" name="modalxreason" required="required"></textarea>
+				<span>Max 200 Characters</span>
+			</div>
+		</div>
+	</form>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-light" data-bs-dismiss="modal">Back</button>
+		<button type="button" class="btn btn-primary modal-btn-confirm" th:attr="data-url=@{/SO13}">Confirm</button>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.modal-btn-confirm').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!$('#dismissform').smkValidate()) return;
+				
+				var xreason = $('#modalxreason').val();
+				var xreasontype = $('#xreasontype').val();
+				$('#dismissModal').modal('hide');
+				var xdoreqnum = $('#searchxdoreqnum').val();
+				deleteRequest($(this).data('url'), {
+					'xdoreqnum' : xdoreqnum,
+					'xreason' : xreason,
+					'xreasontype' : xreasontype,
+					'fromXdate' : $('#searchfromXdate').val(),
+					'toXdate' : $('#searchtoXdate').val(),
+					'xcus' : $('#searchxcus').val(),
+					'xwh' : $('#searchxwh').val(),
+					'xstaff' : $('#searchxstaff').val(),
+					'xstatusreq' : $('#searchxstatusreq').val(),
+					'xitemtype' : $('#searchxitemtype').val(),
+				});
+			});
+		})
+	</script>
+</div>
+
+
+<div th:fragment="header-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<input type="hidden" id="fromDate" th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.fromXdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.fromXdate, df)}"/>
+		<input type="hidden" id="toDate"  th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.toXdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.toXdate, df)}"/>
+		<input type="hidden" id="customer" th:value="${searchParam.xcus}"/>
+		<input type="hidden" id="store" th:value="${searchParam.xwh}"/>
+		<input type="hidden" id="staff" th:value="${searchParam.xstaff}"/>
+		<input type="hidden" id="status" th:value="${searchParam.xstatusreq}"/>
+		<input type="hidden" id="itemtype" th:value="${searchParam.xitemtype}"/>
+
+		<div class="table-responsive">
+			<table class="table datatable" style="white-space: nowrap;">
+				<thead>
+					<tr>
+						<th>Req No.</th>
+						<th>Date</th>
+						<th>Item Type</th>
+						<th>Amount</th>
+						<th>Customer</th>
+						<th>Requisition By</th>
+						<th>Balance</th>
+						<th>Location</th>
+						<th>Submit Time</th>
+						<th>Status</th>
+						<th>Order No.</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<div id="dismissModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="dismiss-modal-content-container"></div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+			
+			var fromDate = $("#fromDate").val();
+			var toDate = $("#toDate").val();
+			var customer = $("#customer").val();
+			var store = $("#store").val();
+			var staff = $("#staff").val();
+			var status = $("#status").val();
+			var itemtype = $("#itemtype").val();
+
+			var dt = $('.datatable').DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : false,
+				"order" : [0, 'desc'],
+				"responsive": true,
+				"lengthChange": true,
+				"columnDefs": [
+					{ "name": "xdoreqnum",   "targets": 0 },
+					{ "name": "xdate",  "targets": 1 },
+					{ "name": "xitemtype",  "targets": 2 },
+					{ "name": "xtotamt",  "targets": 3 },
+					{ "name": "xcus",  "targets": 4 },
+					{ "name": "xstaff", "targets": 5 },
+					{ "name": "balance",  "targets": 6 },
+					{ "name": "location",  "targets": 7 },
+					{ "name": "xsubmittime",  "targets": 8 },
+					{ "name": "xstatusreq",  "targets": 9 },
+					{ "name": "xordernum",  "targets": 10 },
+					{ "name": "xstatus",  "targets": 11 }
+				],
+				"ajax" : getBasepath() + "/SO13/all?fromDate=" + fromDate + "&toDate=" + toDate + "&customer=" + customer + "&store=" + store + "&staff=" + staff + "&status=" + status + "&itemtype=" + itemtype,
+				"columns": [
+					{ "data": "xdoreqnum" },
+					{ "data": "xdate" },
+					{ "data": "xitemtype" },
+					{ 
+						"data": "xtotamt",
+						"class": "text-end",	
+					},
+					{ 
+						"data": "customer",
+						render: function(data, type, row, meta) {
+							return row['xcus'] + ' - ' +  data;
+						},
+					},
+					{ "data": "staff" },
+					{ 
+						"data": "balance",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return 0.0;
+							return data;
+						},
+						"orderable": false,
+						"searchable": false,
+					},
+					{ 
+						"data": "location",
+						"orderable": false,
+						"searchable": false,
+					},
+					{ 
+						"data" : "xsubmittime",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							var d = new Date(data);
+							var datestring = d.getFullYear()  + "-" + ((d.getMonth()+1) < 10 ? '0' + (d.getMonth()+1) : (d.getMonth()+1)) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes();
+							return datestring;
+						}
+					},
+					{ "data": "xstatusreq" },
+					{ 
+						"data": "xordernum",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return "<a href='"+ getBasepath() +"/SO15?xordernum="+ data +"'>"+data+"</a>";
+						}
+					},
+					{ 
+						"data": "xstatus" ,
+						"width": '550px',
+						"orderable": false,
+						"searchable": false,
+						"class": "text-center",
+						render: function(data, type, row, meta) {
+
+							var actions = '<button data-url="/report/print", data-param2="'+row['xdoreqnum']+'", data-rptcode="opreq" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i>Requisition</button>';
+
+							if(data == 'Confirmed' && row['xstatusreq'] == 'Open'){
+								actions += '<a class="btn btn-sm btn-primary mx-1 btn-create-so" data-xdoreqnum="'+ row['xdoreqnum'] +'" href="#">Create SO</a>';
+							}
+
+							if(data == 'Confirmed' && row['xstatusreq'] == 'Open'){
+								actions += '<a class="btn btn-sm btn-danger mx-1 btn-dismiss-req" data-xdoreqnum="'+ row['xdoreqnum'] +'" href="#">Dismiss</a>';
+							}
+
+							return actions;
+						}
+					}
+				]
+			});
+
+			dt.draw();
+
+			$('.datatable').on('click', '.btn-print', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+
+				var i = 2;
+				while(i <= 30){
+					params['param' + i] = $(this).data('param' + i);
+					i++;
+				}
+
+				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			});
+
+			$('.datatable').on('click', 'a.btn-dismiss-req', function(e){
+				e.preventDefault();
+				$('#dismissModal').modal('show');
+
+				sectionReloadAjaxPostReq({
+					id : 'dismiss-modal-content-container',
+					url : '/SO13/dismissmodal'
+				},{
+					"xdoreqnum" : $(this).data('xdoreqnum'),
+					"fromXdate" : fromDate,
+					"toXdate" : toDate,
+					"xcus" : customer,
+					"xwh" : store,
+					"xstaff" : staff,
+					"xstatusreq" : status,
+					"xitemtype" : itemtype
+				});
+			})
+
+			$('.datatable').on('click', 'a.btn-create-so', function(e){
+				e.preventDefault();
+
+				actionPostRequest(getBasepath() + '/SO13/createso', {
+					"xdoreqnum" : $(this).data('xdoreqnum'),
+					"fromXdate" : fromDate,
+					"toXdate" : toDate,
+					"xcus" : customer,
+					"xwh" : store,
+					"xstaff" : staff,
+					"xstatusreq" : status,
+					"xitemtype" : itemtype
+				});
+			})
+		})
+	</script>
+</div>

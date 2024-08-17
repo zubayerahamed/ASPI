@@ -1,0 +1,48 @@
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        web: INFO
+    hibernate: 
+      SQL: DEBUG
+      type: DEBUG
+
+app: 
+  tomcat-service: Tomcat8
+  logging-path: C:/demo/logs
+  template-path: C:/cr_live_reports
+  backup-location: C:/demo/backup
+  database-name: demo
+  version: "@project.version@"
+
+server:
+  port: 8081
+  error:
+    whitelabel:
+      enabled: false
+spring: 
+  datasource: 
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://178.238.224.154:2022;databaseName=demo
+    username: sa
+    password: kitmasters4
+    tomcat:
+      max-wait: 20000
+      max-active: 50
+      max-idle: 20
+      min-idle: 15
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate: 
+        dialect: org.hibernate.dialect.SQLServer2012Dialect
+        id:
+          new_generator_mappings: false
+  jackson:
+    serialization:
+      indent-output: true

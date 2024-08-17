@@ -1,0 +1,554 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:if="${opordheader.xordernum ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
+			<button th:if="${opordheader.xordernum  ne null and opordheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO15/confirm?xordernum=} + ${opordheader.xordernum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
+			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opord'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Order</button>
+			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opordinv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Invoices</button>
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/SO15/store}" th:object="${opordheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${opordheader.xordernum ne null}" th:field="*{xordernum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order No.</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xordernum"
+										th:value="${opordheader.xordernum ne null ? opordheader.xordernum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LSO14/4?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xordernum',
+										data-mainscreen=true,
+										data-mainreloadurl='/SO15?xordernum=',
+										data-mainreloadid='main-form-container',
+										data-detailreloadurl='/SO15/detail-table?xrow=RESET&xordernum=',
+										data-detailreloadid='detail-table-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${opordheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opordheader.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Ledger Requested Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatear" 
+										id="xdatear" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opordheader.xdatear == null ? #dates.format(#dates.createNow(), df) : #dates.format(opordheader.xdatear, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Type</label>
+							<input type="text" class="form-control" th:field="*{xitemtype}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="${opordheader.xcus eq null ? '' : opordheader.xcus + ' - ' + opordheader.customer}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Store</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xwh"
+										th:value="${opordheader.xwh != null ? opordheader.xwh + ' - ' + opordheader.store : ''}">
+								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD1101/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xwh',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD11?xwh=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reference</label>
+							<input type="text" class="form-control" th:field="*{xref}">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Sub Total</label>
+							<input type="number" class="form-control" th:field="*{xlineamt}" min="0" step="1" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">DD Commission (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp}" min="0" max="100" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Special Discount (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp1}" min="0" max="100" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Additional Discount (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp2}" min="0" max="100" required="required">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Amount</label>
+							<input type="number" class="form-control" th:field="*{xtotamt}" min="0" step="1" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Last Invoice ID</label>
+							<input type="text" class="form-control" th:value="${opordheader.xdornum}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition Number</label>
+							<input type="text" class="form-control" th:field="*{xdoreqnum}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Signatory</label>
+							<input type="text" class="form-control" th:value="${opordheader.xstaffappr ne null ? opordheader.xstaffappr + ' - ' + opordheader.staffAppr : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Signatory Date</label>
+							<input type="text" class="form-control" th:field="*{xapprovertime}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opordheader.xordernum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Comments</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xreason}" disabled="disabled"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xsadd-field-container">
+							<div th:remove="tag" th:include="pages/SO15/SO15-fragments :: xsadd-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xmadd-field-container">
+							<div th:remove="tag" th:include="pages/SO15/SO15-fragments :: xmadd-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Expected Delivery Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xexpdel" 
+										id="xexpdel" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:minDate="${#dates.format(#dates.createNow(), df)}"
+										th:value="${opordheader.xexpdel == null ? #dates.format(#dates.createNow(), df) : #dates.format(opordheader.xexpdel, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition By</label>
+							<input type="text" class="form-control" th:value="${opordheader.xstaffreq != null ? opordheader.xstaffreq + ' - ' + opordheader.reqStaffName : ''}" disabled="disabled"/>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Status</label>
+							<input type="text" class="form-control" th:value="${opordheader.xstatus}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Status</label>
+							<input type="text" class="form-control" th:value="${opordheader.xstatusord}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SO15?xordernum=RESET', data-reloadid='main-form-container', data-detailreloadurl='/SO15/detail-table?xordernum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${opordheader.xordernum ne null and opordheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO15?xordernum=} + ${opordheader.xordernum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opordheader.xordernum ne null and opordheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${not #lists.isEmpty(documents)}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Action</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+							</td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div id="customerSearchResultModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Search Results</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+	
+					<div class="modal-body">
+						<div class="customer-search-results-container"></div>
+					</div>
+	
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+
+				sectionReloadAjaxReq({
+					id : $(this).data('detailreloadid'),
+					url : $(this).data('detailreloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.btn-confirm').off('click').on('click', function(e){
+				e.preventDefault();
+				actionPostRequest($(this).data('url'));
+			});
+		})
+	</script>
+</div>
+
+<div th:fragment="xsadd-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Shipping Address</label>
+		<textarea rows="1" cols="" class="form-control" name="xsadd" th:field="${opordheader.xsadd}"></textarea>
+	</div>
+</div>
+
+<div th:fragment="xmadd-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Billing Address</label>
+		<textarea rows="1" cols="" class="form-control" name="xmadd" th:field="${opordheader.xmadd}"></textarea>
+	</div>
+</div>
+
+<div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card" th:if="${oporddetail}">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+			<h6 class="py-sm-3 mb-sm-auto">Details of Sales Order <span th:text="${oporddetail.xordernum}"></span> </h6>
+		</div>
+
+		<div class="card-body" th:if="${opordheader.xstatus eq 'Open'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/SO15/detail/store}" th:object="${oporddetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xordernum}">
+				<input type="hidden" th:field="*{xrow}">
+				<input type="hidden" th:field="*{xdocrow}">
+
+				<div class="row">
+					<div class="col-md-3" th:if="${oporddetail.xdocrow eq 0}">
+						<input type="hidden" th:field="*{xitem}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Code</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xitem"
+										th:value="${oporddetail.xitem ne null ? oporddetail.xitem : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD1301/0?dependentparam='+ ${opordheader.xorgop} +'&hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xitem',
+										data-mainscreen=true,
+										data-mainreloadurl='/SO15/detail-table?xordernum='+ ${oporddetail.xordernum} +'&xrow='+ ${oporddetail.xrow} +'&xitem=',
+										data-mainreloadid='detail-table-container', 
+										data-extrafieldcontroller='SO15'"
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${oporddetail.xdocrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item</label>
+							<input type="hidden" class="form-control" th:field="*{xitem}" required="required">
+							<input type="text" class="form-control" th:value="*{xitem}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Name</label>
+							<input type="text" class="form-control" th:field="*{itemName}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Unit</label>
+							<input type="text" class="form-control" th:field="*{xunit}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${oporddetail.xdocrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition Quantity</label>
+							<input type="number" class="form-control" th:value="*{xqtyreq}" disabled="disabled">
+							<input type="hidden" class="form-control" th:field="*{xqtyreq}">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${oporddetail.xdocrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Quantity</label>
+							<input type="number" class="form-control" th:field="*{xqty}" required="required" min="0" th:max="*{xqtyreq}">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${oporddetail.xdocrow eq 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Quantity</label>
+							<input type="number" class="form-control" th:field="*{xqty}" required="required" min="0">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Default Rate</label>
+							<input type="number" class="form-control" th:value="*{xrated}" required="required" min="0" disabled="disabled">
+							<input type="hidden" class="form-control" th:field="*{xrated}">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${oporddetail.xdocrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition Discount (%)</label>
+							<input type="number" class="form-control" th:value="*{xdiscpreq}" disabled="disabled">
+							<input type="hidden" class="form-control" th:field="*{xdiscpreq}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Discount (%)</label>
+							<input type="number" class="form-control" th:field="*{xdiscp}" required="required" min="0" max="100">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${oporddetail.xrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Rate</label>
+							<input type="number" class="form-control" th:field="*{xrate}" required="required" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${oporddetail.xrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Line Amount</label>
+							<input type="number" class="form-control" th:field="*{xlineamt}" required="required" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SO15/detail-table?xordernum='+ ${oporddetail.xordernum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${oporddetail.xrow ne 0 and oporddetail.xdocrow eq 0}" th:attr="data-url=@{/SO15/detail-table?xordernum=} + ${oporddetail.xordernum} + '&xrow=' + ${oporddetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${oporddetail.xdocrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${oporddetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="table-responsive" th:if="${not #lists.isEmpty(detailList)}">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Item</th>
+						<th>Unit</th>
+						<th class="text-end">Req Qty</th>
+						<th class="text-end">Ord Qty</th>
+						<th class="text-end">D. Rate</th>
+						<th class="text-end">Disc(%)</th>
+						<th class="text-end">Rate</th>
+						<th class="text-end">Line Amt</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="x : ${detailList}">
+						<td>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SO15/detail-table?xordernum=' + ${x.xordernum} + '&xrow=' + ${x.xrow}" th:href="@{/SO15/detail-table?xordernum=} + ${x.xordernum} + '&xrow=' + ${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
+						</td>
+						<td th:text="${x.xunit}"></td>
+						<td class="text-end" th:text="${x.xqtyreq}"></td>
+						<td class="text-end" th:text="${x.xqty}"></td>
+						<td class="text-end" th:text="${x.xrated}"></td>
+						<td class="text-end" th:text="${x.xdiscp}"></td>
+						<td class="text-end" th:text="${x.xrate}"></td>
+						<td class="text-end" th:text="${x.xlineamt}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="searchResultModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Search Results</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+	
+					<div class="modal-body">
+						<div class="search-results-container"></div>
+					</div>
+	
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-detail-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-detail-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(null, $('form#detailform'));
+			});
+
+			$('.btn-detail-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+	
+			$('a.detail-dataindex').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+		})
+	</script>
+</div>

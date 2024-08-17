@@ -1,0 +1,24 @@
+server: 
+  servlet: 
+    context-path: /aspi/
+    session: 
+      persistent: true
+  port: 8081
+spring:
+  mvc:
+    async:
+      request-timeout: -1
+  servlet: 
+    multipart: 
+        max-file-size: 5MB
+  profiles: 
+    active: dev
+  application:
+    name: aspi
+  thymeleaf:
+    cache: false
+  banner:
+    location: banner.txt
+  jackson:
+   serialization:
+     FAIL_ON_EMPTY_BEANS: false

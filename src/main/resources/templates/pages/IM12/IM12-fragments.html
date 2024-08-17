@@ -1,0 +1,343 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:if="${imrcvheader.xrcvnum ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
+			<button th:if="${imrcvheader.xrcvnum  ne null and imrcvheader.xstatus eq 'Open'}" th:attr="data-url=@{/IM12/confirm?xrcvnum=} + ${imrcvheader.xrcvnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
+			<button th:if="${imrcvheader.xrcvnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imrcvheader.xrcvnum}, data-rptcode='imrcv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/IM12/store}" th:object="${imrcvheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${imrcvheader.xrcvnum ne null}" th:field="*{xrcvnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Receive No.</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xrcvnum"
+										th:value="${imrcvheader.xrcvnum ne null ? imrcvheader.xrcvnum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LIM12/1?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xrcvnum',
+										data-mainscreen=true,
+										data-mainreloadurl='/IM12?xrcvnum=',
+										data-mainreloadid='main-form-container',
+										data-detailreloadurl='/IM12/detail-table?xrow=RESET&xrcvnum=',
+										data-detailreloadid='detail-table-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Receive Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${imrcvheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(imrcvheader.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Store</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xwh"
+										th:value="${imrcvheader.xwh != null ? imrcvheader.xwh + ' - ' + imrcvheader.store : ''}">
+								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD1101/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xwh',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD11?xwh=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Receive Type</label>
+							<select class="form-control select" th:field="*{xrcvtype}" required="required">
+								<option value="">-- Select --</option>
+								<option th:each="d : ${rcvTypes}" th:value="${d.xcode}" th:text="${d.xcode}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reference</label>
+							<input type="text" class="form-control" th:field="*{xref}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Amount</label>
+							<input type="number" class="form-control" th:field="*{xtotamt}" min="0" step="1" required="required" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Status</label>
+							<input type="text" class="form-control" th:value="${imrcvheader.xstatus}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Inventory Status</label>
+							<input type="text" class="form-control" th:value="${imrcvheader.xstatusim}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/IM12?xrcvnum=RESET', data-reloadid='main-form-container', data-detailreloadurl='/IM12/detail-table?xrcvnum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${imrcvheader.xrcvnum ne null and imrcvheader.xstatus eq 'Open'}" th:attr="data-url=@{/IM12?xrcvnum=} + ${imrcvheader.xrcvnum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${imrcvheader.xrcvnum ne null and imrcvheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${imrcvheader.xrcvnum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+
+				sectionReloadAjaxReq({
+					id : $(this).data('detailreloadid'),
+					url : $(this).data('detailreloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.btn-confirm').off('click').on('click', function(e){
+				e.preventDefault();
+				actionPostRequest($(this).data('url'));
+			});
+	
+		})
+	</script>
+</div>
+
+<div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card" th:if="${imrcvdetail}">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+			<h6 class="py-sm-3 mb-sm-auto">Details of Inventory Receive <span th:text="${imrcvdetail.xrcvnum}"></span> </h6>
+		</div>
+
+		<div class="card-body" th:if="${imrcvheader.xstatus eq 'Open'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/IM12/detail/store}" th:object="${imrcvdetail}" method="POST">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xrcvnum}">
+				<input type="hidden" th:field="*{xrow}">
+				<input type="hidden" th:field="*{xitem}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Code</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xitem"
+										th:value="${imrcvdetail.xitem ne null ? imrcvdetail.xitem : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD1301/0?dependentparam='+ ${imrcvheader.xorgim} +'&hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xitem',
+										data-mainscreen=true,
+										data-mainreloadurl='/IM12/detail-table?xrcvnum='+ ${imrcvdetail.xrcvnum} +'&xrow='+ ${imrcvdetail.xrow} +'&xitem=',
+										data-mainreloadid='detail-table-container', 
+										data-extrafieldcontroller='IM12'"
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Name</label>
+							<input type="text" class="form-control" th:field="*{itemName}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Unit</label>
+							<input type="hidden" class="form-control" th:field="*{xunit}">
+							<input type="text" class="form-control" th:value="*{xunit}" required="required" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Quantity</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required" min="0">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Receive Rate</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xrate}" required="required" min="0">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${imrcvdetail.xrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Line Amount</label>
+							<input type="number" class="form-control" th:field="*{xlineamt}" required="required" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/IM12/detail-table?xrcvnum='+ ${imrcvdetail.xrcvnum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${imrcvdetail.xrow ne 0}" th:attr="data-url=@{/IM12/detail-table?xrcvnum=} + ${imrcvdetail.xrcvnum} + '&xrow=' + ${imrcvdetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${imrcvdetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="table-responsive" th:if="${not #lists.isEmpty(detailList)}">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Item</th>
+						<th>Unit</th>
+						<th class="text-end">Quantity</th>
+						<th class="text-end">Receive Rate</th>
+						<th class="text-end">Line Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="x : ${detailList}">
+						<td>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/IM12/detail-table?xrcvnum=' + ${x.xrcvnum} + '&xrow=' + ${x.xrow}" th:href="@{/IM12/detail-table?xrcvnum=} + ${x.xrcvnum} + '&xrow=' + ${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
+						</td>
+						<td th:text="${x.xunit}"></td>
+						<td class="text-end" th:text="${x.xqty}"></td>
+						<td class="text-end" th:text="${x.xrate}"></td>
+						<td class="text-end" th:text="${x.xlineamt}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="searchResultModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Search Results</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+	
+					<div class="modal-body">
+						<div class="search-results-container"></div>
+					</div>
+	
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-detail-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-detail-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(null, $('form#detailform'));
+			});
+
+			$('.btn-detail-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+	
+			$('a.detail-dataindex').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+		})
+	</script>
+</div>
+
+

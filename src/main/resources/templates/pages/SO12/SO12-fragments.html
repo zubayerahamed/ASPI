@@ -1,0 +1,508 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:if="${opreqheader.xdoreqnum ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
+			<button th:if="${opreqheader.xdoreqnum  ne null and opreqheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO12/confirm?xdoreqnum=} + ${opreqheader.xdoreqnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
+			<button th:if="${opreqheader.xdoreqnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opreqheader.xdoreqnum}, data-rptcode='opreq'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+			<button th:if="${opreqheader.xdoreqnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opreqheader.xdoreqnum}, data-rptcode='opreq2'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print2</button>
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/SO12/store}" th:object="${opreqheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${opreqheader.xdoreqnum ne null}" th:field="*{xdoreqnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition No.</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xdoreqnum"
+										th:value="${opreqheader.xdoreqnum ne null ? opreqheader.xdoreqnum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LSO12/1?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xdoreqnum',
+										data-mainscreen=true,
+										data-mainreloadurl='/SO12?xdoreqnum=',
+										data-mainreloadid='main-form-container',
+										data-detailreloadurl='/SO12/detail-table?xrow=RESET&xdoreqnum=',
+										data-detailreloadid='detail-table-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										disabled="disabled"
+										th:value="${opreqheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opreqheader.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Ledger Requested Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatear" 
+										id="xdatear" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opreqheader.xdatear == null ? #dates.format(#dates.createNow(), df) : #dates.format(opreqheader.xdatear, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xcus-field-container">
+							<div th:remove="tag" th:include="pages/SO12/SO12-fragments :: xcus-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Store</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xwh"
+										th:value="${opreqheader.xwh != null ? opreqheader.xwh + ' - ' + opreqheader.store : ''}">
+								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD1101/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xwh',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD11?xwh=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reference</label>
+							<input type="text" class="form-control" th:field="*{xref}">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqheader.xdoreqnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Sub Total</label>
+							<input type="number" class="form-control" th:field="*{xlineamt}" min="0" step="1" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">DD Commission (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp}" min="0" max="100" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Special Discount (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp1}" min="0" max="100" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Additional Discount (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp2}" min="0" max="100" required="required">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqheader.xdoreqnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Amount</label>
+							<input type="number" class="form-control" th:field="*{xtotamt}" min="0" step="1" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqheader.xdoreqnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Number</label>
+							<input type="text" class="form-control" th:field="*{xordernum}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqheader.xdoreqnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Signatory</label>
+							<input type="text" class="form-control" th:value="${opreqheader.xstaffappr ne null ? opreqheader.xstaffappr + ' - ' + opreqheader.staffAppr : ''}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqheader.xdoreqnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Signatory Date</label>
+							<input type="text" class="form-control" th:field="*{xapprovertime}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqheader.xdoreqnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Comments</label>
+							<input type="text" class="form-control" th:field="*{xreason}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xsadd-field-container">
+							<div th:remove="tag" th:include="pages/SO12/SO12-fragments :: xsadd-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xmadd-field-container">
+							<div th:remove="tag" th:include="pages/SO12/SO12-fragments :: xmadd-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Expected Delivery Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xexpdel" 
+										id="xexpdel" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:minDate="${#dates.format(#dates.createNow(), df)}"
+										th:value="${opreqheader.xexpdel == null ? #dates.format(#dates.createNow(), df) : #dates.format(opreqheader.xexpdel, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Status</label>
+							<input type="text" class="form-control" th:value="${opreqheader.xstatus}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Requisition Status</label>
+							<input type="text" class="form-control" th:value="${opreqheader.xstatusreq}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SO12?xdoreqnum=RESET', data-reloadid='main-form-container', data-detailreloadurl='/SO12/detail-table?xdoreqnum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${opreqheader.xdoreqnum ne null and opreqheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO12?xdoreqnum=} + ${opreqheader.xdoreqnum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opreqheader.xdoreqnum ne null and opreqheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${opreqheader.xdoreqnum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div id="customerSearchResultModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Search Results</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+	
+					<div class="modal-body">
+						<div class="customer-search-results-container"></div>
+					</div>
+	
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+
+				sectionReloadAjaxReq({
+					id : $(this).data('detailreloadid'),
+					url : $(this).data('detailreloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.btn-confirm').off('click').on('click', function(e){
+				e.preventDefault();
+				actionPostRequest($(this).data('url'), {}, 10000);
+			});
+		})
+	</script>
+</div>
+
+<div th:fragment="xcus-field" xmlns:th="http://www.thymeleaf.org">
+	<input type="hidden" name="xcus" th:value="${opreqheader.xcus}"/>
+	<div class="mb-3 form-group">
+		<label class="form-label">Customer</label>
+		<div class="input-group">
+			<input 	type="text" 
+					class="form-control searchsuggest2"
+					id="xcus"
+					required="required"
+					th:value="${opreqheader.xcus != null ? opreqheader.xcus + ' - ' + opreqheader.customer : ''}">
+			<span 	class="input-group-text btn-search" 
+					th:attr="
+					data-reloadurl='/search/table/LMD14/3?hint=', 
+					data-reloadid='search-suggest-results-container', 
+					data-fieldid='xcus',
+					data-mainscreen=true,
+					data-mainreloadurl='/SO12/xcusfield?xcus=',
+					data-mainreloadid='xcus-field-container',
+					data-extrafieldcontroller='SO12'" 
+					style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+		});
+	</script>
+</div>
+
+<div th:fragment="xsadd-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Shipping Address</label>
+		<textarea rows="1" cols="" class="form-control" name="xsadd" th:field="${opreqheader.xsadd}"></textarea>
+	</div>
+</div>
+
+<div th:fragment="xmadd-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Billing Address</label>
+		<textarea rows="1" cols="" class="form-control" name="xmadd" th:field="${opreqheader.xmadd}"></textarea>
+	</div>
+</div>
+
+<div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card" th:if="${opreqdetail}">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+			<h6 class="py-sm-3 mb-sm-auto">Details of Sales Requisition <span th:text="${opreqdetail.xdoreqnum}"></span> </h6>
+		</div>
+
+		<div class="card-body" th:if="${opreqheader.xstatus eq 'Open'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/SO12/detail/store}" th:object="${opreqdetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xdoreqnum}">
+				<input type="hidden" th:field="*{xrow}">
+				<input type="hidden" th:field="*{xitem}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Code</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xitem"
+										th:value="${opreqdetail.xitem ne null ? opreqdetail.xitem : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD1301/0?dependentparam='+ ${opreqheader.xorgop} +'&hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xitem',
+										data-mainscreen=true,
+										data-mainreloadurl='/SO12/detail-table?xdoreqnum='+ ${opreqdetail.xdoreqnum} +'&xrow='+ ${opreqdetail.xrow} +'&xitem=',
+										data-mainreloadid='detail-table-container', 
+										data-extrafieldcontroller='SO12'"
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Item Name</label>
+							<input type="text" class="form-control" th:field="*{itemName}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Unit</label>
+							<input type="hidden" class="form-control" th:field="*{xunit}">
+							<input type="text" class="form-control" th:value="*{xunit}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Quantity</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required" min="0">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Default Rate</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xrated}" required="required" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Discount (%)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdiscp}" required="required" min="0" max="100">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqdetail.xrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Rate</label>
+							<input type="number" class="form-control" th:field="*{xrate}" required="required" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opreqdetail.xrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Line Amount</label>
+							<input type="number" class="form-control" th:field="*{xlineamt}" required="required" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SO12/detail-table?xdoreqnum='+ ${opreqdetail.xdoreqnum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${opreqdetail.xrow ne 0}" th:attr="data-url=@{/SO12/detail-table?xdoreqnum=} + ${opreqdetail.xdoreqnum} + '&xrow=' + ${opreqdetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opreqdetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="table-responsive" th:if="${not #lists.isEmpty(detailList)}">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Item</th>
+						<th>Unit</th>
+						<th class="text-end">Quantity</th>
+						<th class="text-end">Default Rate</th>
+						<th class="text-end">Discount (%)</th>
+						<th class="text-end">Rate</th>
+						<th class="text-end">Line Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="x : ${detailList}">
+						<td>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SO12/detail-table?xdoreqnum=' + ${x.xdoreqnum} + '&xrow=' + ${x.xrow}" th:href="@{/SO12/detail-table?xdoreqnum=} + ${x.xdoreqnum} + '&xrow=' + ${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
+						</td>
+						<td th:text="${x.xunit}"></td>
+						<td class="text-end" th:text="${x.xqty}"></td>
+						<td class="text-end" th:text="${x.xrated}"></td>
+						<td class="text-end" th:text="${x.xdiscp}"></td>
+						<td class="text-end" th:text="${x.xrate}"></td>
+						<td class="text-end" th:text="${x.xlineamt}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="searchResultModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Search Results</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+	
+					<div class="modal-body">
+						<div class="search-results-container"></div>
+					</div>
+	
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-detail-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-detail-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(null, $('form#detailform'));
+			});
+
+			$('.btn-detail-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('a.detail-dataindex').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+		})
+	</script>
+</div>

@@ -1,0 +1,241 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD19/store}" th:object="${searchParam}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">From Date (Bank)</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xfdate" 
+										id="xfdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${searchParam.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xfdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">To Date (Bank)</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xtdate" 
+										id="xtdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${searchParam.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xtdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Transaction Type</label>
+							<select class="form-control select" th:field="*{xtype}">
+								<option value="All">All</option>
+								<option value="Money Receipt">Money Receipt</option>
+								<option value="Customer Adjustment">Customer Adjustment</option>
+								<option value="Sales Invoice">Sales Invoice</option>
+								<option value="Sales Return">Sales Return</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD19', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button type="submit" class="btn btn-warning btn-sm btn-download-excel"><i class="ph-download me-2"></i> Download</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-magnifying-glass me-2"></i> Search</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var targettedForm = $('form#mainform');
+				if(!targettedForm.smkValidate()) return;
+
+				sectionReloadAjaxPostReq({
+					id : 'header-table-container',
+					url : '/AD19/header-table'
+				},{
+					"xfdate" : $('#xfdate').val(),
+					"xtdate" : $('#xtdate').val(),
+					"xtype" : $('#xtype').val(),
+				});
+			});
+
+			$('.btn-download-excel').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var targettedForm = $('form#mainform');
+				if(!targettedForm.smkValidate()) return;
+
+				var xfdate = $('#xfdate').val();
+				var xtdate = $('#xtdate').val();
+				var xtype = $('#xtype').val();
+
+				var fileName = "custom_filename.xlsx";
+
+				var linkUrl = getBasepath() + "/AD19/exportexcel?xfdate=" + xfdate + "&xtdate=" + xtdate + "&xtype=" + xtype;
+
+				window.open(linkUrl, '_blank');
+
+				/* loadingMask2.show();
+				$.ajax({
+					type: "GET",
+					url: linkUrl,
+					xhrFields: {
+						responseType: 'blob' // Set the response type to blob
+					},
+					success: function (data, status, xhr) {
+						loadingMask2.hide();
+						var blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }); // Adjust the MIME type if needed
+						//var blob = new Blob([data], { type: xhr.getResponseHeader("Content-Type") });
+						var link = document.createElement('a');
+						link.href = window.URL.createObjectURL(blob);
+						link.download = fileName;
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+					},
+					error : function(jqXHR, status, errorThrown){
+						showMessage(status, "Something went wrong .... ");
+						loadingMask2.hide();
+					}
+				}); */
+
+			});
+		})
+	</script>
+</div>
+
+
+<div th:fragment="header-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<input type="hidden" id="xfdate" th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xfdate, df)}"/>
+		<input type="hidden" id="xtdate"  th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xtdate, df)}"/>
+		<input type="hidden" id="xtype" th:value="${searchParam.xtype}"/>
+
+		<div class="table-responsive">
+			<table class="table datatable" style="white-space: nowrap;">
+				<thead>
+					<tr>
+						<th>Voucher Date</th>
+						<th>Voucher Number</th>
+						<th>Voucher Type</th>
+						<th>Debit Ledger</th>
+						<th>Debit Amount</th>
+						<th>Credit Ledger</th>
+						<th>Credit Amount</th>
+						<th>Narration</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var xfdate = $("#xfdate").val();
+			var xtdate = $("#xtdate").val();
+			var xtype = $("#xtype").val();
+
+			var dt = $('.datatable').DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : false,
+				"order" : [0, 'desc'],
+				"responsive": true,
+				"lengthChange": true,
+				"columnDefs": [
+					{ "name": "a.xdateact", "targets": 0 },
+					{ "name": "a.xtrnnum", "targets": 1 },
+					{ "name": "a.xdoctype", "targets": 2 },
+					{ "name": "dra", "targets": 3 },
+					{ "name": "debitamount", "targets": 4 },
+					{ "name": "cra", "targets": 5 },
+					{ "name": "creditamount", "targets": 6 },
+					{ "name": "particular", "targets": 7 }
+				],
+				"ajax" : getBasepath() + "/AD19/all?xfdate=" + xfdate + "&xtdate=" + xtdate + "&xtype=" + xtype,
+				"columns": [
+					{ 
+						"data": "vdate",
+						"orderable": false,
+					},
+					{ 
+						"data": "voucher",
+						"orderable": false,
+					},
+					{ 
+						"data": "doctype",
+						"orderable": false,
+					},
+					{ 
+						"data": "dra",
+						"orderable": false,
+						"searchable": false,
+					},
+					{ 
+						"data": "debitAmount",
+						"orderable": false,
+						"searchable": false,
+					},
+					{ 
+						"data": "cra",
+						"orderable": false,
+						"searchable": false,
+					},
+					{ 
+						"data": "creditAmount",
+						"orderable": false,
+						"searchable": false,
+					},
+					{ 
+						"data": "particular",
+						"orderable": false,
+						"searchable": false,
+					}
+				]
+			});
+
+			dt.draw();
+
+		})
+	</script>
+</div>

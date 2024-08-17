@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>DEMO</title>
+	<meta th:remove="tag" th:include="commons :: common-meta"/>
+	<meta th:remove="tag" th:include="commons :: common-css"/>
+	<meta th:remove="tag" th:include="commons :: common-js"/>
+</head>
+
+<body>
+
+	<!-- Main navbar -->
+	<div th:remove="tag" th:include="commons :: main-menu"></div>
+
+
+	<!-- Page content -->
+	<div class="page-content">
+
+		<!-- Main sidebar -->
+		<div th:remove="tag" th:include="commons :: main-sidebar"></div>
+		<!-- /main sidebar -->
+
+
+		<!-- Main content -->
+		<div class="content-wrapper">
+
+			<!-- Inner content -->
+			<div class="content-inner">
+
+				<!-- Content area -->
+				<div class="content">
+
+					<div class="row">
+						<div class="col-xl-3">
+							<div class="main-form-container">
+
+								<div class="card p-0">
+									<div class="card-body p-0">
+										<div class="list-group">
+											<div class="list-group-item bg-light fw-semibold" th:text="${pageTitle}">Group Title</div>
+											<div class="list-group-item" th:each="report : ${reports}">
+												<a class="report-link" th:attr="data-reloadid='header-table-container', data-reloadurl='/' + ${report.prefix} + '/' + ${report.code}" href="#" th:text="${report.title}"></a>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+
+						<div class="col-xl-9">
+							<div class="header-table-container">
+								<div th:replace="pages/RP/RP-form::dynamicreport"></div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!-- /content area -->
+
+				<!-- Footer -->
+				<div th:remove="tag" th:include="commons :: footer-section"></div>
+				<!-- /footer -->
+
+			</div>
+			<!-- /inner content -->
+
+		</div>
+		<!-- /main content -->
+
+	</div>
+	<!-- /page content -->
+
+	<div th:remove="tag" th:include="commons :: modal-section"></div>
+	<div th:remove="tag" th:include="commons :: notification-section"></div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('a.report-link').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+
+			});
+		})
+	</script>
+</body>
+</html>

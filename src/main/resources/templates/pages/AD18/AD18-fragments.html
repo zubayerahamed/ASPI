@@ -1,0 +1,123 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/AD18/store}" th:object="${casms}" method="POST">
+				<input type="hidden" th:field="*{submitFor}"/>
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Transaction Type</label>
+							<select class="form-control select main-screen-reloader" 
+									th:field="*{xtype}" 
+									required="required"
+									th:attr="
+									data-mainscreen=true,
+									data-mainreloadurl='/AD18?xtype=',
+									data-mainreloadid='main-form-container'
+									">
+								<option value="">-- Select --</option>
+								<option value="Money Receipt">Money Receipt</option>
+								<option value="Customer Adjustment">Customer Adjustment</option>
+								<option value="Sales Invoice">Sales Invoice</option>
+								<option value="Sales Return">Sales Return</option>
+								<option value="Invoice Currection">Invoice Currection</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Masking Name</label>
+							<input type="text" class="form-control" th:field="*{xmask}" required="required">
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">API URL</label>
+							<input type="text" class="form-control" th:field="*{xapi}" required="required">
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">User ID</label>
+							<input type="text" class="form-control" th:field="*{xuserid}" required="required">
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Password</label>
+							<input type="text" class="form-control" th:field="*{xpassword}" required="required">
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Base Number</label>
+							<input type="text" class="form-control" th:field="*{xbase}" required="required">
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="zactive">Is Active?</label>
+							<input type="checkbox" id="zactive" th:field="*{zactive}">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/AD18?xtype=RESET', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(casms.xtype)}" th:attr="data-url=@{/AD18?xtype=} + ${casms.xtype}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${not #strings.isEmpty(casms.xtype)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${#strings.isEmpty(casms.xtype)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.main-screen-reloader').on('change', function(e){
+				var mainreloadid = $(this).data('mainreloadid');
+				var mainreloadurl = $(this).data('mainreloadurl');
+				var value = $(this).val();
+				sectionReloadAjaxReq({
+					id : mainreloadid,
+					url : mainreloadurl + value
+				});
+			});
+
+		})
+	</script>
+</div>

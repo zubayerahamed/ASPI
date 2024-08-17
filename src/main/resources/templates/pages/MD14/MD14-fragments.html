@@ -1,0 +1,346 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:if="${not #strings.isEmpty(cacus.xcus)}" class="card-header d-sm-flex align-items-sm-center py-sm-0">
+
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/MD14/store}" th:object="${cacus}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:if="${not #strings.isEmpty(cacus.xcus)}" th:field="*{xcus}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<label class="form-label">Customer Code</label>
+						<div class="input-group">
+							<input 	type="text" 
+									class="form-control searchsuggest2"
+									name="xcus"
+									th:value="${cacus.xcus ne null ? cacus.xcus : ''}"
+									disabled="disabled">
+							<span 	class="input-group-text btn-search" 
+									th:attr="
+									data-reloadurl='/search/table/LMD14/0?hint=', 
+									data-reloadid='search-suggest-results-container', 
+									data-fieldid='xcus',
+									data-mainscreen=true,
+									data-mainreloadurl='/MD14?xcus=',
+									data-mainreloadid='main-form-container'" 
+									style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer Name</label>
+							<input type="text" class="form-control" th:field="*{xorg}" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Sales Org.</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xorgop"
+										th:value="${cacus.xorgop != null ? cacus.xorgop + ' - ' + cacus.salesOrg : ''}">
+								<input 	type="hidden" class="search-val" name="xorgop" th:value="*{xorgop}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD17/2?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xorgop',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD17?xorg=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Contact Name</label>
+							<input type="text" class="form-control" th:field="*{xcontact}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Mobile No.</label>
+							<input type="text" class="form-control" th:field="*{xphone}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Email</label>
+							<input type="email" class="form-control" th:field="*{xemail}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Billing Address</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xmadd}"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Shipping Address</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xsadd}"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">BIN/Trade License</label>
+							<input type="text" class="form-control" th:field="*{xbin}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">NID/TIN</label>
+							<input type="text" class="form-control" th:field="*{xnid}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Territory Code</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xarea"
+										th:value="${cacus.xarea != null ? cacus.xarea + ' - ' + cacus.area : ''}">
+								<input 	type="hidden" class="search-val" name="xarea" th:value="*{xarea}" required="required"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD16/5?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xarea',
+										data-mainscreen=false,
+										data-mainreloadurl='/MD16?xarea=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer Category</label>
+							<select class="form-control select" th:field="*{xcatcus}" required="required" data-minimum-results-for-search="Infinity">
+								<option th:each="cat : ${customerCategories}" th:value="${cat.xcode}" th:text="${cat.xcode}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Monthly Credit Limit</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xcrlimitm}" required="required" min="0">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Yearly Credit Limit</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xcrlimity}" required="required" min="0">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Limit</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xcrlimit}" min="0" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer Old Code</label>
+							<input type="text" class="form-control" th:field="*{xcusold}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Enrollment Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatejoin" 
+										id="xdatejoin" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${cacus.xdatejoin == null ? #dates.format(#dates.createNow(), df) : #dates.format(cacus.xdatejoin, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">SMS Receipients (,)</label>
+							<textarea rows="1" cols="" th:field="*{xsmsnos}" class="form-control"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xisover">Allow Cross Limit</label>
+							<input type="checkbox" id="xisover" th:field="*{xisover}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="zactive">Is Active?</label>
+							<input type="checkbox" id="zactive" th:field="*{zactive}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xissms">Is SMS?</label>
+							<input type="checkbox" id="zactive" th:field="*{xissms}">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/MD14?xcus=RESET', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${not #strings.isEmpty(cacus.xcus)}" th:attr="data-url=@{/MD14?xcus=} + ${cacus.xcus}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${not #strings.isEmpty(cacus.xcus)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${#strings.isEmpty(cacus.xcus)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${cacus.xcus ne null}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data">
+				<input type="hidden" name="screenId" value="MD14"/>
+				<input type="hidden" name="transactionId" th:value="${cacus.xcus}"/>
+				<input type="hidden" name="mainreloadid" value="main-form-container"/>
+				<input type="hidden" name="mainreloadurl" value="/MD14?xcus="/>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Title</label>
+							<input type="text" class="form-control" name="title">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Description</label>
+							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group mb-3">
+							<label class="form-label">File</label>
+							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
+							<!-- <div class="form-text text-muted">Accepted: png, jpg. Max file size 2Mb</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-doc-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								Action
+							</th>
+							<th>Title</th>
+							<th>Description</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+								<button th:if="${cacus.xcus ne null}" 
+										th:attr="
+											data-url=@{/AD21/delete/} + ${x.xdocid}, 
+											data-mainreloadid='main-form-container',
+											data-mainreloadurl='/MD14?xcus='" 
+										type="button" 
+										class="btn btn-danger btn-sm btn-doc-delete">
+									<i class="ph-trash"></i>
+								</button>
+							</td>
+							<td th:text="${x.xtitle}"></td>
+							<td th:text="${x.xdesc}"></td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.btn-docupload').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#docupload').trigger('click');
+			});
+
+			$('.btn-doc-submit').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var files = $('#fileuploader').get(0).files;
+				if(files.length == 0){
+					showMessage('error', "File selection required");
+					return;
+				}
+
+				submitMainForm(null, $('form#documentform'));
+			});
+
+			$('.btn-doc-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+
+				var data = {
+					'mainreloadid' : $(this).data("mainreloadid"),
+					'mainreloadurl' : $(this).data("mainreloadurl")
+				}
+				deleteRequest($(this).data('url'), data);
+			});
+		})
+	</script>
+</div>

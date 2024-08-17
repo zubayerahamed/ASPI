@@ -1,0 +1,720 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:if="${customer.xcus ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
+			<button th:if="${customer.xcus ne null}" th:attr="data-url=@{/report/print}, data-param2=${xfdate}, data-param3=${xtdate}, data-param4=${customer.xcus}, data-rptcode='arleddt'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> View Ledger</button>
+			<button th:if="${customer.xcus ne null}" th:attr="data-url=@{/report/print}, data-param2=${customer.xcus}, data-rptcode='opundel'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Undelivered Items</button>
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/FA35/store}" th:object="${customer}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<div class="row">
+					<input th:if="${customer.xcus ne null}" type="hidden" id="fromDate" th:value="${xfdate}"/>
+					<input th:if="${customer.xcus ne null}" type="hidden" id="toDate" th:value="${#dates.format(#dates.createNow(), df)}"/>
+					<input type="hidden" th:if="${customer.xcus ne null}" th:field="*{xcus}">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer Code</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xcus"
+										th:value="${customer.xcus ne null ? customer.xcus : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD14/2?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xcus',
+										data-mainscreen=true,
+										data-mainreloadurl='/FA35?xcus=',
+										data-mainreloadid='main-form-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Customer Name</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{xorg}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Contact Name</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{xcontact}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Sales Org.</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{salesOrg}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Phone</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{xphone}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Billing Address</label>
+							<div class="input-group">
+								<textarea rows="1" cols="" class="form-control" th:field="*{xmadd}" disabled="disabled"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Shipping Address</label>
+							<div class="input-group">
+								<textarea rows="1" cols="" class="form-control" th:field="*{xsadd}" disabled="disabled"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Area</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="${customer.xarea ne null ? customer.xarea + ' - ' + customer.area : ''}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Monthly Credit Limit</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{xcrlimitm}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Yearly Credit Limit</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{xcrlimity}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Limit</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{xcrlimit}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${customer.xcus ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Current Balance</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:value="*{currentBalance}" disabled="disabled">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/FA35?xcus=RESET', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${customer.xcus ne null}">
+			<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded">
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/FA35/header-table?tab=tab1'" class="nav-link tab-link rounded-start" th:classappend="${tabId eq 'tab1' ? 'active' : ''}">Requisitions</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/FA35/header-table?tab=tab2'" class="nav-link tab-link" th:classappend="${tabId eq 'tab2' ? 'active' : ''}">Orders</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/FA35/header-table?tab=tab3'" class="nav-link tab-link" th:classappend="${tabId eq 'tab3' ? 'active' : ''}">Invoices</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/FA35/header-table?tab=tab4'" class="nav-link tab-link" th:classappend="${tabId eq 'tab4' ? 'active' : ''}">Returns</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/FA35/header-table?tab=tab5'" class="nav-link tab-link" th:classappend="${tabId eq 'tab5' ? 'active' : ''}">Money Receipts</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" th:attr="data-reloadid='tables-fragments-container', data-reloadurl='/FA35/header-table?tab=tab6'" class="nav-link tab-link rounded-end" th:classappend="${tabId eq 'tab6' ? 'active' : ''}">Adjustments</a>
+				</li>
+			</ul>
+
+			<div class="mt-3">
+				<div class="tables-fragments-container">
+					<div th:remove="tag" th:include="pages/FA35/FA35-fragments :: tab1-table"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('a.tab-link').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('a.tab-link').removeClass('active');
+				$(this).addClass('active');
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+		})
+	</script>
+</div>
+
+
+<div th:fragment="tab1-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="table-responsive">
+			<table class="table datatable">
+				<thead>
+					<tr>
+						<th>Requisition No.</th>
+						<th>Requisition Date</th>
+						<th>Ledger Requested Date</th>
+						<th>Item Type</th>
+						<th>Requisition By</th>
+						<th>Store</th>
+						<th>Amount</th>
+						<th>Doc Status</th>
+						<th>Requisition Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.datatable').DataTable({
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": [
+					{ "name": "xdoreqnum",   "targets": 0 },
+					{ "name": "xdate",  "targets": 1 },
+					{ "name": "xdatear",  "targets": 2 },
+					{ "name": "xitemtype",  "targets": 3 },
+					{ "name": "xstaff",  "targets": 4 },
+					{ "name": "xwh",  "targets": 5 },
+					{ "name": "xtotamt",  "targets": 6 },
+					{ "name": "xstatus",  "targets": 7 },
+					{ "name": "xstatusreq",  "targets": 8 },
+					{ "name": "xstatus",  "targets": 9 },
+				],
+				"ajax" : getBasepath() + "/FA35/all/requisitions?xcus=" + $('#xcus').val() + "&fromDate="+$('#fromDate').val()+"&toDate=" + $('#toDate').val() ,
+				"columns": [
+					{ "data": "xdoreqnum"},
+					{ "data": "xdate" },
+					{ "data": "xdatear" },
+					{ "data" : "xitemtype" },
+					{ 
+						"data": "staff",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xstaff'] + ' - ' + data;
+						}
+					},
+					{ 
+						"data": "store",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xwh'] + ' - ' + data;
+						}
+					},
+					{ "data": "xtotamt" },
+					{ "data": "xstatus" },
+					{ "data": "xstatusreq" },
+					{ 
+						"data": "xstatus" ,
+						"orderable": false,
+						"class": 'text-center',
+						"searchable": false,
+						render: function(data, type, row, meta) {
+							return '<button data-url="/report/print" data-param2="'+row['xdoreqnum']+'" data-rptcode="opreq" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i> Print</button>';
+						}
+					}
+				]
+			});
+
+			$('.datatable').on('click', 'button.btn-print', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+
+				var i = 2;
+				while(i <= 30){
+					params['param' + i] = $(this).data('param' + i);
+					i++;
+				}
+
+				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			})
+		})
+	</script>
+</div>
+
+
+<div th:fragment="tab2-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="table-responsive">
+			<table class="table datatable">
+				<thead>
+					<tr>
+						<th>Order No.</th>
+						<th>Order Date</th>
+						<th>Ledger Requested Date</th>
+						<th>Item Type</th>
+						<th>Order By</th>
+						<th>Store</th>
+						<th>Amount</th>
+						<th>Doc Status</th>
+						<th>Order Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.datatable').DataTable({
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": [
+					{ "name": "xordernum",   "targets": 0 },
+					{ "name": "xdate",  "targets": 1 },
+					{ "name": "xdatear",  "targets": 2 },
+					{ "name": "xitemtype",  "targets": 3 },
+					{ "name": "xstaff",  "targets": 4 },
+					{ "name": "xwh",  "targets": 5 },
+					{ "name": "xtotamt",  "targets": 6 },
+					{ "name": "xstatus",  "targets": 7 },
+					{ "name": "xstatusord",  "targets": 8 },
+					{ "name": "xstatus",  "targets": 9 },
+				],
+				"ajax" : getBasepath() + "/FA35/all/orders?xcus=" + $('#xcus').val() + "&fromDate="+$('#fromDate').val()+"&toDate=" + $('#toDate').val() ,
+				"columns": [
+					{ "data": "xordernum"},
+					{ "data": "xdate" },
+					{ "data": "xdatear" },
+					{ "data" : "xitemtype" },
+					{ 
+						"data": "staff",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xstaff'] + ' - ' + data;
+						}
+					},
+					{ 
+						"data": "store",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xwh'] + ' - ' + data;
+						}
+					},
+					{ "data": "xtotamt" },
+					{ "data": "xstatus" },
+					{ "data": "xstatusord" },
+					{ 
+						"data": "xstatus" ,
+						"orderable": false,
+						"class": 'text-center',
+						"searchable": false,
+						render: function(data, type, row, meta) {
+							return '<button data-url="/report/print" data-param2="'+row['xordernum']+'" data-rptcode="opord" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i> Order</button>' + 
+							'<button data-url="/report/print" data-param2="'+row['xordernum']+'" data-rptcode="opordinv" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i> Invoices</button>';
+						}
+					}
+				]
+			});
+
+			$('.datatable').on('click', 'button.btn-print', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+
+				var i = 2;
+				while(i <= 30){
+					params['param' + i] = $(this).data('param' + i);
+					i++;
+				}
+
+				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			})
+		})
+	</script>
+</div>
+
+<div th:fragment="tab3-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="table-responsive">
+			<table class="table datatable">
+				<thead>
+					<tr>
+						<th>Invoice No.</th>
+						<th>Date</th>
+						<th>Ledger Date</th>
+						<th>Item Type</th>
+						<th>Invoice By</th>
+						<th>Store</th>
+						<th>Amount</th>
+						<th>Invoice Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.datatable').DataTable({
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": [
+					{ "name": "xdornum",   "targets": 0 },
+					{ "name": "xdate",  "targets": 1 },
+					{ "name": "xdatear",  "targets": 2 },
+					{ "name": "xitemtype",  "targets": 3 },
+					{ "name": "xstaff",  "targets": 4 },
+					{ "name": "xwh",  "targets": 5 },
+					{ "name": "xtotamt",  "targets": 6 },
+					{ "name": "xstatusim",  "targets": 7 },
+					{ "name": "xstatus",  "targets": 8 },
+				],
+				"ajax" : getBasepath() + "/FA35/all/invoices?xcus=" + $('#xcus').val() + "&fromDate="+$('#fromDate').val()+"&toDate=" + $('#toDate').val() ,
+				"columns": [
+					{ "data": "xdornum"},
+					{ "data": "xdate" },
+					{ "data": "xdatear" },
+					{ "data" : "xitemtype" },
+					{ 
+						"data": "staff",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xstaff'] + ' - ' + data;
+						}
+					},
+					{ 
+						"data": "store",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xwh'] + ' - ' + data;
+						}
+					},
+					{ "data": "xtotamt" },
+					{ "data": "xstatusim" },
+					{ 
+						"data": "xstatus" ,
+						"orderable": false,
+						"class": 'text-center',
+						"searchable": false,
+						render: function(data, type, row, meta) {
+							if(data == 'Confirmed' && row['xstatusim'] == 'Confirmed'){
+								return '<button data-url="/report/print" data-param2="'+row['xdornum']+'" data-rptcode="opdoinvdv" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i> Invoice (D)</button>'
+								+ '<button data-url="/report/print" data-param2="'+row['xdornum']+'" data-rptcode="opdoinvsv" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i> Invoice (S)</button>'
+								+ '<button data-url="/report/print" data-param2="'+row['xdornum']+'" data-rptcode="opdocln" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i> Challan</button>';
+							}
+							return "";
+						}
+					}
+				]
+			});
+
+			$('.datatable').on('click', 'button.btn-print', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+
+				var i = 2;
+				while(i <= 30){
+					params['param' + i] = $(this).data('param' + i);
+					i++;
+				}
+
+				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			})
+		})
+	</script>
+</div>
+
+
+
+<div th:fragment="tab4-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="table-responsive">
+			<table class="table datatable">
+				<thead>
+					<tr>
+						<th>Return No.</th>
+						<th>Date</th>
+						<th>Return By</th>
+						<th>Store</th>
+						<th>Amount</th>
+						<th>Return Status</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.datatable').DataTable({
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": [
+					{ "name": "xcrnnum",   "targets": 0 },
+					{ "name": "xdate",  "targets": 1 },
+					{ "name": "xstaff",  "targets": 2 },
+					{ "name": "xwh",  "targets": 3 },
+					{ "name": "xtotamt",  "targets": 4 },
+					{ "name": "xstatusim",  "targets": 5 },
+				],
+				"ajax" : getBasepath() + "/FA35/all/returns?xcus=" + $('#xcus').val() + "&fromDate="+$('#fromDate').val()+"&toDate=" + $('#toDate').val() ,
+				"columns": [
+					{ "data": "xcrnnum"},
+					{ "data": "xdate" },
+					{ 
+						"data": "staff",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xstaff'] + ' - ' + data;
+						}
+					},
+					{ 
+						"data": "store",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xwh'] + ' - ' + data;
+						}
+					},
+					{ "data": "xtotamt" },
+					{ "data": "xstatusim" },
+				]
+			});
+
+			$('.datatable').on('click', 'button.btn-print', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+
+				var i = 2;
+				while(i <= 30){
+					params['param' + i] = $(this).data('param' + i);
+					i++;
+				}
+
+				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			})
+		})
+	</script>
+</div>
+
+<div th:fragment="tab5-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="table-responsive">
+			<table class="table datatable">
+				<thead>
+					<tr>
+						<th>Receipt Number</th>
+						<th>Deposit Date</th>
+						<th>Receiving By</th>
+						<th>Receiving Date</th>
+						<th>Amount</th>
+						<th>Receipt Status</th>
+						<th>Reason</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.datatable').DataTable({
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : true,
+				"order" : [1, 'desc'],
+				"columnDefs": [
+					{ "name": "xtrnnum",   "targets": 0 },
+					{ "name": "xdate",  "targets": 1 },
+					{ "name": "xstaff",  "targets": 2 },
+					{ "name": "xprime",  "targets": 3 },
+					{ "name": "xstatus",  "targets": 4 },
+					{ "name": "xreason",  "targets": 5 },
+					{ "name": "xstatus",  "targets": 6 },
+				],
+				"ajax" : getBasepath() + "/FA35/all/mr?xcus=" + $('#xcus').val() + "&fromDate="+$('#fromDate').val()+"&toDate=" + $('#toDate').val() ,
+				"columns": [
+					{ "data": "xtrnnum"},
+					{ "data": "xdate" },
+					{ 
+						"data": "staff",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xstaff'] + ' - ' + data;
+						}
+					},
+					{ "data": "xprime" },
+					{ "data": "xstatus" },
+					{ "data": "xreason" },
+					{ 
+						"data": "xstatus" ,
+						"orderable": false,
+						"class": 'text-center',
+						"searchable": false,
+						render: function(data, type, row, meta) {
+							if(data == 'Applied' || data == 'Confirmed'){
+								return '<button data-url="/report/print" data-param2="'+row['xtrnnum']+'" data-rptcode="armr" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i> Print</button>';
+							}
+							return "";
+						}
+					}
+				]
+			});
+
+			$('.datatable').on('click', 'button.btn-print', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+
+				var i = 2;
+				while(i <= 30){
+					params['param' + i] = $(this).data('param' + i);
+					i++;
+				}
+
+				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			})
+		})
+	</script>
+</div>
+
+<div th:fragment="tab6-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="table-responsive">
+			<table class="table datatable">
+				<thead>
+					<tr>
+						<th>Adjustment Number</th>
+						<th>Adjustment Date</th>
+						<th>Adjustment By</th>
+						<th>Type</th>
+						<th>Amount</th>
+						<th>Adjustment Status</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			$('.datatable').DataTable({
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : true,
+				"order" : [1, 'desc'],
+				"columnDefs": [
+					{ "name": "xtrnnum",   "targets": 0 },
+					{ "name": "xdate",  "targets": 1 },
+					{ "name": "xstaff",  "targets": 2 },
+					{ "name": "xtypeobj",  "targets": 3 },
+					{ "name": "xprime",  "targets": 4 },
+					{ "name": "xstatus",  "targets": 5 }
+				],
+				"ajax" : getBasepath() + "/FA35/all/adj?xcus=" + $('#xcus').val() + "&fromDate="+$('#fromDate').val()+"&toDate=" + $('#toDate').val() ,
+				"columns": [
+					{ "data": "xtrnnum"},
+					{ "data": "xdate" },
+					{ 
+						"data": "staff",
+						render: function(data, type, row, meta) {
+							if(data == null || data == '') return "";
+							return row['xstaff'] + ' - ' + data;
+						}
+					},
+					{ "data": "xtypeobj" },
+					{ "data": "xprime" },
+					{ "data": "xstatus" }
+				]
+			});
+		})
+	</script>
+</div>

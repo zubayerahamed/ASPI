@@ -1,0 +1,874 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:if="${opships.xshipment ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
+			<button th:if="${opships.xshipment ne null and opships.xstatus eq 'In Progress'}" th:attr="data-url=@{/SP12/confirm?xshipment=} + ${opships.xshipment}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Shipment</button>
+			<button th:if="${opships.xshipment ne null}" th:attr="data-url=@{/report/print}, data-param2=${opships.xshipment}, data-rptcode='opshipd'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Shipment Detail</button>
+			<button th:if="${opships.xshipment ne null}" th:attr="data-url=@{/report/print}, data-param2=${opships.xshipment}, data-rptcode='opships'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Shipment Summary</button>
+			<button th:if="${opships.xshipment ne null}" th:attr="data-url=@{/report/print}, data-param2=${opships.xshipment}, data-rptcode='opshipg'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Gate Pass</button>
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/SP12/store}" th:object="${opships}" method="POST" th:with="df=${'yyyy-MM-dd'}, dt=${'HH:mm'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xscreen}"/>
+				<input type="hidden" th:if="${opships.xshipment ne null}" th:field="*{xshipment}">
+				<input type="hidden" th:if="${opships.xshipment ne null}" th:field="*{xtypeship}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Shipment No.</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xshipment"
+										th:value="${opships.xshipment ne null ? opships.xshipment : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LSP11/1?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xshipment',
+										data-mainscreen=true,
+										data-mainreloadurl='/SP12?xshipment=',
+										data-mainreloadid='main-form-container',
+										data-detailreloadurl='/SP12/detail-table?xtypecln=RESET&xdocnum=RESET&xshipment=',
+										data-detailreloadid='detail-table-container',
+										data-additionalreloadurl='/SP12/expense-table?xrow=RESET&xshipment=',
+										data-additionalreloadid='expense-table-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Shipment Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${opships.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opships.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Store/Cost Center</label>
+							<input type="text" th:value="${opships.xwh != null ? opships.xwh + ' - ' + opships.store : ''}" class="form-control" disabled="disabled"/>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Shipment Type</label>
+							<input type="text" th:value="*{xtypeship}" class="form-control" disabled="disabled"/>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Vehicle ID</label>
+							<input type="text" th:value="*{xvhl}" class="form-control" disabled="disabled"/>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Driver ID</label>
+							<input type="text" th:value="*{xstaffdrv}" class="form-control" disabled="disabled"/>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Driver Name</label>
+							<input type="text" th:value="*{xnamedrv}" class="form-control" disabled="disabled"/>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Helper Name</label>
+							<input type="text" class="form-control" th:field="*{xhelper}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Loading Incharge</label>
+							<input type="text" class="form-control" th:value="${opships.xincharge != null ? opships.xincharge + ' - ' + opships.incharge : ''}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Delivery Man</label>
+							<input type="text" class="form-control" th:value="${opships.xstaffdm != null ? opships.xstaffdm + ' - ' + opships.deliveryMan : ''}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Pickup Location</label>
+							<input type="text" class="form-control" th:field="*{xlocstart}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Shipping Destination</label>
+							<input type="text" class="form-control" th:field="*{xlocend}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Delivery Point</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xtotpoint}">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Sales Area</label>
+							<input type="text" class="form-control" th:field="*{xarea}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Inbound Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatein" 
+										id="xdatein" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdatein == null ? #dates.format(#dates.createNow(), df) : #dates.format(opships.xdatein, df)}" disabled>
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Inbound Time</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateintime" 
+										id="xdateintime" 
+										class="form-control timepicker" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdatein == null ? #dates.format(#dates.createNow(), dt) : #dates.format(opships.xdatein, dt)}" disabled>
+								<span class="input-group-text">
+									<i class="ph-clock"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Loading Start Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatestart" 
+										id="xdatestart" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdatestart == null ? #dates.format(#dates.createNow(), df) : #dates.format(opships.xdatestart, df)}" disabled="disabled">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Loading Start Time</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatestarttime" 
+										id="xdatestarttime" 
+										class="form-control timepicker" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdatestart == null ? #dates.format(#dates.createNow(), dt) : #dates.format(opships.xdatestart, dt)}" disabled="disabled">
+								<span class="input-group-text">
+									<i class="ph-clock"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Loading End Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateend" 
+										id="xdateend" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdateend == null ? #dates.format(#dates.createNow(), df) : #dates.format(opships.xdateend, df)}" disabled="disabled">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Loading End Time</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateendtime" 
+										id="xdateendtime" 
+										class="form-control timepicker" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdateend == null ? #dates.format(#dates.createNow(), dt) : #dates.format(opships.xdateend, dt)}" disabled="disabled">
+								<span class="input-group-text">
+									<i class="ph-clock"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Outbound Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateout" 
+										id="xdateout" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdateout == null ? #dates.format(#dates.createNow(), df) : #dates.format(opships.xdateout, df)}" disabled>
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Outbound Time</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateouttime" 
+										id="xdateouttime" 
+										class="form-control timepicker" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opships.xdateout == null ? #dates.format(#dates.createNow(), dt) : #dates.format(opships.xdateout, dt)}" disabled>
+								<span class="input-group-text">
+									<i class="ph-clock"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="xmlstart-field-container">
+							<div th:remove="tag" th:include="pages/SP12/SP12-fragments :: xmlstart-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="xmlend-field-container">
+							<div th:remove="tag" th:include="pages/SP12/SP12-fragments :: xmlend-field"></div>
+						</div>
+					</div>
+
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Shipment Status</label>
+							<input type="text" class="form-control" th:value="*{xstatus}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Fare</label>
+							<input type="text" class="form-control" th:value="*{xtotamt}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Challan Amt.</label>
+							<input type="text" class="form-control" th:value="*{xtotship}" disabled="disabled">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Path Summary</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xpath}"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opships.xshipment ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Note</label>
+							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SP12?xshipment=RESET', data-reloadid='main-form-container', data-detailreloadurl='/SP12/detail-table?xshipment=RESET&xtypecln=RESET&xdocnum=RESET', data-detailreloadid='detail-table-container', data-expensereloadurl='/SP12/expense-table?xshipment=RESET&xrow=RESET', data-expensereloadid='expense-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${opships.xshipment ne null and opships.xstatus eq 'In Progress'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-footer" th:if="${opships.xshipment ne null}">
+			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${opships.xshipment ne null and opships.xstatus eq 'In Progress'}">
+				<input type="hidden" name="screenId" value="SP11"/>
+				<input type="hidden" name="transactionId" th:value="${opships.xshipment}"/>
+				<input type="hidden" name="mainreloadid" value="main-form-container"/>
+				<input type="hidden" name="mainreloadurl" value="/SP12?xshipment="/>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Title</label>
+							<input type="text" class="form-control" name="title">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Description</label>
+							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group mb-3">
+							<label class="form-label">File</label>
+							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
+							<!-- <div class="form-text text-muted">Accepted: png, jpg. Max file size 2Mb</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-doc-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
+			</form>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								Action
+							</th>
+							<th>Title</th>
+							<th>Description</th>
+							<th>File</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${documents}">
+							<td>
+								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+								<button th:if="${opships.xshipment ne null and opships.xstatus eq 'In Progress'}"
+										th:attr="
+											data-url=@{/AD21/delete/} + ${x.xdocid}, 
+											data-mainreloadid='main-form-container',
+											data-mainreloadurl='/SP12?xshipment='" 
+										type="button" 
+										class="btn btn-danger btn-sm btn-doc-delete">
+									<i class="ph-trash"></i>
+								</button>
+							</td>
+							<td th:text="${x.xtitle}"></td>
+							<td th:text="${x.xdesc}"></td>
+							<td>
+								<i class="ph-file-dotted me-3"></i>
+								<span th:text="${x.xnameold}"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('#xtypeship').on('change', function(){
+				sectionReloadAjaxReq({
+					id : 'xmlstart-field-container',
+					url : '/SP12/xmlstartfield?xtypeship=' + $(this).val()
+				});
+
+				sectionReloadAjaxReq({
+					id : 'xmlend-field-container',
+					url : '/SP12/xmlendfield?xtypeship=' + $(this).val()
+				});
+			})
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+
+				sectionReloadAjaxReq({
+					id : $(this).data('detailreloadid'),
+					url : $(this).data('detailreloadurl')
+				});
+
+				sectionReloadAjaxReq({
+					id : $(this).data('expensereloadid'),
+					url : $(this).data('expensereloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.btn-confirm').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure?")){
+					return;
+				}
+				actionPostRequest($(this).data('url'));
+			});
+
+			$('.btn-docupload').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#docupload').trigger('click');
+			});
+
+			$('.btn-doc-submit').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var files = $('#fileuploader').get(0).files;
+				if(files.length == 0){
+					showMessage('error', "File selection required");
+					return;
+				}
+
+				submitMainForm(null, $('form#documentform'));
+			});
+
+			$('.btn-doc-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+
+				var data = {
+					'mainreloadid' : $(this).data("mainreloadid"),
+					'mainreloadurl' : $(this).data("mainreloadurl")
+				}
+				deleteRequest($(this).data('url'), data);
+			});
+		})
+	</script>
+</div>
+
+<div th:fragment="xstaffdrv-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Driver ID</label>
+		<div class="input-group">
+			<input 	type="text" 
+					class="form-control searchsuggest2"
+					id="xstaffdrv"
+					th:value="${opships.xstaffdrv != null ? opships.xstaffdrv : ''}">
+			<input 	type="hidden" class="search-val" name="xstaffdrv" th:value="${opships.xstaffdrv}"/>
+			<span 	class="input-group-text btn-search" 
+					th:attr="
+					data-reloadurl='/search/table/LMD12/0?hint=', 
+					data-reloadid='search-suggest-results-container', 
+					data-fieldid='xstaffdrv',
+					data-mainscreen=true,
+					data-mainreloadurl='/SP12/xstaffdrvfield?xstaffdrv=',
+					data-mainreloadid='xstaffdrv-field-container',
+					data-extrafieldcontroller='SP12'" 
+					style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+			<span 	class="input-group-text btn-search-clear" 
+					style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+		});
+	</script>
+</div>
+
+<div th:fragment="xnamedrv-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Driver Name</label>
+		<input type="text" class="form-control" th:field="${opships.xnamedrv}">
+	</div>
+</div>
+
+<div th:fragment="xmlstart-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Millage Start</label>
+		<input type="number" class="form-control numeric-only" name="xmlstart" id="xmlstart" th:value="${opships.xmlstart}">
+	</div>
+</div>
+
+<div th:fragment="xmlend-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Millage End</label>
+		<input type="number" class="form-control numeric-only" name="xmlend" id="xmlend" th:value="${opships.xmlend}">
+	</div>
+</div>
+
+
+<div th:fragment="xdocnum-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Document Number</label>
+		<input 	type="text" 
+				class="form-control"
+				id="xdocnum"
+				th:value="${opshipcln.xdocnum != null ? opshipcln.xdocnum : ''}" disabled>
+	</div>
+</div>
+
+<div th:fragment="xdatedoc-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Document Date</label>
+		<input type="hidden" class="form-control" name="xdatedoc" th:value="${opshipcln.xdatedoc}">
+		<input type="text" class="form-control" name="xdatedoc" id="xdatedoc" th:value="${opshipcln.xdatedoc}" disabled="disabled">
+	</div>
+</div>
+
+<div th:fragment="xamtdoc-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Document Amount</label>
+		<input type="hidden" class="form-control" name="xamtdoc" th:value="${opshipcln.xamtdoc}">
+		<input type="text" class="form-control" name="xamtdoc" id="xamtdoc" th:value="${opshipcln.xamtdoc}" disabled="disabled">
+	</div>
+</div>
+
+<div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card" th:if="${opshipcln}">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+			<h6 class="py-sm-3 mb-sm-auto">Challan Detail of Shipment Entry <span th:text="${opshipcln.xshipment}"></span> </h6>
+		</div>
+
+		<div class="card-body" th:if="${opships.xstatus eq 'In Progress'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/SP12/detail/store}" th:object="${opshipcln}" method="POST" th:with="df=${'yyyy-MM-dd'}, dt=${'HH:mm'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xshipment}">
+				<input type="hidden" th:field="*{xrow}">
+				<input type="hidden" th:field="*{xtypecln}">
+				<input type="hidden" th:field="*{xdocnum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Delivery Point Number</label>
+							<select class="form-control select" th:field="*{xpointd}" required="required" disabled>
+								<option value="">-- Select --</option>
+								<option th:each="number : ${#numbers.sequence(0, 20)}" th:value="${number}" th:text="${number}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Challan Type</label>
+							<select class="form-control select" th:field="*{xtypecln}" required="required" disabled>
+								<option value="Sales Invoice">Sales Invoice</option>
+								<option value="Transfer Challan">Transfer Challan</option>
+								<option value="Sales Return">Sales Return</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xdocnum-field-container">
+							<div th:remove="tag" th:include="pages/SP12/SP12-fragments :: xdocnum-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xdatedoc-field-container">
+							<div th:remove="tag" th:include="pages/SP12/SP12-fragments :: xdatedoc-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="xamtdoc-field-container">
+							<div th:remove="tag" th:include="pages/SP12/SP12-fragments :: xamtdoc-field"></div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Delivery Location</label>
+							<input type="text" class="form-control" th:field="*{xlocation}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Delivered Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatedel" 
+										id="xdatedel" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opshipcln.xdatedel == null ? #dates.format(#dates.createNow(), df) : #dates.format(opshipcln.xdatedel, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Delivered Time</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdatedeltime" 
+										id="xdatedeltime" 
+										class="form-control timepicker" 
+										placeholder="yyyy-mm-dd format" 
+										th:value="${opshipcln.xdatedel == null ? #dates.format(#dates.createNow(), dt) : #dates.format(opshipcln.xdatedel, dt)}">
+								<span class="input-group-text">
+									<i class="ph-clock"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">No. of Points (Delivery)</label>
+							<input type="text" class="form-control numeric-only" th:field="*{xpointc}" min="0" required>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Delivery Point Details</label>
+							<input type="text" class="form-control" th:field="*{xdetails}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Recipient Name</label>
+							<input type="text" class="form-control" th:field="*{xrcvby}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Recipient Mobile</label>
+							<input type="text" class="form-control" th:field="*{xrcbmobile}">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SP12/detail-table?xshipment='+ ${opshipcln.xshipment} +'&xtypecln=RESET&xdocnum=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${opshipcln.xrow ne 0 and opships.xstatus eq 'In Progress'}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="table-responsive" th:if="${not #lists.isEmpty(detailList)}">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Challan</th>
+						<th class="text-end">Delivery Point Number</th>
+						<th>Document Date</th>
+						<th class="text-end">Document Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="x : ${detailList}">
+						<td>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SP12/detail-table?xshipment=' + ${x.xshipment} + '&xtypecln=' + ${x.xtypecln} + '&xdocnum=' + ${x.xdocnum}" th:href="@{/SP12/detail-table?xshipment=} + ${x.xshipment} + '&xtypecln=' + ${x.xtypecln} + '&xdocnum=' + ${x.xdocnum}" th:text="${x.xtypecln + ' - ' + x.xdocnum}"></a>
+						</td>
+						<td class="text-end" th:text="${x.xpointd}"></td>
+						<td th:text="${x.xdatedoc}"></td>
+						<td class="text-end" th:text="${x.xamtdoc}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('#xtypecln').on('change', function(){
+				sectionReloadAjaxReq({
+					id : 'xdocnum-field-container',
+					url : '/SP12/xdocnumfield?xtypecln=' + $(this).val()
+				});
+
+				sectionReloadAjaxReq({
+					id : 'xdatedoc-field-container',
+					url : '/SP12/xdatedocfield?xdocnum=&searchcode='
+				});
+
+				sectionReloadAjaxReq({
+					id : 'xamtdoc-field-container',
+					url : '/SP12/xamtdocfield?xdocnum=&searchcode='
+				});
+			})
+
+			$('.btn-detail-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-detail-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(null, $('form#detailform'));
+			});
+
+			$('.btn-detail-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('a.detail-dataindex').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+		})
+	</script>
+</div>
+
+
+<div th:fragment="expense-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card" th:if="${opshipexp}">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+			<h6 class="py-sm-3 mb-sm-auto">Expense Detail of Shipment Entry <span th:text="${opshipexp.xshipment}"></span> </h6>
+		</div>
+
+		<div class="card-body" th:if="${opships.xstatus eq 'In Progress'}">
+			<form id="expenseform" class="form-validate-jquery" th:action="@{/SP12/expense/store}" th:object="${opshipexp}" method="POST" th:with="df=${'yyyy-MM-dd'}, dt=${'HH:mm'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:field="*{xshipment}">
+				<input type="hidden" th:field="*{xrow}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Expense Type</label>
+							<select class="form-control select" th:field="*{xexptype}" required="required">
+								<option value="">-- Select --</option>
+								<option th:each="ex : ${expenses}" th:value="${ex.xcode}" th:text="${ex.xcode}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Expense Amount</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xcost}" min="0" required>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Remarks</label>
+							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SP12/expense-table?xshipment='+ ${opshipexp.xshipment} +'&xrow=RESET', data-reloadid='expense-table-container'" class="btn btn-light btn-sm btn-expense-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${opshipexp.xrow ne 0}" th:attr="data-url=@{/SP12/expense-table?xshipment=} + ${opshipexp.xshipment} + '&xrow=' + ${opshipexp.xrow}" type="button" class="btn btn-danger btn-sm btn-expense-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opshipexp.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-expense-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${opshipexp.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-expense-submit"><i class="ph-plus me-2"></i> Add New</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="table-responsive" th:if="${not #lists.isEmpty(expenseList)}">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Expense Type</th>
+						<th class="text-end">Expense Amount</th>
+						<th>Remarks</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="x : ${expenseList}">
+						<td>
+							<a class="expense-dataindex" th:attr="data-reloadid='expense-table-container', data-reloadurl='/SP12/expense-table?xshipment=' + ${x.xshipment} + '&xrow=' + ${x.xrow}" th:href="@{/SP12/expense-table?xshipment=} + ${x.xshipment} + '&xrow=' + ${x.xrow}" th:text="${x.xexptype}"></a>
+						</td>
+						<td class="text-end" th:text="${x.xcost}"></td>
+						<td th:text="${x.xnote}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-expense-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-expense-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(null, $('form#expenseform'));
+			});
+
+			$('.btn-expense-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('a.expense-dataindex').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+		})
+	</script>
+</div>
+
