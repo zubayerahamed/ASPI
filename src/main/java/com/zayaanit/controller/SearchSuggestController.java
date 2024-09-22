@@ -36,7 +36,7 @@ import com.zayaanit.entity.Opreqheader;
 import com.zayaanit.entity.Opships;
 import com.zayaanit.entity.Opvhls;
 import com.zayaanit.entity.Pdmst;
-import com.zayaanit.entity.Profile;
+import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xorgs;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Xwhs;
@@ -144,14 +144,14 @@ public class SearchSuggestController extends KitController {
 	}
 
 	@GetMapping("/LAD12/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Profile> searchProfile(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Xprofiles> searchProfile(@PathVariable int suffix) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Profile> list = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Xprofiles> list = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
 		int totalRows = profileService.LAD12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
 
-		DatatableResponseHelper<Profile> response = new DatatableResponseHelper<>();
+		DatatableResponseHelper<Xprofiles> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

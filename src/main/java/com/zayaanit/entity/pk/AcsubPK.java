@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class AcsubPK implements Serializable {
 
 	private static final long serialVersionUID = 7718714515401530583L;
-	
+
 	private Integer zid;
-	private Integer xacc;
 	private Integer xsub;
+	private Integer xacc;
 }

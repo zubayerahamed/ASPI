@@ -7,23 +7,23 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-import com.zayaanit.entity.pk.AcsubPK;
+import com.zayaanit.entity.pk.XprofilesdtPK;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * @author Zubayer Ahamed
- * @since Aug 7, 2024
+ * @since 02-12-2020
  */
 @Data
 @Entity
-@Table(name = "acsub")
-@IdClass(AcsubPK.class)
+@Table(name = "xprofilesdt")
+@IdClass(XprofilesdtPK.class)
 @EqualsAndHashCode(callSuper = true)
-public class Acsub extends AbstractModel<String> {
+public class Xprofilesdt extends AbstractModel<String> {
 
-	private static final long serialVersionUID = 1681419879800536070L;
+	private static final long serialVersionUID = -9011140154721641297L;
 
 	@Id
 	@Basic(optional = false)
@@ -32,20 +32,16 @@ public class Acsub extends AbstractModel<String> {
 
 	@Id
 	@Basic(optional = false)
-	@Column(name = "xsub")
-	private Integer xsub;
+	@Column(name = "xprofile", length = 25)
+	private String xprofile;
 
 	@Id
 	@Basic(optional = false)
-	@Column(name = "xacc")
-	private Integer xacc;
+	@Column(name = "xmenu", length = 10)
+	private String xmenu;
 
-	@Column(name = "xname", length = 100)
-	private String xname;
-
-	@Column(name = "xtype", length = 25)
-	private String xtype;
-
-	@Column(name = "xorg", length = 100)
-	private String xdesc;
+	@Id
+	@Basic(optional = false)
+	@Column(name = "xscreen", length = 10)
+	private String xscreen;
 }

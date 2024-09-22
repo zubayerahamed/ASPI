@@ -28,10 +28,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zayaanit.entity.Profile;
-import com.zayaanit.entity.Profiledt;
+import com.zayaanit.entity.Xprofiles;
+import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.pk.ProfilePK;
+import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.DatatableRequestHelper;
@@ -76,26 +76,26 @@ public class AD12 extends KitController {
 
 	@GetMapping
 	public String index(Model model) {
-		model.addAttribute("profile", Profile.getDefaultInstance());
+		model.addAttribute("profile", Xprofiles.getDefaultInstance());
 		return "pages/AD12/AD12";
 	}
 
 	@GetMapping("/{xprofile}")
 	public String loadFormFragment(@PathVariable String xprofile, Model model) {
 		if("RESET".equalsIgnoreCase(xprofile)) {
-			model.addAttribute("profile", Profile.getDefaultInstance());
+			model.addAttribute("profile", Xprofiles.getDefaultInstance());
 			return "pages/AD12/AD12-fragments::main-form";
 		}
 
-		Optional<Profile> op = profileRepo.findById(new ProfilePK(sessionManager.getBusinessId(), xprofile));
-		model.addAttribute("profile", op.isPresent() ? op.get() : Profile.getDefaultInstance());
+		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
+		model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
 		return "pages/AD12/AD12-fragments::main-form";
 	}
 
 	@PostMapping("/index")
 	public String index2(String xprofile, Model model) {
-		Optional<Profile> op = profileRepo.findById(new ProfilePK(sessionManager.getBusinessId(), xprofile));
-		model.addAttribute("profile", op.isPresent() ? op.get() : Profile.getDefaultInstance());
+		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
+		model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
 		return "pages/AD12/AD12-fragments::main-form";
 	}
 
@@ -117,8 +117,8 @@ public class AD12 extends KitController {
 			map.put(screen.getXscreen(), op);
 		}
 
-		List<Profiledt> profileDtList = profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
-		for(Profiledt pdt : profileDtList) {
+		List<Xprofilesdt> profileDtList = profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
+		for(Xprofilesdt pdt : profileDtList) {
 			if(map.get(pdt.getXscreen()) != null) {
 				map.get(pdt.getXscreen()).setSelected(true);
 			}
@@ -159,8 +159,8 @@ public class AD12 extends KitController {
 			map.put(screen.getXscreen(), op);
 		}
 
-		List<Profiledt> profileDtList = profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
-		for(Profiledt pdt : profileDtList) {
+		List<Xprofilesdt> profileDtList = profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
+		for(Xprofilesdt pdt : profileDtList) {
 			if(map.get(pdt.getXscreen()) != null) {
 				map.get(pdt.getXscreen()).setSelected(true);
 			}
@@ -189,14 +189,14 @@ public class AD12 extends KitController {
 	}
 
 	@GetMapping("/all")
-	public @ResponseBody DatatableResponseHelper<Profile> getAll(){
+	public @ResponseBody DatatableResponseHelper<Xprofiles> getAll(){
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Profile> profiles = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0);
+		List<Xprofiles> profiles = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0);
 		int totalRows = profileService.LAD12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0);
 
-		DatatableResponseHelper<Profile> response = new DatatableResponseHelper<Profile>();
+		DatatableResponseHelper<Xprofiles> response = new DatatableResponseHelper<Xprofiles>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);
@@ -205,7 +205,7 @@ public class AD12 extends KitController {
 	}
 
 	@PostMapping("/store")
-	public @ResponseBody Map<String, Object> store(Profile profile, BindingResult bindingResult){
+	public @ResponseBody Map<String, Object> store(Xprofiles profile, BindingResult bindingResult){
 
 		// VALIDATE XSCREENS
 		modelValidator.validateProfile(profile, bindingResult, validator);
@@ -229,13 +229,13 @@ public class AD12 extends KitController {
 		}
 
 		// Update existing
-		Optional<Profile> op = profileRepo.findById(new ProfilePK(sessionManager.getBusinessId(), profile.getXprofile()));
+		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), profile.getXprofile()));
 		if(!op.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
 			return responseHelper.getResponse();
 		}
 
-		Profile existObj = op.get();
+		Xprofiles existObj = op.get();
 		BeanUtils.copyProperties(profile, existObj, "zid", "zuserid", "ztime", "xprofile");
 		existObj = profileRepo.save(existObj);
 
@@ -264,21 +264,21 @@ public class AD12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		List<Profiledt> existingData = profileDtRepo.findAllByXprofileAndZid(dd.getProfileName(), sessionManager.getBusinessId());
+		List<Xprofilesdt> existingData = profileDtRepo.findAllByXprofileAndZid(dd.getProfileName(), sessionManager.getBusinessId());
 		if(existingData != null && !existingData.isEmpty()) {
 			profileDtRepo.deleteAll(existingData);
 		}
 
-		List<Profiledt> list = new ArrayList<>();
+		List<Xprofilesdt> list = new ArrayList<>();
 		for(String xscreen : dd.getXscreens()) {
-			Profiledt dt = new Profiledt();
+			Xprofilesdt dt = new Xprofilesdt();
 			dt.setXprofile(dd.getProfileName());
 			dt.setZid(sessionManager.getBusinessId());
 			dt.setXscreen(xscreen);
 			list.add(dt);
 		}
 
-		List<Profiledt> savedlist = profileDtRepo.saveAll(list);
+		List<Xprofilesdt> savedlist = profileDtRepo.saveAll(list);
 
 		if(savedlist == null) {
 			responseHelper.setErrorStatusAndMessage("Can't save");
@@ -297,18 +297,18 @@ public class AD12 extends KitController {
 
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(String xprofile){
-		Optional<Profile> op = profileRepo.findById(new ProfilePK(sessionManager.getBusinessId(), xprofile));
+		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
 		if(!op.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do delete");
 			return responseHelper.getResponse();
 		}
 
-		List<Profiledt> details = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
+		List<Xprofilesdt> details = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
 		if(details != null && !details.isEmpty()) {
 			profiledtRepo.deleteAll(details);
 		}
 
-		Profile obj = op.get();
+		Xprofiles obj = op.get();
 		profileRepo.delete(obj);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();

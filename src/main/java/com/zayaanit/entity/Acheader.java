@@ -43,19 +43,16 @@ public class Acheader extends AbstractModel<String> {
 	@Column(name = "xdate")
 	private Date xdate;
 
-	@Column(name = "xwh")
-	private Integer xwh;
+	@Column(name = "xbuid")
+	private Integer xbuid;
 
-	@Column(name = "xscreen")
-	private String xscreen;
+	@Column(name = "xvtype", length = 25)
+	private String xvtype;
 
-	@Column(name = "xtype")
-	private String xtype;
-
-	@Column(name = "xcheque")
+	@Column(name = "xcheque", length = 25)
 	private String xcheque;
 
-	@Column(name = "xref", length = 25)
+	@Column(name = "xref", length = 100)
 	private String xref;
 
 	@Column(name = "xnote", length = 200)
@@ -67,8 +64,11 @@ public class Acheader extends AbstractModel<String> {
 	@Column(name = "xper")
 	private Integer xper;
 
-	@Column(name = "xstatusjv")
+	@Column(name = "xstatusjv", length = 25)
 	private String xstatusjv;
+
+	@Column(name = "xtype", length = 25)
+	private String xtype;
 
 	@Column(name = "xstaff")
 	private Integer xstaff;

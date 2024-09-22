@@ -53,8 +53,8 @@ public class Acbal extends AbstractModel<String> {
 	@Column(name = "xprime")
 	private BigDecimal xprime;
 
-	@Column(name = "xwh")
-	private Integer xwh;
+	@Column(name = "xbuid")
+	private Integer xbuid;
 
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")

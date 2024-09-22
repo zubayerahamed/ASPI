@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
@@ -15,6 +14,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * @author Zubayer Ahamed
+ * @since Jul 2, 2023
  */
 @Data
 @Entity
@@ -30,28 +30,23 @@ public class Zbusiness extends AbstractModel<String> {
 	private Integer zid;
 
 	@NotBlank
-	@Column(name = "zorg", length = 50)
+	@Column(name = "zorg", length = 100)
 	private String zorg;
 
-	@Column(name = "xphone", length = 50)
+	@Column(name = "xphone", length = 100)
 	private String xphone;
 
-	@NotBlank
-	@Column(name = "zname", length = 50)
-	private String zname;
-
-	@Column(name = "xemail", length = 50)
+	@Column(name = "xemail", length = 100)
 	private String xemail;
 
 	@Column(name = "xmadd", length = 200)
 	private String xmadd;
 
-	@Column(name = "zpassword", length = 25)
-	private String zpassword;
+	@Column(name = "xtin", length = 100)
+	private String xtin;
 
-	@Lob
-	@Column(name = "xlogo")
-	private byte[] xlogo;
+	@Column(name = "xvatregno", length = 100)
+	private String xvatregno;
 
 	@Column(name = "xfilesize")
 	private Integer xfilesize;
@@ -65,9 +60,12 @@ public class Zbusiness extends AbstractModel<String> {
 	@Column(name = "zactive")
 	private Boolean zactive;
 
-	@Min(value = 0, message = "Additional invoice allowed days must be greater or equal 0")
-	@Column(name = "xaddidelays")
-	private Integer xaddidelays;
+	@Column(name = "xsessiontime")
+	private Integer xsessiontime;
+
+	@Lob
+	@Column(name = "xlogo")
+	private byte[] xlogo;
 
 	@Column(name = "xrptdefautl", length = 100)
 	private String xrptdefautl;
@@ -75,15 +73,6 @@ public class Zbusiness extends AbstractModel<String> {
 	@Column(name = "xrptpath", length = 100)
 	private String xrptpath;
 
-	@Column(name = "xleddays")
-	private Integer xleddays;
-
 	@Transient
 	private String imageBase64;
-
-	@Transient
-	private String zemail;
-
-	@Transient
-	private String xpassword;
 }

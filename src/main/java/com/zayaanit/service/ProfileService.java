@@ -2,7 +2,7 @@ package com.zayaanit.service;
 
 import java.util.List;
 
-import com.zayaanit.entity.Profile;
+import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.enums.DatatableSortOrderType;
 
 /**
@@ -11,7 +11,7 @@ import com.zayaanit.enums.DatatableSortOrderType;
  */
 public interface ProfileService {
 
-	public List<Profile> LAD12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public List<Xprofiles> LAD12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
 
 	public int LAD12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
 }

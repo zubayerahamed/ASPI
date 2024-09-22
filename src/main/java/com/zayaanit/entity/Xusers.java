@@ -37,56 +37,35 @@ public class Xusers extends AbstractModel<String> {
 
 	@Id
 	@Basic(optional = false)
-	@Column(name = "zemail", length = 20)
+	@Column(name = "zemail", length = 25)
 	private String zemail;
 
-	@Column(name = "xpassword", length = 20)
+	@Column(name = "xpassword", length = 25)
 	private String xpassword;
 
-	@Column(name = "xpasswordold", length = 20)
+	@Column(name = "xpasswordold", length = 25)
 	private String xpasswordold;
 
 	@Column(name = "xstaff")
 	private Integer xstaff;
 
-	@Column(name = "xprofile", length = 20)
-	private String xprofile;
+	@Column(name = "xsessiontype", length = 10)
+	private String xsessiontype;
 
-	@Column(name = "xarea")
-	private Integer xarea;
-
-	@Column(name = "zactive", length = 1)
-	private Boolean zactive = Boolean.TRUE;
+	@Column(name = "xsessiontime")
+	private Integer xsessiontime;
 
 	@Column(name = "zadmin", length = 1)
 	private Boolean zadmin;
 
-	@Column(name = "xcusview")
-	private Integer xcusview;
+	@Column(name = "zactive", length = 1)
+	private Boolean zactive = Boolean.TRUE;
 
-	@Column(name = "xorgpo")
-	private Integer xorgpo;
-
-	@Column(name = "xorgop")
-	private Integer xorgop;
-
-	@Column(name = "xorgim")
-	private Integer xorgim;
-
-	@Column(name = "xswbusiness", length = 1)
-	private Boolean xswbusiness = Boolean.FALSE;
+	@Column(name = "xtheme", length = 10)
+	private String xtheme;
 
 	@Transient
 	private String roles;
-
-	@Transient
-	private String purOrg;
-
-	@Transient
-	private String salesOrg;
-
-	@Transient
-	private String inventoryOrg;
 
 	public String getRoles() {
 		this.roles = "";
@@ -103,15 +82,6 @@ public class Xusers extends AbstractModel<String> {
 	}
 
 	@Transient
-	private String employee;
-
-	@Transient
-	private String area;
-
-	@Transient
-	private String businessName;
-
-	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
 	public static Xusers getDefaultInstance() {
@@ -119,7 +89,6 @@ public class Xusers extends AbstractModel<String> {
 		obj.setSubmitFor(SubmitFor.INSERT);
 		obj.setZactive(Boolean.FALSE);
 		obj.setZactive(Boolean.TRUE);
-		obj.setXcusview(30);
 		return obj;
 	}
 }

@@ -35,7 +35,7 @@ public class Cadoc extends AbstractModel<String> {
 	@Column(name = "xdocid")
 	private Integer xdocid;
 
-	@Column(name = "xscreen", length = 100)
+	@Column(name = "xscreen", length = 10)
 	private String xscreen;
 
 	@Column(name = "xtrnnum")

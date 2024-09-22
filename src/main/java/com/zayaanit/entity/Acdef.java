@@ -1,18 +1,11 @@
 package com.zayaanit.entity;
 
-import java.util.Date;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.zayaanit.entity.pk.AcdefPK;
 
@@ -43,13 +36,8 @@ public class Acdef extends AbstractModel<String> {
 	@Column(name = "xaccpl")
 	private Integer xaccpl;
 
-	@Column(name = "xbacklock", length = 25)
-	private String xbacklock;
-
-	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
-	@Column(name = "xdatelock")
-	private Date xdatelock;
+	@Column(name = "xclyear")
+	private Integer xclyear;
 
 	@Column(name = "xgateyp", length = 25)
 	private String xgateyp;

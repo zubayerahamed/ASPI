@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "acgroup")
 @IdClass(AcgroupPK.class)
 @EqualsAndHashCode(callSuper = true)
-public class Acgroup  extends AbstractModel<String> {
+public class Acgroup extends AbstractModel<String> {
 
 	private static final long serialVersionUID = 5563603837100413499L;
 
@@ -35,7 +35,7 @@ public class Acgroup  extends AbstractModel<String> {
 	@Column(name = "xagcode")
 	private Integer xagcode;
 
-	@Column(name = "xagname", length = 50)
+	@Column(name = "xagname")
 	private String xagname;
 
 	@Column(name = "xaglevel")
@@ -44,7 +44,7 @@ public class Acgroup  extends AbstractModel<String> {
 	@Column(name = "xagparent")
 	private Integer xagparent;
 
-	@Column(name = "xagtype", length = 25)
+	@Column(name = "xagtype")
 	private String xagtype;
 
 }

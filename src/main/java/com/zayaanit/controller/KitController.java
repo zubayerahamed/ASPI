@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.zayaanit.entity.Profiledt;
+import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Xuserwh;
@@ -131,7 +131,7 @@ public abstract class KitController extends BaseController {
 		// Filter menus, if uesr dont have access
 		String xprofile = sessionManager.getLoggedInUserDetails().getXprofile();
 		if(StringUtils.isNotBlank(xprofile)) {
-			List<Profiledt> profildtList = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
+			List<Xprofilesdt> profildtList = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
 			if(profildtList == null || profildtList.isEmpty()) return Collections.emptyList();
 
 			// Create a map from full list first
@@ -141,7 +141,7 @@ public abstract class KitController extends BaseController {
 			}
 
 			List<Xscreens> accessableList = new ArrayList<>();
-			for(Profiledt dt : profildtList) {
+			for(Xprofilesdt dt : profildtList) {
 				if(map.get(dt.getXscreen()) != null) {
 					accessableList.add(map.get(dt.getXscreen()));
 				}

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
-import com.zayaanit.entity.Profiledt;
+import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.repository.ProfiledtRepo;
 import com.zayaanit.service.KitSessionManager;
 
@@ -42,11 +42,11 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		String xprofile = sessionManager.getLoggedInUserDetails().getXprofile();
 		if(StringUtils.isBlank(xprofile)) return true;
 
-		List<Profiledt> profildtList = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
+		List<Xprofilesdt> profildtList = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
 		if(profildtList == null || profildtList.isEmpty()) return false;
 
 		boolean matchFound = false;
-		for(Profiledt dt : profildtList) {
+		for(Xprofilesdt dt : profildtList) {
 			if(modulePath.startsWith("/" + dt.getXscreen())) {
 				matchFound = true;
 			}
