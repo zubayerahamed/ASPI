@@ -36,7 +36,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.zayaanit.repository.OpareaRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.rp.FOPReportService;
@@ -56,7 +55,6 @@ public abstract class AbstractReportService<T> implements ReportFieldService<T> 
 	@Autowired protected FOPReportService fopReportService;
 	@Autowired protected JdbcTemplate jdbcTemplate;
 	@Autowired protected XcodesRepo xcodesRepo;
-	@Autowired protected OpareaRepo opareaRepo;
 
 	protected static final SimpleDateFormat SDF = new SimpleDateFormat("E, dd-MMM-yyyy");
 	protected static final SimpleDateFormat SDF_TIME = new SimpleDateFormat("E, dd-MMM-yyyy HH:mm");

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since Jul 2, 2023
  */
 @Controller
-@RequestMapping({"/", "/home"})
+@RequestMapping({"/home"})
 public class HomeController extends KitController {
 
 	@Override

@@ -1,22 +1,18 @@
 package com.zayaanit.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zayaanit.repository.PdmstRepo;
+import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.repository.ZbusinessRepo;
-import com.zayaanit.security.CustomAuthenticationProvider;
 
 /**
  * @author Zubayer Ahamed
@@ -27,10 +23,9 @@ import com.zayaanit.security.CustomAuthenticationProvider;
 public class SwitchBusinessController extends KitController {
 
 	@Autowired
-	private HttpServletRequest request;
-	@Autowired private ZbusinessRepo zbusinessRepo;
-	@Autowired private XusersRepo xusersRepo;
-	@Autowired private PdmstRepo pdmstRepo;
+	private ZbusinessRepo zbusinessRepo;
+	@Autowired
+	private XusersRepo xusersRepo;
 
 	@Override
 	protected String screenCode() {
@@ -44,19 +39,17 @@ public class SwitchBusinessController extends KitController {
 
 	@GetMapping("/{businessId}")
 	public String loadBusiness(@PathVariable Integer businessId) {
-		String username = sessionManager.getLoggedInUserDetails().getUsername();
-		String password = sessionManager.getLoggedInUserDetails().getPassword();
+		// Find business and check business is active or not
+		Optional<Zbusiness> zbOp = zbusinessRepo.findById(businessId);
+		if (!zbOp.isPresent() || Boolean.FALSE.equals(zbOp.get().getZactive()))
+			return "redirect:/";
 
-		// Invalidate current session
-		request.getSession().invalidate();
+		// Now check, user is active for that business or not
+		Optional<Xusers> userOp = xusersRepo.findById(new XusersPK(zbOp.get().getZid(), sessionManager.getLoggedInUserDetails().getUsername()));
+		if (!userOp.isPresent() || Boolean.FALSE.equals(userOp.get().getZactive()))
+			return "redirect:/";
 
-		// Create a new session for the selected user
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username + "|" + businessId, password);
-		Authentication authentication = new CustomAuthenticationProvider(zbusinessRepo, xusersRepo, pdmstRepo).authenticate(authRequest);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		HttpSession session = request.getSession(true);
-		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+		sessionManager.getLoggedInUserDetails().setZbusiness(zbOp.get());
 		return "redirect:/";
 	}
 

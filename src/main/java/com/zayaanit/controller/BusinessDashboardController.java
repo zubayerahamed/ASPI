@@ -1,7 +1,6 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +57,6 @@ public class BusinessDashboardController extends BaseController {
 			businesses.add(zb);
 		}
 
-		businesses.sort(Comparator.comparing(Zbusiness::getZname));
 		model.addAttribute("businesses", businesses);
 
 		if(sessionManager.getFromMap(ALL_BUSINESS) != null) {

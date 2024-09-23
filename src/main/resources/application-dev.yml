@@ -33,7 +33,7 @@ spring:
       max-idle: 20
       min-idle: 15
   jpa:
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
       ddl-auto: none
       naming:

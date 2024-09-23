@@ -46,12 +46,13 @@ public class KitSessionManagerImpl implements KitSessionManager {
 	@Override
 	public Integer getBusinessId() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(auth == null || !auth.isAuthenticated()) return null;
+		if (auth == null || !auth.isAuthenticated())
+			return null;
 
 		Object principal = auth.getPrincipal();
-		if(principal instanceof MyUserDetails) {
+		if (principal instanceof MyUserDetails) {
 			MyUserDetails mud = (MyUserDetails) principal;
-			return mud.getBusinessId();
+			return mud.getZbusiness() != null ? mud.getZbusiness().getZid() : null;
 		}
 
 		return null;
@@ -60,10 +61,11 @@ public class KitSessionManagerImpl implements KitSessionManager {
 	@Override
 	public Zbusiness getZbusiness() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(auth == null || !auth.isAuthenticated()) return null;
+		if (auth == null || !auth.isAuthenticated())
+			return null;
 
 		Object principal = auth.getPrincipal();
-		if(principal instanceof MyUserDetails) {
+		if (principal instanceof MyUserDetails) {
 			MyUserDetails mud = (MyUserDetails) principal;
 			return mud.getZbusiness();
 		}
@@ -74,16 +76,16 @@ public class KitSessionManagerImpl implements KitSessionManager {
 	@Override
 	public MyUserDetails getLoggedInUserDetails() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(auth == null || !auth.isAuthenticated()) return null;
+		if (auth == null || !auth.isAuthenticated())
+			return null;
 
-		Object principal = auth.getPrincipal(); 
+		Object principal = auth.getPrincipal();
 
-		if(principal instanceof MyUserDetails) {
+		if (principal instanceof MyUserDetails) {
 			return (MyUserDetails) principal;
 		}
 
 		return null;
 	}
 
-	
 }

@@ -43,8 +43,8 @@ public class Xusers extends AbstractModel<String> {
 	@Column(name = "xpassword", length = 25)
 	private String xpassword;
 
-	@Column(name = "xpasswordold", length = 25)
-	private String xpasswordold;
+	@Column(name = "xoldpassword", length = 25)
+	private String xoldpassword;
 
 	@Column(name = "xstaff")
 	private Integer xstaff;

@@ -88,7 +88,7 @@ public class ChangePasswordController extends KitController {
 		}
 
 		user.setXpassword(newPass);
-		user.setXpasswordold(oldPass);
+		user.setXoldpassword(oldPass);
 		user = xuserRepo.save(user);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();

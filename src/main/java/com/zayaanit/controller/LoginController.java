@@ -82,12 +82,6 @@ public class LoginController extends BaseController {
 			return responseHelper.getResponse();
 		}
 
-		users = users.stream().filter(f -> Boolean.TRUE.equals(f.getZactive())).collect(Collectors.toList());
-		if (users.isEmpty()) {
-			responseHelper.setErrorStatusAndMessage("User not found in the system, please try again with appropriate username and password");
-			return responseHelper.getResponse();
-		}
-
 		List<Xusers> selectedBusinessWiseUser = new ArrayList<>();
 		// Business active users
 		for(Xusers user : users) {

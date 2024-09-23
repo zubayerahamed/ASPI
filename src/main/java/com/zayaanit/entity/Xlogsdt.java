@@ -2,11 +2,16 @@ package com.zayaanit.entity;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.zayaanit.entity.pk.XlogsdtPK;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,14 +26,19 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "xlogsdt")
+@IdClass(XlogsdtPK.class)
 @EqualsAndHashCode(callSuper = true)
 public class Xlogsdt extends AbstractModel<String> {
 
 	private static final long serialVersionUID = -1624354019825186611L;
 
+	@Id
+	@Basic(optional = false)
 	@Column(name = "zid")
 	private Integer zid;
 
+	@Id
+	@Basic(optional = false)
 	@Column(name = "xsession")
 	private String xsession;
 

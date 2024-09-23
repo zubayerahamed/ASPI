@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-import com.zayaanit.entity.pk.XmenuscreensPK;
+import com.zayaanit.entity.pk.XmenusPK;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +22,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "xmenus")
-@IdClass(XmenuscreensPK.class)
+@IdClass(XmenusPK.class)
 @EqualsAndHashCode(callSuper = true)
 public class Xmenus extends AbstractModel<String> {
 

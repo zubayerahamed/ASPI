@@ -3,7 +3,6 @@ package com.zayaanit.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,19 +19,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
-import com.zayaanit.entity.Xuserwh;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.validator.ModelValidator;
 import com.zayaanit.model.MyUserDetails;
-import com.zayaanit.repository.CasmsRepo;
 import com.zayaanit.repository.ProfiledtRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
-import com.zayaanit.repository.XuserwhRepo;
 import com.zayaanit.repository.ZbusinessRepo;
 import com.zayaanit.service.PrintingService;
-import com.zayaanit.util.SMSUtil;
 
 /**
  * @author Zubayer Ahamed
@@ -46,11 +41,8 @@ public abstract class KitController extends BaseController {
 	@Autowired protected Validator validator;
 	@Autowired protected ProfiledtRepo profiledtRepo;
 	@Autowired protected PrintingService printingService;
-	@Autowired protected CasmsRepo smsRepo;
-	@Autowired protected SMSUtil smsUtil;
 	@Autowired protected XusersRepo xusersRepo;
 	@Autowired protected ZbusinessRepo zbusinessRepo;
-	@Autowired protected XuserwhRepo xuserwhRepo;
 
 	@ModelAttribute("appVersion")
 	protected String appVersion() {
@@ -73,16 +65,7 @@ public abstract class KitController extends BaseController {
 		MyUserDetails user = sessionManager.getLoggedInUserDetails();
 		if(user == null) return "Anonymus User";
 
-		if(StringUtils.isBlank(user.getEmployeeName())) {
-			if(StringUtils.isNotBlank(user.getXprofile())) return user.getXprofile() + " - " + user.getUsername();
-			return user.getUsername();
-		}
-
-		if(StringUtils.isNotBlank(user.getXprofile())) {
-			return user.getXstaff() + " - " + user.getXprofile() + " - " + user.getEmployeeName();
-		}
-
-		return user.getXstaff() + " - " + user.getEmployeeName();
+		return user.getUsername();
 	}
 	
 
@@ -93,13 +76,8 @@ public abstract class KitController extends BaseController {
 
 	@ModelAttribute("otherBusinesses")
 	protected List<Xusers> otherZbusinesses() {
-		List<Xusers> users = xusersRepo.findByZemailAndXpasswordAndZactive(sessionManager.getLoggedInUserDetails().getUsername(), sessionManager.getLoggedInUserDetails().getPassword(), Boolean.TRUE);
+		List<Xusers> users = xusersRepo.findByZemailAndZactive(sessionManager.getLoggedInUserDetails().getUsername(), Boolean.TRUE);
 		if (users == null || users.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		users = users.stream().filter(f -> Boolean.TRUE.equals(f.getZactive()) && !f.getZid().equals(loggedInZbusiness().getZid())).collect(Collectors.toList());
-		if (users.isEmpty()) {
 			return Collections.emptyList();
 		}
 
@@ -108,7 +86,6 @@ public abstract class KitController extends BaseController {
 		for(Xusers user : users) {
 			Optional<Zbusiness> businessOp = zbusinessRepo.findByZidAndZactive(user.getZid(), Boolean.TRUE);
 			if(businessOp.isPresent()) {
-				user.setBusinessName(businessOp.get().getZname());
 				selectedBusinessWiseUser.add(user);
 			}
 		}
@@ -117,14 +94,12 @@ public abstract class KitController extends BaseController {
 			return Collections.emptyList();
 		}
 
-		selectedBusinessWiseUser.sort(Comparator.comparing(Xusers::getBusinessName));
 		return selectedBusinessWiseUser;
 	}
 
 	@ModelAttribute("sidebarMenus")
 	protected List<Xscreens> menusList(){
 		List<Xscreens> list = xscreenRepo.findAllByXtypeAndZid("Screen", sessionManager.getBusinessId());
-		list.sort(Comparator.comparing(Xscreens::getXsequence));
 
 		if(sessionManager.getLoggedInUserDetails().isAdmin()) return list;
 
@@ -147,7 +122,6 @@ public abstract class KitController extends BaseController {
 				}
 			}
 
-			accessableList.sort(Comparator.comparing(Xscreens::getXsequence));
 			return accessableList;
 		}
 
@@ -159,11 +133,6 @@ public abstract class KitController extends BaseController {
 		return "XMLHttpRequest".equals(requestedWithHeader);
 	}
 
-	protected List<Integer> getXwhList(){
-		List<Xuserwh> xuserwhList = xuserwhRepo.findAllByZemailAndZid(sessionManager.getLoggedInUserDetails().getUsername(), sessionManager.getBusinessId());
-		List<Integer> xwhList = xuserwhList.stream().map(m -> m.getXwh()).collect(Collectors.toList());
-		return xwhList != null ? xwhList : Collections.emptyList();
-	}
 
 	protected String filePath(String path) {
 		if(StringUtils.isBlank(path)) return "";

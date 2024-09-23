@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import com.zayaanit.entity.Xscreens;
+import com.zayaanit.interceptor.BusinessSelectionInterceptor;
 import com.zayaanit.interceptor.MenuAccessAuthorizationInterceptor;
 import com.zayaanit.repository.XscreensRepo;
 
@@ -32,6 +33,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
+	public BusinessSelectionInterceptor businessSelectionInterceptor() {
+		return new BusinessSelectionInterceptor();
+	}
+
+	@Bean
 	public LocaleChangeInterceptor localeChangeInterceptor() {
 		LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
 		lci.setParamName("lang");
@@ -40,11 +46,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths()); 
+		registry.addInterceptor(businessSelectionInterceptor()).addPathPatterns(getMenuPaths(true)); 
+		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths(false)); 
 		registry.addInterceptor(localeChangeInterceptor());
 	}
 
-	private String[] getMenuPaths() {
+	private String[] getMenuPaths(boolean forBusinessSelection) {
 		List<Xscreens> list = xscreenRepo.findAll();
 		list = list.stream().distinct().filter(l -> l.getXtype().equalsIgnoreCase("Screen")).collect(Collectors.toList());
 
@@ -52,6 +59,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		for(Xscreens screen : list) {
 			paths.add("/" + screen.getXscreen() + "/**");
 		}
+		
+		if(forBusinessSelection) {
+			paths.add("/home/**");
+		}
+		
 		return paths.toArray(new String[paths.size()]);
 	}
 
