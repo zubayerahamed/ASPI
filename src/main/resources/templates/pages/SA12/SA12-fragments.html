@@ -12,13 +12,13 @@
 				<div class="row">
 					<div class="col-md-3" th:if="${#strings.isEmpty(xscreens.xscreen)}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Screen</label>
+							<label class="form-label">Screen Code</label>
 							<input type="text" class="form-control" th:field="*{xscreen}" required="required">
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${not #strings.isEmpty(xscreens.xscreen)}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Screen</label>
+							<label class="form-label">Screen Code</label>
 							<input type="text" class="form-control" th:value="${xscreens.xscreen}" disabled="disabled">
 						</div>
 					</div>
@@ -30,29 +30,32 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Transaction Number</label>
-							<input type="number" class="form-control" th:field="*{xnum}" min="0" step="1">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Icon Code</label>
-							<input type="text" class="form-control" th:field="*{xicon}">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
 							<label class="form-label">Type</label>
 							<select class="form-control select" th:field="*{xtype}" required="required" data-minimum-results-for-search="Infinity">
 								<option value="Screen">Screen</option>
+								<option value="Report">Report</option>
+								<option value="Dashboard">Dashboard</option>
 								<option value="System">System</option>
 							</select>
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">View Sequence</label>
-							<input type="number" class="form-control" th:field="*{xsequence}" min="0" step="1" required="required">
+							<label class="form-label">Starting From</label>
+							<input type="number" class="form-control" th:field="*{xnum}" min="0" step="1">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Icon</label>
+							<input type="text" class="form-control" th:field="*{xicon}">
+						</div>
+					</div>
+					
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Keywords</label>
+							<textarea rows="1" class="form-control" th:field="*{xkeywords}"></textarea>
 						</div>
 					</div>
 				</div>
@@ -116,7 +119,7 @@
 						<th>Starting</th>
 						<th>Type</th>
 						<th>Icon</th>
-						<th>Sequence</th>
+						<th>Keyword</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -138,7 +141,7 @@
 					{ "name": "xnum",  "targets": 2 },
 					{ "name": "xtype",  "targets": 3 },
 					{ "name": "xicon",  "targets": 4 },
-					{ "name": "xsequence",  "targets": 5 }
+					{ "name": "xkeywords",  "targets": 5 }
 				],
 				"ajax" : getBasepath() + "/SA12/all",
 				"columns": [
@@ -158,10 +161,7 @@
 						"class": 'text-center',
 					},
 					{ "data": "xicon" },
-					{ 
-						"data": "xsequence",
-						"class": 'text-end',
-					}
+					{ "data": "xkeywords" }
 				]
 			});
 

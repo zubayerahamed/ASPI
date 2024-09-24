@@ -9,17 +9,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zayaanit.entity.Xcodes;
+import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.XcodesPK;
+import com.zayaanit.entity.pk.XmenusPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XcodesRepo;
+import com.zayaanit.repository.XmenusRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.service.KitSessionManager;
@@ -30,11 +33,28 @@ import com.zayaanit.service.KitSessionManager;
 @Component
 public class ModelValidator extends ConstraintValidator {
 
+	@Autowired private XmenusRepo xmenusRepo;
 	@Autowired private XscreensRepo xscreensRepo;
 	@Autowired private KitSessionManager sessionManager;
 	@Autowired private XprofilesRepo profileRepo;
 	@Autowired private XcodesRepo xcodesRepo;
 	@Autowired private XusersRepo xusersRepo;
+	
+
+	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
+		if(xmenus == null) return;
+
+		super.validate(xmenus, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check profile already exist
+		Optional<Xmenus> op = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), xmenus.getXmenu()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(xmenus.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xmenu", "Menu already exist in the system");
+		}
+	}
 
 	public void validateXcodes(Xcodes xcodes, Errors errors, Validator validator) {
 		if(xcodes == null) return;

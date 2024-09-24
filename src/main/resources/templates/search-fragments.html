@@ -22,8 +22,8 @@
 			<table class="table searchdatatable">
 				<thead>
 					<tr>
-						<th>Profile Name</th>
-						<th>Description</th>
+						<th>Profile</th>
+						<th>Remarks</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -40,26 +40,56 @@
 			var mainscreen = $('#mainscreen').val();
 			var mainreloadurl = $('#mainreloadurl').val();
 			var mainreloadid = $('#mainreloadid').val();
+			var detailreloadurl = $('#detailreloadurl').val();
+			var detailreloadid = $('#detailreloadid').val();
+			var additionalreloadurl = $('#additionalreloadurl').val();
+			var additionalreloadid = $('#additionalreloadid').val();
+			var extrafieldcontroller = $('#extrafieldcontroller').val();
+
+			var columns = [
+				{
+					suffix : [0],
+					name : 'xprofile',
+					rendername : 'xprofile',
+					render: function(data, type, row, meta) {
+						return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
+					}
+				}, {
+					suffix : [0],
+					name : 'xnote',
+					rendername: 'xnote',
+				}
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(Number(suffix))) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(Number(suffix))) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render
+					});
+				} 
+			});
 
 			var dt = $('.searchdatatable').DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
 				"order" : [0, 'asc'],
-				"columnDefs": [
-					{ "name": "xprofile",   "targets": 0 },
-					{ "name": "xdesc",  "targets": 1 }
-				],
+				"columnDefs": columnDefs,
 				"ajax" : getBasepath() + "/search/LAD12/" + suffix,
-				"columns": [
-					{ 
-						"data": "xprofile",
-						render: function(data, type, row, meta) {
-							return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
-						}
-					},
-					{ "data": "xdesc" }
-				],
+				"columns": dataRetreiver,
 				"search": {
 					"search": $("#searchValue").val()
 				}
@@ -80,6 +110,20 @@
 						id : mainreloadid,
 						url : mainreloadurl + value
 					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
 				} else {
 					var prompt = $(this).data('prompt');
 					var value = $(this).data('value');

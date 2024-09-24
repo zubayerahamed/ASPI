@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
+import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
@@ -75,27 +76,32 @@ public class AD12 extends KitController {
 	}
 
 	@GetMapping
-	public String index(Model model) {
-		model.addAttribute("profile", Xprofiles.getDefaultInstance());
+	public String index(@RequestParam (required = false) String xprofile, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request)) {
+			if("RESET".equalsIgnoreCase(xprofile)) {
+				model.addAttribute("profile", Xprofiles.getDefaultInstance());
+				return "pages/AD12/AD12-fragments::main-form";
+			}
+
+			Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
+			model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
+			return "pages/AD12/AD12-fragments::main-form";
+		}
+
+		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
+		model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
 		return "pages/AD12/AD12";
 	}
 
 	@GetMapping("/{xprofile}")
 	public String loadFormFragment(@PathVariable String xprofile, Model model) {
 		if("RESET".equalsIgnoreCase(xprofile)) {
-			model.addAttribute("Xprofiles", Xprofiles.getDefaultInstance());
+			model.addAttribute("profile", Xprofiles.getDefaultInstance());
 			return "pages/AD12/AD12-fragments::main-form";
 		}
 
 		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
-		model.addAttribute("Xprofiles", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
-		return "pages/AD12/AD12-fragments::main-form";
-	}
-
-	@PostMapping("/index")
-	public String index2(String xprofile, Model model) {
-		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
-		model.addAttribute("Xprofiles", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
+		model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
 		return "pages/AD12/AD12-fragments::main-form";
 	}
 
@@ -203,47 +209,37 @@ public class AD12 extends KitController {
 	}
 
 	@PostMapping("/store")
-	public @ResponseBody Map<String, Object> store(Xprofiles Xprofiles, BindingResult bindingResult){
+	public @ResponseBody Map<String, Object> store(Xprofiles xprofiles, BindingResult bindingResult){
 
 		// VALIDATE XSCREENS
-		modelValidator.validateProfile(Xprofiles, bindingResult, validator);
+		modelValidator.validateProfile(xprofiles, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
 		// Create new
-		if(SubmitFor.INSERT.equals(Xprofiles.getSubmitFor())) {
-			Xprofiles.setZid(sessionManager.getBusinessId());
-			Xprofiles = profileRepo.save(Xprofiles);
-
-			List<ReloadSectionParams> postData = new ArrayList<>();
-			postData.add(new ReloadSectionParams("xprofile", Xprofiles.getXprofile()));
+		if(SubmitFor.INSERT.equals(xprofiles.getSubmitFor())) {
+			xprofiles.setZid(sessionManager.getBusinessId());
+			xprofiles = profileRepo.save(xprofiles);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/AD12/index", postData));
-			reloadSections.add(new ReloadSection("header-table-container", "/AD12/header-table"));
-			reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table", postData));
+			reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile" + xprofiles.getXprofile()));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
 		}
 
 		// Update existing
-		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), Xprofiles.getXprofile()));
+		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofiles.getXprofile()));
 		if(!op.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
 			return responseHelper.getResponse();
 		}
 
 		Xprofiles existObj = op.get();
-		BeanUtils.copyProperties(Xprofiles, existObj, "zid", "zuserid", "ztime", "xprofile");
+		BeanUtils.copyProperties(xprofiles, existObj, "zid", "zuserid", "ztime", "xprofile");
 		existObj = profileRepo.save(existObj);
 
-		List<ReloadSectionParams> postData = new ArrayList<>();
-		postData.add(new ReloadSectionParams("xprofile", Xprofiles.getXprofile()));
-
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/AD12/index", postData));
-		reloadSections.add(new ReloadSection("header-table-container", "/AD12/header-table"));
-		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table", postData));
+		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile" + existObj.getXprofile()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();

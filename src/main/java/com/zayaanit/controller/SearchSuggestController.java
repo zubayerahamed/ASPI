@@ -1,11 +1,27 @@
 package com.zayaanit.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.zayaanit.entity.Xmenus;
+import com.zayaanit.entity.Xprofiles;
+import com.zayaanit.model.DatatableRequestHelper;
+import com.zayaanit.model.DatatableResponseHelper;
+import com.zayaanit.service.XmenusService;
+import com.zayaanit.service.XprofilesService;
 
 /**
  * @author Zubayer Ahamed
@@ -15,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/search")
 public class SearchSuggestController extends KitController {
 
+	@Autowired private XmenusService xmenusService;
+	@Autowired private XprofilesService profileService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -50,7 +68,37 @@ public class SearchSuggestController extends KitController {
 		return "search-fragments::" + fragmentcode + "-table";
 	}
 
-	
+	@GetMapping("/LSA11/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Xmenus> LSA11(@PathVariable int suffix) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Xmenus> list = xmenusService.LSA11(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		int totalRows = xmenusService.LSA11(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+
+		DatatableResponseHelper<Xmenus> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@GetMapping("/LAD12/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Xprofiles> LAD12(@PathVariable int suffix) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Xprofiles> list = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		int totalRows = profileService.LAD12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+
+		DatatableResponseHelper<Xprofiles> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
 	
 
 	@Override

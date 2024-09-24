@@ -11,7 +11,7 @@ import com.zayaanit.enums.DatatableSortOrderType;
  */
 public interface XscreensService {
 
-	public List<Xscreens> getAll(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText);
+	public List<Xscreens> LSA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix);
 
-	public int countAll(String orderBy, DatatableSortOrderType orderType, String searchText);
+	public int LSA12(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix);
 }

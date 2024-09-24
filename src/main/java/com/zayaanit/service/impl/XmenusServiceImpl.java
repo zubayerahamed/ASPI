@@ -7,48 +7,53 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zayaanit.entity.Xprofiles;
+import com.zayaanit.entity.Xmenus;
 import com.zayaanit.enums.DatatableSortOrderType;
 import com.zayaanit.service.KitSessionManager;
-import com.zayaanit.service.XprofilesService;
+import com.zayaanit.service.XmenusService;
 
 /**
  * @author Zubayer Ahamed
  * @since Jul 3, 2023
  */
 @Service
-public class XprofilesServiceImpl extends AbstractService implements XprofilesService {
+public class XmenusServiceImpl extends AbstractService implements XmenusService {
 	@Autowired private KitSessionManager sessionManager;
 
 	@Override
-	public List<Xprofiles> LAD12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public List<Xmenus> LSA11(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
-		.append(fromClause("xprofiles"))
+		.append(fromClause("xmenus"))
 		.append(whereClause(searchText, suffix))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
 
 		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString());
-		List<Xprofiles> list = new ArrayList<>();
+		List<Xmenus> list = new ArrayList<>();
 		result.stream().forEach(row -> list.add(constractListOfXscreens(row)));
 
 		return list;
 	}
 
 	@Override
-	public int LAD12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public int LSA11(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
-		.append(fromClause("xprofiles"))
+		.append(fromClause("xmenus"))
 		.append(whereClause(searchText, suffix));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
-	private Xprofiles constractListOfXscreens(Map<String, Object> row) {
-		Xprofiles em = new Xprofiles();
-		em.setXprofile((String) row.get("xprofile"));
-		em.setXnote((String) row.get("xnote"));
+	private Xmenus constractListOfXscreens(Map<String, Object> row) {
+		Xmenus em = new Xmenus();
+		em.setXmenu((String) row.get("xmenu"));
+		em.setXtitle((String) row.get("xtitle"));
+		em.setXpmenu((String) row.get("xpmenu"));
+		em.setXicon((String) row.get("xicon"));
+		em.setXsequence((Integer) row.get("xsequence"));
 		return em;
 	}
 
@@ -64,7 +69,7 @@ public class XprofilesServiceImpl extends AbstractService implements XprofilesSe
 		StringBuilder sql = new StringBuilder(" WHERE zid="+sessionManager.getBusinessId()+" ");
 
 		if (searchText == null || searchText.isEmpty()) return sql;
-		return sql.append(" AND (xprofile LIKE '%" + searchText + "%' OR xnote LIKE '%" + searchText + "%') ");
+		return sql.append(" AND (xmenu LIKE '%" + searchText + "%' OR xtitle LIKE '%" + searchText + "%') ");
 	}
 
 	private StringBuilder orderbyClause(String orderByField, String orderType) {

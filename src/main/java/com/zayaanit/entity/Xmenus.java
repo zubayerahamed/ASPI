@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.XmenusPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,4 +51,13 @@ public class Xmenus extends AbstractModel<String> {
 
 	@Column(name = "xsequence")
 	private Integer xsequence;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Xmenus getDefaultInstance() {
+		Xmenus obj = new Xmenus();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		return obj;
+	}
 }
