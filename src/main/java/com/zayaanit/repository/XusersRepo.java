@@ -17,9 +17,10 @@ import com.zayaanit.entity.pk.XusersPK;
 public interface XusersRepo extends JpaRepository<Xusers, XusersPK>{
 
 
-	public List<Xusers> findByZemailAndXpasswordAndZactive(String zemail, String xpassword, Boolean zactive);
+	public List<Xusers> findAllByZemailAndXpasswordAndZactive(String zemail, String xpassword, Boolean zactive);
 
 	public Optional<Xusers> findByZemailAndZid(String zemail, Integer zid);
 
-	public List<Xusers> findByZemailAndZactive(String zemail, Boolean zactive);
+	public List<Xusers> findAllByZemailAndZactive(String zemail, Boolean zactive);
+
 }

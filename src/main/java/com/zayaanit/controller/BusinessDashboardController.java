@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.repository.ZbusinessRepo;
 
 /**
@@ -24,45 +25,29 @@ import com.zayaanit.repository.ZbusinessRepo;
 @RequestMapping("/business")
 public class BusinessDashboardController extends BaseController {
 
-	private static final String OUTSIDE_USERS_NAME = "anonymousUser";
+	@Autowired
+	private ZbusinessRepo zbusinessRepo;
+	@Autowired
+	private XusersRepo xusersRepo;
 
-	@Autowired private ZbusinessRepo zbusinessRepo;
-
-	@SuppressWarnings("unchecked")
 	@GetMapping
 	public String loadBusinessDashboard(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
-		if (!OUTSIDE_USERS_NAME.equalsIgnoreCase(username)) {
-			return "redirect:/";
-		}
 
-		List<Xusers> list = null;
-		if(sessionManager.getFromMap("FAKE_LOGIN_USER") != null) {
-			list = (List<Xusers>) sessionManager.getFromMap("FAKE_LOGIN_USER");
-		}
-		if(list == null || list.isEmpty()) {
-			return "redirect:/";
-		}
+		List<Xusers> list = xusersRepo.findAllByZemailAndZactive(username, Boolean.TRUE);
 
 		List<Zbusiness> businesses = new ArrayList<>();
-		for(Xusers xus : list) {
-			if(Boolean.FALSE.equals(xus.getZactive())) continue;
-			Optional<Zbusiness> zbop = zbusinessRepo.findById(xus.getZid());
-			if(!zbop.isPresent()) continue;
+		for (Xusers user : list) {
+			Optional<Zbusiness> zbop = zbusinessRepo.findByZidAndZactive(user.getZid(), Boolean.TRUE);
+			if (!zbop.isPresent())
+				continue;
 
 			Zbusiness zb = zbop.get();
-			zb.setZemail(xus.getZemail());
-			zb.setXpassword(xus.getXpassword());
 			businesses.add(zb);
 		}
 
 		model.addAttribute("businesses", businesses);
-
-		if(sessionManager.getFromMap(ALL_BUSINESS) != null) {
-			sessionManager.removeFromMap(ALL_BUSINESS);
-		}
-		sessionManager.addToMap(ALL_BUSINESS, businesses);
 
 		return "pages/business/business-dashboard";
 	}

@@ -36,7 +36,7 @@ public class XusersServiceImpl extends AbstractService implements XusersService,
 			throw new UsernameNotFoundException("User not found in the system");
 		}
 
-		List<Xusers> users = xuserRepo.findByZemailAndZactive(username, Boolean.TRUE);
+		List<Xusers> users = xuserRepo.findAllByZemailAndZactive(username, Boolean.TRUE);
 		if (users.isEmpty()) {
 			throw new UsernameNotFoundException("User not found in the system");
 		}

@@ -11,12 +11,6 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Short Name</label>
-							<input type="text" class="form-control" th:field="*{zname}" required="required">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
 							<label class="form-label">Phone Number</label>
 							<input type="text" class="form-control" th:field="*{xphone}">
 						</div>
@@ -29,41 +23,49 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Address</label>
-							<textarea rows="1" cols="" th:field="*{xmadd}" class="form-control"></textarea>
+							<label class="form-label">Mailing Address</label>
+							<textarea rows="1" cols="" th:field="*{xmadd}" class="form-control" required></textarea>
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
+							<label class="form-label">TIN</label>
+							<input type="text" class="form-control" th:field="*{xtin}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">VAT Reg No.</label>
+							<input type="text" class="form-control" th:field="*{xvatregno}">
+						</div>
+					</div>
+					
+					
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
 							<label class="form-label">Max File Size (KB)</label>
-							<input type="number" class="form-control" th:field="*{xfilesize}" scroller="hide" required="required" min="0">
+							<input type="number" class="form-control numeric-only" th:field="*{xfilesize}" scroller="hide" required="required" min="0">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Document Path</label>
-							<input type="text" class="form-control" th:field="*{xdocpath}" placeholder="C:\Documents" required="required">
+							<input type="text" class="form-control" th:field="*{xdocpath}" placeholder="C:\Contents" required="required">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Supporting Documents (,)</label>
-							<input type="text" class="form-control" th:field="*{xdoctypes}" required="required">
+							<input type="text" class="form-control" th:field="*{xdoctypes}" placeholder=".pdf,.jpg,.jpeg,.png" required="required">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Additional Invoice Allowed (Days)</label>
-							<input type="number" class="form-control" th:field="*{xaddidelays}" scroller="hide" required="required" min="0">
+							<label class="form-label">Default Session Time (Seconds)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xsessiontime}" min="0" step="1" required>
 						</div>
 					</div>
 
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Amendment Ledger Days</label>
-							<input type="number" class="form-control" th:field="*{xleddays}" required="required">
-						</div>
-					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Report Path</label>

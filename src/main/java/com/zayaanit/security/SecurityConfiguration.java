@@ -44,7 +44,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 			.authorizeRequests()
 				.antMatchers(
-					"/business",
 					"/developer/**",
 					"/login/fakelogin",
 					"/login/directloginfragment",

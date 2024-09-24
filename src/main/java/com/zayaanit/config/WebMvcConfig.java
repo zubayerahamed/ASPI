@@ -14,7 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.interceptor.BusinessSelectionInterceptor;
 import com.zayaanit.interceptor.MenuAccessAuthorizationInterceptor;
 import com.zayaanit.repository.XscreensRepo;
 
@@ -25,56 +24,52 @@ import com.zayaanit.repository.XscreensRepo;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-	@Autowired private XscreensRepo xscreenRepo;
+	@Autowired
+	private XscreensRepo xscreenRepo;
 
 	@Bean
-	public MenuAccessAuthorizationInterceptor menuAccessInterceptor() {
+	MenuAccessAuthorizationInterceptor menuAccessInterceptor() {
 		return new MenuAccessAuthorizationInterceptor();
 	}
 
 	@Bean
-	public BusinessSelectionInterceptor businessSelectionInterceptor() {
-		return new BusinessSelectionInterceptor();
-	}
-
-	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
+	LocaleChangeInterceptor localeChangeInterceptor() {
 		LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
 		lci.setParamName("lang");
 		return lci;
 	}
 
+	@Bean
+	MessageSource messageSource() {
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setBasenames("classpath:/messages/messages", "classpath:/messages/messages-salesandinvoice");
+		messageSource.setDefaultEncoding("UTF-8");
+		return messageSource;
+	}
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(businessSelectionInterceptor()).addPathPatterns(getMenuPaths(true)); 
-		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths(false)); 
+		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths(true));
 		registry.addInterceptor(localeChangeInterceptor());
 	}
 
 	private String[] getMenuPaths(boolean forBusinessSelection) {
 		List<Xscreens> list = xscreenRepo.findAll();
-		list = list.stream().distinct().filter(l -> l.getXtype().equalsIgnoreCase("Screen")).collect(Collectors.toList());
+		list = list.stream().distinct().filter(l -> l.getXtype().equalsIgnoreCase("Screen"))
+				.collect(Collectors.toList());
 
 		List<String> paths = new ArrayList<>();
-		for(Xscreens screen : list) {
+		for (Xscreens screen : list) {
 			paths.add("/" + screen.getXscreen() + "/**");
 		}
-		
-		if(forBusinessSelection) {
+
+		if (forBusinessSelection) {
+			paths.add("/");
 			paths.add("/home/**");
 		}
-		
+
 		return paths.toArray(new String[paths.size()]);
 	}
 
-	@Bean
-	public MessageSource messageSource() {
-		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasenames(
-				"classpath:/messages/messages",
-				"classpath:/messages/messages-salesandinvoice"
-		);
-		messageSource.setDefaultEncoding("UTF-8");
-		return messageSource;
-	}
+	
 }

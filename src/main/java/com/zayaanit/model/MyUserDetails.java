@@ -45,7 +45,7 @@ public class MyUserDetails implements UserDetails {
 		this.xpassword = user.getXpassword();
 		this.admin = Boolean.TRUE.equals(user.getZadmin());
 		this.xstaff = user.getXstaff();
-
+		this.switchBusiness = Boolean.TRUE.equals(user.getZadmin()) ? true : false;
 		this.accountExpired = false;
 		this.credentialExpired = false;
 		this.accountLocked = !Boolean.TRUE.equals(user.getZactive());
@@ -77,7 +77,7 @@ public class MyUserDetails implements UserDetails {
 	}
 
 	public void setSwitchBusiness(boolean status) {
-		this.switchBusiness = status;
+		this.switchBusiness = this.isAdmin() == true ? true : status;
 	}
 
 	public boolean isSwitchBusiness() {

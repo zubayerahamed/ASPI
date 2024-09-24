@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
-import com.zayaanit.entity.pk.XusersPK;
-import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.repository.ZbusinessRepo;
 
 /**
@@ -24,8 +21,6 @@ public class SwitchBusinessController extends KitController {
 
 	@Autowired
 	private ZbusinessRepo zbusinessRepo;
-	@Autowired
-	private XusersRepo xusersRepo;
 
 	@Override
 	protected String screenCode() {
@@ -40,15 +35,10 @@ public class SwitchBusinessController extends KitController {
 	@GetMapping("/{businessId}")
 	public String loadBusiness(@PathVariable Integer businessId) {
 		// Find business and check business is active or not
-		Optional<Zbusiness> zbOp = zbusinessRepo.findById(businessId);
-		if (!zbOp.isPresent() || Boolean.FALSE.equals(zbOp.get().getZactive()))
-			return "redirect:/";
+		Optional<Zbusiness> zbOp = zbusinessRepo.findByZidAndZactive(businessId, Boolean.TRUE);
+		if (!zbOp.isPresent()) return "redirect:/";
 
-		// Now check, user is active for that business or not
-		Optional<Xusers> userOp = xusersRepo.findById(new XusersPK(zbOp.get().getZid(), sessionManager.getLoggedInUserDetails().getUsername()));
-		if (!userOp.isPresent() || Boolean.FALSE.equals(userOp.get().getZactive()))
-			return "redirect:/";
-
+		// need to update user details also based on the business selection row of user
 		sessionManager.getLoggedInUserDetails().setZbusiness(zbOp.get());
 		return "redirect:/";
 	}

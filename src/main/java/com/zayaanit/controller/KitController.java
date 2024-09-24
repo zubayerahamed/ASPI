@@ -76,7 +76,7 @@ public abstract class KitController extends BaseController {
 
 	@ModelAttribute("otherBusinesses")
 	protected List<Xusers> otherZbusinesses() {
-		List<Xusers> users = xusersRepo.findByZemailAndZactive(sessionManager.getLoggedInUserDetails().getUsername(), Boolean.TRUE);
+		List<Xusers> users = xusersRepo.findAllByZemailAndZactive(sessionManager.getLoggedInUserDetails().getUsername(), Boolean.TRUE);
 		if (users == null || users.isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -86,6 +86,7 @@ public abstract class KitController extends BaseController {
 		for(Xusers user : users) {
 			Optional<Zbusiness> businessOp = zbusinessRepo.findByZidAndZactive(user.getZid(), Boolean.TRUE);
 			if(businessOp.isPresent()) {
+				user.setBusinessName(businessOp.get().getZorg());
 				selectedBusinessWiseUser.add(user);
 			}
 		}

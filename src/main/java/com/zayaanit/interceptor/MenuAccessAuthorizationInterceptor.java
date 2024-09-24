@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import com.zayaanit.entity.Xprofilesdt;
@@ -20,11 +22,26 @@ import com.zayaanit.service.KitSessionManager;
  */
 public class MenuAccessAuthorizationInterceptor implements AsyncHandlerInterceptor {
 
+	private static final String OUTSIDE_USERS_NAME = "anonymousUser";
+
 	@Autowired private KitSessionManager sessionManager;
 	@Autowired private ProfiledtRepo profiledtRepo;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if (OUTSIDE_USERS_NAME.equalsIgnoreCase(username)) {
+			request.getRequestDispatcher("/login").forward(request, response);
+			return false;
+		}
+
+		if(sessionManager.getZbusiness() == null) {
+			request.getRequestDispatcher("/business").forward(request, response);
+			return false;
+		}
+
 		if(!hasAccess(request.getServletPath())) {
 			RequestDispatcher dispatcher = request.getSession().getServletContext().getRequestDispatcher("/accessdenied?message=Truing to access " + request.getServletPath());
 			dispatcher.forward(request, response);
