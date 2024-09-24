@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import com.zayaanit.entity.Xprofilesdt;
-import com.zayaanit.repository.ProfiledtRepo;
+import com.zayaanit.repository.XprofilesdtRepo;
 import com.zayaanit.service.KitSessionManager;
 
 /**
@@ -25,7 +25,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	private static final String OUTSIDE_USERS_NAME = "anonymousUser";
 
 	@Autowired private KitSessionManager sessionManager;
-	@Autowired private ProfiledtRepo profiledtRepo;
+	@Autowired private XprofilesdtRepo profiledtRepo;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

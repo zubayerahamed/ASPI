@@ -56,6 +56,22 @@ public class MyUserDetails implements UserDetails {
 				.collect(Collectors.toList());
 	}
 
+	public void setUserDetails(Xusers user) {
+		this.zemail = user.getZemail();
+		this.xpassword = user.getXpassword();
+		this.admin = Boolean.TRUE.equals(user.getZadmin());
+		this.xstaff = user.getXstaff();
+		this.switchBusiness = Boolean.TRUE.equals(user.getZadmin()) ? true : false;
+		this.accountExpired = false;
+		this.credentialExpired = false;
+		this.accountLocked = !Boolean.TRUE.equals(user.getZactive());
+		this.enabled = Boolean.TRUE.equals(user.getZactive());
+		this.roles = StringUtils.isBlank(user.getRoles()) ? com.zayaanit.enums.UserRole.SUBSCRIBER.getCode()
+				: user.getRoles();
+		this.authorities = Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new)
+				.collect(Collectors.toList());
+	}
+
 	public void setZbusiness(Zbusiness zbusiness) {
 		this.zbusiness = zbusiness;
 	}

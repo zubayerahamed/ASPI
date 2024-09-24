@@ -24,7 +24,7 @@
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Description</label>
-							<textarea rows="1" cols="" th:field="*{xdesc}" class="form-control"></textarea>
+							<textarea rows="1" cols="" th:field="*{xnote}" class="form-control"></textarea>
 						</div>
 					</div>
 				</div>
@@ -109,7 +109,7 @@
 				"stateSave" : true,
 				"columnDefs": [
 					{ "name": "xprofile",   "targets": 0 },
-					{ "name": "xdesc",  "targets": 1 }
+					{ "name": "xnote",  "targets": 1 }
 				],
 				"ajax" : getBasepath() + "/AD12/all",
 				"columns": [
@@ -119,7 +119,7 @@
 							return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" data-xprofile="'+data+'" href="/AD12/index"  detailreloadid="detail-table-container" detailhref="/AD12/detail-table">' + data + '</a>';
 						}
 					},
-					{ "data": "xdesc" }
+					{ "data": "xnote" }
 				]
 			});
 

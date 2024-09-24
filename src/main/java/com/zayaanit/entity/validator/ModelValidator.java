@@ -18,7 +18,7 @@ import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
-import com.zayaanit.repository.ProfileRepo;
+import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
@@ -32,7 +32,7 @@ public class ModelValidator extends ConstraintValidator {
 
 	@Autowired private XscreensRepo xscreensRepo;
 	@Autowired private KitSessionManager sessionManager;
-	@Autowired private ProfileRepo profileRepo;
+	@Autowired private XprofilesRepo profileRepo;
 	@Autowired private XcodesRepo xcodesRepo;
 	@Autowired private XusersRepo xusersRepo;
 

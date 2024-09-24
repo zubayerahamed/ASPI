@@ -117,9 +117,9 @@ public class AD11 extends KitController{
 
 		Zbusiness existObj = op.get();
 		if(imageChanged) {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "zuserid", "ztime", "xrptdefautl", "zpassword");
+			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "zuserid", "ztime", "xrptdefautl");
 		} else {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl", "zpassword");
+			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
 		}
 		existObj = businessRepo.save(existObj);
 

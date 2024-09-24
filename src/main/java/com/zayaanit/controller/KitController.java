@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validator;
@@ -22,7 +21,7 @@ import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.validator.ModelValidator;
 import com.zayaanit.model.MyUserDetails;
-import com.zayaanit.repository.ProfiledtRepo;
+import com.zayaanit.repository.XprofilesdtRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
@@ -39,7 +38,7 @@ public abstract class KitController extends BaseController {
 	@Autowired protected XcodesRepo xcodesRepo;
 	@Autowired protected ModelValidator modelValidator;
 	@Autowired protected Validator validator;
-	@Autowired protected ProfiledtRepo profiledtRepo;
+	@Autowired protected XprofilesdtRepo profiledtRepo;
 	@Autowired protected PrintingService printingService;
 	@Autowired protected XusersRepo xusersRepo;
 	@Autowired protected ZbusinessRepo zbusinessRepo;

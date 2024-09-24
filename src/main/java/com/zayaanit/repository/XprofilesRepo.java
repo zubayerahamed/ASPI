@@ -13,7 +13,7 @@ import com.zayaanit.entity.pk.XprofilesPK;
  * @since Jul 2, 2023
  */
 @Repository
-public interface ProfileRepo extends JpaRepository<Xprofiles, XprofilesPK>{
+public interface XprofilesRepo extends JpaRepository<Xprofiles, XprofilesPK>{
 
 	public List<Xprofiles> findAllByZid(Integer zid);
 }
