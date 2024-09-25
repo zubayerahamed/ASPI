@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import com.zayaanit.entity.pk.XmenusPK;
+import com.zayaanit.entity.pk.XmenuscreensPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +24,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "xmenuscreens")
-@IdClass(XmenusPK.class)
+@IdClass(XmenuscreensPK.class)
 @EqualsAndHashCode(callSuper = true)
 public class Xmenuscreens extends AbstractModel<String> {
 
@@ -46,4 +48,23 @@ public class Xmenuscreens extends AbstractModel<String> {
 
 	@Column(name = "xsequence")
 	private Integer xsequence;
+
+	@Transient
+	private String xmenuTitle;
+	@Transient
+	private Integer xmenuSequence;
+	@Transient
+	private String xscreenTitle;
+	@Transient
+	private String xscreenTtype;
+	
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Xmenuscreens getDefaultInstance() {
+		Xmenuscreens obj = new Xmenuscreens();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXsequence(0);
+		return obj;
+	}
 }

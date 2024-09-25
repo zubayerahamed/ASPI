@@ -58,6 +58,7 @@ public class Xmenus extends AbstractModel<String> {
 	public static Xmenus getDefaultInstance() {
 		Xmenus obj = new Xmenus();
 		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXsequence(0);
 		return obj;
 	}
 }

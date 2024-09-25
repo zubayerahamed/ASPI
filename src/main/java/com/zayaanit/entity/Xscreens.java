@@ -71,6 +71,7 @@ public class Xscreens extends AbstractModel<String> {
 	public static Xscreens getDefaultInstance() {
 		Xscreens obj = new Xscreens();
 		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXnum(0);
 		return obj;
 	}
 }

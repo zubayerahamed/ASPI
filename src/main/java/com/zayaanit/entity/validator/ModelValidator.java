@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
+import com.zayaanit.entity.Xmenuscreens;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
@@ -20,9 +21,9 @@ import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
-import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XmenusRepo;
+import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.service.KitSessionManager;
@@ -71,7 +72,12 @@ public class ModelValidator extends ConstraintValidator {
 		}
 	}
 
-	
+	public void validateXmenuscreens(Xmenuscreens xmenuscreens, Errors errors, Validator validator) {
+		if(xmenuscreens == null) return;
+
+		super.validate(xmenuscreens, errors, validator);
+		if (errors.hasErrors()) return;
+	}
 
 	public void validateXscreens(Xscreens xscreens, Errors errors, Validator validator) {
 		if(xscreens == null) return;
