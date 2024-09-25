@@ -19,5 +19,4 @@ public class AcsubPK implements Serializable {
 
 	private Integer zid;
 	private Integer xsub;
-	private Integer xacc;
 }

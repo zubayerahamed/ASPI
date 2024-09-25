@@ -35,8 +35,6 @@ public class Acsub extends AbstractModel<String> {
 	@Column(name = "xsub")
 	private Integer xsub;
 
-	@Id
-	@Basic(optional = false)
 	@Column(name = "xacc")
 	private Integer xacc;
 
