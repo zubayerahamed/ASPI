@@ -101,7 +101,7 @@ public class SA13 extends KitController {
 			Optional<Xscreens> xscreensOp = xscreensRepo.findById(new XscreensPK(sessionManager.getBusinessId(), f.getXscreen()));
 			if(xscreensOp.isPresent()) {
 				f.setXscreenTitle(xscreensOp.get().getXtitle());
-				f.setXscreenTtype(xscreensOp.get().getXtype());
+				f.setXscreenType(xscreensOp.get().getXtype());
 			}
 		});
 		list.sort(Comparator.comparing(Xmenuscreens::getXmenuSequence));

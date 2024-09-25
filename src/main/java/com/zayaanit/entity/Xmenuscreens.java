@@ -56,8 +56,9 @@ public class Xmenuscreens extends AbstractModel<String> {
 	@Transient
 	private String xscreenTitle;
 	@Transient
-	private String xscreenTtype;
-	
+	private String xscreenType;
+	@Transient
+	private boolean profileChecked;
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 

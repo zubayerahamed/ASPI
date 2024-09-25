@@ -302,6 +302,147 @@
 	</script>
 </div>
 
+<div th:fragment="LSA13-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
+
+		<div class="table-responsive">
+			<table class="table searchdatatable">
+				<thead>
+					<tr>
+						<th class="text-center">Menu Code</th>
+						<th class="text-center">Screen</th>
+						<th>Screen Title</th>
+						<th class="text-center">Screen Type</th>
+						<th class="text-center">Sequence</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var fieldId = $('#fieldId').val();
+			var suffix = $('#suffix').val();
+			var mainscreen = $('#mainscreen').val();
+			var mainreloadurl = $('#mainreloadurl').val();
+			var mainreloadid = $('#mainreloadid').val();
+			var detailreloadurl = $('#detailreloadurl').val();
+			var detailreloadid = $('#detailreloadid').val();
+			var additionalreloadurl = $('#additionalreloadurl').val();
+			var additionalreloadid = $('#additionalreloadid').val();
+			var extrafieldcontroller = $('#extrafieldcontroller').val();
+
+			var columns = [
+				{
+					suffix : [0],
+					name : 'xmenu',
+					rendername : 'xmenu',
+					render: function(data, type, row, meta) {
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA13?xrow=" data-value="'+ row['xrow'] +'" data-prompt="'+ data + ' - ' + row['xscreen'] +'">' + data + '</a>';
+					}
+				}, {
+					suffix : [0],
+					name : 'xscreen',
+					rendername: 'xscreen',
+				}, {
+					suffix : [0],
+					name : 'xscreentitle',
+					rendername: 'xscreentitle',
+				}, {
+					suffix : [0],
+					class: 'text-end',
+					name : 'xscreentype',
+					rendername: 'xscreentype',
+				}, {
+					suffix : [0],
+					name : 'xsequence',
+					rendername: 'xsequence',
+				}
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render,
+						class : el.class
+					});
+				} 
+			});
+
+			var dt = $('.searchdatatable').DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"order" : [0, 'asc'],
+				"columnDefs": columnDefs,
+				"ajax" : getBasepath() + "/search/LSA13/" + suffix,
+				"columns": dataRetreiver,
+				"search": {
+					"search": $("#searchValue").val()
+				}
+			});
+
+			//make ajax to call server
+			dt.draw();
+
+			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+				e.preventDefault();
+
+				if(mainscreen == 'true'){
+					$('#searchSuggestTableModal').modal('hide');
+
+					var value = $(this).data('value');
+
+					sectionReloadAjaxReq({
+						id : mainreloadid,
+						url : mainreloadurl + value
+					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
+				} else {
+					var prompt = $(this).data('prompt');
+					var value = $(this).data('value');
+
+					$('#searchSuggestTableModal').modal('hide');
+
+					$('input[name="'+ fieldId +'"]').val(value);
+					$('#' + fieldId).val(prompt);
+				}
+			})
+		})
+	</script>
+</div>
+
 <div th:fragment="LAD12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
@@ -436,10 +577,7 @@
 				<thead>
 					<tr>
 						<th>User ID</th>
-						<th>Employee</th>
-						<th>Profile</th>
-						<th>Sales Area</th>
-						<th>Is Active</th>
+						<th>Is Active?</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -458,38 +596,57 @@
 			var mainreloadid = $('#mainreloadid').val();
 			var detailreloadurl = $('#detailreloadurl').val();
 			var detailreloadid = $('#detailreloadid').val();
+			var additionalreloadurl = $('#additionalreloadurl').val();
+			var additionalreloadid = $('#additionalreloadid').val();
+			var extrafieldcontroller = $('#extrafieldcontroller').val();
+
+			var columns = [
+				{
+					suffix : [0],
+					name : 'zemail',
+					rendername : 'zemail',
+					render: function(data, type, row, meta) {
+						return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
+					}
+				}, {
+					suffix : [0],
+					name : 'zactive',
+					rendername: 'zactive',
+					render: function(data, type, row, meta) {
+						return data == true ? 'Y' : 'N';
+					}
+				}
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(Number(suffix))) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(Number(suffix))) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render
+					});
+				} 
+			});
 
 			var dt = $('.searchdatatable').DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
 				"order" : [0, 'asc'],
-				"columnDefs": [
-					{ "name": "u.zemail", "targets": 0 },
-					{ "name": "employee",  "targets": 1 },
-					{ "name": "xprofile",  "targets": 2 },
-					{ "name": "area",  "targets": 3 },
-					{ "name": "zactive",  "target": 4 }
-				],
+				"columnDefs": columnDefs,
 				"ajax" : getBasepath() + "/search/LAD13/" + suffix,
-				"columns": [
-					{ 
-						"data": "zemail",
-						render: function(data, type, row, meta) {
-							return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
-						}
-					},
-					{ "data": "employee" },
-					{ "data": "xprofile" },
-					{ "data": "area" },
-					{ 
-						"data": "zactive",
-						"class": 'text-center',
-						render: function(data, type) {
-							return data == true ? 'Y' : 'N';
-						}
-					}
-				],
+				"columns": dataRetreiver,
 				"search": {
 					"search": $("#searchValue").val()
 				}
@@ -515,6 +672,13 @@
 						sectionReloadAjaxReq({
 							id : detailreloadid,
 							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
 						});
 					}
 				} else {

@@ -3,10 +3,11 @@ package com.zayaanit.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,24 +24,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zayaanit.entity.Xmenus;
+import com.zayaanit.entity.Xmenuscreens;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
+import com.zayaanit.entity.pk.XmenusPK;
+import com.zayaanit.entity.pk.XmenuscreensPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
-import com.zayaanit.model.DatatableRequestHelper;
-import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.model.ReloadSectionParams;
+import com.zayaanit.repository.XmenusRepo;
+import com.zayaanit.repository.XmenuscreensRepo;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XprofilesdtRepo;
-import com.zayaanit.service.XprofilesService;
+import com.zayaanit.repository.XscreensRepo;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -54,9 +56,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/AD12")
 public class AD12 extends KitController {
 
-	@Autowired private XprofilesService profileService;
 	@Autowired private XprofilesRepo profileRepo;
 	@Autowired private XprofilesdtRepo profileDtRepo;
+	@Autowired private XmenuscreensRepo xmenuscreensRepo;
+	@Autowired private XmenusRepo xmenusRepo;
+	@Autowired private XscreensRepo xscreensRepo;
 
 	private String pageTitle = null;
 
@@ -107,105 +111,53 @@ public class AD12 extends KitController {
 	@GetMapping("/detail-table")
 	public String loadDetailTableFragment(@RequestParam String xprofile, Model model) {
 		if("RESET".equalsIgnoreCase(xprofile)) {
-			model.addAttribute("screens", Collections.emptyList());
+			model.addAttribute("xprofile", xprofile);
+			model.addAttribute("menuscreensGroup", Collections.emptyMap());
 			return "pages/AD12/AD12-fragments::detail-table";
 		}
 
-		Map<String, ScreenOptions> map = new HashMap<>();
+		List<Xmenuscreens> list = xmenuscreensRepo.findAllByZid(sessionManager.getBusinessId());
+		list.stream().forEach(f -> {
+			Optional<Xmenus> xmenusOp = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), f.getXmenu()));
+			if(xmenusOp.isPresent()) {
+				f.setXmenuTitle(xmenusOp.get().getXtitle());
+				f.setXmenuSequence(xmenusOp.get().getXsequence());
+			}
+			Optional<Xscreens> xscreensOp = xscreensRepo.findById(new XscreensPK(sessionManager.getBusinessId(), f.getXscreen()));
+			if(xscreensOp.isPresent()) {
+				f.setXscreenTitle(xscreensOp.get().getXtitle());
+				f.setXscreenType(xscreensOp.get().getXtype());
+			}
+		});
+		list = list.stream().filter(f -> !f.getXscreenType().equalsIgnoreCase("System")).collect(Collectors.toList());
+		list.sort(Comparator.comparing(Xmenuscreens::getXmenuSequence));
 
-		List<Xscreens> screens = xscreenRepo.findAllByXtypeAndZid("Screen", sessionManager.getBusinessId());
-		for(Xscreens screen : screens) {
-			ScreenOptions op = new ScreenOptions();
-			op.setXscreen(screen.getXscreen());
-			op.setXtitle(screen.getXtitle());
-			map.put(screen.getXscreen(), op);
-		}
-
-		List<Xprofilesdt> profileDtList = profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
-		for(Xprofilesdt pdt : profileDtList) {
-			if(map.get(pdt.getXscreen()) != null) {
-				map.get(pdt.getXscreen()).setSelected(true);
+		List<Xprofilesdt> profileDetails =  profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
+		if(!profileDetails.isEmpty()) {
+			// Make checked status
+			for (Xprofilesdt dt : profileDetails) {
+				Xmenuscreens ms = list.stream().filter(f -> f.getXmenu().equalsIgnoreCase(dt.getXmenu()) && f.getXscreen().equalsIgnoreCase(dt.getXscreen())).findFirst().orElse(null);
+				if(ms == null) continue;
+				ms.setProfileChecked(true);
 			}
 		}
 
-		List<ScreenOptions> scOptions = new ArrayList<>();
-		for(Map.Entry<String, ScreenOptions> m : map.entrySet()) {
-			scOptions.add(m.getValue());
-		}
-
-		scOptions.sort(Comparator.comparing(ScreenOptions::getSequence));
-
-		boolean allSelected = false;
-		if(scOptions.size() == scOptions.stream().filter(f -> f.isSelected()).count()) {
-			allSelected = true;
-		}
-		model.addAttribute("allSelected", allSelected);
-		model.addAttribute("screens", scOptions);
-		model.addAttribute("profileName", xprofile);
-		return "pages/AD12/AD12-fragments::detail-table";
-	}
-
-	@PostMapping("/detail-table")
-	public String loadDetailTableFragment2(String xprofile, Model model) {
-		if("RESET".equalsIgnoreCase(xprofile)) {
-			model.addAttribute("screens", Collections.emptyList());
-			return "pages/AD12/AD12-fragments::detail-table";
-		}
-
-		Map<String, ScreenOptions> map = new HashMap<>();
-
-		List<Xscreens> screens = xscreenRepo.findAllByXtypeAndZid("Screen", sessionManager.getBusinessId());
-		for(Xscreens screen : screens) {
-			ScreenOptions op = new ScreenOptions();
-			op.setXscreen(screen.getXscreen());
-			op.setXtitle(screen.getXtitle());
-			map.put(screen.getXscreen(), op);
-		}
-
-		List<Xprofilesdt> profileDtList = profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
-		for(Xprofilesdt pdt : profileDtList) {
-			if(map.get(pdt.getXscreen()) != null) {
-				map.get(pdt.getXscreen()).setSelected(true);
+		Map<String, List<Xmenuscreens>> groupedByXmenu = new LinkedHashMap<>();
+		list.stream().forEach(l -> {
+			if(groupedByXmenu.get(l.getXmenu() + " - " + l.getXmenuTitle()) != null) {
+				groupedByXmenu.get(l.getXmenu() + " - " + l.getXmenuTitle()).add(l);
+			} else {
+				List<Xmenuscreens> mslist = new ArrayList<>();
+				mslist.add(l);
+				groupedByXmenu.put(l.getXmenu() + " - " + l.getXmenuTitle(), mslist);
 			}
-		}
+		});
 
-		List<ScreenOptions> scOptions = new ArrayList<>();
-		for(Map.Entry<String, ScreenOptions> m : map.entrySet()) {
-			scOptions.add(m.getValue());
-		}
-
-		scOptions.sort(Comparator.comparing(ScreenOptions::getSequence));
-
-		boolean allSelected = false;
-		if(scOptions.size() == scOptions.stream().filter(f -> f.isSelected()).count()) {
-			allSelected = true;
-		}
-		model.addAttribute("allSelected", allSelected);
-		model.addAttribute("screens", scOptions);
-		model.addAttribute("profileName", xprofile);
+		model.addAttribute("xprofile", xprofile);
+		model.addAttribute("menuscreensGroup", groupedByXmenu);
 		return "pages/AD12/AD12-fragments::detail-table";
 	}
 
-	@GetMapping("/header-table")
-	public String loadHeaderTableFragment(Model model) {
-		return "pages/AD12/AD12-fragments::header-table";
-	}
-
-	@GetMapping("/all")
-	public @ResponseBody DatatableResponseHelper<Xprofiles> getAll(){
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		DatatableRequestHelper helper = new DatatableRequestHelper(request);
-
-		List<Xprofiles> profiles = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0);
-		int totalRows = profileService.LAD12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0);
-
-		DatatableResponseHelper<Xprofiles> response = new DatatableResponseHelper<Xprofiles>();
-		response.setDraw(helper.getDraw());
-		response.setRecordsTotal(totalRows);
-		response.setRecordsFiltered(totalRows);
-		response.setData(profiles);
-		return response;
-	}
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xprofiles xprofiles, BindingResult bindingResult){
@@ -220,7 +172,8 @@ public class AD12 extends KitController {
 			xprofiles = profileRepo.save(xprofiles);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile" + xprofiles.getXprofile()));
+			reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + xprofiles.getXprofile()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=" + xprofiles.getXprofile()));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -238,7 +191,7 @@ public class AD12 extends KitController {
 		existObj = profileRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile" + existObj.getXprofile()));
+		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + existObj.getXprofile()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -264,10 +217,14 @@ public class AD12 extends KitController {
 
 		List<Xprofilesdt> list = new ArrayList<>();
 		for(String xscreen : dd.getXscreens()) {
+			Optional<Xmenuscreens> xmenuscreensOp = xmenuscreensRepo.findById(new XmenuscreensPK(sessionManager.getBusinessId(), Integer.valueOf(xscreen)));
+			if(!xmenuscreensOp.isPresent()) continue;
+
 			Xprofilesdt dt = new Xprofilesdt();
-			dt.setXprofile(dd.getProfileName());
 			dt.setZid(sessionManager.getBusinessId());
-			dt.setXscreen(xscreen);
+			dt.setXprofile(dd.getProfileName());
+			dt.setXmenu(xmenuscreensOp.get().getXmenu());
+			dt.setXscreen(xmenuscreensOp.get().getXscreen());
 			list.add(dt);
 		}
 
@@ -278,11 +235,8 @@ public class AD12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		List<ReloadSectionParams> postData = new ArrayList<>();
-		postData.add(new ReloadSectionParams("xprofile", dd.getProfileName()));
-
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table", postData));
+		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=" + dd.getProfileName()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Details saved successfully");
 		return responseHelper.getResponse();
@@ -304,25 +258,13 @@ public class AD12 extends KitController {
 		Xprofiles obj = op.get();
 		profileRepo.delete(obj);
 
-		List<ReloadSectionParams> postData = new ArrayList<>();
-		postData.add(new ReloadSectionParams("xprofile", "RESET"));
-
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/AD12/index", postData));
-		reloadSections.add(new ReloadSection("header-table-container", "/AD12/header-table"));
-		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table", postData));
+		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=RESET"));
+		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
 	}
-}
-
-@Data
-class ScreenOptions{
-	private String xscreen;
-	private String xtitle;
-	private boolean selected;
-	private Integer sequence;
 }
 
 @Data

@@ -19,11 +19,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
+import com.zayaanit.entity.Xusers;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.service.XmenusService;
 import com.zayaanit.service.XprofilesService;
 import com.zayaanit.service.XscreensService;
+import com.zayaanit.service.XusersService;
 
 /**
  * @author Zubayer Ahamed
@@ -31,11 +33,12 @@ import com.zayaanit.service.XscreensService;
  */
 @Controller
 @RequestMapping("/search")
-public class SearchSuggestController extends KitController {
+public class SearchSuggestController {
 
 	@Autowired private XmenusService xmenusService;
 	@Autowired private XscreensService xscreensService;
 	@Autowired private XprofilesService profileService;
+	@Autowired private XusersService xusersService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -118,17 +121,21 @@ public class SearchSuggestController extends KitController {
 		response.setData(list);
 		return response;
 	}
-	
 
-	@Override
-	protected String screenCode() {
-		return null;
+	@GetMapping("/LAD13/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Xusers> LAD13(@PathVariable int suffix) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Xusers> list = xusersService.LAD13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		int totalRows = xusersService.LAD13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+
+		DatatableResponseHelper<Xusers> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
 	}
 
-	@Override
-	protected String pageTitle() {
-		return null;
-	}
-
-	
 }

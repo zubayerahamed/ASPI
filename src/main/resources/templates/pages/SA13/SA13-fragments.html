@@ -133,11 +133,11 @@
 						<tbody>
 							<tr th:each="ms : ${g.value}">
 								<td class="text-center">
-									<a class="dataindex" href="/SA13?xrow=" reloadid="main-form-container" data-value="" th:text="${ms.xmenu}"></a>
+									<a class="dataindex" href="/SA13?xrow=" reloadid="main-form-container" th:attr="data-value=${ms.xrow}" th:text="${ms.xmenu}"></a>
 								</td>
 								<td class="text-center" th:text="${ms.xscreen}"></td>
 								<td th:text="${ms.xscreenTitle}"></td>
-								<td class="text-center" th:text="${ms.xscreenTtype}"></td>
+								<td class="text-center" th:text="${ms.xscreenType}"></td>
 								<td class="text-center" th:text="${ms.xsequence}"></td>
 							</tr>
 						</tbody>

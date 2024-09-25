@@ -66,6 +66,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		if (forBusinessSelection) {
 			paths.add("/");
 			paths.add("/home/**");
+			paths.add("/SA11/**");
+			paths.add("/SA12/**");
+			paths.add("/SA13/**");
+			paths.add("/M01/**");
 		}
 
 		return paths.toArray(new String[paths.size()]);

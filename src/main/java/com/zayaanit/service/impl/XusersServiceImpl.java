@@ -51,9 +51,10 @@ public class XusersServiceImpl extends AbstractService implements XusersService,
 
 	@Override
 	public List<Xusers> LAD13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
-		.append(fromClause("xusers u"))
+		.append(fromClause("xusers im"))
 		.append(whereClause(searchText, suffix))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
@@ -67,9 +68,10 @@ public class XusersServiceImpl extends AbstractService implements XusersService,
 
 	@Override
 	public int LAD13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
-		.append(fromClause("xusers u"))
+		.append(fromClause("xusers im"))
 		.append(whereClause(searchText, suffix));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
@@ -77,35 +79,23 @@ public class XusersServiceImpl extends AbstractService implements XusersService,
 	private Xusers constractListOfXscreens(Map<String, Object> row) {
 		Xusers em = new Xusers();
 		em.setZemail((String) row.get("zemail"));
-		em.setXstaff((Integer) row.get("xstaff"));
-//		em.setXprofile((String) row.get("xprofile"));
-//		em.setXarea((Integer) row.get("xarea"));
+//		em.setXstaff((Integer) row.get("xstaff"));
 		em.setZactive((Boolean) row.get("zactive"));
-		em.setZadmin((Boolean) row.get("zadmin"));
-//		em.setEmployee((String) row.get("employee"));
-//		em.setArea((String) row.get("area"));
 		return em;
 	}
 
 	private StringBuilder selectClause() {
-		return new StringBuilder("SELECT u.*, staff.xname as employee, area.xname as area");
+		return new StringBuilder("SELECT im.*");
 	}
 
 	private StringBuilder fromClause(String tableName) {
-		return new StringBuilder(" FROM " + tableName + " ")
-				.append(" LEFT JOIN pdmst staff ON staff.xstaff = u.xstaff AND staff.zid = u.zid ")
-				.append(" LEFT JOIN oparea area ON area.xarea = u.xarea AND area.zid = u.zid ");
+		return new StringBuilder(" FROM " + tableName + " ");
 	}
 
 	private StringBuilder whereClause(String searchText, int suffix) {
-		StringBuilder sql = new StringBuilder(" WHERE u.zid="+sessionManager.getBusinessId()+" ");
-		if (searchText == null || searchText.isEmpty())
-			return sql;
-		return sql.append(" AND (zemail LIKE '%" + searchText 
-				+ "%' OR staff.xname LIKE '%" + searchText 
-				+ "%' OR xprofile LIKE '%" + searchText 
-				+ "%' OR area.xname LIKE '%" + searchText 
-				+ "%') ");
+		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+		if (searchText == null || searchText.isEmpty()) return sql;
+		return sql.append(" AND (zemail LIKE '%" + searchText + "%') ");
 	}
 
 	private StringBuilder orderbyClause(String orderByField, String orderType) {

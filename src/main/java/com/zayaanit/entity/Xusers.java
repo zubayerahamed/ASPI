@@ -90,7 +90,6 @@ public class Xusers extends AbstractModel<String> {
 	public static Xusers getDefaultInstance() {
 		Xusers obj = new Xusers();
 		obj.setSubmitFor(SubmitFor.INSERT);
-		obj.setZactive(Boolean.FALSE);
 		obj.setZactive(Boolean.TRUE);
 		return obj;
 	}

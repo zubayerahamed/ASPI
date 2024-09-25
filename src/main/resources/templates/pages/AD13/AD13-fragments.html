@@ -24,7 +24,7 @@
 										data-mainscreen=true,
 										data-mainreloadurl='/AD13?zemail=',
 										data-mainreloadid='main-form-container',
-										data-detailreloadurl='/AD13/detail-table?xwh=RESET&zemail=',
+										data-detailreloadurl='/AD13/detail-table?xprofile=RESET&zemail=',
 										data-detailreloadid='detail-table-container'"
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -53,12 +53,10 @@
 								<input 	type="hidden" class="search-val" name="xstaff" th:value="*{xstaff}"/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LMD12/0?hint=', 
+										data-reloadurl='/search/table/LFA14/1?hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xstaff',
-										data-mainscreen=false,
-										data-mainreloadurl='/MD12?xstaff=',
-										data-mainreloadid='main-form-container'" 
+										data-mainscreen=false" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 								<span 	class="input-group-text btn-search-clear" 
 										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
@@ -67,133 +65,23 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Profile</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xprofile"
-										th:value="${xusers.xprofile != null ? xusers.xprofile : ''}">
-								<input 	type="hidden" class="search-val" name="xprofile" th:value="*{xprofile}"/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LAD12/0?hint=',
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xprofile',
-										data-mainscreen=false,
-										data-mainreloadurl='/AD12?xprofile=',
-										data-mainreloadid='main-form-container'" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
-						</div>
-					</div>
-					
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Purchaing Org.</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xorgpo"
-										th:value="${xusers.xorgpo != null ? xusers.xorgpo + ' - ' + xusers.purOrg : ''}">
-								<input 	type="hidden" class="search-val" name="xorgpo" th:value="*{xorgpo}" required/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LMD17/1?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xorgpo',
-										data-mainscreen=false,
-										data-mainreloadurl='/MD17?xorg=',
-										data-mainreloadid='main-form-container'" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
-						</div>
-					</div>
-					
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Sales Org.</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xorgop"
-										th:value="${xusers.xorgop != null ? xusers.xorgop + ' - ' + xusers.salesOrg : ''}">
-								<input 	type="hidden" class="search-val" name="xorgop" th:value="*{xorgop}" required/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LMD17/2?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xorgop',
-										data-mainscreen=false,
-										data-mainreloadurl='/MD17?xorg=',
-										data-mainreloadid='main-form-container'" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
-						</div>
-					</div>
-					
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Inventory Org.</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xorgim"
-										th:value="${xusers.xorgim != null ? xusers.xorgim + ' - ' + xusers.inventoryOrg : ''}">
-								<input 	type="hidden" class="search-val" name="xorgim" th:value="*{xorgim}" required/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LMD17/3?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xorgim',
-										data-mainscreen=false,
-										data-mainreloadurl='/MD17?xorg=',
-										data-mainreloadid='main-form-container'" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
-						</div>
-					</div>
-					
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Sales Area</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xarea"
-										th:value="${xusers.xarea != null ? xusers.xarea + ' - ' + xusers.area : ''}">
-								<input 	type="hidden" class="search-val" name="xarea" th:value="*{xarea}" required/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LMD16/0?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xarea',
-										data-mainscreen=false,
-										data-mainreloadurl='/MD16?xarea=',
-										data-mainreloadid='main-form-container'" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
+							<label class="form-label">Session Type</label>
+							<select class="form-control" th:field="*{xsessiontype}" required="required">
+								<option value="Default">Default</option>
+								<option value="Custom">Custom</option>
+							</select>
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Customer Profile (Days)</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xcusview}" required="required" min="0" max="365">
+							<label class="form-label">Session Time (In Second)</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xsessiontime}" required="required" min="0">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label d-block" for="xswbusiness">Allow Switch Business?</label>
-							<input type="checkbox" id="xswbusiness" th:field="*{xswbusiness}">
+							<label class="form-label d-block" for="zadmin">Is Admin?</label>
+							<input type="checkbox" id="zadmin" th:field="*{zadmin}">
 						</div>
 					</div>
 					<div class="col-md-3">
@@ -206,7 +94,7 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/AD13?zemail=RESET', data-reloadid='main-form-container',  data-detailreloadurl='/AD13/detail-table?zemail=RESET&xwh=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/AD13?zemail=RESET', data-reloadid='main-form-container',  data-detailreloadurl='/AD13/detail-table?zemail=RESET&xprofile=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
 						<button th:if="${not #strings.isEmpty(xusers.zemail)}" th:attr="data-url=@{/AD13?zemail=} + ${xusers.zemail}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
@@ -255,61 +143,48 @@
 
 
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
-	<div class="card" th:if="${accessDetail}">
+	<div class="card" th:if="${xuserprofiles}">
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
-			<h6 class="py-sm-3 mb-sm-auto">Store Access Details</h6>
+			<h6 class="py-sm-3 mb-sm-auto">Access Profiles</h6>
 		</div>
 
 		<div class="card-body">
-			<form id="detailform" class="form-validate-jquery" th:action="@{/AD13/detail/store}" th:object="${accessDetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/AD13/detail/store}" th:object="${xuserprofiles}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" name="submitFor" th:value="*{submitFor}"/>
 				<input type="hidden" name="zemail" th:value="*{zemail}">
-				<input type="hidden" name="xwh" th:value="*{xwh}">
+				<input type="hidden" name="xprofile" th:value="*{xprofile}">
 
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Store</label>
+							<label class="form-label">Profile</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
-										name="xwh"
-										th:value="${accessDetail.xwh ne null ? accessDetail.xwh : ''}"
+										name="xprofile"
+										th:value="${xuserprofiles.xprofile ne null ? xuserprofiles.xprofile : ''}"
 										disabled="disabled">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LMD11/0?hint=', 
+										data-reloadurl='/search/table/LAD12/0?hint=', 
 										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xwh',
+										data-fieldid='xprofile',
 										data-mainscreen=true,
-										data-mainreloadurl='/AD13/detail-table?zemail='+ ${accessDetail.zemail} +'&xwh=',
+										data-mainreloadurl='/AD13/detail-table?zemail='+ ${xuserprofiles.zemail} +'&xprofile=',
 										data-mainreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Name</label>
-							<input type="text" class="form-control" th:field="*{store}" disabled="disabled">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label d-block" for="xisprime">Is Prime?</label>
-							<input type="checkbox" th:field="*{xisprime}">
 						</div>
 					</div>
 				</div>
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/AD13/detail-table?zemail='+ ${accessDetail.zemail} +'&xwh=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/AD13/detail-table?zemail='+ ${xuserprofiles.zemail} +'&xprofile=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${accessDetail.submitFor ne T(com.zayaanit.enums.SubmitFor).INSERT}" th:attr="data-url=@{/AD13/detail-table?zemail=} + ${accessDetail.zemail} + '&xwh=' + ${accessDetail.xwh}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${accessDetail.submitFor ne T(com.zayaanit.enums.SubmitFor).INSERT}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${accessDetail.submitFor eq T(com.zayaanit.enums.SubmitFor).INSERT}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
+						<button th:if="${xuserprofiles.submitFor ne T(com.zayaanit.enums.SubmitFor).INSERT}" th:attr="data-url=@{/AD13/detail-table?zemail=} + ${xuserprofiles.zemail} + '&xprofile=' + ${xuserprofiles.xprofile}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${xuserprofiles.submitFor eq T(com.zayaanit.enums.SubmitFor).INSERT}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
 				</div>
 			</form>
@@ -319,16 +194,14 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th>Store</th>
-						<th>Is Prime?</th>
+						<th>Profile</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
-							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/AD13/detail-table?zemail=' + ${x.zemail} + '&xwh=' + ${x.xwh}" th:href="@{/AD13/detail-table?zemail=} + ${x.zemail} + '&xwh=' + ${x.xwh}" th:text="${x.xwh + ' - ' + x.store}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/AD13/detail-table?zemail=' + ${x.zemail} + '&xprofile=' + ${x.xprofile}" th:href="@{/AD13/detail-table?zemail=} + ${x.zemail} + '&xprofile=' + ${x.xprofile}" th:text="${x.xprofile}"></a>
 						</td>
-						<td th:text="${x.xisprime ne null and x.xisprime eq true ? 'Y' : 'N'}"></td>
 					</tr>
 				</tbody>
 			</table>

@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.XuserprofilesPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,4 +44,14 @@ public class Xuserprofiles extends AbstractModel<String> {
 	@Basic(optional = false)
 	@Column(name = "xprofile", length = 25)
 	private String xprofile;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Xuserprofiles getDefaultInstance(String zemail) {
+		Xuserprofiles obj = new Xuserprofiles();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setZemail(zemail);
+		return obj;
+	}
 }

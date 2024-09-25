@@ -45,7 +45,7 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/AD12/RESET', data-reloadid='main-form-container', data-detailid='detail-table-container', data-detailurl='/AD12/detail-table?xprofile=RESET'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/AD12?xprofile=RESET', data-reloadid='main-form-container', data-detailid='detail-table-container', data-detailurl='/AD12/detail-table?xprofile=RESET'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
 						<button th:if="${not #strings.isEmpty(profile.xprofile)}" th:attr="data-url=@{/AD12}, data-xprofile=${profile.xprofile}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
@@ -94,12 +94,11 @@
 </div>
 
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
-	<div class="card" th:if="${not #lists.isEmpty(screens)}">
+	<div class="card" th:if="${not #maps.isEmpty(menuscreensGroup)}">
 
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
 			<h6 class="py-sm-3 mb-sm-auto">
-				<input type="checkbox" id="selectall" th:checked="${allSelected}">
-				<span th:text="${profileName}" class="ms-3"></span> profile details
+				Profile details
 			</h6>
 			<div class="ms-sm-auto my-sm-auto">
 				<button th:attr="data-url=@{/AD12/detail/save}" type="button" class="btn btn-sm btn-primary detail-save-btn">
@@ -109,21 +108,42 @@
 			</div>
 		</div>
 
-		<input type="hidden" th:value="${profileName}" id="profileName"/>
+		<input type="hidden" th:value="${xprofile}" id="profileName"/>
 
-		<div class="table-responsive">
-			<table class="table">
-				<tbody>
-					<tr th:each="screen: ${screens}">
-						<td>
-							<input type="checkbox" th:attr="id=${screen.xscreen}" name="screens" th:checked="${screen.selected}">
-							<span th:text="${screen.xscreen}" class="ms-3"></span>
-						</td>
-						<td th:text="${screen.xtitle}"></td>
-					</tr>
-				</tbody>
-			</table>
+		<div class="card-body">
+			<div th:each="g : ${menuscreensGroup}" class="mb-5">
+				<div class="table-responsive">
+					<h3 th:text="${g.key}"></h3>
+					<table class="table normaltable">
+						<thead>
+							<tr>
+								<th></th>
+								<th class="text-center">Menu Code</th>
+								<th class="text-center">Screen</th>
+								<th>Screen Title</th>
+								<th class="text-center">Screen Type</th>
+								<th class="text-center">Sequence</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="ms : ${g.value}">
+								<td>
+									<input type="checkbox" class="screens" th:id="${ms.xrow}" th:checked="${ms.profileChecked}">
+								</td>
+								<td class="text-center">
+									<a class="dataindex" href="/SA13?xrow=" reloadid="main-form-container" th:attr="data-value=${ms.xrow}" th:text="${ms.xmenu}"></a>
+								</td>
+								<td class="text-center" th:text="${ms.xscreen}"></td>
+								<td th:text="${ms.xscreenTitle}"></td>
+								<td class="text-center" th:text="${ms.xscreenType}"></td>
+								<td class="text-center" th:text="${ms.xsequence}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
+
 	</div>
 
 	<script type="text/javascript">
@@ -146,7 +166,7 @@
 			})
 
 			function generateXscreens(){
-				var screens = $("input[type='checkbox'][name='screens']");
+				var screens = $("input[type='checkbox'][class='screens']");
 				xscreens = [];
 				$.each(screens, function (i, screen) {
 					if($(screen).is(":checked")){
