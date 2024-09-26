@@ -1,0 +1,88 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/FA11/store}" th:object="${acdef}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Fiscal year</label>
+							<select class="form-control" th:field="*{xoffset}" required="required">
+								<option value="0">Jan - Dec</option>
+								<option value="1">Feb - Jan</option>
+								<option value="2">Mar - Feb</option>
+								<option value="3">Apr - Mar</option>
+								<option value="4">May - Apr</option>
+								<option value="5">June - May</option>
+								<option value="6">Jul - Jun</option>
+								<option value="7">Aug - Jul</option>
+								<option value="8">Sep - Aug</option>
+								<option value="9">Oct - Sep</option>
+								<option value="10">Nov - Oct</option>
+								<option value="11">Dec - Nov</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Closed</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xclyear}" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Get Voucher Year/Periord</label>
+							<select class="form-control" th:field="*{xgateyp}" required="required">
+								<option value="From Date">From Date</option>
+								<option value="From Default">From Default</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Default Year</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdefaultyear}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Default Period</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdefaultper}">
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/FA11', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+		})
+	</script>
+</div>

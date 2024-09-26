@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
+import com.zayaanit.service.CabunitService;
 import com.zayaanit.service.XmenusService;
 import com.zayaanit.service.XprofilesService;
 import com.zayaanit.service.XscreensService;
@@ -39,6 +41,7 @@ public class SearchSuggestController {
 	@Autowired private XscreensService xscreensService;
 	@Autowired private XprofilesService profileService;
 	@Autowired private XusersService xusersService;
+	@Autowired private CabunitService cabunitService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -131,6 +134,22 @@ public class SearchSuggestController {
 		int totalRows = xusersService.LAD13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
 
 		DatatableResponseHelper<Xusers> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@GetMapping("/LAD17/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Cabunit> LAD17(@PathVariable int suffix) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Cabunit> list = cabunitService.LAD17(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		int totalRows = cabunitService.LAD17(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+
+		DatatableResponseHelper<Cabunit> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

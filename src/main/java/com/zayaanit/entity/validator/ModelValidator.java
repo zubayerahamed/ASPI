@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+import com.zayaanit.entity.Acdef;
+import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xmenuscreens;
@@ -15,12 +17,14 @@ import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XcodesPK;
 import com.zayaanit.entity.pk.XmenusPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
+import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XmenusRepo;
 import com.zayaanit.repository.XprofilesRepo;
@@ -40,7 +44,7 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private XprofilesRepo profileRepo;
 	@Autowired private XcodesRepo xcodesRepo;
 	@Autowired private XusersRepo xusersRepo;
-	
+	@Autowired private CabunitRepo cabunitRepo;
 
 	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
 		if(xmenus == null) return;
@@ -126,9 +130,29 @@ public class ModelValidator extends ConstraintValidator {
 		}
 	}
 
+	public void validateCabunit(Cabunit cabunit, Errors errors, Validator validator) {
+		if(cabunit == null) return;
+
+		super.validate(cabunit, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check profile already exist
+		Optional<Cabunit> op = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), cabunit.getXbuid()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(cabunit.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xbuid", "Business unit exist in the system");
+		}
+	}
+
 	public void validateZbusiness(Zbusiness zbusiness, Errors errors, Validator validator) {
 		if(zbusiness == null) return;
 		super.validate(zbusiness, errors, validator);
+	}
+
+	public void validateAcdef(Acdef acdef, Errors errors, Validator validator) {
+		if(acdef == null) return;
+		super.validate(acdef, errors, validator);
 	}
 
 }

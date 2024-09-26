@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.AcdefPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,5 +49,14 @@ public class Acdef extends AbstractModel<String> {
 
 	@Column(name = "xdefaultper")
 	private Integer xdefaultper;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Acdef getDefaultInstance() {
+		Acdef obj = new Acdef();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		return obj;
+	}
 
 }

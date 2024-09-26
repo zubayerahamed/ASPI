@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.CabunitPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,4 +48,13 @@ public class Cabunit extends AbstractModel<String> {
 
 	@Column(name = "xnote", length = 200)
 	private String xnote;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Cabunit getDefaultInstance() {
+		Cabunit obj = new Cabunit();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		return obj;
+	}
 }
