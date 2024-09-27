@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acgroup;
-import com.zayaanit.entity.Acgroup;
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
@@ -149,11 +147,17 @@ public class FA12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		List<Acgroup> childs = acgroupRepo.findAllByZidAndXagparent(sessionManager.getBusinessId(), xagcode);
+		if(!childs.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("Cang't delete this group, child group found");
+			return responseHelper.getResponse();
+		}
+
 		Acgroup obj = op.get();
 		acgroupRepo.delete(obj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET"));
+		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (obj.getXagparent() == null ? "RESET" : obj.getXagparent())));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

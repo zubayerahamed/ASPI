@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.AcmstPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,13 +40,24 @@ public class Acmst extends AbstractModel<String> {
 	@Column(name = "xgroup")
 	private Integer xgroup;
 
-	@Column(name = "xorg", length = 100)
+	@Column(name = "xdesc", length = 100)
 	private String xdesc;
 
-	@Column(name = "xacctype", length = 50)
+	@Column(name = "xacctype", length = 25)
 	private String xacctype;
 
-	@Column(name = "xaccusage", length = 50)
+	@Column(name = "xaccusage", length = 25)
 	private String xaccusage;
 
+	@Transient
+	private String groupName;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Acmst getDefaultInstance() {
+		Acmst obj = new Acmst();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		return obj;
+	}
 }

@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 
 import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Acgroup;
+import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
@@ -19,6 +20,7 @@ import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcgroupPK;
+import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XcodesPK;
 import com.zayaanit.entity.pk.XmenusPK;
@@ -27,6 +29,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.repository.AcgroupRepo;
+import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XmenusRepo;
@@ -49,6 +52,7 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private XusersRepo xusersRepo;
 	@Autowired private CabunitRepo cabunitRepo;
 	@Autowired private AcgroupRepo acgroupRepo;
+	@Autowired private AcmstRepo acmstRepo;
 
 	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
 		if(xmenus == null) return;
@@ -161,6 +165,21 @@ public class ModelValidator extends ConstraintValidator {
 
 		if(SubmitFor.INSERT.equals(acgroup.getSubmitFor()) && op.isPresent()) {
 			errors.rejectValue("xagcode", "Group code exist in the system");
+		}
+	}
+
+	public void validateAcmst(Acmst acmst, Errors errors, Validator validator) {
+		if(acmst == null) return;
+
+		super.validate(acmst, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check profile already exist
+		Optional<Acmst> op = acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), acmst.getXacc()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(acmst.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xacc", "Account exist in the system");
 		}
 	}
 

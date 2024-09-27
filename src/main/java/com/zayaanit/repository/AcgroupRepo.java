@@ -1,5 +1,7 @@
 package com.zayaanit.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,5 @@ import com.zayaanit.entity.pk.AcgroupPK;
 @Repository
 public interface AcgroupRepo extends JpaRepository<Acgroup, AcgroupPK> {
 
+	public List<Acgroup> findAllByZidAndXagparent(Integer zid, Integer xagparent);
 }

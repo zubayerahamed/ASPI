@@ -17,6 +17,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Acgroup;
+import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xprofiles;
@@ -25,6 +26,7 @@ import com.zayaanit.entity.Xusers;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.service.AcgroupService;
+import com.zayaanit.service.AcmstService;
 import com.zayaanit.service.CabunitService;
 import com.zayaanit.service.XmenusService;
 import com.zayaanit.service.XprofilesService;
@@ -45,6 +47,7 @@ public class SearchSuggestController {
 	@Autowired private XusersService xusersService;
 	@Autowired private CabunitService cabunitService;
 	@Autowired private AcgroupService acgroupService;
+	@Autowired private AcmstService acmstService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -169,6 +172,22 @@ public class SearchSuggestController {
 		int totalRows = acgroupService.LFA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
 
 		DatatableResponseHelper<Acgroup> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@GetMapping("/LFA13/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Acmst> LFA13(@PathVariable int suffix) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Acmst> list = acmstService.LFA13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		int totalRows = acmstService.LFA13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+
+		DatatableResponseHelper<Acmst> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);
