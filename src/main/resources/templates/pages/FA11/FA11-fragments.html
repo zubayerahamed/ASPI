@@ -9,7 +9,7 @@
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Fiscal year</label>
-							<select class="form-control" th:field="*{xoffset}" required="required">
+							<select class="form-control select" th:field="*{xoffset}" required="required">
 								<option value="0">Jan - Dec</option>
 								<option value="1">Feb - Jan</option>
 								<option value="2">Mar - Feb</option>
@@ -27,29 +27,14 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Closed</label>
+							<label class="form-label">Closed Year</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xclyear}" required="required">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Get Voucher Year/Periord</label>
-							<select class="form-control" th:field="*{xgateyp}" required="required">
-								<option value="From Date">From Date</option>
-								<option value="From Default">From Default</option>
-							</select>
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Default Year</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xdefaultyear}">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Default Period</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xdefaultper}">
+							<label class="form-label">Closed On</label>
+							<input type="text" class="form-control" th:value="*{xcldate}" disabled>
 						</div>
 					</div>
 				</div>

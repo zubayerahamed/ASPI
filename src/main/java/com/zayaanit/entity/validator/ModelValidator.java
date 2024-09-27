@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zayaanit.entity.Acdef;
+import com.zayaanit.entity.Acgroup;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
@@ -17,6 +18,7 @@ import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XcodesPK;
 import com.zayaanit.entity.pk.XmenusPK;
@@ -24,6 +26,7 @@ import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
+import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XmenusRepo;
@@ -45,6 +48,7 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private XcodesRepo xcodesRepo;
 	@Autowired private XusersRepo xusersRepo;
 	@Autowired private CabunitRepo cabunitRepo;
+	@Autowired private AcgroupRepo acgroupRepo;
 
 	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
 		if(xmenus == null) return;
@@ -142,6 +146,21 @@ public class ModelValidator extends ConstraintValidator {
 
 		if(SubmitFor.INSERT.equals(cabunit.getSubmitFor()) && op.isPresent()) {
 			errors.rejectValue("xbuid", "Business unit exist in the system");
+		}
+	}
+
+	public void validateAcgroup(Acgroup acgroup, Errors errors, Validator validator) {
+		if(acgroup == null) return;
+
+		super.validate(acgroup, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check profile already exist
+		Optional<Acgroup> op = acgroupRepo.findById(new AcgroupPK(sessionManager.getBusinessId(), acgroup.getXagcode()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(acgroup.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xagcode", "Group code exist in the system");
 		}
 	}
 

@@ -1,11 +1,15 @@
 package com.zayaanit.entity;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.AcdefPK;
@@ -41,14 +45,9 @@ public class Acdef extends AbstractModel<String> {
 	@Column(name = "xclyear")
 	private Integer xclyear;
 
-	@Column(name = "xgateyp", length = 25)
-	private String xgateyp;
-
-	@Column(name = "xdefaultyear")
-	private Integer xdefaultyear;
-
-	@Column(name = "xdefaultper")
-	private Integer xdefaultper;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "xcldate")
+	private Date xcldate;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;

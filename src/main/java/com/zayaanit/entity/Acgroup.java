@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.AcgroupPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,7 +37,7 @@ public class Acgroup extends AbstractModel<String> {
 	@Column(name = "xagcode")
 	private Integer xagcode;
 
-	@Column(name = "xagname")
+	@Column(name = "xagname", length = 50)
 	private String xagname;
 
 	@Column(name = "xaglevel")
@@ -44,7 +46,19 @@ public class Acgroup extends AbstractModel<String> {
 	@Column(name = "xagparent")
 	private Integer xagparent;
 
-	@Column(name = "xagtype")
+	@Column(name = "xagtype", length = 50)
 	private String xagtype;
 
+	@Transient
+	private String parentName;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Acgroup getDefaultInstance() {
+		Acgroup obj = new Acgroup();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXaglevel(1);
+		return obj;
+	}
 }

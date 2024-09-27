@@ -1,13 +1,13 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -79,29 +79,15 @@ public class FA11 extends KitController {
 //		}
 
 		if(acdef.getXclyear() == null) {
-			responseHelper.setErrorStatusAndMessage("Closed required");
-			return responseHelper.getResponse();
-		}
-	
-		if(StringUtils.isBlank(acdef.getXgateyp())) {
-			responseHelper.setErrorStatusAndMessage("Get Voucher Year/Periord required");
+			responseHelper.setErrorStatusAndMessage("Closed year required");
 			return responseHelper.getResponse();
 		}
 
-		if(!"From Date".equals(acdef.getXgateyp())) {
-			if(acdef.getXdefaultyear() == null) {
-				responseHelper.setErrorStatusAndMessage("Default year required");
-				return responseHelper.getResponse();
-			}
-
-			if(acdef.getXdefaultper() == null) {
-				responseHelper.setErrorStatusAndMessage("Default period required");
-				return responseHelper.getResponse();
-			}
-		}
+		acdef.setXcldate(new Date());
 
 		// Create new
 		if(SubmitFor.INSERT.equals(acdef.getSubmitFor())) {
+			
 			acdef.setZid(sessionManager.getBusinessId());
 			acdef = acdefRepo.save(acdef);
 
