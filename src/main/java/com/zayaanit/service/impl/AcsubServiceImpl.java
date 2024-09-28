@@ -72,7 +72,7 @@ public class AcsubServiceImpl extends AbstractService implements AcsubService {
 
 		if(suffix == 1) {
 			String paramsValues[] = dependentParam.split(",");
-			sql = sql.append(" AND im.xtype="+ paramsValues[0] +" ");
+			sql = sql.append(" AND im.xtype='"+ paramsValues[0] +"' ");
 		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;

@@ -85,6 +85,9 @@ public class Xusers extends AbstractModel<String> {
 	private String businessName;
 
 	@Transient
+	private String employeeName;
+
+	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
 	public static Xusers getDefaultInstance() {

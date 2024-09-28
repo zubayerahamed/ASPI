@@ -49,11 +49,11 @@
 								<input 	type="text" 
 										class="form-control searchsuggest2"
 										id="xstaff"
-										th:value="${xusers.xstaff != null ? xusers.xstaff + ' - ' + xusers.employee : ''}">
+										th:value="${xusers.xstaff != null ? xusers.xstaff + ' - ' + xusers.employeeName : ''}">
 								<input 	type="hidden" class="search-val" name="xstaff" th:value="*{xstaff}"/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LFA14/1?hint=', 
+										data-reloadurl='/search/table/LFA14/1?dependentparam=Employee&hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xstaff',
 										data-mainscreen=false" 
