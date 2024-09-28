@@ -21,7 +21,7 @@ public class AcgroupServiceImpl extends AbstractService implements AcgroupServic
 	@Autowired private KitSessionManager sessionManager;
 
 	@Override
-	public List<Acgroup> LFA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix) {
+	public List<Acgroup> LFA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
@@ -38,7 +38,7 @@ public class AcgroupServiceImpl extends AbstractService implements AcgroupServic
 	}
 
 	@Override
-	public int LFA12(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix) {
+	public int LFA12(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")

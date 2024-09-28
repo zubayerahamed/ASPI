@@ -21,7 +21,7 @@ public class XprofilesServiceImpl extends AbstractService implements XprofilesSe
 	@Autowired private KitSessionManager sessionManager;
 
 	@Override
-	public List<Xprofiles> LAD12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public List<Xprofiles> LAD12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
@@ -38,7 +38,7 @@ public class XprofilesServiceImpl extends AbstractService implements XprofilesSe
 	}
 
 	@Override
-	public int LAD12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public int LAD12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")

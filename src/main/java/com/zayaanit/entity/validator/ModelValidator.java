@@ -11,6 +11,7 @@ import org.springframework.validation.Errors;
 import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Acgroup;
 import com.zayaanit.entity.Acmst;
+import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
@@ -21,6 +22,7 @@ import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcmstPK;
+import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XcodesPK;
 import com.zayaanit.entity.pk.XmenusPK;
@@ -30,6 +32,7 @@ import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.AcmstRepo;
+import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XmenusRepo;
@@ -53,6 +56,7 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private CabunitRepo cabunitRepo;
 	@Autowired private AcgroupRepo acgroupRepo;
 	@Autowired private AcmstRepo acmstRepo;
+	@Autowired private AcsubRepo acsubRepo;
 
 	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
 		if(xmenus == null) return;
@@ -180,6 +184,21 @@ public class ModelValidator extends ConstraintValidator {
 
 		if(SubmitFor.INSERT.equals(acmst.getSubmitFor()) && op.isPresent()) {
 			errors.rejectValue("xacc", "Account exist in the system");
+		}
+	}
+
+	public void validateAcsub(Acsub acsub, Errors errors, Validator validator) {
+		if(acsub == null) return;
+
+		super.validate(acsub, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check profile already exist
+		Optional<Acsub> op = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), acsub.getXsub()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(acsub.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xsub", "Account exist in the system");
 		}
 	}
 

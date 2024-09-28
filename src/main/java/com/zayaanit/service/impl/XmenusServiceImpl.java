@@ -21,7 +21,7 @@ public class XmenusServiceImpl extends AbstractService implements XmenusService 
 	@Autowired private KitSessionManager sessionManager;
 
 	@Override
-	public List<Xmenus> LSA11(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public List<Xmenus> LSA11(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
@@ -38,7 +38,7 @@ public class XmenusServiceImpl extends AbstractService implements XmenusService 
 	}
 
 	@Override
-	public int LSA11(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public int LSA11(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")

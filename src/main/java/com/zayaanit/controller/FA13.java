@@ -74,6 +74,7 @@ public class FA13 extends KitController {
 				Optional<Acgroup> groupOp = acgrouprepo.findById(new AcgroupPK(sessionManager.getBusinessId(), op.get().getXgroup()));
 				if(groupOp.isPresent()) {
 					acmst.setGroupName(groupOp.get().getXagname());
+					generateParentGroups(acmst, groupOp.get());
 				}
 			}
 			model.addAttribute("acmst", acmst != null ? acmst : Acmst.getDefaultInstance());
@@ -82,6 +83,21 @@ public class FA13 extends KitController {
 
 		model.addAttribute("acmst", Acmst.getDefaultInstance());
 		return "pages/FA13/FA13";
+	}
+
+	private void generateParentGroups(Acmst acmst, Acgroup acgroup) {
+		if(acgroup == null) return;
+
+		acmst.getParentGroups().add(acgroup);
+
+		if(acgroup.getXagparent() != null) {
+			Optional<Acgroup> groupOp = acgrouprepo.findById(new AcgroupPK(sessionManager.getBusinessId(), acgroup.getXagparent()));
+			if(groupOp.isPresent()) {
+				generateParentGroups(acmst, groupOp.get());
+			} else {
+				return;
+			}
+		}
 	}
 
 	@PostMapping("/store")

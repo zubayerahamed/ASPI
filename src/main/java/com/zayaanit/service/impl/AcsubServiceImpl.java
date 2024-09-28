@@ -7,9 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zayaanit.entity.Acmst;
+import com.zayaanit.entity.Acsub;
 import com.zayaanit.enums.DatatableSortOrderType;
-import com.zayaanit.service.AcmstService;
+import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.KitSessionManager;
 
 /**
@@ -17,64 +17,70 @@ import com.zayaanit.service.KitSessionManager;
  * @since Jul 3, 2023
  */
 @Service
-public class AcmstServiceImpl extends AbstractService implements AcmstService {
+public class AcsubServiceImpl extends AbstractService implements AcsubService {
 	@Autowired private KitSessionManager sessionManager;
 
 	@Override
-	public List<Acmst> LFA13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
+	public List<Acsub> LFA14(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
-		.append(fromClause("acmst im"))
-		.append(whereClause(searchText))
+		.append(fromClause("acsub im"))
+		.append(whereClause(searchText, suffix, dependentParam))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
 
 		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString());
-		List<Acmst> list = new ArrayList<>();
-		result.stream().forEach(row -> list.add(constractListOfAcmst(row)));
+		List<Acsub> list = new ArrayList<>();
+		result.stream().forEach(row -> list.add(constractListOfAcsub(row)));
 
 		return list;
 	}
 
 	@Override
-	public int LFA13(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
+	public int LFA14(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
-		.append(fromClause("acmst im"))
-		.append(whereClause(searchText));
+		.append(fromClause("acsub im"))
+		.append(whereClause(searchText, suffix, dependentParam));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
-	private Acmst constractListOfAcmst(Map<String, Object> row) {
-		Acmst em = new Acmst();
+	private Acsub constractListOfAcsub(Map<String, Object> row) {
+		Acsub em = new Acsub();
 		em.setXacc((Integer) row.get("xacc"));
-		em.setXgroup((Integer) row.get("xgroup"));
+		em.setXsub((Integer) row.get("xsub"));
 		em.setXdesc((String) row.get("xdesc"));
-		em.setXacctype((String) row.get("xacctype"));
-		em.setXaccusage((String) row.get("xaccusage"));
-		em.setGroupName((String) row.get("groupname"));
+		em.setXname((String) row.get("xname"));
+		em.setXtype((String) row.get("xtype"));
+		em.setAccountName((String) row.get("accountname"));
 		return em;
 	}
 
 	private StringBuilder selectClause() {
-		return new StringBuilder("SELECT im.*, a.xagname as groupname ");
+		return new StringBuilder("SELECT im.*, a.xdesc as accountname ");
 	}
 
 	private StringBuilder fromClause(String tableName) {
 		return new StringBuilder(" FROM " + tableName + " ")
-				.append(" LEFT JOIN acgroup a ON a.xagcode = im.xgroup AND a.zid = im.zid ");
+				.append(" LEFT JOIN acmst a ON a.xacc = im.xacc AND a.zid = im.zid ");
 	}
 
-	private StringBuilder whereClause(String searchText) {
+	private StringBuilder whereClause(String searchText, int suffix, String dependentParam) {
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+
+		if(suffix == 1) {
+			String paramsValues[] = dependentParam.split(",");
+			sql = sql.append(" AND im.xtype="+ paramsValues[0] +" ");
+		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;
 
-		return sql.append(" AND (im.xacc LIKE '%" + searchText + "%' "
+		return sql.append(" AND (im.xsub LIKE '%" + searchText + "%' "
+				+ "OR im.xname LIKE '%" + searchText + "%' "
 				+ "OR im.xdesc LIKE '%" + searchText + "%' "
-				+ "OR im.xacctype LIKE '%" + searchText + "%') ");
+				+ "OR im.xtype LIKE '%" + searchText + "%') ");
 	}
 
 	private StringBuilder orderbyClause(String orderByField, String orderType) {

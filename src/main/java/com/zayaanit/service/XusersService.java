@@ -11,6 +11,6 @@ import com.zayaanit.enums.DatatableSortOrderType;
  */
 public interface XusersService {
 
-	public List<Xusers> LAD13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
-	public int LAD13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public List<Xusers> LAD13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
+	public int LAD13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 }

@@ -50,7 +50,7 @@ public class XusersServiceImpl extends AbstractService implements XusersService,
 	}
 
 	@Override
-	public List<Xusers> LAD13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public List<Xusers> LAD13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
@@ -67,7 +67,7 @@ public class XusersServiceImpl extends AbstractService implements XusersService,
 	}
 
 	@Override
-	public int LAD13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix) {
+	public int LAD13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")

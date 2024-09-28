@@ -21,7 +21,7 @@ public class CabunitServiceImpl extends AbstractService implements CabunitServic
 	@Autowired private KitSessionManager sessionManager;
 
 	@Override
-	public List<Cabunit> LAD17(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix) {
+	public List<Cabunit> LAD17(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
@@ -38,7 +38,7 @@ public class CabunitServiceImpl extends AbstractService implements CabunitServic
 	}
 
 	@Override
-	public int LAD17(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix) {
+	public int LAD17(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")

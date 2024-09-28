@@ -18,6 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Acgroup;
 import com.zayaanit.entity.Acmst;
+import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xprofiles;
@@ -27,6 +28,7 @@ import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.service.AcgroupService;
 import com.zayaanit.service.AcmstService;
+import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.CabunitService;
 import com.zayaanit.service.XmenusService;
 import com.zayaanit.service.XprofilesService;
@@ -48,6 +50,7 @@ public class SearchSuggestController {
 	@Autowired private CabunitService cabunitService;
 	@Autowired private AcgroupService acgroupService;
 	@Autowired private AcmstService acmstService;
+	@Autowired private AcsubService acsubService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -84,12 +87,12 @@ public class SearchSuggestController {
 	}
 
 	@GetMapping("/LSA11/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Xmenus> LSA11(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Xmenus> LSA11(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Xmenus> list = xmenusService.LSA11(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
-		int totalRows = xmenusService.LSA11(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Xmenus> list = xmenusService.LSA11(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = xmenusService.LSA11(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Xmenus> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -100,12 +103,12 @@ public class SearchSuggestController {
 	}
 
 	@GetMapping("/LSA12/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Xscreens> LSA12(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Xscreens> LSA12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Xscreens> list = xscreensService.LSA12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
-		int totalRows = xscreensService.LSA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Xscreens> list = xscreensService.LSA12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = xscreensService.LSA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Xscreens> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -116,12 +119,12 @@ public class SearchSuggestController {
 	}
 
 	@GetMapping("/LAD12/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Xprofiles> LAD12(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Xprofiles> LAD12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Xprofiles> list = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
-		int totalRows = profileService.LAD12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Xprofiles> list = profileService.LAD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = profileService.LAD12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Xprofiles> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -132,12 +135,12 @@ public class SearchSuggestController {
 	}
 
 	@GetMapping("/LAD13/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Xusers> LAD13(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Xusers> LAD13(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Xusers> list = xusersService.LAD13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
-		int totalRows = xusersService.LAD13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Xusers> list = xusersService.LAD13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = xusersService.LAD13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Xusers> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -148,12 +151,12 @@ public class SearchSuggestController {
 	}
 
 	@GetMapping("/LAD17/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Cabunit> LAD17(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Cabunit> LAD17(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Cabunit> list = cabunitService.LAD17(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
-		int totalRows = cabunitService.LAD17(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Cabunit> list = cabunitService.LAD17(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = cabunitService.LAD17(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Cabunit> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -164,12 +167,12 @@ public class SearchSuggestController {
 	}
 
 	@GetMapping("/LFA12/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Acgroup> LFA12(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Acgroup> LFA12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Acgroup> list = acgroupService.LFA12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
-		int totalRows = acgroupService.LFA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Acgroup> list = acgroupService.LFA12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = acgroupService.LFA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Acgroup> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -180,14 +183,30 @@ public class SearchSuggestController {
 	}
 
 	@GetMapping("/LFA13/{suffix}")
-	public @ResponseBody DatatableResponseHelper<Acmst> LFA13(@PathVariable int suffix) {
+	public @ResponseBody DatatableResponseHelper<Acmst> LFA13(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		List<Acmst> list = acmstService.LFA13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
-		int totalRows = acmstService.LFA13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		List<Acmst> list = acmstService.LFA13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = acmstService.LFA13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Acmst> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@GetMapping("/LFA14/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Acsub> LFA14(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Acsub> list = acsubService.LFA14(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = acsubService.LFA14(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Acsub> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.AcsubPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,6 +46,18 @@ public class Acsub extends AbstractModel<String> {
 	@Column(name = "xtype", length = 25)
 	private String xtype;
 
-	@Column(name = "xorg", length = 100)
+	@Column(name = "xdesc", length = 100)
 	private String xdesc;
+
+	@Transient
+	private String accountName;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Acsub getDefaultInstance() {
+		Acsub obj = new Acsub();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		return obj;
+	}
 }

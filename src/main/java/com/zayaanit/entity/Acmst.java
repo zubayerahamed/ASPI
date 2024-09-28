@@ -1,5 +1,8 @@
 package com.zayaanit.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,6 +54,9 @@ public class Acmst extends AbstractModel<String> {
 
 	@Transient
 	private String groupName;
+
+	@Transient
+	private List<Acgroup> parentGroups = new ArrayList<>();
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;

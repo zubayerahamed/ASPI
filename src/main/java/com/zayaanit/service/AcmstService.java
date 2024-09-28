@@ -11,7 +11,7 @@ import com.zayaanit.enums.DatatableSortOrderType;
  */
 public interface AcmstService {
 
-	public List<Acmst> LFA13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public List<Acmst> LFA13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 
-	public int LFA13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public int LFA13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 }

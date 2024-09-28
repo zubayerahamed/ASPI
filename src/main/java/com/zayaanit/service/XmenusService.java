@@ -11,7 +11,7 @@ import com.zayaanit.enums.DatatableSortOrderType;
  */
 public interface XmenusService {
 
-	public List<Xmenus> LSA11(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public List<Xmenus> LSA11(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 
-	public int LSA11(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public int LSA11(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 }

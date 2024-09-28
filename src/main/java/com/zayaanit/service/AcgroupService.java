@@ -11,7 +11,7 @@ import com.zayaanit.enums.DatatableSortOrderType;
  */
 public interface AcgroupService {
 
-	public List<Acgroup> LFA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public List<Acgroup> LFA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 
-	public int LFA12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public int LFA12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 }

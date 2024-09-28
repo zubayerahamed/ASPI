@@ -21,7 +21,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 	@Autowired private KitSessionManager sessionManager;
 
 	@Override
-	public List<Xscreens> LSA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix) {
+	public List<Xscreens> LSA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
@@ -38,7 +38,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 	}
 
 	@Override
-	public int LSA12(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix) {
+	public int LSA12(String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")

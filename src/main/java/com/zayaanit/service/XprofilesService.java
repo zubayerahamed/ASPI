@@ -11,7 +11,7 @@ import com.zayaanit.enums.DatatableSortOrderType;
  */
 public interface XprofilesService {
 
-	public List<Xprofiles> LAD12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public List<Xprofiles> LAD12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 
-	public int LAD12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix);
+	public int LAD12(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
 }
