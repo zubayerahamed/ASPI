@@ -67,7 +67,7 @@ public class Acbal extends AbstractModel<String> {
 	@Column(name = "xper")
 	private Integer xper;
 
-	@Column(name = "xref", length = 25)
+	@Column(name = "xref", length = 100)
 	private String xref;
 
 	@Column(name = "xhnote", length = 200)

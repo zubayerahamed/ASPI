@@ -87,6 +87,11 @@ public class FA14 extends KitController {
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acsub acsub, BindingResult bindingResult){
 
+		if(acsub.getXsub() == null) {
+			Integer xsub = acsubRepo.getNextAvailableId(sessionManager.getBusinessId());
+			acsub.setXsub(xsub);
+		}
+
 		// VALIDATE XSCREENS
 		modelValidator.validateAcsub(acsub, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);

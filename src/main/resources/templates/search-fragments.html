@@ -1250,27 +1250,25 @@
 			var extrafieldcontroller = $('#extrafieldcontroller').val();
 			var dependentParam = $('#dependentParam').val();
 			var resetParam = $('#resetParam').val();
-			
-			console.log(dependentParam);
 
 			var columns = [
 				{
-					suffix : [0],
+					suffix : [0,1],
 					name : 'xsub',
 					rendername : 'xsub',
 					render: function(data, type, row, meta) {
 						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA13?xacc=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] + '">' + data + '</a>';
 					}
 				}, {
-					suffix : [0],
+					suffix : [0,1],
 					name : 'xname',
 					rendername: 'xname',
 				}, {
-					suffix : [0],
+					suffix : [0,1],
 					name : 'xtype',
 					rendername: 'xtype',
 				} , {
-					suffix : [0],
+					suffix : [0,1],
 					name : 'xdesc',
 					rendername: 'xdesc',
 				},
@@ -1302,9 +1300,166 @@
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
-				"order" : [0, 'asc'],
+				"order" : [0, 'desc'],
 				"columnDefs": columnDefs,
 				"ajax" : getBasepath() + "/search/LFA14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"columns": dataRetreiver,
+				"search": {
+					"search": $("#searchValue").val()
+				}
+			});
+
+			//make ajax to call server
+			dt.draw();
+
+			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+				e.preventDefault();
+
+				if(mainscreen == 'true'){
+					$('#searchSuggestTableModal').modal('hide');
+
+					var value = $(this).data('value');
+
+					sectionReloadAjaxReq({
+						id : mainreloadid,
+						url : mainreloadurl + value
+					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
+				} else {
+					var prompt = $(this).data('prompt');
+					var value = $(this).data('value');
+
+					$('#searchSuggestTableModal').modal('hide');
+
+					$('input[name="'+ fieldId +'"]').val(value);
+					$('#' + fieldId).val(prompt);
+					
+					if(resetParam != undefined && resetParam != ''){
+						var resetFields = resetParam.split(',');
+						$.each(resetFields, function(i, j){
+							if(j != undefined && j != '') {
+								$('#' + j).val("");
+								$('input[name="'+ j +'"]').val("");
+							}
+						});
+					}
+				}
+			})
+		})
+	</script>
+</div>
+
+
+
+<div th:fragment="LFA15-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
+
+		<div class="table-responsive">
+			<table class="table searchdatatable">
+				<thead>
+					<tr>
+						<th>Voucher</th>
+						<th>Date</th>
+						<th>Business Unit</th>
+						<th>Reference</th>
+						<th>Type</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var fieldId = $('#fieldId').val();
+			var suffix = $('#suffix').val();
+			var mainscreen = $('#mainscreen').val();
+			var mainreloadurl = $('#mainreloadurl').val();
+			var mainreloadid = $('#mainreloadid').val();
+			var detailreloadurl = $('#detailreloadurl').val();
+			var detailreloadid = $('#detailreloadid').val();
+			var additionalreloadurl = $('#additionalreloadurl').val();
+			var additionalreloadid = $('#additionalreloadid').val();
+			var extrafieldcontroller = $('#extrafieldcontroller').val();
+			var dependentParam = $('#dependentParam').val();
+			var resetParam = $('#resetParam').val();
+
+			var columns = [
+				{
+					suffix : [0,1,2,3],
+					name : 'xvoucher',
+					rendername : 'xvoucher',
+					render: function(data, type, row, meta) {
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA15?xvoucher=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
+					}
+				}, {
+					suffix : [0,1,2,3],
+					name : 'xdate',
+					rendername: 'xdate',
+				}, {
+					suffix : [0,1,2,3],
+					name : 'xbuid',
+					rendername: 'xbuid',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['businessUnitName'];
+					}
+				} , {
+					suffix : [0,1,2,3],
+					name : 'xref',
+					rendername: 'xref',
+				}, {
+					suffix : [0,1,2,3],
+					name : 'xtype',
+					rendername: 'xtype',
+				},
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render,
+						class : el.class
+					});
+				} 
+			});
+
+			var dt = $('.searchdatatable').DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": columnDefs,
+				"ajax" : getBasepath() + "/search/LFA15/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
 					"search": $("#searchValue").val()

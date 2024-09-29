@@ -1,6 +1,7 @@
 package com.zayaanit.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.zayaanit.entity.Cabunit;
@@ -16,4 +17,6 @@ import com.zayaanit.entity.pk.CabunitPK;
 @Repository
 public interface CabunitRepo extends JpaRepository<Cabunit, CabunitPK> {
 
+	@Query(value = "select isnull(max(COALESCE(xbuid,0)) + 1, 101) from cabunit where zid=?1", nativeQuery = true)
+	public Integer getNextAvailableId(Integer zid);
 }

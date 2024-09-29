@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 
 import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Acgroup;
+import com.zayaanit.entity.Acheader;
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
@@ -200,6 +201,13 @@ public class ModelValidator extends ConstraintValidator {
 		if(SubmitFor.INSERT.equals(acsub.getSubmitFor()) && op.isPresent()) {
 			errors.rejectValue("xsub", "Account exist in the system");
 		}
+	}
+
+	public void validateAcheader(Acheader acheader, Errors errors, Validator validator) {
+		if(acheader == null) return;
+
+		super.validate(acheader, errors, validator);
+		if (errors.hasErrors()) return;
 	}
 
 	public void validateZbusiness(Zbusiness zbusiness, Errors errors, Validator validator) {

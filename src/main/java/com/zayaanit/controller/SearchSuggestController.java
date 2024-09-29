@@ -17,6 +17,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Acgroup;
+import com.zayaanit.entity.Acheader;
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
@@ -27,6 +28,7 @@ import com.zayaanit.entity.Xusers;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.service.AcgroupService;
+import com.zayaanit.service.AcheaderService;
 import com.zayaanit.service.AcmstService;
 import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.CabunitService;
@@ -51,6 +53,7 @@ public class SearchSuggestController {
 	@Autowired private AcgroupService acgroupService;
 	@Autowired private AcmstService acmstService;
 	@Autowired private AcsubService acsubService;
+	@Autowired private AcheaderService acheaderService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -207,6 +210,22 @@ public class SearchSuggestController {
 		int totalRows = acsubService.LFA14(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Acsub> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@GetMapping("/LFA15/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Acheader> LFA15(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Acheader> list = acheaderService.LFA15(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = acheaderService.LFA15(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Acheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

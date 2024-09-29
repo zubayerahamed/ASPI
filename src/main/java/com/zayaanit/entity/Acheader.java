@@ -10,11 +10,13 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.zayaanit.entity.pk.AcheaderPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,9 +51,6 @@ public class Acheader extends AbstractModel<String> {
 	@Column(name = "xvtype", length = 25)
 	private String xvtype;
 
-	@Column(name = "xcheque", length = 25)
-	private String xcheque;
-
 	@Column(name = "xref", length = 100)
 	private String xref;
 
@@ -73,4 +72,17 @@ public class Acheader extends AbstractModel<String> {
 	@Column(name = "xstaff")
 	private Integer xstaff;
 
+	@Transient
+	private String businessUnitName;
+	@Transient
+	private String staffName;
+	
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Acheader getDefaultInstance() {
+		Acheader obj = new Acheader();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		return obj;
+	}
 }

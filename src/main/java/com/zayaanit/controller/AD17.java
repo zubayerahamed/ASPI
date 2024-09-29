@@ -72,6 +72,11 @@ public class AD17 extends KitController {
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Cabunit cabunit, BindingResult bindingResult){
+		
+		if(cabunit.getXbuid() == null) {
+			Integer xbuid = cabunitRepo.getNextAvailableId(sessionManager.getBusinessId());
+			cabunit.setXbuid(xbuid);
+		}
 
 		// VALIDATE XSCREENS
 		modelValidator.validateCabunit(cabunit, bindingResult, validator);
