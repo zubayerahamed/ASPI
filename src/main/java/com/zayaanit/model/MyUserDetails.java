@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 
@@ -29,9 +30,9 @@ public class MyUserDetails implements UserDetails {
 	private boolean admin;
 	private Integer xstaff;
 
-	private String xprofile;
 	private boolean switchBusiness;
 	private Zbusiness zbusiness;
+	private Xprofiles xprofile;
 
 	private boolean accountExpired;
 	private boolean credentialExpired;
@@ -80,11 +81,11 @@ public class MyUserDetails implements UserDetails {
 		return zbusiness;
 	}
 
-	public void setXprofile(String xprofile) {
+	public void setXprofile(Xprofiles xprofile) {
 		this.xprofile = xprofile;
 	}
 
-	public String getXprofile() {
+	public Xprofiles getXprofile() {
 		return this.xprofile;
 	}
 

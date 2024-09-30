@@ -1,6 +1,7 @@
 package com.zayaanit.interceptor;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +13,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
+import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xprofilesdt;
+import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.repository.XprofilesdtRepo;
+import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.service.KitSessionManager;
 
 /**
@@ -26,6 +31,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 
 	@Autowired private KitSessionManager sessionManager;
 	@Autowired private XprofilesdtRepo profiledtRepo;
+	@Autowired private XusersRepo usersRepo;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -42,6 +48,25 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			return false;
 		}
 
+		Optional<Xusers> usersOp =  usersRepo.findById(new XusersPK(sessionManager.getBusinessId(), username));
+		if(!usersOp.isPresent()) {
+			request.getRequestDispatcher("/login").forward(request, response);
+			request.getSession().invalidate();
+			return false;
+		}
+		if(Boolean.FALSE.equals(usersOp.get().getZactive())) {
+			request.getRequestDispatcher("/login").forward(request, response);
+			request.getSession().invalidate();
+			return false;
+		}
+
+		if(Boolean.FALSE.equals(usersOp.get().getZadmin()) && sessionManager.getXprofile() == null) {
+			request.getRequestDispatcher("/profiles").forward(request, response);
+			return false;
+		}
+
+		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
+
 		if(!hasAccess(request.getServletPath())) {
 			RequestDispatcher dispatcher = request.getSession().getServletContext().getRequestDispatcher("/accessdenied?message=Truing to access " + request.getServletPath());
 			dispatcher.forward(request, response);
@@ -56,10 +81,10 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		if(sessionManager.getLoggedInUserDetails() == null) return true;
 		if(sessionManager.getLoggedInUserDetails().isAdmin()) return true;
 
-		String xprofile = sessionManager.getLoggedInUserDetails().getXprofile();
-		if(StringUtils.isBlank(xprofile)) return true;
+		Xprofiles xprofile = sessionManager.getLoggedInUserDetails().getXprofile();
+		if(xprofile == null) return true;
 
-		List<Xprofilesdt> profildtList = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
+		List<Xprofilesdt> profildtList = xprofile.getDetails();
 		if(profildtList == null || profildtList.isEmpty()) return false;
 
 		boolean matchFound = false;

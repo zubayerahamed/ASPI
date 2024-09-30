@@ -48,6 +48,7 @@ public class SwitchBusinessController extends KitController {
 
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 		sessionManager.getLoggedInUserDetails().setZbusiness(zbOp.get());
+		sessionManager.getLoggedInUserDetails().setXprofile(null);
 		return "redirect:/";
 	}
 

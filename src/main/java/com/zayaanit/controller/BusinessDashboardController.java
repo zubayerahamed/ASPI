@@ -47,6 +47,11 @@ public class BusinessDashboardController extends BaseController {
 			businesses.add(zb);
 		}
 
+		if(!businesses.isEmpty() && businesses.size() == 1) {
+			sessionManager.getLoggedInUserDetails().setZbusiness(businesses.get(0));
+			return "redirect:/";
+		}
+
 		model.addAttribute("businesses", businesses);
 
 		return "pages/business/business-dashboard";

@@ -1,5 +1,8 @@
 package com.zayaanit.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +42,9 @@ public class Xprofiles extends AbstractModel<String> {
 
 	@Column(name = "xnote", length = 100)
 	private String xnote;
+
+	@Transient
+	private List<Xprofilesdt> details = new ArrayList<>();
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;

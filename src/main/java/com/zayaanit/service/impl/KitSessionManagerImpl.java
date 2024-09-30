@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.model.MyUserDetails;
 import com.zayaanit.service.KitSessionManager;
@@ -68,6 +69,21 @@ public class KitSessionManagerImpl implements KitSessionManager {
 		if (principal instanceof MyUserDetails) {
 			MyUserDetails mud = (MyUserDetails) principal;
 			return mud.getZbusiness();
+		}
+
+		return null;
+	}
+
+	@Override
+	public Xprofiles getXprofile() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !auth.isAuthenticated())
+			return null;
+
+		Object principal = auth.getPrincipal();
+		if (principal instanceof MyUserDetails) {
+			MyUserDetails mud = (MyUserDetails) principal;
+			return mud.getXprofile();
 		}
 
 		return null;

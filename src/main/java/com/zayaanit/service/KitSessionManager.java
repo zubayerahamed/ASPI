@@ -1,5 +1,6 @@
 package com.zayaanit.service;
 
+import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.model.MyUserDetails;
 
@@ -18,6 +19,8 @@ public interface KitSessionManager {
 	public Integer getBusinessId();
 
 	public Zbusiness getZbusiness();
+
+	public Xprofiles getXprofile();
 
 	public MyUserDetails getLoggedInUserDetails();
 }
