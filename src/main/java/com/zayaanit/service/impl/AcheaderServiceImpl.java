@@ -1,15 +1,21 @@
 package com.zayaanit.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Acheader;
+import com.zayaanit.entity.pk.AcdefPK;
 import com.zayaanit.enums.DatatableSortOrderType;
+import com.zayaanit.model.YearPeriodResult;
+import com.zayaanit.repository.AcdefRepo;
 import com.zayaanit.service.AcheaderService;
 import com.zayaanit.service.KitSessionManager;
 
@@ -20,6 +26,7 @@ import com.zayaanit.service.KitSessionManager;
 @Service
 public class AcheaderServiceImpl extends AbstractService implements AcheaderService {
 	@Autowired private KitSessionManager sessionManager;
+	@Autowired private AcdefRepo acdefRepo;
 
 	@Override
 	public List<Acheader> LFA15(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
@@ -97,5 +104,29 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 
 	private StringBuilder limitAndOffsetClause(int limit, int offset) {
 		return new StringBuilder(" OFFSET "+offset+" ROWS FETCH NEXT "+limit+" ROWS ONLY ");
+	}
+
+	@Override
+	public YearPeriodResult getYearPeriod(Date date) {
+		if(date == null) return null;
+
+		Optional<Acdef> acdefOp = acdefRepo.findById(new AcdefPK(sessionManager.getBusinessId()));
+		if(!acdefOp.isPresent()) return null;
+
+		Acdef acdef = acdefOp.get();
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+
+		int year = cal.get(Calendar.YEAR);
+		int per = 12 + (cal.get(Calendar.MONTH) + 1) - acdef.getXoffset();
+
+		if(per <= 12) {
+			year = year - 1;
+		} else {
+			per = per - 12;
+		}
+
+		return new YearPeriodResult(year, per);
 	}
 }

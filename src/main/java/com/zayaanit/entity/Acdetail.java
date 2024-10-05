@@ -59,12 +59,22 @@ public class Acdetail extends AbstractModel<String> {
 	private String xnote;
 
 	@Transient
+	private String accountName;
+	@Transient
+	private String accountUsage;
+	@Transient
+	private String subAccountName;
+
+	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
 	public static Acdetail getDefaultInstance(Integer xvoucher) {
 		Acdetail obj = new Acdetail();
 		obj.setSubmitFor(SubmitFor.INSERT);
 		obj.setXvoucher(xvoucher);
+		obj.setXrow(0);
+		obj.setXdebit(BigDecimal.ZERO);
+		obj.setXcredit(BigDecimal.ZERO);
 		return obj;
 	}
 }

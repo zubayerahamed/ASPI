@@ -1,9 +1,11 @@
 package com.zayaanit.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.zayaanit.entity.Acheader;
 import com.zayaanit.enums.DatatableSortOrderType;
+import com.zayaanit.model.YearPeriodResult;
 
 /**
  * @author Zubayer Ahamed
@@ -12,6 +14,6 @@ import com.zayaanit.enums.DatatableSortOrderType;
 public interface AcheaderService {
 
 	public List<Acheader> LFA15(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
-
 	public int LFA15(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam);
+	public YearPeriodResult getYearPeriod(Date date);
 }

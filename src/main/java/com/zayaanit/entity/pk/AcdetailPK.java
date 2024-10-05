@@ -17,7 +17,7 @@ public class AcdetailPK implements Serializable {
 
 	private static final long serialVersionUID = -8557818653337381168L;
 
-	private String zid;
+	private Integer zid;
 	private Integer xvoucher;
 	private Integer xrow;
 }
