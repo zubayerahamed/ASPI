@@ -140,18 +140,6 @@
 				<input type="hidden" name="mainreloadurl" value="/FA15?xvoucher="/>
 				<div class="row">
 					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Title</label>
-							<input type="text" class="form-control" name="title">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Description</label>
-							<textarea rows="1" cols="" class="form-control" name="description"></textarea>
-						</div>
-					</div>
-					<div class="col-md-3">
 						<div class="form-group mb-3">
 							<label class="form-label">File</label>
 							<input type="file" name="file" id="fileuploader" class="form-control" th:attr="accept=${loggedInZbusiness.xdoctypes}">
@@ -173,8 +161,6 @@
 							<th>
 								Action
 							</th>
-							<th>Title</th>
-							<th>Description</th>
 							<th>File</th>
 						</tr>
 					</thead>
@@ -192,8 +178,6 @@
 									<i class="ph-trash"></i>
 								</button>
 							</td>
-							<td th:text="${x.xtitle}"></td>
-							<td th:text="${x.xdesc}"></td>
 							<td>
 								<i class="ph-file-dotted me-3"></i>
 								<span th:text="${x.xnameold}"></span>

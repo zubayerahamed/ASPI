@@ -1,0 +1,375 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/FA17/store}" th:object="${searchParam}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">From Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xfdate" 
+										id="xfdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${searchParam.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xfdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">To Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xtdate" 
+										id="xtdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required="required"
+										th:value="${searchParam.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xtdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Year</label>
+							<input type="text" class="form-control" name="xyear" id="xyear" th:value="${searchParam.xyear}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Period</label>
+							<input type="text" class="form-control" name="xper" id="xper" th:value="${searchParam.xper}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Business Unit</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xbuid">
+								<input 	type="hidden" class="search-val" name="xbuid" th:value="${searchParam.xbuid ne null ? searchParam.xbuid + ' - ' + searchParam.businessUnitName : ''}"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LAD17/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xbuid',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Type</label>
+							<select class="form-control select" th:field="*{xtype}">
+								<option value="">-- Select --</option>
+								<option value="General">General</option>
+								<option value="Imported">Imported</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">GL Status</label>
+							<select class="form-control select" th:field="*{xstatusjv}">
+								<option value="">-- Select --</option>
+								<option value="Balanced">Balanced</option>
+								<option value="Suspended">Suspended</option>
+								<option value="Posted">Posted</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/FA17', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:attr="
+									data-url=@{/report/print}, 
+									data-rptcode='voucher'" 
+								type="button" 
+								class="btn btn-light btn-sm btn-custom-print ms-1"><i class="ph-printer me-2"></i> Print</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-search ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
+						<button type="submit" class="btn btn-success btn-sm btn-post-all ms-1"><i class="ph-check-square-offset me-2"></i> Post All</button>
+						<button type="submit" class="btn btn-warning btn-sm btn-unpost-all ms-1"><i class="ph-x-square me-2"></i> Unpost All</button>
+						<button type="submit" class="btn btn-danger btn-sm btn-delete-all ms-1"><i class="ph-trash me-2"></i> Delete All</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				$('.header-table-container').html("");
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-search').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var targettedForm = $('form#mainform');
+				if(!targettedForm.smkValidate()) return;
+
+				sectionReloadAjaxPostReq({
+					id : 'header-table-container',
+					url : '/FA17/header-table'
+				},{
+					"xfdate" : $('#xfdate').val(),
+					"xtdate" : $('#xtdate').val(),
+					"xyear" : $('#xyear').val(),
+					"xper" : $('#xper').val(),
+					"xbuid" : $('input[name="xbuid"]').val(),
+					"xtype" : $('#xtype').val(),
+					"xstatusjv" :  $('#xstatusjv').val(),
+				});
+			});
+
+			$('.btn-post-all').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(getBasepath() + '/FA17/post-all');
+			});
+
+			$('.btn-unpost-all').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var targettedForm = $('form#mainform');
+				if(!targettedForm.smkValidate()) return;
+
+				sectionReloadAjaxPostReq({
+					id : 'header-table-container',
+					url : '/FA17/unpost-all'
+				},{
+					"xfdate" : $('#xfdate').val(),
+					"xtdate" : $('#xtdate').val(),
+					"xyear" : $('#xyear').val(),
+					"xper" : $('#xper').val(),
+					"xbuid" : $('input[name="xbuid"]').val(),
+					"xtype" : $('#xtype').val(),
+					"xstatusjv" :  $('#xstatusjv').val(),
+				});
+			});
+
+			$('.btn-delete-all').off('click').on('click', function(e){
+				e.preventDefault();
+
+				if(!confirm("Are you sure, to delete all?")){
+					return;
+				}
+
+				var targettedForm = $('form#mainform');
+				if(!targettedForm.smkValidate()) return;
+
+				sectionReloadAjaxDeleteReq({
+					id : 'header-table-container',
+					url : '/FA17/delete-all'
+				},{
+					"xfdate" : $('#xfdate').val(),
+					"xtdate" : $('#xtdate').val(),
+					"xyear" : $('#xyear').val(),
+					"xper" : $('#xper').val(),
+					"xbuid" : $('input[name="xbuid"]').val(),
+					"xtype" : $('#xtype').val(),
+					"xstatusjv" :  $('#xstatusjv').val(),
+				});
+			});
+
+
+			$('.btn-custom-print').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+				params.param2 = $('#xfdate').val();
+				params.param3 = $('#xtdate').val();
+				params.param4 = $('#xyear').val();
+				params.param5 = $('#xper').val();
+				params.param6 = $('input[name="xbuid"]').val();
+				params.param7 = $('#xtype').val();
+				params.param8 = $('#xstatusjv').val();
+				generateOnScreenReport($(this).data('url'), params);
+			});
+		})
+	</script>
+</div>
+
+
+
+
+<div th:fragment="header-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<input type="hidden" id="xfdate" th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xfdate, df)}"/>
+		<input type="hidden" id="xtdate"  th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xtdate, df)}"/>
+		<input type="hidden" id="xyear" th:value="${searchParam.xyear}"/>
+		<input type="hidden" id="xper" th:value="${searchParam.xper}"/>
+		<input type="hidden" id="xbuid" th:value="${searchParam.xbuid}"/>
+		<input type="hidden" id="xtype" th:value="${searchParam.xtype}"/>
+		<input type="hidden" id="xstatusjv" th:value="${searchParam.xstatusjv}"/>
+
+		<div class="table-responsive">
+			<table class="table datatable" style="white-space: nowrap;">
+				<thead>
+					<tr>
+						<th>Voucher</th>
+						<th>Date, Year, Period</th>
+						<th>Business Unit</th>
+						<th>Voucher Type</th>
+						<th>Type</th>
+						<th>GL Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+			
+			var xfdate = $("#xfdate").val();
+			var xtdate = $("#xtdate").val();
+			var xyear = $("#xyear").val();
+			var xper = $("#xper").val();
+			var xbuid = $("#xbuid").val();
+			var xtype = $("#xtype").val();
+			var xstatusjv = $("#xstatusjv").val();
+
+			var dt = $('.datatable').DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"stateSave" : false,
+				"order" : [0, 'desc'],
+				"responsive": true,
+				"lengthChange": true,
+				"columnDefs": [
+					{ "name": "xvoucher",   "targets": 0 },
+					{ "name": "xdate",   "targets": 1 },
+					{ "name": "xbuid",  "targets": 2 },
+					{ "name": "xvtype",  "targets": 3 },
+					{ "name": "xtype",  "targets": 4 },
+					{ "name": "xstatusjv",  "targets": 5 },
+					{ "name": "xdate",  "targets": 6 }
+				],
+				"ajax" : getBasepath() + "/FA17/all?xfdate=" + xfdate + "&xtdate=" + xtdate + "&xyear=" + xyear + "&xper=" + xper + "&xbuid=" + xbuid + "&xtype=" + xtype + "&xstatusjv=" + xstatusjv,
+				"columns": [
+					{ "data": "xvoucher" },
+					{ 
+						"data": "xdate" ,
+						render: function(data, type, row, meta) {
+							return data + ' [Year: ' +  row['xyear'] + ', Period: ' + row['xper'] + ']';
+						},
+					},
+					{ 
+						"data": "xbuid",
+						render: function(data, type, row, meta) {
+							return data + ' - ' +  row['businessUnitName'];
+						},
+					},
+					{ "data": "xvtype" },
+					{ "data": "xtype" },
+					{ "data": "xstatusjv" },
+					{ 
+						"data": "xdate" ,
+						"width": '550px',
+						"orderable": false,
+						"searchable": false,
+						"class": "text-center",
+						render: function(data, type, row, meta) {
+
+							var actions = '<button data-url="/report/print", data-param2="'+row['xvoucher']+'", data-rptcode="voucher" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i>Print</button>';
+
+							if(row['xstatusjv'] == 'Balanced'){
+								actions += '<a class="btn btn-sm btn-primary mx-1 btn-voucher-post" data-xvoucher="'+ row['xvoucher'] +'" href="#">Post</a>';
+							}
+
+							if(row['xstatusjv'] == 'Posted'){
+								actions += '<a class="btn btn-sm btn-primary mx-1 btn-voucher-unpost" data-xvoucher="'+ row['xvoucher'] +'" href="#">Unpost</a>';
+							}
+
+							if(row['xstatusjv'] != 'Posted'){
+								actions += '<a class="btn btn-sm btn-danger mx-1 btn-dismiss-req" data-xvoucher="'+ row['xvoucher'] +'" href="#">Delete</a>';
+							}
+
+							return actions;
+						}
+					}
+				]
+			});
+
+			dt.draw();
+
+			$('.datatable').on('click', '.btn-print', function(e){
+				e.preventDefault();
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+
+				var i = 2;
+				while(i <= 30){
+					params['param' + i] = $(this).data('param' + i);
+					i++;
+				}
+
+				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			});
+
+			$('.datatable').on('click', 'a.btn-dismiss-req', function(e){
+				e.preventDefault();
+				$('#dismissModal').modal('show');
+
+				sectionReloadAjaxDeleteReq({
+					id : 'header-table-container',
+					url : '/FA17/header-table'
+				},{
+					"xvoucher" : $(this).data('xvoucher'),
+				});
+			})
+
+			$('.datatable').on('click', 'a.btn-voucher-post', function(e){
+				e.preventDefault();
+
+				actionPostRequest(getBasepath() + '/FA17/voucher-post', {
+					"xvoucher" : $(this).data('xvoucher'),
+				});
+			})
+
+			$('.datatable').on('click', 'a.btn-voucher-unpost', function(e){
+				e.preventDefault();
+
+				actionPostRequest(getBasepath() + '/FA17/voucher-unpost', {
+					"xvoucher" : $(this).data('xvoucher'),
+				});
+			})
+		})
+	</script>
+</div>

@@ -7,6 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.NamedStoredProcedureQueries;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,6 +30,18 @@ import lombok.EqualsAndHashCode;
 @Table(name = "acheader")
 @IdClass(AcheaderPK.class)
 @EqualsAndHashCode(callSuper = true)
+@NamedStoredProcedureQueries({
+	@NamedStoredProcedureQuery(name = "FA_VoucherPost", procedureName = "FA_VoucherPost", parameters = {
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "voucher", type = Integer.class) 
+	}),
+	@NamedStoredProcedureQuery(name = "FA_VoucherUnPost", procedureName = "FA_VoucherUnPost", parameters = {
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "voucher", type = Integer.class) 
+	}) 
+})
 public class Acheader extends AbstractModel<String> {
 
 	private static final long serialVersionUID = 4696242623656256597L;

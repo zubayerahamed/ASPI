@@ -9,11 +9,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Acheader;
 import com.zayaanit.entity.pk.AcdefPK;
 import com.zayaanit.enums.DatatableSortOrderType;
+import com.zayaanit.model.FA17SearchParam;
 import com.zayaanit.model.YearPeriodResult;
 import com.zayaanit.repository.AcdefRepo;
 import com.zayaanit.service.AcheaderService;
@@ -52,6 +54,33 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 		sql.append("SELECT COUNT(*) ")
 		.append(fromClause("acheader im"))
 		.append(whereClause(searchText, suffix, dependentParam));
+		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+	}
+
+	@Override
+	public List<Acheader> LFA17(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, FA17SearchParam param) {
+		searchText = searchText.replaceAll("'", "''");
+		StringBuilder sql = new StringBuilder();
+		sql.append(selectClause())
+		.append(fromClause("acheader im"))
+		.append(whereClauseLFA17(searchText, suffix, param))
+		.append(orderbyClause(orderBy, orderType.name()))
+		.append(limitAndOffsetClause(limit, offset));
+
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString());
+		List<Acheader> list = new ArrayList<>();
+		result.stream().forEach(row -> list.add(constractListOfAcsub(row)));
+
+		return list;
+	}
+
+	@Override
+	public int LFA17(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, FA17SearchParam param) {
+		searchText = searchText.replaceAll("'", "''");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) ")
+		.append(fromClause("acheader im"))
+		.append(whereClauseLFA17(searchText, suffix, param));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
@@ -96,6 +125,27 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 				+ "OR im.xbuid LIKE '%" + searchText + "%' "
 				+ "OR bu.xname LIKE '%" + searchText + "%' "
 				+ "OR im.xref LIKE '%" + searchText + "%') ");
+	}
+
+	private StringBuilder whereClauseLFA17(String searchText, int suffix, FA17SearchParam param) {
+		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+
+		sql.append(" AND (im.xdate between '"+ sdf.format(param.getXfdate()) +"' AND '"+ sdf.format(param.getXtdate()) +"') ");
+		if(param.getXyear() != null) sql.append(" AND im.xyear = '"+ param.getXyear() +"' ");
+		if(param.getXper() != null) sql.append(" AND im.xper = '"+ param.getXper() +"' ");
+		if(param.getXbuid() != null) sql.append(" AND im.xbuid = '"+ param.getXbuid() +"' ");
+		if(StringUtils.hasText(param.getXtype())) sql.append(" AND im.xtype = '"+ param.getXtype() +"' ");
+		if(StringUtils.hasText(param.getXstatusjv())) sql.append(" AND im.xstatusjv = '"+ param.getXstatusjv() +"' ");
+
+		if (searchText == null || searchText.isEmpty()) return sql;
+
+		return sql.append(" AND (im.xdate LIKE '%" + searchText + "%' "
+				+ "OR im.xyear LIKE '%" + searchText + "%' "
+				+ "OR im.xper LIKE '%" + searchText + "%' "
+				+ "OR im.xbuid LIKE '%" + searchText + "%' "
+				+ "OR im.xtype LIKE '%" + searchText + "%' "
+				+ "OR bu.xname LIKE '%" + searchText + "%' "
+				+ "OR im.xstatusjv LIKE '%" + searchText + "%') ");
 	}
 
 	private StringBuilder orderbyClause(String orderByField, String orderType) {

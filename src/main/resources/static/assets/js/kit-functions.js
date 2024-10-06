@@ -83,6 +83,28 @@ function sectionReloadAjaxPostReq(section, data, callbackFunction) {
 	});
 }
 
+function sectionReloadAjaxDeleteReq(section, data, callbackFunction) {
+	loadingMask2.show();
+	$.ajax({
+		url: getBasepath() + section.url,
+		type: "DELETE",
+		data: data,
+		success: function (data) {
+			loadingMask2.hide();
+			$("." + section.id).html("");
+			$("." + section.id).append(data);
+
+			if(callbackFunction != undefined){
+				callbackFunction();
+			}
+		},
+		error: function (jqXHR, status, errorThrown) {
+			loadingMask2.hide();
+			showMessage("error", jqXHR.responseJSON.message);
+		},
+	});
+}
+
 function submitMainForm(customurl, customform){
 	if(customform == undefined && $('form#mainform').length < 1) return;
 

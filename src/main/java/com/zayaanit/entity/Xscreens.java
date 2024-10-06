@@ -29,10 +29,12 @@ import lombok.EqualsAndHashCode;
 @IdClass(XscreensPK.class)
 @EqualsAndHashCode(callSuper = true)
 @NamedStoredProcedureQueries({
-		@NamedStoredProcedureQuery(name = "Fn_getTrn", procedureName = "Fn_getTrn", parameters = {
-				@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, name = "screen", type = String.class),
-				@StoredProcedureParameter(mode = ParameterMode.OUT, name = "trn_code", type = String.class) }) })
+	@NamedStoredProcedureQuery(name = "Fn_getTrn", procedureName = "Fn_getTrn", parameters = {
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "screen", type = String.class),
+		@StoredProcedureParameter(mode = ParameterMode.OUT, name = "trn_code", type = String.class) 
+	}) 
+})
 public class Xscreens extends AbstractModel<String> {
 
 	private static final long serialVersionUID = -2405933466608149531L;
