@@ -8,6 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.NamedStoredProcedureQueries;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,6 +29,14 @@ import lombok.EqualsAndHashCode;
 @Table(name = "acbal")
 @IdClass(AcbalPK.class)
 @EqualsAndHashCode(callSuper = true)
+@NamedStoredProcedureQueries({
+	@NamedStoredProcedureQuery(name = "FA_YearEnd", procedureName = "FA_YearEnd", parameters = {
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "year", type = Integer.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "date", type = Date.class)
+	})
+})
 public class Acbal extends AbstractModel<String> {
 
 	private static final long serialVersionUID = -1093692323942299487L;

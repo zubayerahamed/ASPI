@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -161,6 +162,11 @@ public class AD12 extends KitController {
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xprofiles xprofiles, BindingResult bindingResult){
+
+		if(StringUtils.isBlank(xprofiles.getXprofile())) {
+			responseHelper.setErrorStatusAndMessage("Profile name required");
+			return responseHelper.getResponse();
+		}
 
 		// VALIDATE XSCREENS
 		modelValidator.validateProfile(xprofiles, bindingResult, validator);

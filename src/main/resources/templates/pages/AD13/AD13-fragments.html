@@ -50,7 +50,7 @@
 										class="form-control searchsuggest2"
 										id="xstaff"
 										th:value="${xusers.xstaff != null ? xusers.xstaff + ' - ' + xusers.employeeName : ''}">
-								<input 	type="hidden" class="search-val" name="xstaff" th:value="*{xstaff}"/>
+								<input 	type="hidden" class="search-val" name="xstaff" th:value="*{xstaff}" required/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
 										data-reloadurl='/search/table/LFA14/1?dependentparam=Employee&hint=', 
@@ -75,10 +75,10 @@
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Session Time (In Second)</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xsessiontime}" required="required" min="0">
+							<input type="number" class="form-control numeric-only" th:field="*{xsessiontime}" min="0">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${loggedInUser.admin}">
 						<div class="mb-3 form-group">
 							<label class="form-label d-block" for="zadmin">Is Admin?</label>
 							<input type="checkbox" id="zadmin" th:field="*{zadmin}">

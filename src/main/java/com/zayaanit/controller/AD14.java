@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -109,6 +110,16 @@ public class AD14 extends KitController {
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xcodes xcodes, BindingResult bindingResult){
+
+		if(StringUtils.isBlank(xcodes.getXtype())){
+			responseHelper.setErrorStatusAndMessage("Code type required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(xcodes.getXcode())){
+			responseHelper.setErrorStatusAndMessage("Code required");
+			return responseHelper.getResponse();
+		}
 
 		// VALIDATE XSCREENS
 		modelValidator.validateXcodes(xcodes, bindingResult, validator);

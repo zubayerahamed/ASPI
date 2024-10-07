@@ -1,35 +1,30 @@
  package com.zayaanit.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.exceptions.ResourceNotFoundException;
-import com.zayaanit.model.MyUserDetails;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.AcbalRepo;
-import com.zayaanit.repository.ZbusinessRepo;
+
+import lombok.Data;
 
 /**
  * @author Zubayer Ahamed
@@ -41,7 +36,6 @@ public class FA18 extends KitController{
 
 	private String pageTitle = null;
 
-	@Autowired private ZbusinessRepo businessRepo;
 	@Autowired private AcbalRepo acbalRepo;
 
 	@Override
@@ -60,19 +54,7 @@ public class FA18 extends KitController{
 
 	@GetMapping
 	public String index(HttpServletRequest request, Model model) throws ResourceNotFoundException {
-		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
-		if(!op.isPresent()) throw new ResourceNotFoundException();
-
-		Zbusiness zb = op.get();
-		if(zb.getXfilesize() == null) zb.setXfilesize(0);
-		if(StringUtils.isBlank(zb.getXdocpath())) zb.setXdocpath("C:\\Contents\\");
-		if(StringUtils.isBlank(zb.getXdoctypes())) zb.setXdoctypes(".jpg,.jpeg,.png,.pdf");
-		if(StringUtils.isBlank(zb.getXrptpath())) zb.setXrptpath("C:\\Reports");
-		if(zb.getXlogo() != null && zb.getXlogo().length > 0) {
-			zb.setImageBase64(Base64.getEncoder().encodeToString(zb.getXlogo()));
-		}
-
-		model.addAttribute("business", zb);
+		model.addAttribute("years", acbalRepo.getDistinctYears(sessionManager.getBusinessId()));
 
 		if(isAjaxRequest(request)) {
 			return "pages/FA18/FA18-fragments::main-form";
@@ -82,57 +64,31 @@ public class FA18 extends KitController{
 	}
 
 	@PostMapping("/store")
-	public @ResponseBody Map<String, Object> store(Zbusiness zbusiness, @RequestParam(value= "files[]", required = false) MultipartFile[] files, BindingResult bindingResult){
+	public @ResponseBody Map<String, Object> store(YearEndProcess yep){
 
-		if(zbusiness.getXfilesize() == null) zbusiness.setXfilesize(1024);
-		if(StringUtils.isBlank(zbusiness.getXdocpath())) zbusiness.setXdocpath("C:\\Contents\\");
-		if(StringUtils.isBlank(zbusiness.getXrptpath())) {
-			responseHelper.setErrorStatusAndMessage("Report path required");
+		if(yep.getXyear() == null) {
+			responseHelper.setErrorStatusAndMessage("Year required");
 			return responseHelper.getResponse();
 		}
 
-		// Process image first
-		boolean imageChanged = false;
-		if(files != null && files.length > 0) {
-			try {
-				zbusiness.setXlogo(files[0].getBytes());
-				imageChanged = true;
-			} catch (IOException e) {
-				responseHelper.setErrorStatusAndMessage("Something wrong in image, please try again with new one");
-				return responseHelper.getResponse();
-			}
-		}
-
-		// VALIDATE XSCREENS
-		modelValidator.validateZbusiness(zbusiness, bindingResult, validator);
-		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
-
-		// Update existing
-		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
-		if(!op.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
+		if(yep.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("GL date required");
 			return responseHelper.getResponse();
 		}
 
-		zbusiness.setXdocpath(zbusiness.getXdocpath().trim());
-		zbusiness.setXdoctypes(zbusiness.getXdoctypes().trim());
-
-		Zbusiness existObj = op.get();
-		if(imageChanged) {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "zuserid", "ztime", "xrptdefautl");
-		} else {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
-		}
-		existObj = businessRepo.save(existObj);
-
-		// Load newly updated zbusiness into session manager object
-		MyUserDetails my = sessionManager.getLoggedInUserDetails();
-		my.setZbusiness(existObj);
+		acbalRepo.FA_YearEnd(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), yep.getXyear(), yep.getXdate());
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA18"));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Updated successfully");
+		responseHelper.setSuccessStatusAndMessage("Process confirmed successfully!");
 		return responseHelper.getResponse();
 	}
+}
+
+@Data
+class YearEndProcess{
+	private Integer xyear;
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
+	private Date xdate;
 }

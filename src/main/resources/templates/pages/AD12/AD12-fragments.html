@@ -19,7 +19,7 @@
 										name="xprofile"
 										th:value="${not #strings.isEmpty(profile.xprofile) ? profile.xprofile : ''}"
 										th:disabled="${not #strings.isEmpty(profile.xprofile)}"
-										th:required="${not #strings.isEmpty(profile.xprofile)}">
+										th:required="${#strings.isEmpty(profile.xprofile)}">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
 										data-reloadurl='/search/table/LAD12/0?hint=', 

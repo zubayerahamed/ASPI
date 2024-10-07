@@ -79,23 +79,28 @@ public class XusersServiceImpl extends AbstractService implements XusersService,
 	private Xusers constractListOfXscreens(Map<String, Object> row) {
 		Xusers em = new Xusers();
 		em.setZemail((String) row.get("zemail"));
-//		em.setXstaff((Integer) row.get("xstaff"));
+		em.setXstaff((Integer) row.get("xstaff"));
 		em.setZactive((Boolean) row.get("zactive"));
+		em.setEmployeeName((String) row.get("employeename"));
 		return em;
 	}
 
 	private StringBuilder selectClause() {
-		return new StringBuilder("SELECT im.*");
+		return new StringBuilder("SELECT im.*, e.xname as employeename ");
 	}
 
 	private StringBuilder fromClause(String tableName) {
-		return new StringBuilder(" FROM " + tableName + " ");
+		return new StringBuilder(" FROM " + tableName + " ")
+				.append(" LEFT JOIN acsub e ON e.xsub = im.xstaff AND e.zid = im.zid ");
 	}
 
 	private StringBuilder whereClause(String searchText, int suffix) {
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
 		if (searchText == null || searchText.isEmpty()) return sql;
-		return sql.append(" AND (zemail LIKE '%" + searchText + "%') ");
+		
+		return sql.append(" AND (im.zemail LIKE '%" + searchText + "%' "
+				+ "OR im.xstaff LIKE '%" + searchText + "%' "
+				+ "OR e.xname LIKE '%" + searchText + "%') ");
 	}
 
 	private StringBuilder orderbyClause(String orderByField, String orderType) {

@@ -21,16 +21,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserprofiles;
 import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XuserprofilesPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
@@ -46,6 +49,7 @@ public class AD13 extends KitController {
 	@Autowired private XusersRepo xuserRepo;
 	@Autowired private XuserprofilesRepo xuserprofilesRepo;
 	@Autowired private XprofilesRepo xprofilesRepo;
+	@Autowired private AcsubRepo acsubRepo;
 
 	private String pageTitle = null;
 
@@ -73,6 +77,10 @@ public class AD13 extends KitController {
 
 			Optional<Xusers> op = xuserRepo.findById(new XusersPK(sessionManager.getBusinessId(), zemail));
 			Xusers user = op.isPresent() ? op.get() : Xusers.getDefaultInstance();
+			if(user.getXstaff() != null) {
+				Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), user.getXstaff()));
+				if(acsubOp.isPresent()) user.setEmployeeName(acsubOp.get().getXname());
+			}
 			model.addAttribute("xusers", user);
 			return "pages/AD13/AD13-fragments::main-form";
 		}
@@ -119,12 +127,41 @@ public class AD13 extends KitController {
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xusers xusers, BindingResult bindingResult){
 
+		if(StringUtils.isBlank(xusers.getZemail())) {
+			responseHelper.setErrorStatusAndMessage("User ID required");
+			return responseHelper.getResponse();
+		}
+
+		if(xusers.getXstaff() == null) {
+			responseHelper.setErrorStatusAndMessage("Employee selection required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(xusers.getXsessiontype())) {
+			responseHelper.setErrorStatusAndMessage("Session type required");
+			return responseHelper.getResponse();
+		}
+
+		if(!"Default".equalsIgnoreCase(xusers.getXsessiontype())) {
+			if(xusers.getXsessiontime() == null) {
+				responseHelper.setErrorStatusAndMessage("For Custom session type, session time is required");
+				return responseHelper.getResponse();
+			}
+
+			if(xusers.getXsessiontime() <= 0) {
+				responseHelper.setErrorStatusAndMessage("Invalid session time");
+				return responseHelper.getResponse();
+			}
+		}
+
 		// VALIDATE XSCREENS
 		modelValidator.validateXusers(xusers, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
 		// Create new
 		if(SubmitFor.INSERT.equals(xusers.getSubmitFor())) {
+			if(!sessionManager.getLoggedInUserDetails().isAdmin()) xusers.setZadmin(false);
+			xusers.setXtheme("Default");
 			xusers.setZid(sessionManager.getBusinessId());
 			xusers = xuserRepo.save(xusers);
 
@@ -145,10 +182,13 @@ public class AD13 extends KitController {
 
 		Xusers existObj = op.get();
 		if(StringUtils.isBlank(xusers.getXpassword())) {
-			BeanUtils.copyProperties(xusers, existObj, "zid", "zuserid", "ztime", "zemail", "zadmin", "xpassword");
+			BeanUtils.copyProperties(xusers, existObj, "zid", "zuserid", "ztime", "zemail", "xtheme", "xpassword", "xoldpassword", "zadmin");
 		} else {
-			BeanUtils.copyProperties(xusers, existObj, "zid", "zuserid", "ztime", "zemail", "zadmin");
+			String existPass = existObj.getXpassword();
+			BeanUtils.copyProperties(xusers, existObj, "zid", "zuserid", "ztime", "zemail", "xtheme", "zadmin");
+			existObj.setXoldpassword(existPass);
 		}
+		if(sessionManager.getLoggedInUserDetails().isAdmin() && !sessionManager.getLoggedInUserDetails().getUsername().equals(xusers.getZemail())) existObj.setZadmin(xusers.getZadmin());
 		existObj = xuserRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
