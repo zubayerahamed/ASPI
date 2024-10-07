@@ -98,15 +98,7 @@
 						<button type="reset" th:attr="data-reloadurl='/FA17', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:attr="
-									data-url=@{/report/print}, 
-									data-rptcode='voucher'" 
-								type="button" 
-								class="btn btn-light btn-sm btn-custom-print ms-1"><i class="ph-printer me-2"></i> Print</button>
-						<button type="submit" class="btn btn-primary btn-sm btn-search ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
-						<button type="submit" class="btn btn-success btn-sm btn-post-all ms-1"><i class="ph-check-square-offset me-2"></i> Post All</button>
-						<button type="submit" class="btn btn-warning btn-sm btn-unpost-all ms-1"><i class="ph-x-square me-2"></i> Unpost All</button>
-						<button type="submit" class="btn btn-danger btn-sm btn-delete-all ms-1"><i class="ph-trash me-2"></i> Delete All</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-search-vouchers ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
 					</div>
 				</div>
 			</form>
@@ -127,8 +119,9 @@
 				});
 			});
 
-			$('.btn-search').off('click').on('click', function(e){
+			$('.btn-search-vouchers').off('click').on('click', function(e){
 				e.preventDefault();
+				console.log("here");
 
 				var targettedForm = $('form#mainform');
 				if(!targettedForm.smkValidate()) return;
@@ -146,73 +139,6 @@
 					"xstatusjv" :  $('#xstatusjv').val(),
 				});
 			});
-
-			$('.btn-post-all').off('click').on('click', function(e){
-				e.preventDefault();
-				submitMainForm(getBasepath() + '/FA17/post-all');
-			});
-
-			$('.btn-unpost-all').off('click').on('click', function(e){
-				e.preventDefault();
-
-				var targettedForm = $('form#mainform');
-				if(!targettedForm.smkValidate()) return;
-
-				sectionReloadAjaxPostReq({
-					id : 'header-table-container',
-					url : '/FA17/unpost-all'
-				},{
-					"xfdate" : $('#xfdate').val(),
-					"xtdate" : $('#xtdate').val(),
-					"xyear" : $('#xyear').val(),
-					"xper" : $('#xper').val(),
-					"xbuid" : $('input[name="xbuid"]').val(),
-					"xtype" : $('#xtype').val(),
-					"xstatusjv" :  $('#xstatusjv').val(),
-				});
-			});
-
-			$('.btn-delete-all').off('click').on('click', function(e){
-				e.preventDefault();
-
-				if(!confirm("Are you sure, to delete all?")){
-					return;
-				}
-
-				var targettedForm = $('form#mainform');
-				if(!targettedForm.smkValidate()) return;
-
-				sectionReloadAjaxDeleteReq({
-					id : 'header-table-container',
-					url : '/FA17/delete-all'
-				},{
-					"xfdate" : $('#xfdate').val(),
-					"xtdate" : $('#xtdate').val(),
-					"xyear" : $('#xyear').val(),
-					"xper" : $('#xper').val(),
-					"xbuid" : $('input[name="xbuid"]').val(),
-					"xtype" : $('#xtype').val(),
-					"xstatusjv" :  $('#xstatusjv').val(),
-				});
-			});
-
-
-			$('.btn-custom-print').off('click').on('click', function(e){
-				e.preventDefault();
-
-				var params = {};
-				params.reportCode = $(this).data('rptcode');
-				params.reportType = "PDF";
-				params.param1 = $("#businessZid").val();
-				params.param2 = $('#xfdate').val();
-				params.param3 = $('#xtdate').val();
-				params.param4 = $('#xyear').val();
-				params.param5 = $('#xper').val();
-				params.param6 = $('input[name="xbuid"]').val();
-				params.param7 = $('#xtype').val();
-				params.param8 = $('#xstatusjv').val();
-				generateOnScreenReport($(this).data('url'), params);
-			});
 		})
 	</script>
 </div>
@@ -222,6 +148,14 @@
 
 <div th:fragment="header-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
+		<div class="card-header d-sm-flex justify-content-center align-items-sm-center p-2">
+			<button class="btn btn-light btn-sm selection-counter d-none"></button>
+			<button class="btn btn-success btn-sm btn-post-all ms-1"><i class="ph-check-square-offset me-2"></i> Post All Selected</button>
+			<button class="btn btn-warning btn-sm btn-unpost-all ms-1"><i class="ph-x-square me-2"></i> Unpost All Selected</button>
+			<button class="btn btn-danger btn-sm btn-delete-all ms-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
+		</div>
+	
+	
 		<input type="hidden" id="xfdate" th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xfdate, df)}"/>
 		<input type="hidden" id="xtdate"  th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xtdate, df)}"/>
 		<input type="hidden" id="xyear" th:value="${searchParam.xyear}"/>
@@ -234,6 +168,7 @@
 			<table class="table datatable" style="white-space: nowrap;">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Voucher</th>
 						<th>Date, Year, Period</th>
 						<th>Business Unit</th>
@@ -252,7 +187,8 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			kit.ui.init();
-			
+
+			var selectedVouchers = [];
 			var xfdate = $("#xfdate").val();
 			var xtdate = $("#xtdate").val();
 			var xyear = $("#xyear").val();
@@ -271,15 +207,24 @@
 				"lengthChange": true,
 				"columnDefs": [
 					{ "name": "xvoucher",   "targets": 0 },
-					{ "name": "xdate",   "targets": 1 },
-					{ "name": "xbuid",  "targets": 2 },
-					{ "name": "xvtype",  "targets": 3 },
-					{ "name": "xtype",  "targets": 4 },
-					{ "name": "xstatusjv",  "targets": 5 },
-					{ "name": "xdate",  "targets": 6 }
+					{ "name": "xvoucher",   "targets": 1 },
+					{ "name": "xdate",   "targets": 2 },
+					{ "name": "xbuid",  "targets": 3 },
+					{ "name": "xvtype",  "targets": 4 },
+					{ "name": "xtype",  "targets": 5 },
+					{ "name": "xstatusjv",  "targets": 6 },
+					{ "name": "xdate",  "targets": 7 }
 				],
 				"ajax" : getBasepath() + "/FA17/all?xfdate=" + xfdate + "&xtdate=" + xtdate + "&xyear=" + xyear + "&xper=" + xper + "&xbuid=" + xbuid + "&xtype=" + xtype + "&xstatusjv=" + xstatusjv,
 				"columns": [
+					{ 
+						"data": "xvoucher", 
+						"orderable": false,
+						"searchable": false,
+						render: function(data, type, row, meta) {
+							return '<input type="checkbox" class="voucher-selection" data-xvoucher="'+ data +'">';
+						},
+					},
 					{ "data": "xvoucher" },
 					{ 
 						"data": "xdate" ,
@@ -343,33 +288,122 @@
 				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
 			});
 
+			$('.datatable').on('change', '.voucher-selection', function(e){
+				var voucher = $(this).data('xvoucher');
+				if ($(this).is(':checked')) {
+					if (!selectedVouchers.includes(voucher)) {
+						selectedVouchers.push(voucher); // Add only if not already in array
+					}
+				} else {
+					selectedVouchers = selectedVouchers.filter(function(item) {
+						return item !== voucher; // Remove the unchecked voucher
+					});
+				}
+
+				if(selectedVouchers.length > 0){
+					$('.selection-counter').removeClass('d-none');
+					$('.selection-counter').html(selectedVouchers.length + ' Selected');
+				} else {
+					$('.selection-counter').addClass('d-none');
+				}
+			});
+
 			$('.datatable').on('click', 'a.btn-dismiss-req', function(e){
 				e.preventDefault();
-				$('#dismissModal').modal('show');
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
 
-				sectionReloadAjaxDeleteReq({
-					id : 'header-table-container',
-					url : '/FA17/header-table'
-				},{
+				actionPostRequest(getBasepath() + '/FA17/voucher-delete', {
 					"xvoucher" : $(this).data('xvoucher'),
+					"xfdate" : xfdate,
+					"xtdate" : xtdate,
+					"xyear" : xyear,
+					"xper" : xper,
+					"xbuid" : xbuid,
+					"xtype" : xtype,
+					"xstatusjv" : xstatusjv
 				});
-			})
+			});
 
 			$('.datatable').on('click', 'a.btn-voucher-post', function(e){
 				e.preventDefault();
 
 				actionPostRequest(getBasepath() + '/FA17/voucher-post', {
 					"xvoucher" : $(this).data('xvoucher'),
+					"xfdate" : xfdate,
+					"xtdate" : xtdate,
+					"xyear" : xyear,
+					"xper" : xper,
+					"xbuid" : xbuid,
+					"xtype" : xtype,
+					"xstatusjv" : xstatusjv
 				});
-			})
+			});
 
 			$('.datatable').on('click', 'a.btn-voucher-unpost', function(e){
 				e.preventDefault();
 
 				actionPostRequest(getBasepath() + '/FA17/voucher-unpost', {
 					"xvoucher" : $(this).data('xvoucher'),
+					"xfdate" : xfdate,
+					"xtdate" : xtdate,
+					"xyear" : xyear,
+					"xper" : xper,
+					"xbuid" : xbuid,
+					"xtype" : xtype,
+					"xstatusjv" : xstatusjv
 				});
-			})
+			});
+
+			$('.btn-post-all').off('click').on('click', function(e){
+				e.preventDefault();
+
+				actionPostRequest(getBasepath() + '/FA17/post-all', {
+					"selectedVouchers" : selectedVouchers.length > 0 ? selectedVouchers.join(',') : "",
+					"xfdate" : xfdate,
+					"xtdate" : xtdate,
+					"xyear" : xyear,
+					"xper" : xper,
+					"xbuid" : xbuid,
+					"xtype" : xtype,
+					"xstatusjv" : xstatusjv
+				});
+			});
+
+			$('.btn-unpost-all').off('click').on('click', function(e){
+				e.preventDefault();
+
+				actionPostRequest(getBasepath() + '/FA17/unpost-all', {
+					"selectedVouchers" : selectedVouchers.length > 0 ? selectedVouchers.join(',') : "",
+					"xfdate" : xfdate,
+					"xtdate" : xtdate,
+					"xyear" : xyear,
+					"xper" : xper,
+					"xbuid" : xbuid,
+					"xtype" : xtype,
+					"xstatusjv" : xstatusjv
+				});
+			});
+
+			$('.btn-delete-all').off('click').on('click', function(e){
+				e.preventDefault();
+
+				if(!confirm("Are you sure, to delete all Balanced & Suspended vouchers?")){
+					return;
+				}
+
+				actionPostRequest(getBasepath() + '/FA17/delete-all', {
+					"selectedVouchers" : selectedVouchers.length > 0 ? selectedVouchers.join(',') : "",
+					"xfdate" : xfdate,
+					"xtdate" : xtdate,
+					"xyear" : xyear,
+					"xper" : xper,
+					"xbuid" : xbuid,
+					"xtype" : xtype,
+					"xstatusjv" : xstatusjv
+				});
+			});
 		})
 	</script>
 </div>

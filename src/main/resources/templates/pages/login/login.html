@@ -54,6 +54,8 @@
 										<h5 class="mb-0">Login to your account</h5>
 										<span class="d-block text-muted">Enter your credentials below</span>
 
+										<p th:if="${errorMessage}" class="text-center text-danger mt-2" th:text="${errorMessage}">Invalid Credentials</p>
+
 										<div th:if="${param.error}" class="error-message-container d-none text-danger m-2 text-center">Wrong credential</div>
 										<div th:if="${param.logout}" class="error-message-container d-none text-success m-2 text-center">You have been logged out</div>
 										<div class="error-message-container d-none text-danger m-2 text-center">You have been logged out</div>

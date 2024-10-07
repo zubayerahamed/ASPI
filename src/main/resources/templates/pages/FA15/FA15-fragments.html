@@ -362,7 +362,7 @@
 						<td>
 							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/FA15/detail-table?xvoucher=' + ${x.xvoucher} + '&xrow=' + ${x.xrow}" th:href="@{/FA15/detail-table?xvoucher=} + ${x.xvoucher} + '&xrow=' + ${x.xrow}" th:text="${x.xacc + ' - ' + x.accountName}"></a>
 						</td>
-						<td th:text="${x.xsub + ' - ' + x.subAccountName}"></td>
+						<td th:text="${x.xsub != null ? x.xsub + ' - ' + x.subAccountName : ''}"></td>
 						<td th:text="${x.xnote}"></td>
 						<td th:text="${x.xdebit}"></td>
 						<td th:text="${x.xcredit}"></td>

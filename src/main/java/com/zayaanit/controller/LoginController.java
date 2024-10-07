@@ -31,7 +31,7 @@ public class LoginController extends BaseController {
 	}
 
 	@GetMapping
-	public String loadLoginPage(Model model, @RequestParam(required = false) String device) {
+	public String loadLoginPage(Model model, @RequestParam(required = false) String device, @RequestParam(required = false) String error) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
@@ -44,6 +44,7 @@ public class LoginController extends BaseController {
 		}
 
 		model.addAttribute("pageTitle", "Login");
+		if(error != null) model.addAttribute("errorMessage", "Invalid username or password.");
 		log.debug("Login page called at {}", new Date());
 		return LOGAIN_PAGE_PATH;
 	}
