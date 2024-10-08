@@ -19,7 +19,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Menu Code</th>
@@ -34,7 +34,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -102,7 +102,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -118,7 +119,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -173,7 +174,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Screen</th>
@@ -189,7 +190,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -260,7 +261,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -276,7 +278,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -331,7 +333,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th class="text-center">Menu Code</th>
@@ -346,7 +348,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -413,7 +415,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -429,7 +432,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -484,7 +487,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Profile</th>
@@ -496,7 +499,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -512,6 +515,7 @@
 			var extrafieldcontroller = $('#extrafieldcontroller').val();
 			var dependentParam = $('#dependentParam').val();
 			var resetParam = $('#resetParam').val();
+			var tableName = $('#tablename').val();
 
 			var columns = [
 				{
@@ -549,7 +553,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -565,7 +570,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -599,7 +604,7 @@
 
 					$('input[name="'+ fieldId +'"]').val(value);
 					$('#' + fieldId).val(prompt);
-					
+
 					if(resetParam != undefined && resetParam != ''){
 						var resetFields = resetParam.split(',');
 						$.each(resetFields, function(i, j){
@@ -621,7 +626,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>User ID</th>
@@ -634,7 +639,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -697,7 +702,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -713,7 +719,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -769,7 +775,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Business Unit</th>
@@ -782,7 +788,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -840,7 +846,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -856,7 +863,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -913,7 +920,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Group Code</th>
@@ -928,7 +935,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -997,7 +1004,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -1013,7 +1021,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -1070,7 +1078,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Account Code</th>
@@ -1085,7 +1093,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -1154,7 +1162,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -1170,7 +1179,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -1228,7 +1237,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Code</th>
@@ -1242,7 +1251,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -1304,7 +1313,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -1320,7 +1330,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){
@@ -1377,7 +1387,7 @@
 		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
-			<table class="table searchdatatable">
+			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Voucher</th>
@@ -1392,7 +1402,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
 
@@ -1461,7 +1471,8 @@
 				} 
 			});
 
-			var dt = $('.searchdatatable').DataTable({
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
@@ -1477,7 +1488,7 @@
 			//make ajax to call server
 			dt.draw();
 
-			$('.searchdatatable').on('click', 'a.dataindex', function(e){
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				if(mainscreen == 'true'){

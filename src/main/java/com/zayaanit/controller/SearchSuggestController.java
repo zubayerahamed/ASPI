@@ -86,6 +86,7 @@ public class SearchSuggestController {
 		model.addAttribute("detailreloadid", detailreloadid);
 		model.addAttribute("additionalreloadurl", additionalreloadurl);
 		model.addAttribute("additionalreloadid", additionalreloadid);
+		model.addAttribute("tablename", System.currentTimeMillis());
 		return "search-fragments::" + fragmentcode + "-table";
 	}
 
