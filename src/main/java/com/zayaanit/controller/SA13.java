@@ -127,6 +127,21 @@ public class SA13 extends KitController {
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xmenuscreens xmenuscreens, BindingResult bindingResult){
 
+		if(StringUtils.isBlank(xmenuscreens.getXmenu())) {
+			responseHelper.setErrorStatusAndMessage("Menu code required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(xmenuscreens.getXscreen())) {
+			responseHelper.setErrorStatusAndMessage("Screen code required");
+			return responseHelper.getResponse();
+		}
+
+		if(xmenuscreens.getXsequence() < 0) {
+			responseHelper.setErrorStatusAndMessage("Invalid sequence");
+			return responseHelper.getResponse();
+		}
+
 		// VALIDATE XSCREENS
 		modelValidator.validateXmenuscreens(xmenuscreens, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);

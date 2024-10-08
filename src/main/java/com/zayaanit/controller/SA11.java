@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -78,6 +79,26 @@ public class SA11 extends KitController {
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xmenus xmenus, BindingResult bindingResult){
+
+		if(StringUtils.isBlank(xmenus.getXmenu())) {
+			responseHelper.setErrorStatusAndMessage("Menu code required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(xmenus.getXtitle())) {
+			responseHelper.setErrorStatusAndMessage("Menu title required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(xmenus.getXpmenu())) {
+			responseHelper.setErrorStatusAndMessage("Parent menu required");
+			return responseHelper.getResponse();
+		}
+
+		if(xmenus.getXsequence() <= 0) {
+			responseHelper.setErrorStatusAndMessage("Sequence must be greater than 0");
+			return responseHelper.getResponse();
+		}
 
 		// VALIDATE XSCREENS
 		modelValidator.validateXmenus(xmenus, bindingResult, validator);

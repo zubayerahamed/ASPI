@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,6 +74,26 @@ public class SA12 extends KitController {
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xscreens xscreens, BindingResult bindingResult){
+
+		if(StringUtils.isBlank(xscreens.getXscreen())) {
+			responseHelper.setErrorStatusAndMessage("Screen code required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(xscreens.getXtitle())) {
+			responseHelper.setErrorStatusAndMessage("Screen title required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(xscreens.getXtype())) {
+			responseHelper.setErrorStatusAndMessage("Screen type required");
+			return responseHelper.getResponse();
+		}
+
+		if(xscreens.getXnum() < 0) {
+			responseHelper.setErrorStatusAndMessage("Invalid starting from");
+			return responseHelper.getResponse();
+		}
 
 		// VALIDATE XSCREENS
 		modelValidator.validateXscreens(xscreens, bindingResult, validator);
