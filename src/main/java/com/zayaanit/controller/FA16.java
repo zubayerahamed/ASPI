@@ -51,8 +51,8 @@ import com.zayaanit.service.AcheaderService;
  * @since Jul 3, 2023
  */
 @Controller
-@RequestMapping("/FA15")
-public class FA15 extends KitController {
+@RequestMapping("/FA16")
+public class FA16 extends KitController {
 
 	@Autowired private AcheaderRepo acheaderRepo;
 	@Autowired private CabunitRepo cabunitRepo;
@@ -66,13 +66,13 @@ public class FA15 extends KitController {
 
 	@Override
 	protected String screenCode() {
-		return "FA15";
+		return "FA16";
 	}
 
 	@Override
 	protected String pageTitle() {
 		if(this.pageTitle != null) return this.pageTitle;
-		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "FA15"));
+		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "FA16"));
 		if(!op.isPresent()) return null;
 		this.pageTitle = op.get().getXtitle();
 		return this.pageTitle;
@@ -85,7 +85,7 @@ public class FA15 extends KitController {
 		if(isAjaxRequest(request)) {
 			if("RESET".equalsIgnoreCase(xvoucher)) {
 				model.addAttribute("acheader", Acheader.getDefaultInstance());
-				return "pages/FA15/FA15-fragments::main-form";
+				return "pages/FA16/FA16-fragments::main-form";
 			}
 
 			Optional<Acheader> op = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xvoucher)));
@@ -105,27 +105,27 @@ public class FA15 extends KitController {
 			}
 			model.addAttribute("acheader", acheader != null ? acheader : Acheader.getDefaultInstance());
 
-			List<Cadoc> cdocList = cadocRepo.findAllByZidAndXscreenAndXtrnnum(sessionManager.getBusinessId(), "FA15", Integer.valueOf(xvoucher));
+			List<Cadoc> cdocList = cadocRepo.findAllByZidAndXscreenAndXtrnnum(sessionManager.getBusinessId(), "FA16", Integer.valueOf(xvoucher));
 			model.addAttribute("documents", cdocList);
 
-			return "pages/FA15/FA15-fragments::main-form";
+			return "pages/FA16/FA16-fragments::main-form";
 		}
 
 		model.addAttribute("acheader", Acheader.getDefaultInstance());
-		return "pages/FA15/FA15";
+		return "pages/FA16/FA16";
 	}
 
 	@GetMapping("/detail-table")
 	public String detailFormFragment(@RequestParam String xvoucher, @RequestParam String xrow, @RequestParam(required = false) Integer xacc, Model model) {
 		if("RESET".equalsIgnoreCase(xvoucher) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("acheader", Acheader.getDefaultInstance());
-			return "pages/FA15/FA15-fragments::detail-table";
+			return "pages/FA16/FA16-fragments::detail-table";
 		}
 
 		Optional<Acheader> oph = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xvoucher)));
 		if(!oph.isPresent()) {
 			model.addAttribute("acheader", Acheader.getDefaultInstance());
-			return "pages/FA15/FA15-fragments::detail-table";
+			return "pages/FA16/FA16-fragments::detail-table";
 		}
 		model.addAttribute("acheader", oph.get());
 
@@ -157,7 +157,7 @@ public class FA15 extends KitController {
 			}
 
 			model.addAttribute("acdetail", acdetail);
-			return "pages/FA15/FA15-fragments::detail-table";
+			return "pages/FA16/FA16-fragments::detail-table";
 		}
 
 		Optional<Acdetail> acdetailOp = acdetailRepo.findById(new AcdetailPK(sessionManager.getBusinessId(), Integer.parseInt(xvoucher), Integer.parseInt(xrow)));
@@ -173,7 +173,7 @@ public class FA15 extends KitController {
 		}
 
 		model.addAttribute("acdetail", acdetail);
-		return "pages/FA15/FA15-fragments::detail-table";
+		return "pages/FA16/FA16-fragments::detail-table";
 	}
 
 	@PostMapping("/store")
@@ -214,15 +214,15 @@ public class FA15 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(acheader.getSubmitFor())) {
-			acheader.setXtype("General");
+			acheader.setXtype("Imported");
 			acheader.setXstatusjv("Balanced");
-			acheader.setXvoucher(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "FA15"));
+			acheader.setXvoucher(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "FA16"));
 			acheader.setZid(sessionManager.getBusinessId());
 			acheader = acheaderRepo.save(acheader);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + acheader.getXvoucher()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher="+ acheader.getXvoucher() +"&xrow=RESET"));
+			reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acheader.getXvoucher()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/FA16/detail-table?xvoucher="+ acheader.getXvoucher() +"&xrow=RESET"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Voucher created successfully");
 			return responseHelper.getResponse();
@@ -246,8 +246,8 @@ public class FA15 extends KitController {
 		existObj = acheaderRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + existObj.getXvoucher()));
-		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher="+ acheader.getXvoucher() +"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + existObj.getXvoucher()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/FA16/detail-table?xvoucher="+ acheader.getXvoucher() +"&xrow=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Voucher updated successfully");
 		return responseHelper.getResponse();
@@ -316,8 +316,8 @@ public class FA15 extends KitController {
 			acheaderRepo.save(acheader);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + acdetail.getXvoucher()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher=" + acdetail.getXvoucher() + "&xrow=RESET"));
+			reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acdetail.getXvoucher()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/FA16/detail-table?xvoucher=" + acdetail.getXvoucher() + "&xrow=RESET"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Voucher detail added successfully");
 			return responseHelper.getResponse();
@@ -342,8 +342,8 @@ public class FA15 extends KitController {
 		acheaderRepo.save(acheader);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + acdetail.getXvoucher()));
-		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher=" + acdetail.getXvoucher() + "&xrow=" + exist.getXrow()));
+		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acdetail.getXvoucher()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/FA16/detail-table?xvoucher=" + acdetail.getXvoucher() + "&xrow=" + exist.getXrow()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Voucher detail updated successfully");
 		return responseHelper.getResponse();
@@ -369,8 +369,8 @@ public class FA15 extends KitController {
 		acheaderRepo.delete(obj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=RESET"));
-		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher=RESET&xrow=RESET"));
+		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=RESET"));
+		reloadSections.add(new ReloadSection("detail-table-container", "/FA16/detail-table?xvoucher=RESET&xrow=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -406,8 +406,8 @@ public class FA15 extends KitController {
 		acheaderRepo.save(acheader);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + xvoucher));
-		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher="+xvoucher+"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + xvoucher));
+		reloadSections.add(new ReloadSection("detail-table-container", "/FA16/detail-table?xvoucher="+xvoucher+"&xrow=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

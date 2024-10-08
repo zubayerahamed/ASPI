@@ -108,7 +108,7 @@ public class FA14 extends KitController {
 
 		if("Sub Account".equals(acsub.getXtype())) {
 			if(acsub.getXacc() == null) {
-				responseHelper.setErrorStatusAndMessage("Account required");
+				responseHelper.setErrorStatusAndMessage("Account selection required if account type is Sub Account");
 				return responseHelper.getResponse();
 			}
 		}

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -94,6 +95,20 @@ public class FA12 extends KitController {
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acgroup acgroup, BindingResult bindingResult){
+		if(acgroup.getXagcode() == null) {
+			responseHelper.setErrorStatusAndMessage("Group code required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(acgroup.getXagname())) {
+			responseHelper.setErrorStatusAndMessage("Group name required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(acgroup.getXagtype())) {
+			responseHelper.setErrorStatusAndMessage("Group type required");
+			return responseHelper.getResponse();
+		}
 
 		// VALIDATE XSCREENS
 		modelValidator.validateAcgroup(acgroup, bindingResult, validator);

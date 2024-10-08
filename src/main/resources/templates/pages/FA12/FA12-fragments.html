@@ -54,6 +54,7 @@
 								<option value="Expenditure">Expenditure</option>
 							</select>
 							<input type="text" class="form-control" th:if="${acgroup.xaglevel ne 1 or acgroup.xagcode ne null}" th:value="*{xagtype}" disabled>
+							<input type="hidden" class="form-control" th:if="${acgroup.xaglevel ne 1 or acgroup.xagcode ne null}" th:field="*{xagtype}">
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${acgroup.xaglevel ne 1}">

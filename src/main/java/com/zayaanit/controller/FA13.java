@@ -103,12 +103,17 @@ public class FA13 extends KitController {
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acmst acmst, BindingResult bindingResult){
 
+		if(acmst.getXacc() == null) {
+			responseHelper.setErrorStatusAndMessage("Account code required");
+			return responseHelper.getResponse();
+		}
+
 		// VALIDATE XSCREENS
 		modelValidator.validateAcmst(acmst, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
 		if(acmst.getXgroup() == null) {
-			responseHelper.setErrorStatusAndMessage("Group required");
+			responseHelper.setErrorStatusAndMessage("Account group required");
 			return responseHelper.getResponse();
 		}
 

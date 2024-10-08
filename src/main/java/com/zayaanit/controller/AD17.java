@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,10 +73,15 @@ public class AD17 extends KitController {
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Cabunit cabunit, BindingResult bindingResult){
-		
+
 		if(cabunit.getXbuid() == null) {
 			Integer xbuid = cabunitRepo.getNextAvailableId(sessionManager.getBusinessId());
 			cabunit.setXbuid(xbuid);
+		}
+
+		if(StringUtils.isBlank(cabunit.getXname())) {
+			responseHelper.setErrorStatusAndMessage("Business unit name required");
+			return responseHelper.getResponse();
 		}
 
 		// VALIDATE XSCREENS

@@ -73,11 +73,6 @@ public class FA11 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-//		if(acdef.getXaccpl() == null) {
-//			responseHelper.setErrorStatusAndMessage("Retained Earnings Account required");
-//			return responseHelper.getResponse();
-//		}
-
 		if(acdef.getXclyear() == null) {
 			responseHelper.setErrorStatusAndMessage("Closed year required");
 			return responseHelper.getResponse();

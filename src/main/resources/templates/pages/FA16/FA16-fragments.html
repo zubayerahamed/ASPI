@@ -3,7 +3,7 @@
 		<div class="card-header d-sm-flex align-items-sm-center p-0"></div>
 
 		<div class="card-body">
-			<form id="mainform" class="form-validate-jquery" th:action="@{/FA15/store}" th:object="${acheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/FA16/store}" th:object="${acheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
 				<input type="hidden" th:if="${acheader.xvoucher ne null}" th:field="*{xvoucher}">
 
@@ -19,13 +19,13 @@
 										disabled="disabled">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LFA15/1?hint=', 
+										data-reloadurl='/search/table/LFA15/2?hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xvoucher',
 										data-mainscreen=true,
-										data-mainreloadurl='/FA15?xvoucher=',
+										data-mainreloadurl='/FA16?xvoucher=',
 										data-mainreloadid='main-form-container',
-										data-detailreloadurl='/FA15/detail-table?xrow=RESET&xvoucher=',
+										data-detailreloadurl='/FA16/detail-table?xrow=RESET&xvoucher=',
 										data-detailreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -119,10 +119,10 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/FA15?xvoucher=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/FA15/detail-table?xvoucher=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/FA16?xvoucher=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/FA16/detail-table?xvoucher=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${acheader.xvoucher ne null and acheader.xstatusjv ne 'Posted'}" th:attr="data-url=@{/FA15?xvoucher=} + ${acheader.xvoucher}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${acheader.xvoucher ne null and acheader.xstatusjv ne 'Posted'}" th:attr="data-url=@{/FA16?xvoucher=} + ${acheader.xvoucher}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
 						<button th:if="${acheader.xvoucher ne null and acheader.xstatusjv ne 'Posted'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${acheader.xvoucher eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
@@ -134,10 +134,10 @@
 		<div class="card-footer" th:if="${acheader.xvoucher ne null}">
 			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
 			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${acheader.xvoucher ne null and acheader.xstatusjv ne 'Posted'}">
-				<input type="hidden" name="screenId" value="FA15"/>
+				<input type="hidden" name="screenId" value="FA16"/>
 				<input type="hidden" name="transactionId" th:value="${acheader.xvoucher}"/>
 				<input type="hidden" name="mainreloadid" value="main-form-container"/>
-				<input type="hidden" name="mainreloadurl" value="/FA15?xvoucher="/>
+				<input type="hidden" name="mainreloadurl" value="/FA16?xvoucher="/>
 				<div class="row">
 					<div class="col-md-3">
 						<div class="form-group mb-3">
@@ -172,7 +172,7 @@
 										th:attr="
 											data-url=@{/AD21/delete/} + ${x.xdocid}, 
 											data-mainreloadid='main-form-container',
-											data-mainreloadurl='/FA15?xvoucher='" 
+											data-mainreloadurl='/FA16?xvoucher='" 
 										type="button" 
 										class="btn btn-danger btn-sm btn-doc-delete">
 									<i class="ph-trash"></i>
@@ -264,7 +264,7 @@
 		</div>
 
 		<div class="card-body" th:if="${acheader.xstatusjv ne 'Posted'}">
-			<form id="detailform" class="form-validate-jquery" th:action="@{/FA15/detail/store}" th:object="${acdetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/FA16/detail/store}" th:object="${acdetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" name="submitFor" th:value="*{submitFor}"/>
 				<input type="hidden" name="xvoucher" th:value="*{xvoucher}">
 				<input type="hidden" name="xrow" th:value="*{xrow}">
@@ -287,7 +287,7 @@
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xsub',
 										data-mainscreen=true,
-										data-mainreloadurl='/FA15/detail-table?xvoucher='+ ${acdetail.xvoucher} +'&xrow='+ ${acdetail.xrow} +'&xacc=',
+										data-mainreloadurl='/FA16/detail-table?xvoucher='+ ${acdetail.xvoucher} +'&xrow='+ ${acdetail.xrow} +'&xacc=',
 										data-mainreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -340,10 +340,10 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/FA15/detail-table?xvoucher='+ ${acdetail.xvoucher} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/FA16/detail-table?xvoucher='+ ${acdetail.xvoucher} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${acdetail.xrow ne 0}" th:attr="data-url=@{/FA15/detail-table?xvoucher=} + ${acdetail.xvoucher} + '&xrow=' + ${acdetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${acdetail.xrow ne 0}" th:attr="data-url=@{/FA16/detail-table?xvoucher=} + ${acdetail.xvoucher} + '&xrow=' + ${acdetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
 						<button th:if="${acdetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${acdetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
@@ -365,7 +365,7 @@
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
-							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/FA15/detail-table?xvoucher=' + ${x.xvoucher} + '&xrow=' + ${x.xrow}" th:href="@{/FA15/detail-table?xvoucher=} + ${x.xvoucher} + '&xrow=' + ${x.xrow}" th:text="${x.xacc + ' - ' + x.accountName}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/FA16/detail-table?xvoucher=' + ${x.xvoucher} + '&xrow=' + ${x.xrow}" th:href="@{/FA16/detail-table?xvoucher=} + ${x.xvoucher} + '&xrow=' + ${x.xrow}" th:text="${x.xacc + ' - ' + x.accountName}"></a>
 						</td>
 						<td th:text="${x.xsub != null ? x.xsub + ' - ' + x.subAccountName : ''}"></td>
 						<td th:text="${x.xnote}"></td>
