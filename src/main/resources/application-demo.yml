@@ -10,9 +10,9 @@ logging:
 
 app: 
   tomcat-service: Tomcat9
-  logging-path: C:/logs/aspi
+  logging-path: C:/KIT/ASPI/logs
   template-path: C:/cr_live_reports
-  backup-location: C:/logs/aspi/backup
+  backup-location: C:/KIT/ASPI/backup
   database-name: aspi
   version: "@project.version@"
 
