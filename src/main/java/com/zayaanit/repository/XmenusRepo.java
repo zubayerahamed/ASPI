@@ -1,6 +1,7 @@
 package com.zayaanit.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,6 @@ import com.zayaanit.entity.pk.XmenusPK;
 public interface XmenusRepo extends JpaRepository<Xmenus, XmenusPK> {
 
 	List<Xmenus> findAllByZidAndXpmenu(Integer zid, String xpmenu);
+
+	List<Xmenus> findAllByZidAndXpmenuAndXmenuIn(Integer zid, String xpmenu, Set<String> xmenus);
 }

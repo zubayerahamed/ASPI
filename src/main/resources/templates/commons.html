@@ -78,7 +78,7 @@
 			</ul>
 
 			<ul class="nav flex-row justify-content-end order-1 order-lg-2">
-				<li class="nav-item nav-item-dropdown-lg dropdown ms-lg-2" th:if="${loggedInUser.switchBusiness}">
+				<li class="nav-item nav-item-dropdown-lg dropdown ms-lg-2" th:if="${loggedInUser.switchBusiness and not #lists.isEmpty(otherBusinesses)}">
 					<a href="#" class="navbar-nav-link align-items-center rounded-pill p-1" data-bs-toggle="dropdown">
 						<div class="status-indicator-container">
 							<!-- <img th:src="@{/assets/images/demo/users/face11.jpg}" class="w-32px h-32px rounded-pill" alt=""> -->
@@ -88,7 +88,7 @@
 						<span class="d-none d-lg-inline-block mx-lg-2">Switch Business</span>
 					</a>
 
-					<div class="dropdown-menu dropdown-menu-end">
+					<div th:if="${not #lists.isEmpty(otherBusinesses)}" class="dropdown-menu dropdown-menu-end">
 						<a th:each="user : ${otherBusinesses}" th:href="@{/switchbusiness/} + ${user.zid}" class="dropdown-item">
 							<i class="ph-briefcase me-2" style="font-size: 25px;"></i><span th:text="${user.businessName}"></span>
 						</a>
@@ -166,6 +166,14 @@
 							</a>
 						</li>
 
+						<!-- Sub menus -->
+						<div
+							th:if="${not #lists.isEmpty(master.subMenus)}"
+							th:each="submenu : ${master.subMenus}"
+							th:remove="tag">
+							<div th:remove="tag" th:replace="commons :: submenu-fragment(${submenu})"></div>
+						</div>
+
 					</div>
 
 				</ul>
@@ -177,6 +185,28 @@
 
 	</div>
 </div>
+
+
+<li class="nav-item nav-item-submenu" th:fragment="submenu-fragment(master)" xmlns:th="http://www.thymeleaf.org">
+	<a href="#" class="nav-link"><i th:classappend="${#strings.isEmpty(master.menuIcon) ? 'ph-house' :master.menuIcon}"></i><span th:text="${master.menuTitle}"></span></a>
+	<ul class="nav-group-sub collapse">
+
+		<!-- screens -->
+		<li class="nav-item" th:each="screen : ${master.screens}">
+			<a th:href="@{/} + ${screen.xscreen}" class="nav-link" th:text="${screen.xtitle}"></a>
+		</li>
+
+		<!-- sub menus -->
+		<div
+			th:if="${not #lists.isEmpty(master.subMenus)}"
+			th:each="submenu : ${master.subMenus}"
+			th:remove="tag">
+			<div th:remove="tag" th:replace="commons :: submenu-fragment(${submenu})"></div>
+		</div>
+
+	</ul>
+</li>
+
 
 
 <div th:fragment="notification-section" xmlns:th="http://www.thymeleaf.org">
