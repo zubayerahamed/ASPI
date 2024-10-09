@@ -17,7 +17,9 @@ import com.zayaanit.entity.pk.XmenuscreensPK;
 public interface XmenuscreensRepo extends JpaRepository<Xmenuscreens, XmenuscreensPK> {
 
 	List<Xmenuscreens> findAllByZid(Integer zid);
-	
+
+	List<Xmenuscreens> findAllByZidAndXmenu(Integer zid, String xmenu);
+
 	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from xmenuscreens where zid=?1", nativeQuery = true)
 	public Integer getNextAvailableRow(Integer zid);
 }

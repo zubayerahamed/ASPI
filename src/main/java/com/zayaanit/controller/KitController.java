@@ -3,6 +3,7 @@ package com.zayaanit.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +16,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.zayaanit.entity.Xmenus;
+import com.zayaanit.entity.Xmenuscreens;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.validator.ModelValidator;
+import com.zayaanit.model.MenuTree;
 import com.zayaanit.model.MyUserDetails;
 import com.zayaanit.repository.XcodesRepo;
+import com.zayaanit.repository.XmenusRepo;
+import com.zayaanit.repository.XmenuscreensRepo;
 import com.zayaanit.repository.XprofilesdtRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
@@ -35,6 +42,8 @@ import com.zayaanit.service.PrintingService;
  */
 public abstract class KitController extends BaseController {
 
+	@Autowired protected XmenuscreensRepo xmenuscreensRepo;
+	@Autowired protected XmenusRepo xmenusRepo;
 	@Autowired protected XscreensRepo xscreenRepo;
 	@Autowired protected XcodesRepo xcodesRepo;
 	@Autowired protected ModelValidator modelValidator;
@@ -98,8 +107,53 @@ public abstract class KitController extends BaseController {
 		return selectedBusinessWiseUser;
 	}
 
+	@ModelAttribute("masterMeus")
+	protected List<MenuTree> masterMenus(){
+		List<MenuTree> masterMenus = new ArrayList<MenuTree>();
+
+		// get all the masters
+		List<Xmenus> masters = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), "M");
+		masters.sort(Comparator.comparing(Xmenus::getXsequence));
+		for(Xmenus xmenu : masters) {
+
+			MenuTree mtree = constractTheMenu(xmenu);
+			masterMenus.add(mtree);
+
+		}
+
+		return masterMenus;
+	}
+
+	private MenuTree constractTheMenu(Xmenus xmenu) {
+
+		MenuTree mtree = new MenuTree();
+		mtree.setMenuCode(xmenu.getXmenu());
+		mtree.setMenuTitle(xmenu.getXtitle());
+		mtree.setMenuIcon(xmenu.getXicon());
+
+		// get all the assigned screens
+		List<Xmenuscreens> screens = xmenuscreensRepo.findAllByZidAndXmenu(sessionManager.getBusinessId(), xmenu.getXmenu());
+		screens.sort(Comparator.comparing(Xmenuscreens::getXsequence));
+		for(Xmenuscreens screen : screens) {
+			Optional<Xscreens> xscreenOp = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), screen.getXscreen()));
+			if(xscreenOp.isPresent()) mtree.getScreens().add(xscreenOp.get());
+		}
+
+		// get sub menus
+		List<Xmenus> subMenus = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), xmenu.getXmenu());
+		for(Xmenus subMenu : subMenus) {
+			mtree.getSubMenus().add(constractTheMenu(subMenu));
+		}
+
+		return mtree;
+
+	}
+
 	@ModelAttribute("sidebarMenus")
 	protected List<Xscreens> menusList(){
+		
+		
+		
 		List<Xscreens> list = xscreenRepo.findAllByXtypeAndZid("Screen", sessionManager.getBusinessId());
 
 		if(sessionManager.getLoggedInUserDetails().isAdmin()) return list;
