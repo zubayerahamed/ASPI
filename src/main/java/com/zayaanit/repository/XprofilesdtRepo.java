@@ -16,4 +16,8 @@ import com.zayaanit.entity.pk.XprofilesdtPK;
 public interface XprofilesdtRepo extends JpaRepository<Xprofilesdt, XprofilesdtPK> {
 
 	public List<Xprofilesdt> findAllByXprofileAndZid(String xprofile, Integer zid);
+
+	public void deleteAllByZidAndXmenu(Integer zid, String xmenu);
+
+	public void deleteAllByZidAndXscreen(Integer zid, String xscreen);
 }

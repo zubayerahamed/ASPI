@@ -25,7 +25,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
-		.append(fromClause("xscreens"))
+		.append(fromClause("xscreens im"))
 		.append(whereClause(searchText))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
@@ -42,7 +42,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
-		.append(fromClause("xscreens"))
+		.append(fromClause("xscreens im"))
 		.append(whereClause(searchText));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
@@ -59,7 +59,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 	}
 
 	private StringBuilder selectClause() {
-		return new StringBuilder("SELECT * ");
+		return new StringBuilder("SELECT im.* ");
 	}
 
 	private StringBuilder fromClause(String tableName) {

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +28,8 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.XmenusRepo;
+import com.zayaanit.repository.XmenuscreensRepo;
+import com.zayaanit.repository.XprofilesdtRepo;
 
 /**
  * @author Zubayer Ahamed
@@ -37,6 +40,8 @@ import com.zayaanit.repository.XmenusRepo;
 public class SA11 extends KitController {
 
 	@Autowired private XmenusRepo xmenusRepo;
+	@Autowired private XmenuscreensRepo xmenuscreensRepo;
+	@Autowired private XprofilesdtRepo xprofilesdtRepo;
 
 	private String pageTitle = null;
 
@@ -137,6 +142,7 @@ public class SA11 extends KitController {
 	}
 
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam String xmenu){
 		Optional<Xmenus> op = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), xmenu));
@@ -144,6 +150,12 @@ public class SA11 extends KitController {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do delete");
 			return responseHelper.getResponse();
 		}
+
+		// delete all profile details
+		xprofilesdtRepo.deleteAllByZidAndXmenu(sessionManager.getBusinessId(), xmenu);
+
+		// delete all menu screens
+		xmenuscreensRepo.deleteAllByZidAndXmenu(sessionManager.getBusinessId(), xmenu);
 
 		Xmenus obj = op.get();
 		xmenusRepo.delete(obj);

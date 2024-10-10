@@ -93,6 +93,10 @@ public abstract class KitController extends BaseController {
 			if(acsubOp.isPresent()) name = acsubOp.get().getXname();
 		}
 
+		if(user.getXprofile() != null) {
+			name = name + " - " + user.getXprofile().getXprofile();
+		}
+
 		return name;
 	}
 

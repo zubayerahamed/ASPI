@@ -180,9 +180,6 @@
 						<th>Screen</th>
 						<th>Title</th>
 						<th>Type</th>
-						<th>Starting</th>
-						<th>Icon</th>
-						<th>Keyword</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -223,19 +220,6 @@
 					suffix : [0],
 					name : 'xtype',
 					rendername: 'xtype',
-				}, {
-					suffix : [0],
-					class: 'text-end',
-					name : 'xnum',
-					rendername: 'xnum',
-				}, {
-					suffix : [0],
-					name : 'xicon',
-					rendername: 'xicon',
-				}, {
-					suffix : [0],
-					name : 'xkeywords',
-					rendername: 'xkeywords',
 				}
 			];
 
@@ -312,7 +296,7 @@
 
 					$('input[name="'+ fieldId +'"]').val(value);
 					$('#' + fieldId).val(prompt);
-					
+
 					if(resetParam != undefined && resetParam != ''){
 						var resetFields = resetParam.split(',');
 						$.each(resetFields, function(i, j){

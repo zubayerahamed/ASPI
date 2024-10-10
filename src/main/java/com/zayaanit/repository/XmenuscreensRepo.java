@@ -24,4 +24,8 @@ public interface XmenuscreensRepo extends JpaRepository<Xmenuscreens, Xmenuscree
 
 	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from xmenuscreens where zid=?1", nativeQuery = true)
 	public Integer getNextAvailableRow(Integer zid);
+
+	public void deleteAllByZidAndXmenu(Integer zid, String xmenu);
+
+	public void deleteAllByZidAndXscreen(Integer zid, String xscreen);
 }

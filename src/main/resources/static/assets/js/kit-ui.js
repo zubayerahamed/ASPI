@@ -415,4 +415,37 @@ kit.ui.init = function(){
  
 $(document).ready(function(){
 	kit.ui.init();
+
+	$(".menu-search").off('input').on('input', function(){
+		var hint = $(this).val();
+		console.log(hint);
+
+		$('.menu-search-container').css('display', 'block');
+
+		var targetElement = $(this);
+		var serachUrl = $(this).attr('search-url');
+		inset = $(this).attr('inset');
+		if(inset == undefined) inset = 'leftinset'
+		if(hint == '') return;
+
+		if(debounce != null) clearTimeout(debounce);
+		debounce = setTimeout(function(){
+			$.ajax({
+				url : getBasepath() + '/' + serachUrl + '/' + hint,
+				type : 'GET',
+				success : function(data) {
+					generateSearchResult(targetElement, data);
+				},
+				error : function(jqXHR, status, errorThrown){
+					//showMessage(status, "Something went wrong .... ");
+				}
+			});
+		}, 200);
+		customKeyPress();
+	});
+
+	$(".menu-search").off('blur').on('blur', function(){
+		$('.menu-search-container').css('display', 'none');
+	})
+	
 })

@@ -6,9 +6,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +25,8 @@ import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.repository.XmenuscreensRepo;
+import com.zayaanit.repository.XprofilesdtRepo;
 
 /**
  * @author Zubayer Ahamed
@@ -33,6 +37,9 @@ import com.zayaanit.model.ReloadSection;
 public class SA12 extends KitController {
 
 	private String pageTitle = null;
+
+	@Autowired private XmenuscreensRepo xmenuscreensRepo;
+	@Autowired private XprofilesdtRepo xprofilesdtRepo;
 
 	@Override
 	protected String screenCode() {
@@ -131,6 +138,7 @@ public class SA12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam String xscreen){
 		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), xscreen));
@@ -138,6 +146,12 @@ public class SA12 extends KitController {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do delete");
 			return responseHelper.getResponse();
 		}
+
+		// delete all from profile details
+		xprofilesdtRepo.deleteAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+
+		// delete all from xmenu screens
+		xmenuscreensRepo.deleteAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
 
 		Xscreens obj = op.get();
 		xscreenRepo.delete(obj);
