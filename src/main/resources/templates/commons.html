@@ -95,6 +95,23 @@
 					</div>
 				</li>
 
+				<li class="nav-item nav-item-dropdown-lg dropdown ms-lg-2" th:if="${not #lists.isEmpty(otherProfiles)}">
+					<a href="#" class="navbar-nav-link align-items-center rounded-pill p-1" data-bs-toggle="dropdown">
+						<div class="status-indicator-container">
+							<!-- <img th:src="@{/assets/images/demo/users/face11.jpg}" class="w-32px h-32px rounded-pill" alt=""> -->
+							<i class="ph-briefcase" style="font-size: 25px;"></i>
+							<span class="status-indicator bg-success"></span>
+						</div>
+						<span class="d-none d-lg-inline-block mx-lg-2">Switch Profile</span>
+					</a>
+
+					<div th:if="${not #lists.isEmpty(otherProfiles)}" class="dropdown-menu dropdown-menu-end">
+						<a th:each="profile : ${otherProfiles}" th:href="@{/switchprofile?xprofile=} + ${profile.xprofile}" class="dropdown-item">
+							<i class="ph-briefcase me-2" style="font-size: 25px;"></i><span th:text="${profile.xprofile}"></span>
+						</a>
+					</div>
+				</li>
+
 				<li class="nav-item nav-item-dropdown-lg dropdown ms-lg-2">
 					<a href="#" class="navbar-nav-link align-items-center rounded-pill p-1" data-bs-toggle="dropdown">
 						<div class="status-indicator-container">

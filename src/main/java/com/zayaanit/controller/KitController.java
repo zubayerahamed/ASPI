@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,11 +23,13 @@ import com.zayaanit.entity.Xmenuscreens;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
+import com.zayaanit.entity.Xuserprofiles;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
+import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.entity.validator.ModelValidator;
 import com.zayaanit.model.MenuTree;
 import com.zayaanit.model.MyUserDetails;
@@ -39,6 +40,7 @@ import com.zayaanit.repository.XmenuscreensRepo;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XprofilesdtRepo;
 import com.zayaanit.repository.XscreensRepo;
+import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.repository.ZbusinessRepo;
 import com.zayaanit.service.PrintingService;
@@ -61,6 +63,7 @@ public abstract class KitController extends BaseController {
 	@Autowired protected XusersRepo xusersRepo;
 	@Autowired protected ZbusinessRepo zbusinessRepo;
 	@Autowired protected AcsubRepo acsubRepo;
+	@Autowired protected XuserprofilesRepo xuserprofilesRepo;
 
 	@ModelAttribute("appVersion")
 	protected String appVersion() {
@@ -117,6 +120,30 @@ public abstract class KitController extends BaseController {
 		}
 
 		return allActiveBusinesses;
+	}
+
+	@ModelAttribute("otherProfiles")
+	protected List<Xprofiles> otherProfiles() {
+		Optional<Xusers> userOp = xusersRepo.findById(new XusersPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername()));
+		if (!userOp.isPresent()) {
+			return Collections.emptyList();
+		}
+
+		Xusers user = userOp.get();
+		if(Boolean.TRUE.equals(user.getZadmin())) return Collections.emptyList();
+
+		List<Xprofiles> allActiveProfiles = new ArrayList<>();
+
+		List<Xuserprofiles> usersProfiles = xuserprofilesRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), user.getZemail());
+		usersProfiles = usersProfiles.stream().filter(f -> !f.getXprofile().equals(sessionManager.getLoggedInUserDetails().getXprofile().getXprofile())).collect(Collectors.toList());
+		usersProfiles.sort(Comparator.comparing(Xuserprofiles::getXprofile));
+
+		for(Xuserprofiles up : usersProfiles) {
+			Optional<Xprofiles> profileOp = xprofilesRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), up.getXprofile()));
+			if(profileOp.isPresent()) allActiveProfiles.add(profileOp.get());
+		}
+
+		return allActiveProfiles;
 	}
 
 	@ModelAttribute("masterMeus")

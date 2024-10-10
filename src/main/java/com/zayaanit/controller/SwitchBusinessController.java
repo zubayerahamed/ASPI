@@ -19,22 +19,12 @@ import com.zayaanit.repository.ZbusinessRepo;
  */
 @Controller
 @RequestMapping("/switchbusiness")
-public class SwitchBusinessController extends KitController {
+public class SwitchBusinessController extends BaseController {
 
 	@Autowired
 	private ZbusinessRepo zbusinessRepo;
 	@Autowired
 	private XusersRepo xusersRepo;
-
-	@Override
-	protected String screenCode() {
-		return null;
-	}
-
-	@Override
-	protected String pageTitle() {
-		return null;
-	}
 
 	@GetMapping("/{businessId}")
 	public String loadBusiness(@PathVariable Integer businessId) {

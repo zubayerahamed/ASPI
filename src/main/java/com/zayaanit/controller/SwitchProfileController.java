@@ -19,20 +19,10 @@ import com.zayaanit.repository.XprofilesdtRepo;
  */
 @Controller
 @RequestMapping("/switchprofile")
-public class SwitchProfileController extends KitController {
+public class SwitchProfileController extends BaseController {
 
 	@Autowired private XprofilesRepo xprofileRepo;
 	@Autowired private XprofilesdtRepo xprofilesdtRepo;
-
-	@Override
-	protected String screenCode() {
-		return null;
-	}
-
-	@Override
-	protected String pageTitle() {
-		return null;
-	}
 
 	@GetMapping
 	public String loadBusiness(@RequestParam String xprofile) {
