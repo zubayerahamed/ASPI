@@ -31,24 +31,8 @@
 				<div class="content">
 
 					<div class="row">
-						<div class="col-xl-3">
-							<div class="main-form-container">
 
-								<div class="card p-0">
-									<div class="card-body p-0">
-										<div class="list-group">
-											<div class="list-group-item bg-light fw-semibold" th:text="${pageTitle}">Group Title</div>
-											<div class="list-group-item" th:each="report : ${reports}">
-												<a class="report-link" th:attr="data-reloadid='header-table-container', data-reloadurl='/' + ${report.prefix} + '/' + ${report.code}" href="#" th:text="${report.title}"></a>
-											</div>
-										</div>
-									</div>
-								</div>
-								
-							</div>
-						</div>
-
-						<div class="col-xl-9">
+						<div class="col-xl-12">
 							<div class="header-table-container">
 								<div th:replace="pages/RP/RP-form::dynamicreport"></div>
 							</div>

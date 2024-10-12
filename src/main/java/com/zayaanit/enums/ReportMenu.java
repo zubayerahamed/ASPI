@@ -10,6 +10,8 @@ import com.zayaanit.model.ReportParamMap;
  */
 public enum ReportMenu {
 
+	
+	
 	armr("FA31", "Money Receipt", "armr.rpt", ReportParamMap.armr, "Y", false),
 	arledd("FA35", "Customer Ledger", "arledd.rpt", ReportParamMap.arledd, "Y", false),
 	opundel("FA35", "Undelivered Items", "opundel.rpt", ReportParamMap.opundel, "Y", false),
@@ -40,6 +42,25 @@ public enum ReportMenu {
 	opshipg("SP11", "Gate Pass", "opshipg.rpt", ReportParamMap.opshipg, "Y", false),
 
 	// REPORT MODULES REPORT
+	RP01("RP01", "User Listing Report", "RP01.rpt", ReportParamMap.RP01, "Y", false),
+	RP02("RP02", "Profile Wise Access Report", "RP02.rpt", ReportParamMap.RP02, "Y", false),
+	RP03("RP03", "Chart of Account Detail", "RP03.rpt", ReportParamMap.RP03, "Y", false),
+	RP04("RP04", "Chart of Account Summary", "RP04.rpt", ReportParamMap.RP04, "Y", false),
+	RP05("RP05", "Sub Account Report", "RP05.rpt", ReportParamMap.RP05, "Y", false),
+	RP06("RP06", "General Journal", "RP06.rpt", ReportParamMap.RP06, "Y", false),
+	RP07("RP07", "Account Ledger", "RP07.rpt", ReportParamMap.RP07, "Y", false),
+	RP08("RP08", "", "RP08.rpt", ReportParamMap.RP08, "Y", false),
+	RP09("RP09", "", "RP09.rpt", ReportParamMap.RP09, "Y", false),
+	RP10("RP10", "", "RP10.rpt", ReportParamMap.RP10, "Y", false),
+	RP11("RP11", "", "RP11.rpt", ReportParamMap.RP11, "Y", false),
+	RP12("RP12", "", "RP12.rpt", ReportParamMap.RP12, "Y", false),
+	RP13("RP13", "", "RP13.rpt", ReportParamMap.RP13, "Y", false),
+	RP14("RP14", "", "RP14.rpt", ReportParamMap.RP14, "Y", false),
+	RP15("RP15", "", "RP15.rpt", ReportParamMap.RP15, "Y", false),
+	RP16("RP16", "", "RP16.rpt", ReportParamMap.RP16, "Y", false),
+	RP17("RP16", "", "RP17.rpt", ReportParamMap.RP17, "Y", false),
+	
+	
 	// RP11
 	opdodtmis("RP11", "Sales Invoice Detail (MIS)", "opdodtmis.rpt", ReportParamMap.opdodtmis, "Y", false),
 	opdosmmis("RP11", "Sales Invoice Summary (MIS)", "opdosmmis.rpt", ReportParamMap.opdosmmis, "Y", false),

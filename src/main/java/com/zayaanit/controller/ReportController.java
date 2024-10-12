@@ -96,7 +96,7 @@ public abstract class ReportController extends KitController {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private ReportFieldService getReportFieldService(ReportMenu reportMenu) {
+	protected ReportFieldService getReportFieldService(ReportMenu reportMenu) {
 		if(reportMenu == null) return null;
 		try {
 			return (ReportFieldService) appContext.getBean(reportMenu.name() + "_Service");

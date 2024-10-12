@@ -85,7 +85,7 @@ public class ModelValidator extends ConstraintValidator {
 		if(!op.isPresent()) return;
 
 		if(SubmitFor.INSERT.equals(xcodes.getSubmitFor()) && op.isPresent()) {
-			errors.rejectValue("xcodes", "Code already exist in the system");
+			errors.rejectValue("xcode", "Code already exist in the system");
 		}
 	}
 
