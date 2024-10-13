@@ -26,7 +26,7 @@ public class AcmstServiceImpl extends AbstractService implements AcmstService {
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
 		.append(fromClause("acmst im"))
-		.append(whereClause(searchText))
+		.append(whereClause(searchText, suffix, dependentParam))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
 
@@ -43,7 +43,7 @@ public class AcmstServiceImpl extends AbstractService implements AcmstService {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
 		.append(fromClause("acmst im"))
-		.append(whereClause(searchText));
+		.append(whereClause(searchText, suffix, dependentParam));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
@@ -67,8 +67,13 @@ public class AcmstServiceImpl extends AbstractService implements AcmstService {
 				.append(" LEFT JOIN acgroup a ON a.xagcode = im.xgroup AND a.zid = im.zid ");
 	}
 
-	private StringBuilder whereClause(String searchText) {
+	private StringBuilder whereClause(String searchText, int suffix, String dependentParam) {
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+
+		if(suffix == 1) {
+			String paramsValues[] = dependentParam.split(",");
+			sql = sql.append(" AND im.xaccusage='"+ paramsValues[0] +"' ");
+		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;
 

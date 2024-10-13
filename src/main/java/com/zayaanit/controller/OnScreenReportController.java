@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/report")
-public class OnScreenReportController extends ReportController {
+public class OnScreenReportController extends AbstractReportController {
 
 	@Override
 	protected String screenCode() {

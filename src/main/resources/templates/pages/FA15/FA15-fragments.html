@@ -305,7 +305,7 @@
 								<input 	type="hidden" class="search-val" name="xsub" th:value="*{xsub}" th:required="${acdetail.accountUsage ne 'Default'}"/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LFA14/1?dependentparam='+${acdetail.accountUsage}+'&hint=', 
+										data-reloadurl='/search/table/LFA14/1?dependentparam='+${acdetail.accountUsage + ',' + acdetail.xacc}+',&hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xsub',
 										data-mainscreen=false" 

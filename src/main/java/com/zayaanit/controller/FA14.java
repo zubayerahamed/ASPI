@@ -161,4 +161,12 @@ public class FA14 extends KitController {
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
 	}
+
+	@GetMapping("/xaccfield")
+	public String loadXaccFieldFragment(@RequestParam String xtype, Model model){
+		Acsub acsub = Acsub.getDefaultInstance();
+		acsub.setXtype(xtype);
+		model.addAttribute("acsub", acsub);
+		return "pages/FA14/FA14-fragments::xacc-field";
+	}
 }

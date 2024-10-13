@@ -60,15 +60,24 @@
 					var dependentValues = '';
 					$.each(dependentArr, function(i, j){
 						var dependentFiledValue = $('input[name="'+ j +'"]').val();
+						var dependentex = $('input[name="'+ j +'"]').attr('dependentex');
 						if(dependentFiledValue == '') {
 							var fieldName = $("label[for='"+j+"']").text();
 							showMessage('error', fieldName + ' required');
 							requiredError = true;
 						}
 						if(dependentValues == ''){
-							dependentValues = dependentFiledValue;
+							if(dependentex != undefined && dependentex != null && dependentex != '') {
+								dependentValues = dependentex + ',' + dependentFiledValue;
+							} else {
+								dependentValues = dependentFiledValue;
+							}
 						} else {
-							dependentValues = dependentValues + ',' + dependentFiledValue;
+							if(dependentex != undefined && dependentex != null && dependentex != '') {
+								dependentValues = dependentValues + ',' + dependentex + ',' + dependentFiledValue;
+							} else {
+								dependentValues = dependentValues + ',' + dependentFiledValue;
+							}
 						}
 					});
 
@@ -98,6 +107,7 @@
 				e.preventDefault();
 				$(this).siblings('input.searchsuggest2').val("");
 				$(this).siblings('input.search-val').val("");
+				$(this).siblings('input.search-val').attr("dependentex", "");
 
 				var resetFieldIds = $(this).data('toreset');
 				if(resetFieldIds != undefined && resetFieldIds != ''){

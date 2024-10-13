@@ -56,27 +56,11 @@
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${acsub.xsub eq null}">
-						<div class="mb-3 form-group">
-							<label class="form-label">Account</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xacc"
-										th:value="${acsub.xacc != null ? acsub.xacc + ' - ' + acsub.accountName : ''}">
-								<input 	type="hidden" class="search-val" name="xacc" th:value="*{xacc}"/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LFA13/0?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xacc',
-										data-mainscreen=false" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
+						<div class="xacc-field-container">
+							<div th:remove="tag" th:include="pages/FA14/FA14-fragments :: xacc-field"></div>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${acsub.xsub ne null}">
+					<div class="col-md-3" th:if="${acsub.xsub ne null and acsub.xtype eq 'Sub Account'}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Account</label>
 							<input type="text" class="form-control" th:value="${acsub.xacc != null ? acsub.xacc + ' - ' + acsub.accountName : ''}" disabled>
@@ -124,6 +108,42 @@
 				deleteRequest($(this).data('url'));
 			});
 
+			$('#xtype').on('change', function(){
+				sectionReloadAjaxReq({
+					id : 'xacc-field-container',
+					url : '/FA14/xaccfield?xtype=' + $(this).val()
+				});
+			})
+
+		})
+	</script>
+</div>
+
+
+<div th:fragment="xacc-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group" th:if="${acsub.xtype eq 'Sub Account'}">
+		<label class="form-label">Account</label>
+		<div class="input-group">
+			<input 	type="text" 
+					class="form-control searchsuggest2"
+					id="xacc"
+					th:value="${acsub.xacc != null ? acsub.xacc + ' - ' + acsub.accountName : ''}">
+			<input 	type="hidden" class="search-val" name="xacc" th:value="*{xacc}" required/>
+			<span 	class="input-group-text btn-search" 
+					th:attr="
+					data-reloadurl='/search/table/LFA13/1?dependentparam='+${acsub.xtype}+'&hint=', 
+					data-reloadid='search-suggest-results-container', 
+					data-fieldid='xacc',
+					data-mainscreen=false" 
+					style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+			<span 	class="input-group-text btn-search-clear" 
+					style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
 		})
 	</script>
 </div>

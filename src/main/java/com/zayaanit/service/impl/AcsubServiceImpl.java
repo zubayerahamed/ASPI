@@ -72,12 +72,13 @@ public class AcsubServiceImpl extends AbstractService implements AcsubService {
 
 		if(suffix == 1) {
 			String paramsValues[] = dependentParam.split(",");
-			sql = sql.append(" AND im.xtype='"+ paramsValues[0] +"' ");
-		}
 
-		if(suffix == 2) {
-			String paramsValues[] = dependentParam.split(",");
-			sql = sql.append(" AND im.xacc='"+ paramsValues[0] +"' ");
+			if(paramsValues.length == 2 && "Sub Account".equals(paramsValues[0])) {
+				sql = sql.append(" AND im.xtype='"+ paramsValues[0] +"' ")
+						.append(" AND im.xacc='"+ paramsValues[1] +"' ");   // xacc only match for sub account, otherwise ignore it
+			} else {
+				sql = sql.append(" AND im.xtype='"+ paramsValues[0] +"' ");
+			}
 		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;

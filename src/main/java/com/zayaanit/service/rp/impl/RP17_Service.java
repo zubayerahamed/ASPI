@@ -1,6 +1,7 @@
 package com.zayaanit.service.rp.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -20,6 +21,12 @@ public class RP17_Service extends AbstractReportService {
 		List<FormFieldBuilder> fieldsList = new ArrayList<>();
 
 		fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
+
+		fieldsList.add(FormFieldBuilder.generateDateField(2, true, "From Date", new Date(), true));
+
+		fieldsList.add(FormFieldBuilder.generateDateField(3, true, "To Date", new Date(), true));
+
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
 		return fieldsList;
 	}
