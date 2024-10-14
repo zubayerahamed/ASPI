@@ -41,7 +41,6 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		if (OUTSIDE_USERS_NAME.equalsIgnoreCase(username)) {

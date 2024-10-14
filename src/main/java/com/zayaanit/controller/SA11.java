@@ -60,8 +60,8 @@ public class SA11 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xmenu, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request) && frommenu == null) {
+	public String index(@RequestParam (required = false) String xmenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request)) {
 			if("RESET".equalsIgnoreCase(xmenu)) {
 				model.addAttribute("xmenus", Xmenus.getDefaultInstance());
 				return "pages/SA11/SA11-fragments::main-form";
@@ -71,8 +71,6 @@ public class SA11 extends KitController {
 			model.addAttribute("xmenus", op.isPresent() ? op.get() : Xmenus.getDefaultInstance());
 			return "pages/SA11/SA11-fragments::main-form";
 		}
-
-		if(frommenu == null) return "redirect:/";
 
 		Optional<Xmenus> op = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), xmenu));
 		model.addAttribute("xmenus", op.isPresent() ? op.get() : Xmenus.getDefaultInstance());

@@ -56,7 +56,12 @@ function sectionReloadAjaxReq(section) {
 		},
 		error: function (jqXHR, status, errorThrown) {
 			loadingMask2.hide();
-			showMessage("error", jqXHR.responseJSON.message);
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		},
 	});
 }
@@ -78,7 +83,12 @@ function sectionReloadAjaxPostReq(section, data, callbackFunction) {
 		},
 		error: function (jqXHR, status, errorThrown) {
 			loadingMask2.hide();
-			showMessage("error", jqXHR.responseJSON.message);
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		},
 	});
 }
@@ -100,7 +110,12 @@ function sectionReloadAjaxDeleteReq(section, data, callbackFunction) {
 		},
 		error: function (jqXHR, status, errorThrown) {
 			loadingMask2.hide();
-			showMessage("error", jqXHR.responseJSON.message);
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		},
 	});
 }
@@ -185,8 +200,13 @@ function submitMainForm(customurl, customform){
 			}
 		}, 
 		error : function(jqXHR, status, errorThrown){
-			showMessage(status, "Something went wrong .... ");
 			loadingMask2.hide();
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		}
 	});
 }
@@ -257,8 +277,13 @@ function submitMultipartForm(submitUrl, submitType, targettedForm, frommodal){
 			}
 		}, 
 		error : function(jqXHR, status, errorThrown){
-			showMessage(status, "Something went wrong .... ");
 			loadingMask2.hide();
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		}
 	});
 }
@@ -312,8 +337,13 @@ function deleteRequest(customurl, data){
 			}
 		}, 
 		error : function(jqXHR, status, errorThrown){
-			showMessage(status, "Something went wrong .... ");
 			loadingMask2.hide();
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		}
 	});
 }
@@ -368,8 +398,13 @@ function actionPostRequest(customurl, data, timeout){
 			}
 		}, 
 		error : function(jqXHR, status, errorThrown){
-			showMessage(status, "Something went wrong .... ");
 			loadingMask2.hide();
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		}
 	});
 }
@@ -408,8 +443,13 @@ function generateOnScreenReport(customurl, data, reportType){
 			}
 		}, 
 		error : function(jqXHR, status, errorThrown){
-			showMessage(status, "Something went wrong .... ");
 			loadingMask2.hide();
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		}
 	});
 }
@@ -465,7 +505,12 @@ function submitReportForm(customurl){
 		}, 
 		error : function(jqXHR, status, errorThrown){
 			loadingMask2.hide();
-			showMessage(status, "Something went wrong .... ");
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
 		}
 	});
 }

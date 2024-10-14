@@ -15,6 +15,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.interceptor.MenuAccessAuthorizationInterceptor;
+import com.zayaanit.interceptor.SessionTimeoutInterceptor;
 import com.zayaanit.repository.XscreensRepo;
 
 /**
@@ -26,6 +27,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Autowired
 	private XscreensRepo xscreenRepo;
+	@Autowired
+    private SessionTimeoutInterceptor sessionTimeoutInterceptor;
 
 	@Bean
 	MenuAccessAuthorizationInterceptor menuAccessInterceptor() {
@@ -49,6 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(sessionTimeoutInterceptor).addPathPatterns("/**");
 		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths(true));
 		registry.addInterceptor(localeChangeInterceptor());
 	}

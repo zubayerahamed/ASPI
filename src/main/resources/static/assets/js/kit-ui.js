@@ -428,6 +428,8 @@ $(document).ready(function(){
 			id : 'screen-container',
 			url : '/' + screenCode + '?frommenu='
 		});
+
+		$('.navbar-toggler.sidebar-mobile-main-toggle').click();
 	})
 
 	$(".menu-search").off('input').on('input', function(){

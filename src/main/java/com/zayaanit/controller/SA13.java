@@ -63,10 +63,10 @@ public class SA13 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xrow, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+	public String index(@RequestParam (required = false) String xrow, HttpServletRequest request, Model model) {
 		generateHeaderData(model);
 
-		if(isAjaxRequest(request) && frommenu == null) {
+		if(isAjaxRequest(request)) {
 			if("RESET".equalsIgnoreCase(xrow)) {
 				model.addAttribute("xmenuscreens", Xmenuscreens.getDefaultInstance());
 				return "pages/SA13/SA13-fragments::main-form";
@@ -76,8 +76,6 @@ public class SA13 extends KitController {
 			model.addAttribute("xmenuscreens", op.isPresent() ? op.get() : Xmenuscreens.getDefaultInstance());
 			return "pages/SA13/SA13-fragments::main-form";
 		}
-
-		if(frommenu == null) return "redirect:/";
 
 		if(StringUtils.isNotBlank(xrow)) {
 			if("RESET".equalsIgnoreCase(xrow)) {
