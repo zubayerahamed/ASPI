@@ -117,3 +117,21 @@
 		})
 	</script>
 </div>
+
+
+<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
+	<script>
+		$(document).ready(function(){
+			kit.ui.init();
+
+			sectionReloadAjaxPostReq({
+				id : 'list-table-container',
+				url : '/search/table/LFA12/0'
+			}, {
+				mainscreen: true, 
+				mainreloadurl: '/FA12?xagparent=RESET&xagcode=',
+				mainreloadid: 'main-form-container',
+			});
+		})
+	</script>
+</div>

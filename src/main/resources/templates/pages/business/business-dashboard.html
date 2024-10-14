@@ -68,7 +68,9 @@
 				<!-- Content area -->
 				<div class="row justify-content-center align-items-center">
 
-					<h1 th:if="${#lists.isEmpty(businesses)}" class="text-center">You are not assign with any Business</h1>
+					<h1 th:if="${#lists.isEmpty(businesses)}" class="text-center">You are not assigned with any Business</h1>
+
+					<h1 th:if="${not #lists.isEmpty(businesses)}" class="text-center">Select Business</h1>
 
 					<div th:each="business : ${businesses}" class="col-sm-6 col-xl-3">
 						<a class="p-4 business-submit-button card card-body bg-primary text-white align-items-center" th:href="@{/switchbusiness/} + ${business.zid}">

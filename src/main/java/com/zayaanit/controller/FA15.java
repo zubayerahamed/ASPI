@@ -176,6 +176,11 @@ public class FA15 extends KitController {
 		return "pages/FA15/FA15-fragments::detail-table";
 	}
 
+	@GetMapping("/list-table")
+	public String loadListTableFragment(Model model) {
+		return "pages/FA15/FA15-fragments::list-table";
+	}
+
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acheader acheader, BindingResult bindingResult){
 
@@ -223,6 +228,7 @@ public class FA15 extends KitController {
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + acheader.getXvoucher()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher="+ acheader.getXvoucher() +"&xrow=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/FA15/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Voucher created successfully");
 			return responseHelper.getResponse();
@@ -248,6 +254,7 @@ public class FA15 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + existObj.getXvoucher()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher="+ acheader.getXvoucher() +"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Voucher updated successfully");
 		return responseHelper.getResponse();
@@ -318,6 +325,7 @@ public class FA15 extends KitController {
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + acdetail.getXvoucher()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher=" + acdetail.getXvoucher() + "&xrow=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/FA15/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Voucher detail added successfully");
 			return responseHelper.getResponse();
@@ -344,6 +352,7 @@ public class FA15 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + acdetail.getXvoucher()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher=" + acdetail.getXvoucher() + "&xrow=" + exist.getXrow()));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Voucher detail updated successfully");
 		return responseHelper.getResponse();
@@ -371,6 +380,7 @@ public class FA15 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher=RESET&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -408,6 +418,7 @@ public class FA15 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA15?xvoucher=" + xvoucher));
 		reloadSections.add(new ReloadSection("detail-table-container", "/FA15/detail-table?xvoucher="+xvoucher+"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

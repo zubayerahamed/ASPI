@@ -93,6 +93,11 @@ public class FA12 extends KitController {
 		return "pages/FA12/FA12";
 	}
 
+	@GetMapping("/list-table")
+	public String loadListTableFragment(Model model) {
+		return "pages/FA12/FA12-fragments::list-table";
+	}
+
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acgroup acgroup, BindingResult bindingResult){
 		if(acgroup.getXagcode() == null) {
@@ -130,6 +135,7 @@ public class FA12 extends KitController {
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (acgroup.getXagparent() == null ? "RESET" : acgroup.getXagparent())));
+			reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -149,6 +155,7 @@ public class FA12 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=" + existObj.getXagcode() + "&xagparent=" + (existObj.getXagparent() == null ? "RESET" : existObj.getXagparent())));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -173,6 +180,7 @@ public class FA12 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (obj.getXagparent() == null ? "RESET" : obj.getXagparent())));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

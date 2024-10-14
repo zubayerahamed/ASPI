@@ -31,7 +31,7 @@
 							<input type="number" class="form-control numeric-only" th:field="*{xclyear}" required="required">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${acdef.zid != null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Closed On</label>
 							<input type="text" class="form-control" th:value="*{xcldate}" disabled>

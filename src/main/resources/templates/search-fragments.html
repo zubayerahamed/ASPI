@@ -1,22 +1,5 @@
-<div th:fragment="search-hidden-fields" xmlns:th="http://www.thymeleaf.org">
-	<input type="hidden" id="searchValue" th:value="${searchValue}"/>
-	<input type="hidden" id="fieldId" th:value="${fieldId}"/>
-	<input type="hidden" id="suffix" th:value="${suffix}"/>
-	<input type="hidden" id="mainscreen" th:value="${mainscreen}"/>
-	<input type="hidden" id="mainreloadurl" th:value="${mainreloadurl}"/>
-	<input type="hidden" id="mainreloadid" th:value="${mainreloadid}"/>
-	<input type="hidden" id="detailreloadid" th:value="${detailreloadid}"/>
-	<input type="hidden" id="detailreloadurl" th:value="${detailreloadurl}"/>
-	<input type="hidden" id="additionalreloadid" th:value="${additionalreloadid}"/>
-	<input type="hidden" id="additionalreloadurl" th:value="${additionalreloadurl}"/>
-	<input type="hidden" id="extrafieldcontroller" th:value="${extrafieldcontroller}"/>
-	<input type="hidden" id="dependentParam" th:value="${dependentParam}"/>
-	<input type="hidden" id="resetParam" th:value="${resetParam}"/>
-</div>
-
 <div th:fragment="LSA11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -38,18 +21,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -112,7 +96,7 @@
 				"ajax" : getBasepath() + "/search/LSA11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -122,7 +106,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -171,7 +155,6 @@
 
 <div th:fragment="LSA12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -191,18 +174,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -255,7 +239,7 @@
 				"ajax" : getBasepath() + "/search/LSA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -265,7 +249,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -314,7 +298,6 @@
 
 <div th:fragment="LSA13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -336,18 +319,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -409,7 +393,7 @@
 				"ajax" : getBasepath() + "/search/LSA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -419,7 +403,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -468,7 +452,6 @@
 
 <div th:fragment="LAD12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -487,19 +470,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
-			var tableName = $('#tablename').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -547,7 +530,7 @@
 				"ajax" : getBasepath() + "/search/LAD12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -557,7 +540,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -583,6 +566,8 @@
 				} else {
 					var prompt = $(this).data('prompt');
 					var value = $(this).data('value');
+					
+					console.log("here");
 
 					$('#searchSuggestTableModal').modal('hide');
 
@@ -607,7 +592,6 @@
 
 <div th:fragment="LAD13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -627,18 +611,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -696,7 +681,7 @@
 				"ajax" : getBasepath() + "/search/LAD13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -706,7 +691,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -756,7 +741,6 @@
 
 <div th:fragment="LAD17-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -776,18 +760,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -840,7 +825,7 @@
 				"ajax" : getBasepath() + "/search/LAD17/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -850,7 +835,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -901,7 +886,6 @@
 
 <div th:fragment="LFA12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -923,18 +907,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -998,7 +983,7 @@
 				"ajax" : getBasepath() + "/search/LFA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -1008,7 +993,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -1059,7 +1044,6 @@
 
 <div th:fragment="LFA13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -1081,18 +1065,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -1156,7 +1141,7 @@
 				"ajax" : getBasepath() + "/search/LFA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -1166,7 +1151,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -1224,7 +1209,6 @@
 
 <div th:fragment="LFA14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -1246,18 +1230,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -1321,7 +1306,7 @@
 				"ajax" : getBasepath() + "/search/LFA14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -1331,7 +1316,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');
@@ -1382,7 +1367,6 @@
 
 <div th:fragment="LFA15-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:remove="tag" th:include="search-fragments :: search-hidden-fields"></div>
 
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
@@ -1404,18 +1388,19 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			var fieldId = $('#fieldId').val();
-			var suffix = $('#suffix').val();
-			var mainscreen = $('#mainscreen').val();
-			var mainreloadurl = $('#mainreloadurl').val();
-			var mainreloadid = $('#mainreloadid').val();
-			var detailreloadurl = $('#detailreloadurl').val();
-			var detailreloadid = $('#detailreloadid').val();
-			var additionalreloadurl = $('#additionalreloadurl').val();
-			var additionalreloadid = $('#additionalreloadid').val();
-			var extrafieldcontroller = $('#extrafieldcontroller').val();
-			var dependentParam = $('#dependentParam').val();
-			var resetParam = $('#resetParam').val();
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
 
 			var columns = [
 				{
@@ -1479,7 +1464,7 @@
 				"ajax" : getBasepath() + "/search/LFA15/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 				"columns": dataRetreiver,
 				"search": {
-					"search": $("#searchValue").val()
+					"search": searchValue
 				}
 			});
 
@@ -1489,7 +1474,7 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				if(mainscreen == 'true'){
+				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
 
 					var value = $(this).data('value');

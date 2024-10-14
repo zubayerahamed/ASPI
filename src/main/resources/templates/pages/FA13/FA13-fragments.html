@@ -16,8 +16,7 @@
 										class="form-control searchsuggest2"
 										name="xacc"
 										th:value="${acmst.xacc ne null ? acmst.xacc : ''}"
-										th:disabled="${acmst.xacc != null}"
-										th:required="${acmst.xacc == null}">
+										th:disabled="${acmst.xacc != null}">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
 										data-reloadurl='/search/table/LFA13/0?hint=', 
@@ -104,6 +103,27 @@
 				</div>
 			</form>
 		</div>
+
+
+		<div class="card-footer" th:if="${acmst.xacc ne null && not #lists.isEmpty(acmst.subAccounts)}">
+			<h6 class="py-sm-3 mb-sm-auto">List of Sub Accounts</h6>
+
+			<div class="table-responsive" th:if="${not #lists.isEmpty(acmst.subAccounts)}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Name</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="x : ${acmst.subAccounts}">
+							<td th:text="${x.xsub + ' - ' + x.xname}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
@@ -131,6 +151,23 @@
 				deleteRequest($(this).data('url'));
 			});
 
+		})
+	</script>
+</div>
+
+<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
+	<script>
+		$(document).ready(function(){
+			kit.ui.init();
+
+			sectionReloadAjaxPostReq({
+				id : 'list-table-container',
+				url : '/search/table/LFA13/0'
+			}, {
+				mainscreen: true, 
+				mainreloadurl: '/FA13?xacc=',
+				mainreloadid: 'main-form-container'
+			});
 		})
 	</script>
 </div>

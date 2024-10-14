@@ -124,6 +124,11 @@ public class AD13 extends KitController {
 		return "pages/AD13/AD13-fragments::detail-table";
 	}
 
+	@GetMapping("/list-table")
+	public String loadListTableFragment(Model model) {
+		return "pages/AD13/AD13-fragments::list-table";
+	}
+
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xusers xusers, BindingResult bindingResult){
 
@@ -168,6 +173,7 @@ public class AD13 extends KitController {
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + xusers.getZemail()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + xusers.getZemail() + "&xprofile=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/AD13/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -194,6 +200,7 @@ public class AD13 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + existObj.getZemail()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + existObj.getZemail() + "&xprofile=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/AD13/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -225,6 +232,7 @@ public class AD13 extends KitController {
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + xuserprofiles.getZemail()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + xuserprofiles.getZemail() + "&xprofile=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/AD13/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -254,6 +262,7 @@ public class AD13 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=RESET&xprofile=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/AD13/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -273,6 +282,7 @@ public class AD13 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + zemail));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + zemail + "&xprofile=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/AD13/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

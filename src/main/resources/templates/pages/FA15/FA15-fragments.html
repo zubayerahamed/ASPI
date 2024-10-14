@@ -415,3 +415,23 @@
 		})
 	</script>
 </div>
+
+
+<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
+	<script>
+		$(document).ready(function(){
+			kit.ui.init();
+
+			sectionReloadAjaxPostReq({
+				id : 'list-table-container',
+				url : '/search/table/LFA15/1'
+			}, {
+				mainscreen: true, 
+				mainreloadurl: '/FA15?xvoucher=',
+				mainreloadid: 'main-form-container',
+				detailreloadurl: '/FA15/detail-table?xrow=RESET&xvoucher=',
+				detailreloadid: 'detail-table-container'
+			});
+		})
+	</script>
+</div>

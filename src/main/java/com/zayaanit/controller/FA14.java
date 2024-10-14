@@ -84,6 +84,11 @@ public class FA14 extends KitController {
 		return "pages/FA14/FA14";
 	}
 
+	@GetMapping("/list-table")
+	public String loadListTableFragment(Model model) {
+		return "pages/FA14/FA14-fragments::list-table";
+	}
+
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acsub acsub, BindingResult bindingResult){
 
@@ -120,6 +125,7 @@ public class FA14 extends KitController {
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/FA14/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -139,6 +145,7 @@ public class FA14 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=" + existObj.getXacc()));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA14/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -157,6 +164,7 @@ public class FA14 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA14/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

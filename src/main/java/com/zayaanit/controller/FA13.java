@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acgroup;
 import com.zayaanit.entity.Acmst;
+import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcmstPK;
@@ -30,6 +31,7 @@ import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.AcmstRepo;
+import com.zayaanit.repository.AcsubRepo;
 
 /**
  * @author Zubayer Ahamed
@@ -41,6 +43,7 @@ public class FA13 extends KitController {
 
 	@Autowired private AcmstRepo acmstRepo;
 	@Autowired private AcgroupRepo acgrouprepo;
+	@Autowired private AcsubRepo acsubRepo;
 
 	private String pageTitle = null;
 
@@ -76,6 +79,11 @@ public class FA13 extends KitController {
 					acmst.setGroupName(groupOp.get().getXagname());
 					generateParentGroups(acmst, groupOp.get());
 				}
+
+				if("Sub Account".equals(acmst.getXaccusage())) {
+					List<Acsub> subAccounts = acsubRepo.findAllByZidAndXacc(sessionManager.getBusinessId(), acmst.getXacc());
+					acmst.setSubAccounts(subAccounts);
+				}
 			}
 			model.addAttribute("acmst", acmst != null ? acmst : Acmst.getDefaultInstance());
 			return "pages/FA13/FA13-fragments::main-form";
@@ -100,12 +108,17 @@ public class FA13 extends KitController {
 		}
 	}
 
+	@GetMapping("/list-table")
+	public String loadListTableFragment(Model model) {
+		return "pages/FA13/FA13-fragments::list-table";
+	}
+
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acmst acmst, BindingResult bindingResult){
 
 		if(acmst.getXacc() == null) {
-			responseHelper.setErrorStatusAndMessage("Account code required");
-			return responseHelper.getResponse();
+			Integer xacc = acmstRepo.getNextAvailableId(sessionManager.getBusinessId());
+			acmst.setXacc(xacc);
 		}
 
 		// VALIDATE XSCREENS
@@ -143,6 +156,7 @@ public class FA13 extends KitController {
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/FA13/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -162,6 +176,7 @@ public class FA13 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=" + existObj.getXacc()));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA13/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -180,6 +195,7 @@ public class FA13 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA13/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

@@ -93,3 +93,20 @@
 		})
 	</script>
 </div>
+
+<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
+	<script>
+		$(document).ready(function(){
+			kit.ui.init();
+
+			sectionReloadAjaxPostReq({
+				id : 'list-table-container',
+				url : '/search/table/LAD17/0'
+			}, {
+				mainscreen: true, 
+				mainreloadurl: '/AD17?xbuid=',
+				mainreloadid: 'main-form-container',
+			});
+		})
+	</script>
+</div>

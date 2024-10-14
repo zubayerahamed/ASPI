@@ -70,6 +70,8 @@
 
 					<h1 th:if="${#lists.isEmpty(profiles)}" class="text-center">You are not assign with any Profiles</h1>
 
+					<h1 th:if="${not #lists.isEmpty(profiles)}" class="text-center">Select Profile</h1>
+
 					<div th:each="profile : ${profiles}" class="col-sm-6 col-xl-3">
 						<a class="p-4 business-submit-button card card-body bg-primary text-white align-items-center" th:href="@{/switchprofile?xprofile=} + ${profile.xprofile}">
 							<h3 th:text="${profile.xprofile}" class="m-0 p-0"></h3>

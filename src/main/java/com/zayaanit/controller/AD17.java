@@ -71,6 +71,11 @@ public class AD17 extends KitController {
 		return "pages/AD17/AD17";
 	}
 
+	@GetMapping("/list-table")
+	public String loadListTableFragment(Model model) {
+		return "pages/AD17/AD17-fragments::list-table";
+	}
+
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Cabunit cabunit, BindingResult bindingResult){
 
@@ -95,6 +100,7 @@ public class AD17 extends KitController {
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/AD17/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -114,6 +120,7 @@ public class AD17 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=" + existObj.getXbuid()));
+		reloadSections.add(new ReloadSection("list-table-container", "/AD17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -132,6 +139,7 @@ public class AD17 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/AD17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

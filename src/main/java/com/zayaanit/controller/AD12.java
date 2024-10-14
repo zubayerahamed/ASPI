@@ -159,6 +159,10 @@ public class AD12 extends KitController {
 		return "pages/AD12/AD12-fragments::detail-table";
 	}
 
+	@GetMapping("/list-table")
+	public String loadListTableFragment(Model model) {
+		return "pages/AD12/AD12-fragments::list-table";
+	}
 
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xprofiles xprofiles, BindingResult bindingResult){
@@ -180,6 +184,7 @@ public class AD12 extends KitController {
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + xprofiles.getXprofile()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=" + xprofiles.getXprofile()));
+			reloadSections.add(new ReloadSection("list-table-container", "/AD12/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -198,6 +203,8 @@ public class AD12 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + existObj.getXprofile()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=" + xprofiles.getXprofile()));
+		reloadSections.add(new ReloadSection("list-table-container", "/AD12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -267,6 +274,7 @@ public class AD12 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/AD12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
