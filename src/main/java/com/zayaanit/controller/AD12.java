@@ -113,7 +113,7 @@ public class AD12 extends KitController {
 	public String loadDetailTableFragment(@RequestParam String xprofile, Model model) {
 		if("RESET".equalsIgnoreCase(xprofile)) {
 			model.addAttribute("xprofile", xprofile);
-			model.addAttribute("menuscreensGroup", Collections.emptyMap());
+			model.addAttribute("mgMap", Collections.emptyMap());
 			return "pages/AD12/AD12-fragments::detail-table";
 		}
 
@@ -143,19 +143,22 @@ public class AD12 extends KitController {
 			}
 		}
 
-		Map<String, List<Xmenuscreens>> groupedByXmenu = new LinkedHashMap<>();
+		Map<String, MenuScreenGroup> mgMap = new LinkedHashMap<>();
 		list.stream().forEach(l -> {
-			if(groupedByXmenu.get(l.getXmenu() + " - " + l.getXmenuTitle()) != null) {
-				groupedByXmenu.get(l.getXmenu() + " - " + l.getXmenuTitle()).add(l);
+			if(mgMap.get(l.getXmenu() + " - " + l.getXmenuTitle()) != null) {
+				MenuScreenGroup msg = mgMap.get(l.getXmenu() + " - " + l.getXmenuTitle());
+				msg.getMenus().add(l);
 			} else {
-				List<Xmenuscreens> mslist = new ArrayList<>();
-				mslist.add(l);
-				groupedByXmenu.put(l.getXmenu() + " - " + l.getXmenuTitle(), mslist);
+				MenuScreenGroup msg = new MenuScreenGroup();
+				msg.setMenucode(l.getXmenu());
+				msg.setMenuname(l.getXmenuTitle());
+				msg.getMenus().add(l);
+				mgMap.put(l.getXmenu() + " - " + l.getXmenuTitle(), msg);
 			}
 		});
 
 		model.addAttribute("xprofile", xprofile);
-		model.addAttribute("menuscreensGroup", groupedByXmenu);
+		model.addAttribute("mgMap", mgMap);
 		return "pages/AD12/AD12-fragments::detail-table";
 	}
 
@@ -285,4 +288,20 @@ public class AD12 extends KitController {
 class DetailData{
 	private String[] xscreens;
 	private String profileName;
+}
+
+@Data
+class MenuScreenGroup{
+	private String menucode;
+	private String menuname;
+	private List<Xmenuscreens> menus = new ArrayList<>();
+	private boolean allSelected;
+
+	public boolean isAllSelected() {
+		if(this.menus == null || this.menus.isEmpty()) return false;
+
+		int menuCount = menus.size();
+		int checkedCount = menus.stream().filter(f -> f.isProfileChecked()).collect(Collectors.toList()).size();
+		return menuCount == checkedCount;
+	}
 }

@@ -222,7 +222,7 @@
 
 						<!-- Main -->
 						<li class="nav-item" th:each="screen : ${master.screens}">
-							<a th:href="@{/} + ${screen.xscreen}" th:attr="id=${screen.xscreen}" class="nav-link" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
+							<a th:href="@{/} + ${screen.xscreen}" class="nav-link screen-item" th:attr="id=${screen.xscreen}, data-screen=${screen.xscreen}" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
 								<i th:classappend="${#strings.isEmpty(screen.xicon) ? 'ph-house' :screen.xicon}"></i>
 								<span th:text="${screen.xtitle}"></span>
 							</a>
@@ -255,7 +255,10 @@
 
 		<!-- screens -->
 		<li class="nav-item" th:each="screen : ${master.screens}">
-			<a th:href="@{/} + ${screen.xscreen}" class="nav-link" th:text="${screen.xtitle}"></a>
+			<a th:href="@{/} + ${screen.xscreen}" class="nav-link screen-item" th:attr="id=${screen.xscreen}, data-screen=${screen.xscreen}" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
+				<i th:classappend="${#strings.isEmpty(screen.xicon) ? 'ph-house' :screen.xicon}"></i>
+				<span th:text="${screen.xtitle}"></span>
+			</a>
 		</li>
 
 		<!-- sub menus -->

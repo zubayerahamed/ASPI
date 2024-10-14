@@ -94,7 +94,7 @@
 </div>
 
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
-	<div class="card" th:if="${not #maps.isEmpty(menuscreensGroup)}">
+	<div class="card" th:if="${not #maps.isEmpty(mgMap)}">
 
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
 			<h6 class="py-sm-3 mb-sm-auto">
@@ -111,13 +111,15 @@
 		<input type="hidden" th:value="${xprofile}" id="profileName"/>
 
 		<div class="card-body">
-			<div th:each="g : ${menuscreensGroup}" class="mb-5">
+			<div th:each="g : ${mgMap}" class="mb-5">
 				<div class="table-responsive">
 					<h3 th:text="${g.key}"></h3>
 					<table class="table normaltable">
 						<thead>
 							<tr>
-								<th></th>
+								<th>
+									<input type="checkbox" class="gr-menu" th:id="${g.value.menucode}" th:checked="${g.value.allSelected}">
+								</th>
 								<th class="text-center">Menu Code</th>
 								<th class="text-center">Screen</th>
 								<th>Screen Title</th>
@@ -126,9 +128,9 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="ms : ${g.value}">
+							<tr th:each="ms : ${g.value.menus}">
 								<td>
-									<input type="checkbox" class="screens" th:id="${ms.xrow}" th:checked="${ms.profileChecked}">
+									<input type="checkbox" th:classappend="${'screens ' + g.value.menucode}" th:id="${ms.xrow}" th:attr="data-pid=${g.value.menucode}" th:checked="${ms.profileChecked}">
 								</td>
 								<td class="text-center">
 									<a class="dataindex" href="/SA13?xrow=" reloadid="main-form-container" th:attr="data-value=${ms.xrow}" th:text="${ms.xmenu}"></a>
@@ -152,8 +154,20 @@
 
 			var xscreens = [];
 
-			$('#selectall').on('click', function(){
-				var screens = $("input[type='checkbox'][name='screens']");
+			function generateXscreens(){
+				var screens = $("input[type='checkbox'].screens");
+				xscreens = [];
+				$.each(screens, function (i, screen) {
+					if($(screen).is(":checked")){
+						xscreens.push($(screen).attr('id'));
+					}
+				});
+			}
+
+			$('.gr-menu').on('click', function(){
+				var elid = $(this).attr('id');
+
+				var screens = $('input[type="checkbox"].' + elid);
 				if($(this).is(":checked")){
 					$.each(screens, function (i, screen) {
 						$(screen).prop('checked', true);
@@ -163,17 +177,26 @@
 						$(screen).prop('checked', false);
 					});
 				}
-			})
+			});
 
-			function generateXscreens(){
-				var screens = $("input[type='checkbox'][class='screens']");
-				xscreens = [];
+			$('.screens').on('click', function(){
+				var parentId = $(this).data('pid');
+
+				var screens = $("input[type='checkbox']." + parentId);
+				var count = screens.length;
+				var checkedCount = 0;
 				$.each(screens, function (i, screen) {
 					if($(screen).is(":checked")){
-						xscreens.push($(screen).attr('id'));
+						checkedCount++;
 					}
 				});
-			}
+
+				if(count == checkedCount){
+					$('#' + parentId).prop('checked', true);
+				} else {
+					$('#' + parentId).prop('checked', false);
+				}
+			});
 
 			$('.detail-save-btn').off('click').on('click', function(e){
 				e.preventDefault();

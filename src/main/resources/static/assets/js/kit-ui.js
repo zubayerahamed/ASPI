@@ -416,6 +416,17 @@ kit.ui.init = function(){
 $(document).ready(function(){
 	kit.ui.init();
 
+//	$('.screen-item').on('click', function(e){
+//		e.preventDefault();
+//
+//		var screenCode = $(this).data('screen');
+//
+//		sectionReloadAjaxReq({
+//			id : 'screen-page-container',
+//			url : '/' + screenCode
+//		});
+//	})
+
 	$(".menu-search").off('input').on('input', function(){
 		var hint = $(this).val();
 		console.log(hint);
