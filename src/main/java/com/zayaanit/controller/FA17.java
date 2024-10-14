@@ -68,12 +68,14 @@ public class FA17 extends KitController {
 	}
 
 	@GetMapping
-	public String index(HttpServletRequest request, Model model) {
+	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) {
 		model.addAttribute("searchParam", FA17SearchParam.getDefaultInstance());
 
-		if(isAjaxRequest(request)) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			return "pages/FA17/FA17-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		return "pages/FA17/FA17";
 	}

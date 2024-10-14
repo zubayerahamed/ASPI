@@ -59,8 +59,8 @@ public class FA14 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xsub, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam (required = false) String xsub, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xsub)) {
 				model.addAttribute("acsub", Acsub.getDefaultInstance());
 				return "pages/FA14/FA14-fragments::main-form";
@@ -79,6 +79,8 @@ public class FA14 extends KitController {
 			model.addAttribute("acsub", acsub != null ? acsub : Acsub.getDefaultInstance());
 			return "pages/FA14/FA14-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("acsub", Acsub.getDefaultInstance());
 		return "pages/FA14/FA14";

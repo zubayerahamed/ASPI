@@ -55,8 +55,8 @@ public class FA12 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xagcode, @RequestParam (required = false) String xagparent, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam (required = false) String xagcode, @RequestParam (required = false) String xagparent, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xagcode) && "RESET".equalsIgnoreCase(xagparent)) {
 				model.addAttribute("acgroup", Acgroup.getDefaultInstance());
 				return "pages/FA12/FA12-fragments::main-form";
@@ -88,6 +88,8 @@ public class FA12 extends KitController {
 			model.addAttribute("acgroup", op.isPresent() ? op.get() : Acgroup.getDefaultInstance());
 			return "pages/FA12/FA12-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("acgroup", Acgroup.getDefaultInstance());
 		return "pages/FA12/FA12";

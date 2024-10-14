@@ -62,8 +62,8 @@ public class FA13 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xacc, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam (required = false) String xacc, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xacc)) {
 				model.addAttribute("acmst", Acmst.getDefaultInstance());
 				return "pages/FA13/FA13-fragments::main-form";
@@ -88,6 +88,8 @@ public class FA13 extends KitController {
 			model.addAttribute("acmst", acmst != null ? acmst : Acmst.getDefaultInstance());
 			return "pages/FA13/FA13-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("acmst", Acmst.getDefaultInstance());
 		return "pages/FA13/FA13";

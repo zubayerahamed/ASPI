@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acdef;
@@ -53,11 +54,12 @@ public class FA11 extends KitController {
 	}
 
 	@GetMapping
-	public String index(HttpServletRequest request, Model model) {
+	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) {
 		Optional<Acdef> acdefOp = acdefRepo.findById(new AcdefPK(sessionManager.getBusinessId()));
 		Acdef acdef = acdefOp.isPresent() ? acdefOp.get() : Acdef.getDefaultInstance();
 		model.addAttribute("acdef", acdef);
-		if(isAjaxRequest(request)) return "pages/FA11/FA11-fragments::main-form";
+		if(isAjaxRequest(request) && frommenu == null) return "pages/FA11/FA11-fragments::main-form";
+		if(frommenu == null) return "redirect:/";
 		return "pages/FA11/FA11";
 	}
 

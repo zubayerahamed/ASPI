@@ -55,8 +55,8 @@ public class AD17 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xbuid, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam (required = false) String xbuid, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xbuid)) {
 				model.addAttribute("cabunit", Cabunit.getDefaultInstance());
 				return "pages/AD17/AD17-fragments::main-form";
@@ -66,6 +66,8 @@ public class AD17 extends KitController {
 			model.addAttribute("cabunit", op.isPresent() ? op.get() : Cabunit.getDefaultInstance());
 			return "pages/AD17/AD17-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("cabunit", Cabunit.getDefaultInstance());
 		return "pages/AD17/AD17";

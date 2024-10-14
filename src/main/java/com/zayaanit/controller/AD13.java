@@ -68,8 +68,8 @@ public class AD13 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String zemail, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam (required = false) String zemail, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(zemail)) {
 				model.addAttribute("xusers", Xusers.getDefaultInstance());
 				return "pages/AD13/AD13-fragments::main-form";
@@ -84,6 +84,8 @@ public class AD13 extends KitController {
 			model.addAttribute("xusers", user);
 			return "pages/AD13/AD13-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("xusers", Xusers.getDefaultInstance());
 		return "pages/AD13/AD13";

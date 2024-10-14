@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Xscreens;
@@ -53,12 +54,14 @@ public class FA18 extends KitController{
 	}
 
 	@GetMapping
-	public String index(HttpServletRequest request, Model model) throws ResourceNotFoundException {
+	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) throws ResourceNotFoundException {
 		model.addAttribute("years", acbalRepo.getDistinctYears(sessionManager.getBusinessId()));
 
-		if(isAjaxRequest(request)) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			return "pages/FA18/FA18-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		return "pages/FA18/FA18";
 	}

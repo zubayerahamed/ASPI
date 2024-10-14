@@ -79,10 +79,10 @@ public class FA15 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xvoucher, HttpServletRequest request, Model model) {
+	public String index(@RequestParam (required = false) String xvoucher, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
-		if(isAjaxRequest(request)) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xvoucher)) {
 				model.addAttribute("acheader", Acheader.getDefaultInstance());
 				return "pages/FA15/FA15-fragments::main-form";
@@ -110,6 +110,8 @@ public class FA15 extends KitController {
 
 			return "pages/FA15/FA15-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("acheader", Acheader.getDefaultInstance());
 		return "pages/FA15/FA15";

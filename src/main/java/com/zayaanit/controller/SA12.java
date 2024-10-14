@@ -56,8 +56,8 @@ public class SA12 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xscreen, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam (required = false) String xscreen, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xscreen)) {
 				model.addAttribute("xscreens", Xscreens.getDefaultInstance());
 				return "pages/SA12/SA12-fragments::main-form";
@@ -67,6 +67,8 @@ public class SA12 extends KitController {
 			model.addAttribute("xscreens", op.isPresent() ? op.get() : Xscreens.getDefaultInstance());
 			return "pages/SA12/SA12-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), xscreen));
 		model.addAttribute("xscreens", op.isPresent() ? op.get() : Xscreens.getDefaultInstance());

@@ -57,7 +57,7 @@ public class AD11 extends KitController{
 	}
 
 	@GetMapping
-	public String index(HttpServletRequest request, Model model) throws ResourceNotFoundException {
+	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) throws ResourceNotFoundException {
 		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
 		if(!op.isPresent()) throw new ResourceNotFoundException();
 
@@ -72,9 +72,11 @@ public class AD11 extends KitController{
 
 		model.addAttribute("business", zb);
 
-		if(isAjaxRequest(request)) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			return "pages/AD11/AD11-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		return "pages/AD11/AD11";
 	}

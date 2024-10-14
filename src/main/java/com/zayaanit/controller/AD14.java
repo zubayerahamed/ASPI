@@ -60,8 +60,8 @@ public class AD14 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam(required = false) String xtype, @RequestParam(required = false) String xcode, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam(required = false) String xtype, @RequestParam(required = false) String xcode, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xtype) && "RESET".equalsIgnoreCase(xcode)) {
 				model.addAttribute("xcodes", Xcodes.getDefaultInstance());
 				model.addAttribute("codeTypes", xcodesRepo.findAllByXtypeAndZid("Code Type", sessionManager.getBusinessId()));
@@ -73,6 +73,8 @@ public class AD14 extends KitController {
 			model.addAttribute("codeTypes", xcodesRepo.findAllByXtypeAndZid("Code Type", sessionManager.getBusinessId()));
 			return "pages/AD14/AD14-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("xcodes", Xcodes.getDefaultInstance());
 		model.addAttribute("codeTypes", xcodesRepo.findAllByXtypeAndZid("Code Type", sessionManager.getBusinessId()));

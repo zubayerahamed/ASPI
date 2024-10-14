@@ -416,16 +416,19 @@ kit.ui.init = function(){
 $(document).ready(function(){
 	kit.ui.init();
 
-//	$('.screen-item').on('click', function(e){
-//		e.preventDefault();
-//
-//		var screenCode = $(this).data('screen');
-//
-//		sectionReloadAjaxReq({
-//			id : 'screen-page-container',
-//			url : '/' + screenCode
-//		});
-//	})
+	$('.screen-item').on('click', function(e){
+		e.preventDefault();
+
+		$('.screen-item').removeClass('active');
+		$(this).addClass('active');
+
+		var screenCode = $(this).data('screen');
+
+		sectionReloadAjaxReq({
+			id : 'screen-container',
+			url : '/' + screenCode + '?frommenu='
+		});
+	})
 
 	$(".menu-search").off('input').on('input', function(){
 		var hint = $(this).val();

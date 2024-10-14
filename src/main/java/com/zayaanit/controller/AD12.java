@@ -80,8 +80,8 @@ public class AD12 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xprofile, HttpServletRequest request, Model model) {
-		if(isAjaxRequest(request)) {
+	public String index(@RequestParam (required = false) String xprofile, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xprofile)) {
 				model.addAttribute("profile", Xprofiles.getDefaultInstance());
 				return "pages/AD12/AD12-fragments::main-form";
@@ -91,6 +91,8 @@ public class AD12 extends KitController {
 			model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
 			return "pages/AD12/AD12-fragments::main-form";
 		}
+
+		if(frommenu == null) return "redirect:/";
 
 		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
 		model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
