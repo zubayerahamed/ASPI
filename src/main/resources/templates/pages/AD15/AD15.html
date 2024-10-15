@@ -1,0 +1,57 @@
+<!-- Inner content -->
+<div class="content-inner"  xmlns:th="http://www.thymeleaf.org">
+
+	<!-- Page header -->
+	<div class="page-header page-header-light shadow" th:if="${not #strings.isEmpty(pageTitle)}">
+		<div class="page-header-content d-lg-flex">
+			<div class="d-flex">
+				<h4 class="page-title mb-0" th:text="${pageTitle}">Header Title</h4>
+			</div>
+		</div>
+	</div>
+	<!-- /page header -->
+
+	<!-- Content area -->
+	<div class="content">
+
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="info-form-container">
+					<div th:remove="tag" th:include="pages/AD15/AD15-fragments :: info-form"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="cp-form-container">
+					<div th:remove="tag" th:include="pages/AD15/AD15-fragments :: cp-form"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="favourite-form-container">
+					<div th:remove="tag" th:include="pages/AD15/AD15-fragments :: favourite-form"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="theme-form-container">
+					<div th:remove="tag" th:include="pages/AD15/AD15-fragments :: theme-form"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- /content area -->
+
+	<!-- Footer -->
+	<div th:remove="tag" th:include="commons :: footer-section"></div>
+	<!-- /footer -->
+
+</div>
+<!-- /inner content -->

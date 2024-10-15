@@ -47,8 +47,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Controller
-@RequestMapping("/AD21")
-public class AD21 extends KitController {
+@RequestMapping("/AD18")
+public class AD18 extends KitController {
 	private String pageTitle = null;
 	private SimpleDateFormat sdfpath = new SimpleDateFormat("MMyyyy");
 
@@ -56,13 +56,13 @@ public class AD21 extends KitController {
 
 	@Override
 	protected String screenCode() {
-		return "AD21";
+		return "AD18";
 	}
 
 	@Override
 	protected String pageTitle() {
 		if (this.pageTitle != null) return this.pageTitle;
-		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "AD21"));
+		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "AD18"));
 		if (!op.isPresent()) return null;
 		this.pageTitle = op.get().getXtitle();
 		return this.pageTitle;
@@ -155,7 +155,7 @@ public class AD21 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		String docId = xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "AD21").toString();
+		String docId = xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "AD18").toString();
 		UUID fileID = UUID.randomUUID();
 
 		Cadoc cadoc = new Cadoc();

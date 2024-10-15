@@ -133,7 +133,7 @@
 
 		<div class="card-footer" th:if="${acheader.xvoucher ne null}">
 			<h6 class="py-sm-3 mb-sm-auto">Documents</h6>
-			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD21/upload}" method="POST" enctype="multipart/form-data" th:if="${acheader.xvoucher ne null and acheader.xstatusjv ne 'Posted'}">
+			<form id="documentform" class="form-validate-jquery mb-3" th:action="@{/AD18/upload}" method="POST" enctype="multipart/form-data" th:if="${acheader.xvoucher ne null and acheader.xstatusjv ne 'Posted'}">
 				<input type="hidden" name="screenId" value="FA16"/>
 				<input type="hidden" name="transactionId" th:value="${acheader.xvoucher}"/>
 				<input type="hidden" name="mainreloadid" value="main-form-container"/>
@@ -167,10 +167,10 @@
 					<tbody>
 						<tr th:each="x : ${documents}">
 							<td>
-								<a th:href="@{/AD21/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
+								<a th:href="@{/AD18/download/} + ${x.xdocid}" class="btn btn-primary btn-sm btn-doc-download" target="_blank"><i class="ph-download-simple"></i></a>
 								<button th:if="${acheader.xvoucher ne null and acheader.xstatusjv ne 'Posted'}"
 										th:attr="
-											data-url=@{/AD21/delete/} + ${x.xdocid}, 
+											data-url=@{/AD18/delete/} + ${x.xdocid}, 
 											data-mainreloadid='main-form-container',
 											data-mainreloadurl='/FA16?xvoucher='" 
 										type="button" 
