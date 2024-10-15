@@ -2,8 +2,8 @@
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
 			<h2 class="m-0 p-0 ms-3 me-3 my-2" th:text="${'Level - ' + acgroup.xaglevel}"></h2>
-			<button th:attr="data-reloadurl='/FA12?xagcode='+ ${acgroup.xagparent} +'&xagparent=RESET', data-reloadid='main-form-container'" th:if="${acgroup.xaglevel ne 1 and acgroup.xagparent ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-left me-2"></i> <span th:text="${'Back to Level ' + (acgroup.xaglevel - 1)}"></span></button>
-			<button th:attr="data-reloadurl='/FA12?xagcode=RESET&xagparent=' + ${acgroup.xagcode}, data-reloadid='main-form-container'" th:if="${acgroup.xagcode ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-right me-2"></i> <span th:text="${'Go to Level ' + (acgroup.xaglevel + 1)}"></span></button>
+			<button th:attr="data-reloadurl='/FA12?xagcode='+ ${acgroup.xagparent} +'&xagparent=RESET', data-reloadid='main-form-container', data-xaglevel=${acgroup.xaglevel - 1}" th:if="${acgroup.xaglevel ne 1 and acgroup.xagparent ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-left me-2"></i> <span th:text="${'Back to Level ' + (acgroup.xaglevel - 1)}"></span></button>
+			<button th:attr="data-reloadurl='/FA12?xagcode=RESET&xagparent=' + ${acgroup.xagcode}, data-reloadid='main-form-container', data-xaglevel=${acgroup.xaglevel + 1}" th:if="${acgroup.xagcode ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-right me-2"></i> <span th:text="${'Go to Level ' + (acgroup.xaglevel + 1)}"></span></button>
 		</div>
 
 		<div class="card-body">
@@ -95,9 +95,20 @@
 			$('.btn-navigation').off('click').on('click', function(e){
 				e.preventDefault();
 
+				var xaglevel = $(this).data('xaglevel');
+
 				sectionReloadAjaxReq({
 					id : $(this).data('reloadid'),
 					url : $(this).data('reloadurl')
+				});
+
+				sectionReloadAjaxPostReq({
+					id : 'list-table-container',
+					url : '/search/table/LFA12/1?dependentparam=' + xaglevel
+				}, {
+					mainscreen: true, 
+					mainreloadurl: '/FA12?xagparent=RESET&xagcode=',
+					mainreloadid: 'main-form-container',
 				});
 			});
 
@@ -120,13 +131,15 @@
 
 
 <div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
-	<script>
+	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function(){
 			kit.ui.init();
 
+			var xaglevel = /*[[${acgroup.xaglevel}]]*/;
+
 			sectionReloadAjaxPostReq({
 				id : 'list-table-container',
-				url : '/search/table/LFA12/0'
+				url : '/search/table/LFA12/1?dependentparam=' + xaglevel
 			}, {
 				mainscreen: true, 
 				mainreloadurl: '/FA12?xagparent=RESET&xagcode=',

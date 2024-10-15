@@ -2,13 +2,9 @@
  * Application basepath
  */
 function getBasepath(){
-	var basePath = $('a.basePath').attr('href');
-	basePath = basePath.split('/')[1];
-	var href = location.href.split('/');
-	if(basePath != ''){
-		return href[0] + '//' + href[2] + '/' + basePath;
-	}
-	return href[0] + '//' + href[2];
+	const basePath = $('a.basePath').attr('href').split('/')[1];
+	const href = location.href.split('/');
+	return basePath ? `${href[0]}//${href[2]}/${basePath}` : `${href[0]}//${href[2]}`;
 }
 
 
@@ -66,7 +62,7 @@ function sectionReloadAjaxReq(section) {
 	});
 }
 
-function sectionReloadAjaxPostReq(section, data, callbackFunction) {
+function sectionReloadAjaxPostReq(section, data, callback) {
 	loadingMask2.show();
 	$.ajax({
 		url: getBasepath() + section.url,
@@ -77,9 +73,7 @@ function sectionReloadAjaxPostReq(section, data, callbackFunction) {
 			$("." + section.id).html("");
 			$("." + section.id).append(data);
 
-			if(callbackFunction != undefined){
-				callbackFunction();
-			}
+			if(callback) callback();
 		},
 		error: function (jqXHR, status, errorThrown) {
 			loadingMask2.hide();

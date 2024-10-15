@@ -26,7 +26,7 @@ public class AcgroupServiceImpl extends AbstractService implements AcgroupServic
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
 		.append(fromClause("acgroup im"))
-		.append(whereClause(searchText))
+		.append(whereClause(searchText, suffix, dependentParam))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
 
@@ -43,7 +43,7 @@ public class AcgroupServiceImpl extends AbstractService implements AcgroupServic
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
 		.append(fromClause("acgroup im"))
-		.append(whereClause(searchText));
+		.append(whereClause(searchText, suffix, dependentParam));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
@@ -67,8 +67,13 @@ public class AcgroupServiceImpl extends AbstractService implements AcgroupServic
 				.append(" LEFT JOIN acgroup a ON a.xagcode = im.xagparent AND a.zid = im.zid ");
 	}
 
-	private StringBuilder whereClause(String searchText) {
+	private StringBuilder whereClause(String searchText, int suffix, String dependentParam) {
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+
+		if(suffix == 1) {
+			String paramsValues[] = dependentParam.split(",");
+			sql = sql.append(" AND im.xaglevel='"+ paramsValues[0] +"' ");
+		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;
 

@@ -77,7 +77,7 @@
 							<select class="form-control select" th:field="*{xvtype}" required="required">
 								<option value="">-- Select --</option>
 								<option value="Journal Voucher">Journal Voucher</option>
-								<option th:each="vt : ${voucherTypes}" value="${vt.xcode}" th:text="${vt.xcode}"></option>
+								<option th:each="vt : ${voucherTypes}" th:value="${vt.xcode}" th:text="${vt.xcode}"></option>
 							</select>
 						</div>
 					</div>

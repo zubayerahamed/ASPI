@@ -96,7 +96,13 @@ public class FA12 extends KitController {
 	}
 
 	@GetMapping("/list-table")
-	public String loadListTableFragment(Model model) {
+	public String loadListTableFragment(@RequestParam(required = false) Integer xaglevel, Model model) {
+		if(xaglevel == null || xaglevel < 0) xaglevel = 0;
+
+		Acgroup acgroup = Acgroup.getDefaultInstance();
+		acgroup.setXaglevel(xaglevel);
+
+		model.addAttribute("acgroup", acgroup);
 		return "pages/FA12/FA12-fragments::list-table";
 	}
 
@@ -137,7 +143,7 @@ public class FA12 extends KitController {
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (acgroup.getXagparent() == null ? "RESET" : acgroup.getXagparent())));
-			reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table"));
+			reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + acgroup.getXaglevel()));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -157,7 +163,7 @@ public class FA12 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=" + existObj.getXagcode() + "&xagparent=" + (existObj.getXagparent() == null ? "RESET" : existObj.getXagparent())));
-		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table"));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + existObj.getXaglevel()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -182,7 +188,7 @@ public class FA12 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (obj.getXagparent() == null ? "RESET" : obj.getXagparent())));
-		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table"));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + obj.getXaglevel()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
