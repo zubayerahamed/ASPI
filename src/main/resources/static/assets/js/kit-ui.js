@@ -401,7 +401,20 @@ kit.ui.config.inputFieldsEvents = function(){
 	});
 }
 
+kit.ui.config.tooltip = function(){
+
+	const tooltipSelector = document.querySelectorAll('[data-bs-popup="tooltip"]');
+
+	tooltipSelector.forEach(function(popup) {
+		new bootstrap.Tooltip(popup, {
+			boundary: '.page-content'
+		});
+	});
+
+}
+
 kit.ui.init = function(){
+	kit.ui.config.tooltip();
 	kit.ui.config.select2();
 	kit.ui.config.noty();
 	kit.ui.menu();
