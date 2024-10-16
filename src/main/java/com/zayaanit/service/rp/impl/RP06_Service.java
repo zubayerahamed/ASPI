@@ -34,7 +34,7 @@ public class RP06_Service extends AbstractReportService {
 		type.add(new DropdownOption("", "-- Select --"));
 		type.add(new DropdownOption("General", "General"));
 		type.add(new DropdownOption("Imported", "Imported"));
-		fieldsList.add(FormFieldBuilder.generateDropdownField(4, "Type", type, "", false));
+		fieldsList.add(FormFieldBuilder.generateDropdownField(5, "Type", type, "", false));
 
 		List<DropdownOption> vtype = new ArrayList<>();
 		vtype.add(new DropdownOption("", "-- Select --"));
@@ -43,7 +43,7 @@ public class RP06_Service extends AbstractReportService {
 		vtypes.stream().forEach(v -> {
 			vtype.add(new DropdownOption(v.getXcode(), v.getXcode()));
 		});
-		fieldsList.add(FormFieldBuilder.generateDropdownField(5, "Voucher Type", vtype, "", false));
+		fieldsList.add(FormFieldBuilder.generateDropdownField(6, "Voucher Type", vtype, "", false));
 
 		List<DropdownOption> glstatus = new ArrayList<>();
 		glstatus.add(new DropdownOption("", "-- Select --"));
@@ -51,7 +51,7 @@ public class RP06_Service extends AbstractReportService {
 		glstatus.add(new DropdownOption("Balanced", "Balanced"));
 		glstatus.add(new DropdownOption("Posted", "Posted"));
 		glstatus.add(new DropdownOption("Suspended", "Suspended"));
-		fieldsList.add(FormFieldBuilder.generateDropdownField(6, "GL Status", glstatus, "", false));
+		fieldsList.add(FormFieldBuilder.generateDropdownField(7, "GL Status", glstatus, "", false));
 
 		return fieldsList;
 	}
