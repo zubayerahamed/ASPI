@@ -50,6 +50,9 @@ public class Acgroup extends AbstractModel<String> {
 	private String xagtype;
 
 	@Transient
+	private Integer againParent;
+
+	@Transient
 	private String parentName;
 
 	@Transient

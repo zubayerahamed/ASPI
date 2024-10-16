@@ -62,7 +62,7 @@ public class FA12 extends KitController {
 				return "pages/FA12/FA12-fragments::main-form";
 			}
 
-			if("RESET".equalsIgnoreCase(xagcode)) {
+			if("RESET".equalsIgnoreCase(xagcode)) { // when next click agcode is reset and xagprent is present
 				Optional<Acgroup> parentOp = acgroupRepo.findById(new AcgroupPK(sessionManager.getBusinessId(), Integer.parseInt(xagparent)));
 				if(!parentOp.isPresent()) {
 					model.addAttribute("acgroup", Acgroup.getDefaultInstance());
@@ -74,6 +74,7 @@ public class FA12 extends KitController {
 				acgroup.setParentName(parentOp.get().getXagname());
 				acgroup.setXaglevel(parentOp.get().getXaglevel() + 1);
 				acgroup.setXagtype(parentOp.get().getXagtype());
+				acgroup.setAgainParent(parentOp.get().getXagparent());
 				model.addAttribute("acgroup", acgroup);
 				return "pages/FA12/FA12-fragments::main-form";
 			}
@@ -96,11 +97,12 @@ public class FA12 extends KitController {
 	}
 
 	@GetMapping("/list-table")
-	public String loadListTableFragment(@RequestParam(required = false) Integer xaglevel, Model model) {
-		if(xaglevel == null || xaglevel < 0) xaglevel = 0;
+	public String loadListTableFragment(@RequestParam(required = false) Integer xaglevel, @RequestParam(required = false) Integer xagparent, Model model) {
+		if(xaglevel == null || xaglevel < 1) xaglevel = 1;
 
 		Acgroup acgroup = Acgroup.getDefaultInstance();
 		acgroup.setXaglevel(xaglevel);
+		acgroup.setXagparent(xagparent);
 
 		model.addAttribute("acgroup", acgroup);
 		return "pages/FA12/FA12-fragments::list-table";
@@ -143,7 +145,7 @@ public class FA12 extends KitController {
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (acgroup.getXagparent() == null ? "RESET" : acgroup.getXagparent())));
-			reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + acgroup.getXaglevel()));
+			reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + acgroup.getXaglevel() + "&xagparent=" + acgroup.getXagparent()));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
 			return responseHelper.getResponse();
@@ -163,7 +165,7 @@ public class FA12 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=" + existObj.getXagcode() + "&xagparent=" + (existObj.getXagparent() == null ? "RESET" : existObj.getXagparent())));
-		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + existObj.getXaglevel()));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + existObj.getXaglevel() + "&xagparent=" + existObj.getXagparent()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -188,7 +190,7 @@ public class FA12 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (obj.getXagparent() == null ? "RESET" : obj.getXagparent())));
-		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + obj.getXaglevel()));
+		reloadSections.add(new ReloadSection("list-table-container", "/FA12/list-table?xaglevel=" + obj.getXaglevel() + "&xagparent=" + obj.getXagparent()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

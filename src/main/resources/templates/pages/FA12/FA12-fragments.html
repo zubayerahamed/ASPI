@@ -2,8 +2,8 @@
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
 			<h2 class="m-0 p-0 ms-3 me-3 my-2" th:text="${'Level - ' + acgroup.xaglevel}"></h2>
-			<button th:attr="data-reloadurl='/FA12?xagcode='+ ${acgroup.xagparent} +'&xagparent=RESET', data-reloadid='main-form-container', data-xaglevel=${acgroup.xaglevel - 1}" th:if="${acgroup.xaglevel ne 1 and acgroup.xagparent ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-left me-2"></i> <span th:text="${'Back to Level ' + (acgroup.xaglevel - 1)}"></span></button>
-			<button th:attr="data-reloadurl='/FA12?xagcode=RESET&xagparent=' + ${acgroup.xagcode}, data-reloadid='main-form-container', data-xaglevel=${acgroup.xaglevel + 1}" th:if="${acgroup.xagcode ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-right me-2"></i> <span th:text="${'Go to Level ' + (acgroup.xaglevel + 1)}"></span></button>
+			<button th:attr="data-reloadurl='/FA12?xagcode='+ ${acgroup.xagparent} +'&xagparent=RESET', data-reloadid='main-form-container', data-xaglevel=${acgroup.xaglevel - 1}, data-xagparent=${acgroup.againParent}" th:if="${acgroup.xaglevel ne 1 and acgroup.xagparent ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-left me-2"></i> <span th:text="${'Back to Level ' + (acgroup.xaglevel - 1)}"></span></button>
+			<button th:attr="data-reloadurl='/FA12?xagcode=RESET&xagparent=' + ${acgroup.xagcode}, data-reloadid='main-form-container', data-xaglevel=${acgroup.xaglevel + 1}, data-xagparent=${acgroup.xagcode}" th:if="${acgroup.xagcode ne null}" class="btn btn-primary btn-sm btn-navigation my-2 ms-3"><i class="ph-arrow-fat-lines-right me-2"></i> <span th:text="${'Go to Level ' + (acgroup.xaglevel + 1)}"></span></button>
 		</div>
 
 		<div class="card-body">
@@ -35,8 +35,7 @@
 							</div>
 						</div>
 					</div>
-					
-					
+
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Group Name</label>
@@ -96,6 +95,8 @@
 				e.preventDefault();
 
 				var xaglevel = $(this).data('xaglevel');
+				var xagparent = $(this).data('xagparent');
+				if(xagparent == undefined || xagparent == null) xagparent = '';
 
 				sectionReloadAjaxReq({
 					id : $(this).data('reloadid'),
@@ -104,7 +105,7 @@
 
 				sectionReloadAjaxPostReq({
 					id : 'list-table-container',
-					url : '/search/table/LFA12/1?dependentparam=' + xaglevel
+					url : '/search/table/LFA12/1?dependentparam=' + xaglevel + ',' + xagparent
 				}, {
 					mainscreen: true, 
 					mainreloadurl: '/FA12?xagparent=RESET&xagcode=',
@@ -136,6 +137,7 @@
 			kit.ui.init();
 
 			var xaglevel = /*[[${acgroup.xaglevel}]]*/;
+			var xagparent = /*[[${acgroup.xagparent}]]*/;
 
 			sectionReloadAjaxPostReq({
 				id : 'list-table-container',

@@ -73,6 +73,10 @@ public class AcgroupServiceImpl extends AbstractService implements AcgroupServic
 		if(suffix == 1) {
 			String paramsValues[] = dependentParam.split(",");
 			sql = sql.append(" AND im.xaglevel='"+ paramsValues[0] +"' ");
+
+			if(paramsValues.length > 1 && !"1".equalsIgnoreCase(paramsValues[0])) {
+				sql = sql.append(" AND im.xagparent='"+ paramsValues[1] +"' ");
+			}
 		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;

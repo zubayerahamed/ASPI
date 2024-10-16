@@ -43,7 +43,6 @@ public class RP06_Service extends AbstractReportService {
 		vtypes.stream().forEach(v -> {
 			vtype.add(new DropdownOption(v.getXcode(), v.getXcode()));
 		});
-		vtype.add(new DropdownOption("Imported", "Imported"));
 		fieldsList.add(FormFieldBuilder.generateDropdownField(5, "Voucher Type", vtype, "", false));
 
 		List<DropdownOption> glstatus = new ArrayList<>();
