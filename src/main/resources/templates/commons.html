@@ -224,7 +224,7 @@
 
 						<!-- Main -->
 						<li class="nav-item" th:each="screen : ${master.screens}">
-							<a th:href="@{/} + ${screen.xscreen}" class="nav-link screen-item" th:attr="id=${screen.xscreen}, data-screen=${screen.xscreen}" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
+							<a th:id="${screen.xscreen}" th:href="@{/} + ${screen.xscreen}" class="nav-link screen-item" th:attr="id=${screen.xscreen}, data-screen=${screen.xscreen}" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
 								<i th:classappend="${#strings.isEmpty(screen.xicon) ? 'ph-house' :screen.xicon}"></i>
 								<span th:text="${screen.xtitle}"></span>
 							</a>
@@ -257,7 +257,7 @@
 
 		<!-- screens -->
 		<li class="nav-item" th:each="screen : ${master.screens}">
-			<a th:href="@{/} + ${screen.xscreen}" class="nav-link screen-item" th:attr="id=${screen.xscreen}, data-screen=${screen.xscreen}" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
+			<a th:id="${screen.xscreen}" th:href="@{/} + ${screen.xscreen}" class="nav-link screen-item" th:attr="id=${screen.xscreen}, data-screen=${screen.xscreen}" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
 				<i th:classappend="${#strings.isEmpty(screen.xicon) ? 'ph-house' :screen.xicon}"></i>
 				<span th:text="${screen.xtitle}"></span>
 			</a>
@@ -293,18 +293,24 @@
 
 
 <div th:fragment="favorite-links" xmlns:th="http://www.thymeleaf.org">
-	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="fw-semibold mb-2">My Favorite Links</div>
+	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="fw-semibold">My Favorite Links</div>
+	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="mb-2" style="font-size: 12px; font-style: italic;">You can add maximum 6 favorite lins here</div>
 	<div th:if="${not loggedInUser.isAdmin}"  class="list-group mb-3">
-		<label th:each="f : ${favouriteMenus}" class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
-			<div class="d-flex flex-fill justify-content-between my-1">
-				<div class="form-check-label d-flex me-2">
+
+		<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2" th:each="f : ${favouriteMenus}">
+			<div class="d-flex flex-fill my-1 align-items-center">
+				<div class="form-check-label d-flex me-2 align-items-center">
 					<i class="me-3" th:classappend="${#strings.isEmpty(f.screenIcon) ? 'ph-house' : f.screenIcon}"></i>
-					<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}" class="fw-bold screen-item" th:text="${f.screenName}"></a>
+					<div>
+						<span class="fw-bold">
+							<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}" class="fw-bold screen-item" th:text="${f.screenName}"></a>
+						</span>
+					</div>
 				</div>
+				<input type="radio" th:attr="data-url=@{/} + 'AD15/make-default?screen=' + ${f.xscreen}" class="form-check-input cursor-pointer ms-auto default-favorite-link" name="favorite-default" title="Make it default" th:value="${f.xscreen}" th:checked="${f.xisdefault ? 'checked' : false}" data-bs-popup="tooltip">
 			</div>
 		</label>
 
-		<a th:href="@{/AD15}" th:attr="data-screen=AD15" class="fw-bold screen-item">Manage Favorites</a>
 	</div>
 </div>
 

@@ -451,6 +451,11 @@ $(document).ready(function(){
 		});
 	});
 
+	$(document).on('click', 'input[type="radio"][name="favorite-default"].default-favorite-link', function (e) {
+		var submitUrl = $(this).data('url');
+		actionPostRequest(submitUrl, null);
+	});
+
 	$('.screen-item').on('click', function(e){
 		e.preventDefault();
 

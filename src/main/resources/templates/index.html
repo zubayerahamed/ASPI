@@ -24,8 +24,14 @@
 		<!-- Main content -->
 		<div class="content-wrapper screen-container">
 
-
 		</div>
+		<script type="text/javascript" th:inline="javascript">
+			$(document).ready(function(){
+				var favscreen = /*[[${favscreen}]]*/;
+				if(favscreen == undefined || favscreen == null || favscreen == '') return;
+				$('#' + favscreen).click();
+			})
+		</script>
 		<!-- /main content -->
 
 	</div>

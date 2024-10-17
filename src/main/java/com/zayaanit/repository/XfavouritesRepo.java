@@ -20,4 +20,6 @@ public interface XfavouritesRepo extends JpaRepository<Xfavourites, XfavouritesP
 	public Integer getNextAvailableSequence(Integer zid);
 
 	List<Xfavourites> findAllByZidAndZemailAndXprofile(Integer zid, String xemail, String xprofile);
+
+	List<Xfavourites> findAllByZidAndZemailAndXprofileAndXisdefault(Integer zid, String xemail, String xprofile, Boolean xisdefault);
 }

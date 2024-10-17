@@ -30,7 +30,9 @@ public enum ReportMenu {
 	RP14("RP14", "Balance Sheet Summary", "RP14.rpt", ReportParamMap.RP14, "Y", false),
 	RP15("RP15", "Cross Year Account Ledger", "RP15.rpt", ReportParamMap.RP15, "Y", false),
 	RP16("RP16", "Cross Year Trial Balance", "RP16.rpt", ReportParamMap.RP16, "Y", false),
-	RP17("RP16", "Cross Year Profit & Loss", "RP17.rpt", ReportParamMap.RP17, "Y", false);
+	RP17("RP16", "Cross Year Profit & Loss", "RP17.rpt", ReportParamMap.RP17, "Y", false),
+	RP18("RP18", "Sub Account Ledger Detail", "RP18.rpt", ReportParamMap.RP18, "Y", false),
+	RP19("RP19", "Sub Account Ledger Summary", "RP19.rpt", ReportParamMap.RP19, "Y", false);
 
 	private String group;
 	private String description;

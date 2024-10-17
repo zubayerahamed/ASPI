@@ -1,39 +1,32 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zayaanit.entity.Acdef;
+import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xfavourites;
-import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
-import com.zayaanit.entity.pk.AcdefPK;
+import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.XfavouritesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
-import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.repository.AcdefRepo;
 import com.zayaanit.repository.XfavouritesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
@@ -46,7 +39,6 @@ import com.zayaanit.repository.XusersRepo;
 @RequestMapping("/AD15")
 public class AD15 extends KitController {
 
-	@Autowired private AcdefRepo acdefRepo;
 	@Autowired private XusersRepo xusersRepo;
 	@Autowired private XfavouritesRepo xfavouritesRepo;
 	@Autowired private XscreensRepo xscreenRepo;
@@ -78,62 +70,72 @@ public class AD15 extends KitController {
 		if(!usersOp.isPresent()) return "redirect:/";
 
 		Xusers user = usersOp.get(); 
+		if(user.getXstaff() != null) {
+			Optional<Acsub> employeeOp = acsubRepo.findById(new AcsubPK(loggedInZbusiness().getZid(), user.getXstaff()));
+			if(employeeOp.isPresent()) user.setEmployeeName(employeeOp.get().getXname());
+		}
 
 		model.addAttribute("user", user);
 
-		if(isAjaxRequest(request) && frommenu == null) return "pages/AD15/AD15-fragments::main-form";
+		if(isAjaxRequest(request) && frommenu == null) return "pages/AD15/AD15-fragments::cp-form";
 		if(frommenu == null) return "redirect:/";
 		return "pages/AD15/AD15";
 	}
 
-	@PostMapping("/store")
-	public @ResponseBody Map<String, Object> store(Acdef acdef, BindingResult bindingResult){
+	@Transactional
+	@PostMapping("/cp/store")
+	public @ResponseBody Map<String, Object> store(String oldPass, String newPass, String confirmPass){
 
-		// VALIDATE XSCREENS
-		modelValidator.validateAcdef(acdef, bindingResult, validator);
-		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
-	
-		if(acdef.getXoffset() == null) {
-			responseHelper.setErrorStatusAndMessage("Fiscal Year required");
+		// VALIDATE DATA
+		if(StringUtils.isBlank(oldPass)) {
+			responseHelper.setErrorStatusAndMessage("Old password required");
 			return responseHelper.getResponse();
 		}
 
-		if(acdef.getXclyear() == null) {
-			responseHelper.setErrorStatusAndMessage("Closed year required");
+		if(StringUtils.isBlank(newPass)) {
+			responseHelper.setErrorStatusAndMessage("New password required");
 			return responseHelper.getResponse();
 		}
 
-		acdef.setXcldate(new Date());
-
-		// Create new
-		if(SubmitFor.INSERT.equals(acdef.getSubmitFor())) {
-			
-			acdef.setZid(sessionManager.getBusinessId());
-			acdef = acdefRepo.save(acdef);
-
-			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/AD15"));
-			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Saved successfully");
+		if(StringUtils.isBlank(confirmPass)) {
+			responseHelper.setErrorStatusAndMessage("Confirm password required");
 			return responseHelper.getResponse();
 		}
 
-		// Update existing
-		Optional<Acdef> op = acdefRepo.findById(new AcdefPK(sessionManager.getBusinessId()));
-		if(!op.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
+		if(!newPass.equals(confirmPass)) {
+			responseHelper.setErrorStatusAndMessage("New Password and Confirm password not matched");
 			return responseHelper.getResponse();
 		}
 
-		Acdef existObj = op.get();
-		BeanUtils.copyProperties(acdef, existObj, "zid", "zuserid", "ztime");
+		Optional<Xusers> xusersOp = xusersRepo.findById(new XusersPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername()));
+		if(!xusersOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("User not found");
+			return responseHelper.getResponse();
+		}
 
-		existObj = acdefRepo.save(existObj);
+		Xusers user = xusersOp.get();
+
+		if(!oldPass.equals(user.getXpassword())) {
+			responseHelper.setErrorStatusAndMessage("Old password not valid");
+			return responseHelper.getResponse();
+		}
+
+		user.setXpassword(newPass);
+		user.setXoldpassword(oldPass);
+		user = xusersRepo.save(user);
+
+		// get all the users with this zeamil and change password for them
+		List<Xusers> usersList = xusersRepo.findAllByZemail(loggedInUser().getUsername());
+		usersList.stream().forEach(u -> {
+			u.setXpassword(newPass);
+			u.setXoldpassword(oldPass);
+			xusersRepo.save(u);
+		});
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/AD15"));
+		reloadSections.add(new ReloadSection("cp-form-container", "/AD15"));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Updated successfully");
+		responseHelper.setSuccessStatusAndMessage("Password changed successfully");
 		return responseHelper.getResponse();
 	}
 
@@ -160,6 +162,13 @@ public class AD15 extends KitController {
 		Optional<Xfavourites> favOp = xfavouritesRepo.findById(new XfavouritesPK(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile(), screen));
 		if(favOp.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Screen already added to favorite list");
+			return responseHelper.getResponse();
+		}
+
+		// Check total no of favorites in db
+		List<Xfavourites> list = xfavouritesRepo.findAllByZidAndZemailAndXprofile(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile());
+		if(list.size() == 6) {
+			responseHelper.setErrorStatusAndMessage("You already reached the maximum number of favorite links. Please remove previous any one to add new.");
 			return responseHelper.getResponse();
 		}
 
@@ -223,6 +232,36 @@ public class AD15 extends KitController {
 	public String loadFavoriteLinks(Model model) {
 		model.addAttribute("favouriteMenus", favouriteMenus());
 		return "commons::favorite-links";
+	}
+
+	@PostMapping("/make-default")
+	public @ResponseBody Map<String, Object> makeDefaultFavorite(@RequestParam String screen){
+
+		if(loggedInUser().isAdmin()) {
+			responseHelper.setErrorStatusAndMessage("Admin user not allowed to add default favorite");
+			return responseHelper.getResponse();
+		}
+
+		Optional<Xfavourites> favOp = xfavouritesRepo.findById(new XfavouritesPK(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile(), screen));
+		if(!favOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Screen not found in favorite list");
+			return responseHelper.getResponse();
+		}
+
+		// find the previous default and remove it
+		List<Xfavourites> favList = xfavouritesRepo.findAllByZidAndZemailAndXprofileAndXisdefault(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile(), true);
+		favList.stream().forEach(f -> {
+			f.setXisdefault(false);
+			xfavouritesRepo.save(f);
+		});
+
+		Xfavourites fav = favOp.get();
+		fav.setXisdefault(true);
+		xfavouritesRepo.save(fav);
+
+		responseHelper.setDisplayMessage(false);
+		responseHelper.setSuccessStatusAndMessage("Success");
+		return responseHelper.getResponse();
 	}
 
 	@PostMapping("/switch-color-mode")

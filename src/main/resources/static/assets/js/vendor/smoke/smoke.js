@@ -278,8 +278,8 @@
             strongPassRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])\w{6,}$/;
             textPass = languaje.textSPassStrong;
             break;
-            default:// Debe contener al menos 4 caracteres
-            strongPassRegex = /^(?=.*[a-z0-9])\w{4,}$/;
+            default:// Debe contener al menos 3 caracteres
+            strongPassRegex = /^(?=.*[a-z0-9])\w{3,}$/;
             textPass = languaje.textSPassDefault;
           }
           // Se valida que el value del input cumpla con la expresión regular

@@ -23,4 +23,6 @@ public interface XusersRepo extends JpaRepository<Xusers, XusersPK>{
 
 	public List<Xusers> findAllByZemailAndZactive(String zemail, Boolean zactive);
 
+	public List<Xusers> findAllByZemail(String zemail);
+
 }
