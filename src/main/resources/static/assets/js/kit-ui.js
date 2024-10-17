@@ -457,6 +457,7 @@ $(document).ready(function(){
 		});
 
 		$('.navbar-toggler.sidebar-mobile-main-toggle').click();
+		$('.customize-aspi-offcanvas').click();
 	})
 
 	$(".menu-search").off('input').on('input', function(){

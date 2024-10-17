@@ -171,7 +171,10 @@ public abstract class KitController extends BaseController {
 		favsList = favsList.stream().filter(f -> assignedScreens.contains(f.getXscreen())).collect(Collectors.toList());
 		favsList.stream().forEach(f -> {
 			Optional<Xscreens> sOp = xscreenRepo.findById(new XscreensPK(loggedInZbusiness().getZid(), f.getXscreen()));
-			if(sOp.isPresent()) f.setScreenName(sOp.get().getXtitle());
+			if(sOp.isPresent()) {
+				f.setScreenName(sOp.get().getXtitle());
+				f.setScreenIcon(sOp.get().getXicon());
+			}
 		});
 		favsList.sort(Comparator.comparing(Xfavourites::getXsequence));
 		return favsList;

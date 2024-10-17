@@ -8,7 +8,7 @@
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Fiscal year</label>
+							<label class="form-label required">Fiscal year</label>
 							<select class="form-control select" th:field="*{xoffset}" required="required">
 								<option value="0">Jan - Dec</option>
 								<option value="1">Feb - Jan</option>
@@ -27,7 +27,7 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Closed Year</label>
+							<label class="form-label required">Closed Year</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xclyear}" required="required">
 						</div>
 					</div>

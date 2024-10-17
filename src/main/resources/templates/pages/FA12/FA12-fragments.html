@@ -15,7 +15,7 @@
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Group Code</label>
+							<label class="form-label required">Group Code</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
@@ -38,13 +38,13 @@
 
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Group Name</label>
+							<label class="form-label required">Group Name</label>
 							<input type="text" class="form-control" th:field="*{xagname}" required>
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Group Type</label>
+							<label class="form-label required">Group Type</label>
 							<select th:if="${acgroup.xaglevel eq 1 and acgroup.xagcode eq null}" class="form-control select" th:field="*{xagtype}" required>
 								<option value="">-- Select --</option>
 								<option value="Asset">Asset</option>
@@ -58,7 +58,7 @@
 					</div>
 					<div class="col-md-3" th:if="${acgroup.xaglevel ne 1}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Parent Group</label>
+							<label class="form-label required">Parent Group</label>
 							<input type="text" class="form-control" th:value="${acgroup.xagparent + ' - ' + acgroup.parentName}" disabled>
 							<input type="hidden" class="form-control" th:field="*{xagparent}">
 						</div>

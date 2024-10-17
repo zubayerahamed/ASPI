@@ -1,10 +1,13 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Xfavourites;
+import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.pk.AcdefPK;
@@ -177,17 +181,10 @@ public class AD15 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("page-header-container", "/AD15/page-header?screen=" + screen + "&pagetitle=" + pagetitle + "&favorite=YES"));
+		reloadSections.add(new ReloadSection("favorite-links-container", "/AD15/favorite-links"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Added to favorite");
 		return responseHelper.getResponse();
-	}
-
-	@GetMapping("/page-header")
-	public String loadPageHeader(@RequestParam String screen, @RequestParam String pagetitle, @RequestParam String favorite, Model model) {
-		model.addAttribute("screenCode", screen);
-		model.addAttribute("pageTitle", pagetitle);
-		model.addAttribute("isFavorite", "YES".equalsIgnoreCase(favorite));
-		return "commons::page-header";
 	}
 
 	@PostMapping("/remove-from-favourite")
@@ -208,8 +205,23 @@ public class AD15 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("page-header-container", "/AD15/page-header?screen=" + screen + "&pagetitle=" + pagetitle + "&favorite=NO"));
+		reloadSections.add(new ReloadSection("favorite-links-container", "/AD15/favorite-links"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Removed from favorite");
 		return responseHelper.getResponse();
+	}
+
+	@GetMapping("/page-header")
+	public String loadPageHeader(@RequestParam String screen, @RequestParam String pagetitle, @RequestParam String favorite, Model model) {
+		model.addAttribute("screenCode", screen);
+		model.addAttribute("pageTitle", pagetitle);
+		model.addAttribute("isFavorite", "YES".equalsIgnoreCase(favorite));
+		return "commons::page-header";
+	}
+
+	@GetMapping("/favorite-links")
+	public String loadFavoriteLinks(Model model) {
+		model.addAttribute("favouriteMenus", favouriteMenus());
+		return "commons::favorite-links";
 	}
 }

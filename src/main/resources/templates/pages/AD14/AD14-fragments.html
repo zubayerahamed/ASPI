@@ -13,7 +13,7 @@
 				<div class="row">
 					<div class="col-md-3" th:if="${#strings.isEmpty(xcodes.xcode)}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Code Type</label>
+							<label class="form-label required">Code Type</label>
 							<select class="form-control select" id="xtype" name="xtype" th:field="*{xtype}" required="required">
 								<option value="Code Type">Code Type</option>
 								<option th:each="ct : ${codeTypes}" th:value="${ct.xcode}" th:text="${ct.xcode}"></option>
@@ -22,19 +22,19 @@
 					</div>
 					<div class="col-md-3" th:if="${not #strings.isEmpty(xcodes.xcode)}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Code Type</label>
+							<label class="form-label required">Code Type</label>
 							<input type="text" class="form-control" th:value="${xcodes.xtype}" disabled="disabled">
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${#strings.isEmpty(xcodes.xcode)}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Code</label>
+							<label class="form-label required">Code</label>
 							<input type="text" class="form-control" id="xcode" name="xcode" th:field="*{xcode}" required="required">
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${not #strings.isEmpty(xcodes.xcode)}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Code</label>
+							<label class="form-label required">Code</label>
 							<input type="text" class="form-control" th:value="${xcodes.xcode}" disabled="disabled">
 						</div>
 					</div>

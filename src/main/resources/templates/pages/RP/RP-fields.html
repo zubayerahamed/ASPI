@@ -152,7 +152,7 @@
 		<!-- TEXT -->
 		<div th:case="'TEXT'">
 			<div class="mb-3 form-group">
-				<label class="form-label" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
+				<label class="form-label" th:classappend="${field.required ? 'required' : ''}" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
 				<input 	type="text" 
 						class="form-control" 
 						th:id="${field.fieldId}" 
@@ -166,7 +166,7 @@
 		<!-- NUMBER -->
 		<div th:case="'NUMBER'">
 			<div class="mb-3 form-group">
-				<label class="form-label" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
+				<label class="form-label" th:classappend="${field.required ? 'required' : ''}" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
 				<input 	type="number" 
 						class="form-control numeric-only" 
 						th:id="${field.fieldId}" 
@@ -180,7 +180,7 @@
 		<!-- DATE FIELD -->
 		<div th:case="'DATE'">
 			<div class="mb-3 form-group">
-				<label class="form-label" th:for="${field.fieldId}" th:text="${field.prompt}">Date</label>
+				<label class="form-label" th:classappend="${field.required ? 'required' : ''}" th:for="${field.fieldId}" th:text="${field.prompt}">Date</label>
 				<div class="input-group">
 					<input 	type="text" 
 							th:name="${field.fieldName}" 
@@ -200,7 +200,7 @@
 		<!-- TIME -->
 		<div th:case="'TIME'">
 			<div class="mb-3 form-group">
-				<label th:for="${field.fieldId}" th:text="${field.prompt}" class="form-label">Time: </label>
+				<label th:for="${field.fieldId}" th:classappend="${field.required ? 'required' : ''}" th:text="${field.prompt}" class="form-label">Time: </label>
 				<div class="input-group time  timepicker">
 					<input 	class="form-control" 
 							data-type="timepicker" 
@@ -219,7 +219,7 @@
 		<!-- DROPDOWN -->
 		<div th:case="'DROPDOWN'">
 			<div class="mb-3 form-group">
-				<label class="form-label" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
+				<label class="form-label" th:classappend="${field.required ? 'required' : ''}" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
 				<select class="form-control select" 
 						th:id="${field.fieldId}" 
 						th:name="${field.fieldName}" 
@@ -236,7 +236,7 @@
 		<!-- DROPDOWN SELECT2 -->
 		<div th:case="'SELECT2'">
 			<div class="mb-3 form-group">
-				<label class="form-label" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
+				<label class="form-label" th:classappend="${field.required ? 'required' : ''}" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
 				<select class="form-control select" 
 						th:id="${field.fieldId}" 
 						th:name="${field.fieldName}" 
@@ -269,7 +269,7 @@
 		<!-- SEARCH ADVANCED -->
 		<div th:case="'SEARCH_ADVANCED'">
 			<div class="mb-3 form-group">
-				<label class="form-label" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
+				<label class="form-label" th:classappend="${field.required ? 'required' : ''}" th:for="${field.fieldId}" th:text="${field.prompt}">Label</label>
 				<div class="input-group">
 					<input 	type="text" 
 							class="form-control searchsuggest2"

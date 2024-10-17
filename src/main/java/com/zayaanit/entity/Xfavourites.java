@@ -61,4 +61,6 @@ public class Xfavourites extends AbstractModel<String> {
 	@Transient
 	private String screenName;
 
+	@Transient
+	private String screenIcon;
 }

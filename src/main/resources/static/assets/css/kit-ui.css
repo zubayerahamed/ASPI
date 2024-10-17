@@ -2,16 +2,23 @@
 	display: none;
 }
 
-.form-control:disabled {
-	background-color: #dbdbdb;
+label.required:after {
+	content:" *";
+	color: red;
 }
 
-table{
-	white-space: nowrap;
+/*
+.form-control:disabled {
+	background-color: #39393d;
 }
 
 .select2-container--disabled .select2-selection--single{
-	background-color: #dbdbdb;
+	background-color: #39393d;
+}
+*/
+
+table{
+	white-space: nowrap;
 }
 
 /*

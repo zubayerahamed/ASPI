@@ -291,6 +291,24 @@
 	</script>
 </div>
 
+
+<div th:fragment="favorite-links" xmlns:th="http://www.thymeleaf.org">
+	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="fw-semibold mb-2">My Favorite Links</div>
+	<div th:if="${not loggedInUser.isAdmin}"  class="list-group mb-3">
+		<label th:each="f : ${favouriteMenus}" class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
+			<div class="d-flex flex-fill justify-content-between my-1">
+				<div class="form-check-label d-flex me-2">
+					<i class="me-3" th:classappend="${#strings.isEmpty(f.screenIcon) ? 'ph-house' : f.screenIcon}"></i>
+					<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}" class="fw-bold screen-item" th:text="${f.screenName}"></a>
+				</div>
+			</div>
+		</label>
+
+		<a th:href="@{/AD15}" th:attr="data-screen=AD15" class="fw-bold screen-item">Manage Favorites</a>
+	</div>
+</div>
+
+
 <div th:fragment="notification-section" xmlns:th="http://www.thymeleaf.org">
 	<div class="offcanvas offcanvas-end" tabindex="-1" id="notifications">
 		<div class="offcanvas-header py-0">

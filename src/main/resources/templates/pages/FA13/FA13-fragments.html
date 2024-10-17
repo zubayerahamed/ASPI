@@ -31,13 +31,13 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Account Name</label>
+							<label class="form-label required">Account Name</label>
 							<input type="text" class="form-control" th:field="*{xdesc}" required>
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Account Usage</label>
+							<label class="form-label required">Account Usage</label>
 							<select class="form-control select" th:field="*{xaccusage}" required>
 								<option value="Default">Default</option>
 								<option value="Supplier">Supplier</option>
@@ -49,7 +49,7 @@
 					</div>
 					<div class="col-md-3" th:if="${acmst.xacc eq null}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Account Group</label>
+							<label class="form-label required">Account Group</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
