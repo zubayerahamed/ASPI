@@ -429,6 +429,20 @@ kit.ui.init = function(){
 $(document).ready(function(){
 	kit.ui.init();
 
+	$(document).on('click', 'a.btn-favorite-add', function (e) {
+		e.preventDefault();
+		actionPostRequest($(this).attr('href'), {
+			"pagetitle" : $(this).data('pagetitle')
+		});
+	});
+
+	$(document).on('click', 'a.btn-favorite-remove', function (e) {
+		e.preventDefault();
+		actionPostRequest($(this).attr('href'), {
+			"pagetitle" : $(this).data('pagetitle')
+		});
+	});
+
 	$('.screen-item').on('click', function(e){
 		e.preventDefault();
 

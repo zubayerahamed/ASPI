@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.XfavouritesPK;
 
@@ -57,7 +58,7 @@ public class Xfavourites extends AbstractModel<String> {
 	@Column(name = "xisdefault", length = 1)
 	private Boolean xisdefault;
 
-	@Column(name = "xicon", length = 50)
-	private String xicon;
+	@Transient
+	private String screenName;
 
 }

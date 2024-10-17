@@ -19,6 +19,11 @@ public class HomeController extends KitController {
 	}
 
 	@Override
+	protected boolean isFavorite() {
+		return checkTheScreenIsInFavouriteList(screenCode());
+	}
+
+	@Override
 	protected String pageTitle() {
 		return "Home";
 	}

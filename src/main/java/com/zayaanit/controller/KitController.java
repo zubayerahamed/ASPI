@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Xfavourites;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xmenuscreens;
 import com.zayaanit.entity.Xprofiles;
@@ -27,6 +28,7 @@ import com.zayaanit.entity.Xuserprofiles;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcsubPK;
+import com.zayaanit.entity.pk.XfavouritesPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
@@ -35,6 +37,7 @@ import com.zayaanit.model.MenuTree;
 import com.zayaanit.model.MyUserDetails;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.XcodesRepo;
+import com.zayaanit.repository.XfavouritesRepo;
 import com.zayaanit.repository.XmenusRepo;
 import com.zayaanit.repository.XmenuscreensRepo;
 import com.zayaanit.repository.XprofilesRepo;
@@ -64,6 +67,8 @@ public abstract class KitController extends BaseController {
 	@Autowired protected ZbusinessRepo zbusinessRepo;
 	@Autowired protected AcsubRepo acsubRepo;
 	@Autowired protected XuserprofilesRepo xuserprofilesRepo;
+	@Autowired protected XfavouritesRepo xfavouritesRepo;
+	@Autowired protected XprofilesdtRepo xprofilesdtRepo;
 
 	@ModelAttribute("appVersion")
 	protected String appVersion() {
@@ -75,6 +80,9 @@ public abstract class KitController extends BaseController {
 
 	@ModelAttribute("screenCode")
 	protected abstract String screenCode();
+
+	@ModelAttribute("isFavorite")
+	protected abstract boolean isFavorite();
 
 	@ModelAttribute("loggedInUser")
 	protected MyUserDetails loggedInUser() {
@@ -148,6 +156,25 @@ public abstract class KitController extends BaseController {
 		}
 
 		return allActiveProfiles;
+	}
+
+	@ModelAttribute("favouriteMenus")
+	protected List<Xfavourites> favouriteMenus(){
+		if(loggedInUser().isAdmin()) return Collections.emptyList();
+		if(loggedInUser().getXprofile() == null) return Collections.emptyList();
+
+		List<Xfavourites> favsList = xfavouritesRepo.findAllByZidAndZemailAndXprofile(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile());
+
+		List<Xprofilesdt> profileDetails = xprofilesdtRepo.findAllByXprofileAndZid(loggedInUser().getXprofile().getXprofile(), loggedInZbusiness().getZid());
+		List<String> assignedScreens = profileDetails.stream().map(m -> m.getXscreen()).collect(Collectors.toList());
+
+		favsList = favsList.stream().filter(f -> assignedScreens.contains(f.getXscreen())).collect(Collectors.toList());
+		favsList.stream().forEach(f -> {
+			Optional<Xscreens> sOp = xscreenRepo.findById(new XscreensPK(loggedInZbusiness().getZid(), f.getXscreen()));
+			if(sOp.isPresent()) f.setScreenName(sOp.get().getXtitle());
+		});
+		favsList.sort(Comparator.comparing(Xfavourites::getXsequence));
+		return favsList;
 	}
 
 	@ModelAttribute("masterMeus")
@@ -238,5 +265,14 @@ public abstract class KitController extends BaseController {
 	protected boolean fileExist(String filePathWithFileName) {
 		File file = new File(filePathWithFileName);
 		return file.exists();
+	}
+
+	protected boolean checkTheScreenIsInFavouriteList(String screenCode) {
+		if(StringUtils.isBlank(screenCode)) return false;
+		if(loggedInUser().isAdmin()) return false;
+		if(loggedInUser().getXprofile() == null) return false;
+
+		Optional<Xfavourites> favOp = xfavouritesRepo.findById(new XfavouritesPK(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile(), screenCode));
+		return favOp.isPresent();
 	}
 }

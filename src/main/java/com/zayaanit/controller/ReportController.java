@@ -29,6 +29,16 @@ public class ReportController extends AbstractReportController{
 	private String screenCode = null;
 
 	@Override
+	protected String screenCode() {
+		return this.screenCode;
+	}
+
+	@Override
+	protected boolean isFavorite() {
+		return checkTheScreenIsInFavouriteList(screenCode());
+	}
+
+	@Override
 	protected String pageTitle() {
 		if(this.pageTitle != null) return this.pageTitle;
 		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), this.screenCode));
@@ -63,11 +73,6 @@ public class ReportController extends AbstractReportController{
 		model.addAttribute("reportCode", rm.name());
 
 		return "pages/RP/RP";
-	}
-
-	@Override
-	protected String screenCode() {
-		return this.screenCode;
 	}
 
 }

@@ -45,6 +45,11 @@ public class SA15 extends KitController {
 	}
 
 	@Override
+	protected boolean isFavorite() {
+		return checkTheScreenIsInFavouriteList(screenCode());
+	}
+
+	@Override
 	protected String pageTitle() {
 		if (this.pageTitle != null) return this.pageTitle;
 		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "SA15"));

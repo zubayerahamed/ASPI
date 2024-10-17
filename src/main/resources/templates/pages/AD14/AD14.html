@@ -2,12 +2,8 @@
 <div class="content-inner" xmlns:th="http://www.thymeleaf.org">
 
 	<!-- Page header -->
-	<div class="page-header page-header-light shadow" th:if="${not #strings.isEmpty(pageTitle)}">
-		<div class="page-header-content d-lg-flex">
-			<div class="d-flex">
-				<h4 class="page-title mb-0" th:text="${pageTitle}">Header Title</h4>
-			</div>
-		</div>
+	<div class="page-header-container">
+		<div th:remove="tag" th:include="commons :: page-header"></div>
 	</div>
 	<!-- /page header -->
 

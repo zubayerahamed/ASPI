@@ -21,4 +21,9 @@ public class OnScreenReportController extends AbstractReportController {
 		return null;
 	}
 
+	@Override
+	protected boolean isFavorite() {
+		return checkTheScreenIsInFavouriteList(screenCode());
+	}
+
 }

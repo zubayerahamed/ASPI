@@ -47,57 +47,22 @@
 		</div>
 
 		<div class="offcanvas-body">
-		
-			<div class="fw-semibold mb-2">My Favorite Links</div>
-			<div class="list-group mb-3">
-				<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
+
+			<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="fw-semibold mb-2">My Favorite Links</div>
+			<div th:if="${not loggedInUser.isAdmin}"  class="list-group mb-3">
+				<label th:each="f : ${favouriteMenus}" class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
 					<div class="d-flex flex-fill justify-content-between my-1">
 						<div class="form-check-label d-flex me-2">
 							<i class="ph-sun me-3"></i>
-							<a href="" class="fw-bold">Administration</a>
+							<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}" class="fw-bold screen-item" th:text="${f.screenName}"></a>
 						</div>
 						<a href="" class="text-danger"><i class="ph-trash me-2"></i></a>
 					</div>
 				</label>
-				<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
-					<div class="d-flex flex-fill justify-content-between my-1">
-						<div class="form-check-label d-flex me-2">
-							<i class="ph-sun me-3"></i>
-							<a href="" class="fw-bold">Administration</a>
-						</div>
-						<a href="" class="text-danger"><i class="ph-trash me-2"></i></a>
-					</div>
-				</label>
-				<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
-					<div class="d-flex flex-fill justify-content-between my-1">
-						<div class="form-check-label d-flex me-2">
-							<i class="ph-sun me-3"></i>
-							<a href="" class="fw-bold">Administration</a>
-						</div>
-						<a href="" class="text-danger"><i class="ph-trash me-2"></i></a>
-					</div>
-				</label>
-				<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
-					<div class="d-flex flex-fill justify-content-between my-1">
-						<div class="form-check-label d-flex me-2">
-							<i class="ph-sun me-3"></i>
-							<a href="" class="fw-bold">Administration</a>
-						</div>
-						<a href="" class="text-danger"><i class="ph-trash me-2"></i></a>
-					</div>
-				</label>
-				<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">
-					<div class="d-flex flex-fill justify-content-between my-1">
-						<div class="form-check-label d-flex me-2">
-							<i class="ph-sun me-3"></i>
-							<a href="" class="fw-bold">Administration</a>
-						</div>
-						<a href="" class="text-danger"><i class="ph-trash me-2"></i></a>
-					</div>
-				</label>
+
 				<a th:href="@{/AD15}" th:attr="data-screen=AD15" class="fw-bold screen-item">Manage Favorites</a>
 			</div>
-		
+
 			<div class="fw-semibold mb-2">Color mode</div>
 			<div class="list-group mb-3">
 				<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2">

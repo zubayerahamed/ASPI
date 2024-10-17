@@ -37,6 +37,11 @@ public class ChangePasswordController extends KitController {
 	}
 
 	@Override
+	protected boolean isFavorite() {
+		return checkTheScreenIsInFavouriteList(screenCode());
+	}
+
+	@Override
 	protected String pageTitle() {
 		return "Change Password";
 	}
