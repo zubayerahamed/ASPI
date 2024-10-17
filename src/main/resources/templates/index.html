@@ -62,10 +62,10 @@
 							<i class="ph-sun ph-lg me-3"></i>
 							<div>
 								<span class="fw-bold">Light</span>
-								<div class="fs-sm text-muted">Set light theme or reset to default</div>
+								<div class="fs-sm text-muted">Set light color mode or reset to default</div>
 							</div>
 						</div>
-						<input type="radio" class="form-check-input cursor-pointer ms-auto" name="main-theme" value="light" checked>
+						<input type="radio" class="form-check-input cursor-pointer ms-auto color-mode-switch rd-light" th:attr="data-url=@{/} + 'AD15/switch-color-mode'" name="main-theme" value="light" checked>
 					</div>
 				</label>
 
@@ -75,10 +75,10 @@
 							<i class="ph-moon ph-lg me-3"></i>
 							<div>
 								<span class="fw-bold">Dark</span>
-								<div class="fs-sm text-muted">Switch to dark theme</div>
+								<div class="fs-sm text-muted">Switch to dark color mode</div>
 							</div>
 						</div>
-						<input type="radio" class="form-check-input cursor-pointer ms-auto" name="main-theme" value="dark">
+						<input type="radio" class="form-check-input cursor-pointer ms-auto color-mode-switch rd-dark" th:attr="data-url=@{/} + 'AD15/switch-color-mode'" name="main-theme" value="dark">
 					</div>
 				</label>
 
@@ -88,22 +88,31 @@
 							<i class="ph-desktop ph-lg me-3"></i>
 							<div>
 								<span class="fw-bold">Device</span>
-								<div class="fs-sm text-muted">Set theme based on system mode</div>
+								<div class="fs-sm text-muted">Set color based on system mode</div>
 							</div>
 						</div>
-						<input type="radio" class="form-check-input cursor-pointer ms-auto" name="main-theme" value="auto">
+						<input type="radio" class="form-check-input cursor-pointer ms-auto color-mode-switch rd-auto" th:attr="data-url=@{/} + 'AD15/switch-color-mode'" name="main-theme" value="auto">
 					</div>
 				</label>
 			</div>
+			<script type="text/javascript" th:inline="javascript">
+				$(document).ready(function(){
+					var colormode = /*[[${loggedInUser.xtheme}]]*/;
+					if(colormode == null || colormode == '' || colormode == 'Default') colormode = 'light';
+					var activeColor = $('input[name="main-theme"]:checked').val();
+					if(activeColor == colormode) return;
+					$('.rd-' + colormode).click();
+				})
+			</script>
 
 		</div>
 
-		<div class="border-top text-center py-2 px-3">
+		<!-- <div class="border-top text-center py-2 px-3">
 			<a href="https://themeforest.net/item/limitless-responsive-web-application-kit/13080328?ref=kopyov" class="btn btn-yellow fw-semibold w-100 my-1" target="_blank">
 				<i class="ph-floppy-disk me-2"></i>
 				Save
 			</a>
-		</div>
+		</div> -->
 	</div>
 	<!-- /demo config -->
 

@@ -443,6 +443,14 @@ $(document).ready(function(){
 		});
 	});
 
+	$(document).on('click', 'input[type="radio"][name="main-theme"].color-mode-switch', function (e) {
+		var submitUrl = $(this).data('url');
+		var colormode = $('input[name="main-theme"]:checked').val();
+		actionPostRequest(submitUrl, {
+			"colormode" : colormode
+		});
+	});
+
 	$('.screen-item').on('click', function(e){
 		e.preventDefault();
 

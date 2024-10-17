@@ -29,6 +29,7 @@ public class MyUserDetails implements UserDetails {
 	private String xpassword;
 	private boolean admin;
 	private Integer xstaff;
+	private String xtheme;
 
 	private boolean switchBusiness;
 	private Zbusiness zbusiness;
@@ -46,6 +47,7 @@ public class MyUserDetails implements UserDetails {
 		this.xpassword = user.getXpassword();
 		this.admin = Boolean.TRUE.equals(user.getZadmin());
 		this.xstaff = user.getXstaff();
+		this.xtheme = user.getXtheme();
 		this.switchBusiness = Boolean.TRUE.equals(user.getZadmin()) ? true : false;
 		this.accountExpired = false;
 		this.credentialExpired = false;
@@ -62,6 +64,7 @@ public class MyUserDetails implements UserDetails {
 		this.xpassword = user.getXpassword();
 		this.admin = Boolean.TRUE.equals(user.getZadmin());
 		this.xstaff = user.getXstaff();
+		this.xtheme = user.getXtheme();
 		this.switchBusiness = Boolean.TRUE.equals(user.getZadmin()) ? true : false;
 		this.accountExpired = false;
 		this.credentialExpired = false;
@@ -144,4 +147,11 @@ public class MyUserDetails implements UserDetails {
 		return admin;
 	}
 
+	public String getXtheme() {
+		return xtheme;
+	}
+
+	public void setXtheme(String xtheme) {
+		this.xtheme = xtheme;
+	}
 }

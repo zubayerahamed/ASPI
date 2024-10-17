@@ -224,4 +224,22 @@ public class AD15 extends KitController {
 		model.addAttribute("favouriteMenus", favouriteMenus());
 		return "commons::favorite-links";
 	}
+
+	@PostMapping("/switch-color-mode")
+	public @ResponseBody Map<String, Object> switchColorMode(@RequestParam String colormode){
+
+		Optional<Xusers> userOp = xusersRepo.findById(new XusersPK(loggedInZbusiness().getZid(), loggedInUser().getUsername()));
+		if(!userOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Invalid user");
+			return responseHelper.getResponse();
+		}
+
+		Xusers user = userOp.get();
+		user.setXtheme(colormode);
+		xusersRepo.save(user);
+
+		responseHelper.setDisplayMessage(false);
+		responseHelper.setSuccessStatusAndMessage("Color mode changed successfully");
+		return responseHelper.getResponse();
+	}
 }
