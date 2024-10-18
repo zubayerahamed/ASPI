@@ -467,10 +467,12 @@ $(document).ready(function(){
 		sectionReloadAjaxReq({
 			id : 'screen-container',
 			url : '/' + screenCode + '?frommenu='
+		}, () => {
+			$('.customize-aspi-offcanvas').click();
+			if($('.sidebar-mobile-expanded').length > 0){
+				$('.mobile-nav-close').click();
+			}
 		});
-
-		$('.navbar-toggler.sidebar-mobile-main-toggle').click();
-		$('.customize-aspi-offcanvas').click();
 	})
 
 	$(".menu-search").off('input').on('input', function(){

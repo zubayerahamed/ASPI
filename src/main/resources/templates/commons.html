@@ -204,7 +204,7 @@
 							<i class="ph-arrows-left-right"></i>
 						</button>
 
-						<button type="button" class="btn btn-flat-white btn-icon btn-sm rounded-pill border-transparent sidebar-mobile-main-toggle d-lg-none">
+						<button type="button" class="btn btn-flat-white btn-icon btn-sm rounded-pill border-transparent mobile-nav-close sidebar-mobile-main-toggle d-lg-none">
 							<i class="ph-x"></i>
 						</button>
 					</div>
@@ -281,8 +281,8 @@
 			<div class="d-flex">
 				<h4 class="page-title mb-0" th:text="${pageTitle}"></h4>
 			</div>
-			<a th:if="${not isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/add-to-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-add" data-bs-popup="tooltip" title="Add to favorite"><i class="ph-heart fs-1"></i></a>
-			<a th:if="${isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/remove-from-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-remove" data-bs-popup="tooltip" title="Remove from favorite"><i class="ph-heart-break text-danger fs-1"></i></a>
+			<a th:if="${not isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/add-to-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-add" title="Add to favorite"><i class="ph-heart fs-1"></i></a>
+			<a th:if="${isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/remove-from-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-remove" title="Remove from favorite"><i class="ph-heart-break text-danger fs-1"></i></a>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -326,10 +326,6 @@
 				$.each($('.dnd-items'), function(i, item){
 					screenDatas += $(item).data('xscreen') + ':' + (i+1);
 					if((i + 1) != $('.dnd-items').length) screenDatas += '|';
-				});
-
-				actionPostRequest(getBasepath() + '/AD15/favorite-reorder', {
-					screenDatas : screenDatas
 				});
 
 				sectionReloadAjaxPostReq({

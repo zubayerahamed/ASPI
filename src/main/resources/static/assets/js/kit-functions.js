@@ -40,7 +40,7 @@ var loadingMask2 = {
 };
 
 
-function sectionReloadAjaxReq(section) {
+function sectionReloadAjaxReq(section, callback) {
 	loadingMask2.show();
 	$.ajax({
 		url: getBasepath() + section.url,
@@ -49,6 +49,8 @@ function sectionReloadAjaxReq(section) {
 			loadingMask2.hide();
 			$("." + section.id).html("");
 			$("." + section.id).append(data);
+			
+			if(callback) callback();
 		},
 		error: function (jqXHR, status, errorThrown) {
 			loadingMask2.hide();
