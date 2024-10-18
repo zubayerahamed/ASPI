@@ -1,6 +1,7 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,10 +32,13 @@ import com.zayaanit.repository.XfavouritesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Zubayer Ahamed
  * @since Jul 3, 2023
  */
+@Slf4j
 @Controller
 @RequestMapping("/AD15")
 public class AD15 extends KitController {
@@ -280,5 +284,43 @@ public class AD15 extends KitController {
 		responseHelper.setDisplayMessage(false);
 		responseHelper.setSuccessStatusAndMessage("Color mode changed successfully");
 		return responseHelper.getResponse();
+	}
+
+	@PostMapping("/favorite-reorder")
+	public String reorderFavoriteLinks(String screenDatas, Model model){
+
+		if(StringUtils.isBlank(screenDatas)) {
+			model.addAttribute("favouriteMenus", favouriteMenus());
+			return "commons::favorite-links";
+		}
+
+		try {
+			String[] pairs = screenDatas.split("\\|");
+
+			Map<String, Integer> resultMap = new HashMap<>();
+			for (String pair : pairs) {
+				// Split each pair by ':' to get the key and value
+				String[] keyValue = pair.split(":");
+				if(keyValue.length == 2) {
+					String key = keyValue[0];
+					Integer value = Integer.parseInt(keyValue[1]);
+					resultMap.put(key, value);
+				}
+			}
+
+			List<Xfavourites> favList = xfavouritesRepo.findAllByZidAndZemailAndXprofile(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile());
+			favList.stream().forEach(f -> {
+				f.setXsequence(resultMap.get(f.getXscreen()));
+				xfavouritesRepo.save(f);
+			});
+
+		} catch (Exception e) {
+			log.error(ERROR, e.getMessage());
+			model.addAttribute("favouriteMenus", favouriteMenus());
+			return "commons::favorite-links";
+		}
+
+		model.addAttribute("favouriteMenus", favouriteMenus());
+		return "commons::favorite-links";
 	}
 }

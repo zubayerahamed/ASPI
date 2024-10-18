@@ -46,6 +46,8 @@
 	<script th:src="@{/assets/js/vendor/pickers/datepicker.min.js}"></script>
 	<script th:src="@{/assets/js/bootstap-datepicker.js}"></script>
 	<script th:src="@{/assets/js/vendor/ui/prism.min.js}"></script>
+	<script th:src="@{/assets/js/vendor/ui/dragula.min.js}"></script>
+	<script th:src="@{/assets/js/vendor/uploaders/bs_custom_file_input.min.js}"></script>
 
 	<!-- Custom Js Files -->
 	<script th:src="@{/assets/demo/pages/components_tooltips.js}"></script>
@@ -145,8 +147,7 @@
 				<li class="nav-item nav-item-dropdown-lg dropdown ms-lg-2" th:if="${not #lists.isEmpty(otherProfiles)}">
 					<a href="#" class="navbar-nav-link align-items-center rounded-pill p-1" data-bs-toggle="dropdown">
 						<div class="status-indicator-container">
-							<!-- <img th:src="@{/assets/images/demo/users/face11.jpg}" class="w-32px h-32px rounded-pill" alt=""> -->
-							<i class="ph-briefcase" style="font-size: 25px;"></i>
+							<i class="ph-user-switch" style="font-size: 25px;"></i>
 							<span class="status-indicator bg-success"></span>
 						</div>
 						<span class="d-none d-lg-inline-block mx-lg-2">Switch Profile</span>
@@ -154,7 +155,7 @@
 
 					<div th:if="${not #lists.isEmpty(otherProfiles)}" class="dropdown-menu dropdown-menu-end">
 						<a th:each="profile : ${otherProfiles}" th:href="@{/switchprofile?xprofile=} + ${profile.xprofile}" class="dropdown-item">
-							<i class="ph-briefcase me-2" style="font-size: 25px;"></i><span th:text="${profile.xprofile}"></span>
+							<i class="ph-user-square me-2" style="font-size: 25px;"></i><span th:text="${profile.xprofile}"></span>
 						</a>
 					</div>
 				</li>
@@ -276,7 +277,7 @@
 
 <div th:fragment="page-header" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header page-header-light shadow" th:if="${not #strings.isEmpty(pageTitle)}">
-		<div class="page-header-content d-lg-flex justify-content-between align-items-center">
+		<div class="page-header-content d-flex justify-content-between align-items-center">
 			<div class="d-flex">
 				<h4 class="page-title mb-0" th:text="${pageTitle}"></h4>
 			</div>
@@ -294,24 +295,53 @@
 
 <div th:fragment="favorite-links" xmlns:th="http://www.thymeleaf.org">
 	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="fw-semibold">My Favorite Links</div>
-	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="mb-2" style="font-size: 12px; font-style: italic;">You can add maximum 6 favorite lins here</div>
-	<div th:if="${not loggedInUser.isAdmin}"  class="list-group mb-3">
+	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="mb-2" style="font-size: 12px; font-style: italic;">You can add maximum 6 favorite links here</div>
+	<div th:if="${not loggedInUser.isAdmin}" class="list-group mb-3">
+		<div class="mb-3 mb-lg-0">
+			<ul class="media-list-container p-0" id="media-list-target-left">
+				<li th:attr="data-xscreen=${f.xscreen}" class="list-group-item d-flex align-items-center border rounded mb-2 dnd-items" th:each="f : ${favouriteMenus}">
+					<a href="#" class="d-inline-flex align-items-center me-3">
+						<i class="ph-dots-six me-2 dragula-handle"></i>
+					</a>
 
-		<label class="list-group-item list-group-item-action form-check border-width-1 rounded mb-2" th:each="f : ${favouriteMenus}">
-			<div class="d-flex flex-fill my-1 align-items-center">
-				<div class="form-check-label d-flex me-2 align-items-center">
-					<i class="me-3" th:classappend="${#strings.isEmpty(f.screenIcon) ? 'ph-house' : f.screenIcon}"></i>
-					<div>
-						<span class="fw-bold">
-							<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}" class="fw-bold screen-item" th:text="${f.screenName}"></a>
-						</span>
+					<div class="flex-fill">
+						<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}" class="fw-bold screen-item" th:text="${f.screenName}"></a>
 					</div>
-				</div>
-				<input type="radio" th:attr="data-url=@{/} + 'AD15/make-default?screen=' + ${f.xscreen}" class="form-check-input cursor-pointer ms-auto default-favorite-link" name="favorite-default" title="Make it default" th:value="${f.xscreen}" th:checked="${f.xisdefault ? 'checked' : false}" data-bs-popup="tooltip">
-			</div>
-		</label>
 
+					<div class="ms-3">
+						<input type="radio" th:attr="data-url=@{/} + 'AD15/make-default?screen=' + ${f.xscreen}" class="form-check-input cursor-pointer ms-auto default-favorite-link" name="favorite-default" title="Make it default" th:value="${f.xscreen}" th:checked="${f.xisdefault ? 'checked' : false}" data-bs-popup="tooltip">
+					</div>
+				</li>
+			</ul>
+		</div>
 	</div>
+	<script>
+		$(document).ready(function () {
+			var drake = dragula([document.getElementById('media-list-target-left')]);
+
+			drake.on('dragend', function (el, target, source, sibling) {
+
+				var screenDatas = '';
+
+				$.each($('.dnd-items'), function(i, item){
+					screenDatas += $(item).data('xscreen') + ':' + (i+1);
+					if((i + 1) != $('.dnd-items').length) screenDatas += '|';
+				});
+
+				actionPostRequest(getBasepath() + '/AD15/favorite-reorder', {
+					screenDatas : screenDatas
+				});
+
+				sectionReloadAjaxPostReq({
+					id : 'favorite-links-container',
+					url : '/AD15/favorite-reorder'
+				}, {
+					screenDatas : screenDatas
+				});
+
+			});
+		})
+	</script>
 </div>
 
 
