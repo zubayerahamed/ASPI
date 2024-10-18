@@ -296,7 +296,7 @@
 <div th:fragment="favorite-links" xmlns:th="http://www.thymeleaf.org">
 	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="fw-semibold">My Favorite Links</div>
 	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="mb-2" style="font-size: 12px; font-style: italic;">You can add maximum 6 favorite links here</div>
-	<div th:if="${not loggedInUser.isAdmin}" class="list-group mb-3">
+	<div th:if="${not loggedInUser.isAdmin and not #lists.isEmpty(favouriteMenus)}" class="list-group mb-3">
 		<div class="mb-3 mb-lg-0">
 			<ul class="media-list-container p-0" id="media-list-target-left">
 				<li th:attr="data-xscreen=${f.xscreen}" class="list-group-item d-flex align-items-center border rounded mb-2 dnd-items" th:each="f : ${favouriteMenus}">
