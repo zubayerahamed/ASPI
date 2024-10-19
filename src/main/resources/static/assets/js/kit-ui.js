@@ -456,7 +456,7 @@ $(document).ready(function(){
 		actionPostRequest(submitUrl, null);
 	});
 
-	$('.screen-item').on('click', function(e){
+	$(document).on('click', '.screen-item', function (e) {
 		e.preventDefault();
 
 		$('.screen-item').removeClass('active');
