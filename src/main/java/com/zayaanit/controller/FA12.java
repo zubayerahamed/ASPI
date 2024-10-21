@@ -28,10 +28,13 @@ import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.AcgroupRepo;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Zubayer Ahamed
  * @since Jul 3, 2023
  */
+@Slf4j
 @Controller
 @RequestMapping("/FA12")
 public class FA12 extends KitController {
@@ -102,12 +105,17 @@ public class FA12 extends KitController {
 	}
 
 	@GetMapping("/list-table")
-	public String loadListTableFragment(@RequestParam(required = false) Integer xaglevel, @RequestParam(required = false) Integer xagparent, Model model) {
+	public String loadListTableFragment(@RequestParam(required = false) Integer xaglevel, @RequestParam(required = false) String xagparent, Model model) {
 		if(xaglevel == null || xaglevel < 1) xaglevel = 1;
 
 		Acgroup acgroup = Acgroup.getDefaultInstance();
 		acgroup.setXaglevel(xaglevel);
-		acgroup.setXagparent(xagparent);
+		try {
+			acgroup.setXagparent(Integer.parseInt(xagparent));
+		} catch (Exception e) {
+			log.error(ERROR, e.getMessage());
+		}
+		
 
 		model.addAttribute("acgroup", acgroup);
 		return "pages/FA12/FA12-fragments::list-table";
