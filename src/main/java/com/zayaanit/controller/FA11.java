@@ -20,12 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acdef;
+import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcdefPK;
+import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.AcdefRepo;
+import com.zayaanit.repository.AcmstRepo;
 
 /**
  * @author Zubayer Ahamed
@@ -36,6 +39,7 @@ import com.zayaanit.repository.AcdefRepo;
 public class FA11 extends KitController {
 
 	@Autowired private AcdefRepo acdefRepo;
+	@Autowired private AcmstRepo acmstRepo;
 
 	private String pageTitle = null;
 
@@ -62,6 +66,10 @@ public class FA11 extends KitController {
 	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) {
 		Optional<Acdef> acdefOp = acdefRepo.findById(new AcdefPK(sessionManager.getBusinessId()));
 		Acdef acdef = acdefOp.isPresent() ? acdefOp.get() : Acdef.getDefaultInstance();
+		if(acdef.getXaccpl() != null) {
+			Optional<Acmst> acmstOp = acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), acdef.getXaccpl()));
+			if(acmstOp.isPresent()) acdef.setAccountName(acmstOp.get().getXdesc());
+		}
 		model.addAttribute("acdef", acdef);
 		if(isAjaxRequest(request) && frommenu == null) return "pages/FA11/FA11-fragments::main-form";
 		if(frommenu == null) return "redirect:/";
@@ -82,6 +90,11 @@ public class FA11 extends KitController {
 
 		if(acdef.getXclyear() == null) {
 			responseHelper.setErrorStatusAndMessage("Closed year required");
+			return responseHelper.getResponse();
+		}
+
+		if(acdef.getXaccpl() == null) {
+			responseHelper.setErrorStatusAndMessage("Retained Earnings Account required");
 			return responseHelper.getResponse();
 		}
 

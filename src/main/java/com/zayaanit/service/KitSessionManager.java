@@ -23,4 +23,12 @@ public interface KitSessionManager {
 	public Xprofiles getXprofile();
 
 	public MyUserDetails getLoggedInUserDetails();
+
+	public String sessionId();
+
+	public String remoteIp();
+
+	public String serverIp();
+
+	public String userAgent();
 }

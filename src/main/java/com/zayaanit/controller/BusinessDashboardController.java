@@ -49,6 +49,7 @@ public class BusinessDashboardController extends BaseController {
 
 		if(!businesses.isEmpty() && businesses.size() == 1) {
 			sessionManager.getLoggedInUserDetails().setZbusiness(businesses.get(0));
+			sessionManager.addToMap("LOGIN_FLAG", "Y");
 			return "redirect:/";
 		}
 

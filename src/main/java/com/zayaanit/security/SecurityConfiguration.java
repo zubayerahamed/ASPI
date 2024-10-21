@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -31,6 +32,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	public LogoutSuccessHandler logoutSuccessHandler() {
 		return new CustomLogoutSuccessHandler();
+	}
+
+	@Bean
+	public LogoutHandler logoutHandler() {
+		return new CustomLogoutHandler();
 	}
 
 	@Override
@@ -71,11 +77,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.defaultSuccessUrl("/")
 			.and()
 				.logout()
+				.addLogoutHandler(logoutHandler())
 				.invalidateHttpSession(true)
 				.clearAuthentication(true)
 				.deleteCookies("JSESSIONID")
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				.logoutSuccessUrl("/login?logout")
+				
 				.logoutSuccessHandler(logoutSuccessHandler())
 				.permitAll()
 			.and()

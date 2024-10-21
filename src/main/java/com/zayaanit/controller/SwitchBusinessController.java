@@ -1,12 +1,21 @@
 package com.zayaanit.controller;
 
+import java.util.Date;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
@@ -36,10 +45,33 @@ public class SwitchBusinessController extends BaseController {
 		Optional<Xusers> usersOp = xusersRepo.findByZemailAndZid(sessionManager.getLoggedInUserDetails().getUsername(), zbOp.get().getZid());
 		if(!usersOp.isPresent()) return "redirect:/";
 
+		// If already logged in and want to switch business only, just add a logout log from previous business
+		if(sessionManager.getFromMap("LOGIN_DONE") != null) {
+			xlogsService.logout();
+			renewSession();
+		}
+
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 		sessionManager.getLoggedInUserDetails().setZbusiness(zbOp.get());
 		sessionManager.getLoggedInUserDetails().setXprofile(null);
+		sessionManager.getLoggedInUserDetails().setLoginTime(new Date());
+		sessionManager.addToMap("LOGIN_FLAG", "Y");
 		return "redirect:/";
 	}
 
+	private void renewSession() {
+		// 1. Get the current session and invalidate it
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate(); // Invalidate the session to force new session creation
+		}
+
+		// 2. Create a new session
+		HttpSession newSession = request.getSession(true); // Create a new session
+
+		// 3. Preserve the SecurityContext (associate it with the new session)
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+	}
 }

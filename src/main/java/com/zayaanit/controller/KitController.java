@@ -89,6 +89,27 @@ public abstract class KitController extends BaseController {
 		return sessionManager.getLoggedInUserDetails();
 	}
 
+	@ModelAttribute("sessionId")
+	public String sessionId() {
+		return sessionManager.sessionId();
+	}
+
+	@ModelAttribute("remoteIp")
+	public String remoteIp() {
+		return sessionManager.remoteIp();
+	}
+
+	@ModelAttribute("userAgent")
+	public String userAgent() {
+		return sessionManager.userAgent();
+	}
+
+	@ModelAttribute("serverIp")
+	public String serverIp() {
+		return sessionManager.serverIp();
+	}
+
+
 	@ModelAttribute("loginName")
 	protected String loginName() {
 		MyUserDetails user = sessionManager.getLoggedInUserDetails();

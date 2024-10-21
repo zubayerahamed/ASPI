@@ -60,6 +60,9 @@ public class Xlogs extends AbstractModel<String> {
 	@Column(name = "xuseragent")
 	private String xuseragent;
 
+	@Column(name = "xexptype")
+	private String xexptype;
+
 	@Column(name = "xlogintime")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date xlogintime;

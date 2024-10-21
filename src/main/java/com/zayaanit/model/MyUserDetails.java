@@ -2,6 +2,7 @@ package com.zayaanit.model;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,10 @@ public class MyUserDetails implements UserDetails {
 	private boolean enabled;
 	private String roles;
 	private List<GrantedAuthority> authorities;
+	private Date loginTime;
 
 	public MyUserDetails(Xusers user) {
+		this.loginTime = new Date();
 		this.zemail = user.getZemail();
 		this.xpassword = user.getXpassword();
 		this.admin = Boolean.TRUE.equals(user.getZadmin());
@@ -76,6 +79,14 @@ public class MyUserDetails implements UserDetails {
 				.collect(Collectors.toList());
 	}
 
+	public Date getLoginTime() {
+		return this.loginTime;
+	}
+
+	public void setLoginTime(Date date) {
+		this.loginTime = date;
+	}
+	
 	public void setZbusiness(Zbusiness zbusiness) {
 		this.zbusiness = zbusiness;
 	}

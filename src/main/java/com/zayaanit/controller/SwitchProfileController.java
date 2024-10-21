@@ -25,7 +25,7 @@ public class SwitchProfileController extends BaseController {
 	@Autowired private XprofilesdtRepo xprofilesdtRepo;
 
 	@GetMapping
-	public String loadBusiness(@RequestParam String xprofile) {
+	public String loadProfile(@RequestParam String xprofile) {
 		Optional<Xprofiles> profileOp = xprofileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
 		if(!profileOp.isPresent()) return "redirect:/profiles";
 

@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import com.zayaanit.config.AppConfig;
 import com.zayaanit.model.ResponseHelper;
 import com.zayaanit.service.KitSessionManager;
+import com.zayaanit.service.XlogsService;
 
 /**
  * @author Zubayer Ahamed
@@ -28,4 +29,5 @@ public class BaseController {
 	@Autowired protected Environment env;
 	@Autowired protected KitSessionManager sessionManager;
 	@Autowired protected ResponseHelper responseHelper;
+	@Autowired protected XlogsService xlogsService;
 }

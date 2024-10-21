@@ -50,6 +50,9 @@ public class Acdef extends AbstractModel<String> {
 	private Date xcldate;
 
 	@Transient
+	private String accountName;
+
+	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
 	public static Acdef getDefaultInstance() {

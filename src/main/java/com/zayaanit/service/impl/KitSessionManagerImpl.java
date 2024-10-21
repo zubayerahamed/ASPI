@@ -1,13 +1,19 @@
 package com.zayaanit.service.impl;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Zbusiness;
@@ -104,4 +110,40 @@ public class KitSessionManagerImpl implements KitSessionManager {
 		return null;
 	}
 
+	@Override
+	public String sessionId() {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		String sessionId = request.getSession().getId();
+		return sessionId;
+	}
+
+	@Override
+	public String remoteIp() {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		String remoteIp = request.getHeader("X-Forwarded-For");
+		if (remoteIp == null || remoteIp.isEmpty()) {
+			remoteIp = request.getRemoteAddr();
+		}
+		return remoteIp;
+	}
+
+	@Override
+	public String serverIp() {
+		String serverIp = null;
+		try {
+			serverIp = InetAddress.getLocalHost().getHostAddress(); // Server IP address
+		} catch (UnknownHostException e) {
+			serverIp = "Unknown";
+		}
+		return serverIp;
+	}
+
+	@Override
+	public String userAgent() {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		String userAgent = request.getHeader("User-Agent");
+		return userAgent;
+	}
+
+	
 }

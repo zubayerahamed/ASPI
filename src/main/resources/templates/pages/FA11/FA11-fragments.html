@@ -27,6 +27,27 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
+							<label class="form-label required">Retained Earnings Acc.</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xaccpl"
+										th:value="${acdef.xaccpl != null ? acdef.xaccpl + ' - ' + acdef.accountName : ''}">
+								<input 	type="hidden" class="search-val" name="xaccpl" th:value="*{xaccpl}" required/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LFA13/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xaccpl',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
 							<label class="form-label required">Closed Year</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xclyear}" required="required">
 						</div>

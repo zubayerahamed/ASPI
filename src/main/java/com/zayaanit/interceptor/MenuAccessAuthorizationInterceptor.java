@@ -24,6 +24,7 @@ import com.zayaanit.repository.XprofilesdtRepo;
 import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.service.KitSessionManager;
+import com.zayaanit.service.XlogsService;
 
 /**
  * @author Zubayer Ahamed
@@ -38,9 +39,13 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	@Autowired private XprofilesdtRepo xprofiledtRepo;
 	@Autowired private XusersRepo usersRepo;
 	@Autowired private XuserprofilesRepo xuserprofileRepo;
+	@Autowired private XlogsService xlogsService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		//System.out.println("====> session id : " + request.getSession().getId());
+		//System.out.println("===> from auth context " + SecurityContextHolder.getContext().getAuthentication().getDetails().toString());
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		if (OUTSIDE_USERS_NAME.equalsIgnoreCase(username)) {
@@ -80,6 +85,13 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		}
 
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
+
+		// Log login info
+		if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
+			xlogsService.login();
+			sessionManager.removeFromMap("LOGIN_FLAG");
+			sessionManager.addToMap("LOGIN_DONE", "Y");
+		}
 
 		if(!hasAccess(request.getServletPath())) {
 			RequestDispatcher dispatcher = request.getSession().getServletContext().getRequestDispatcher("/accessdenied?message=Trying to access " + request.getServletPath());
