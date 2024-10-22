@@ -93,6 +93,9 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			sessionManager.addToMap("LOGIN_DONE", "Y");
 		}
 
+		System.out.println("====> Session Time : " + sessionManager.getLoggedInUserDetails().getXsessiontime());
+		System.out.println("====> Expiry Time : " + sessionManager.getLoggedInUserDetails().getXsessionexpiry());
+
 		if(!hasAccess(request.getServletPath())) {
 			RequestDispatcher dispatcher = request.getSession().getServletContext().getRequestDispatcher("/accessdenied?message=Trying to access " + request.getServletPath());
 			dispatcher.forward(request, response);

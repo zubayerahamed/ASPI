@@ -65,9 +65,9 @@ public class ReportController extends AbstractReportController{
 			rm = ReportMenu.valueOf(rptcode);
 		} catch (Exception e) {
 			log.error(ERROR, e.getMessage(), e);
-			model.addAttribute("reportFound", false);
-			model.addAttribute("message", "Report is in under maintenance.");
-			return "pages/RP/RP";
+			model.addAttribute("error", "Unauthorized Access.");
+			model.addAttribute("status", "401");
+			return "pages/404";
 		}
 
 		model.addAttribute("reportFound", true);

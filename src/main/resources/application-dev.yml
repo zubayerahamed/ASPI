@@ -21,14 +21,9 @@ server:
   error:
     whitelabel:
       enabled: false
-  compression:
-    enabled: true
-    min-response-size: 1024
-    mime-types: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
 spring: 
   datasource: 
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#    url: jdbc:sqlserver://82.180.147.172:2019;databaseName=aspi
     url: jdbc:sqlserver://localhost;databaseName=aspi
     username: sa
     password: zubayer@123
@@ -51,8 +46,3 @@ spring:
   jackson:
     serialization:
       indent-output: true
-  resources:
-    cache:
-      period: 3600
-    chain:
-      cache: true

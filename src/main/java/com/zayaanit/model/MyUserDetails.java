@@ -1,6 +1,7 @@
 package com.zayaanit.model;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,8 @@ public class MyUserDetails implements UserDetails {
 	private boolean admin;
 	private Integer xstaff;
 	private String xtheme;
+	private Integer xsessiontime;
+	private String xsessiontype;
 
 	private boolean switchBusiness;
 	private Zbusiness zbusiness;
@@ -51,6 +54,8 @@ public class MyUserDetails implements UserDetails {
 		this.admin = Boolean.TRUE.equals(user.getZadmin());
 		this.xstaff = user.getXstaff();
 		this.xtheme = user.getXtheme();
+		this.xsessiontime = user.getXsessiontime();
+		this.xsessiontype = user.getXsessiontype();
 		this.switchBusiness = Boolean.TRUE.equals(user.getZadmin()) ? true : false;
 		this.accountExpired = false;
 		this.credentialExpired = false;
@@ -68,6 +73,8 @@ public class MyUserDetails implements UserDetails {
 		this.admin = Boolean.TRUE.equals(user.getZadmin());
 		this.xstaff = user.getXstaff();
 		this.xtheme = user.getXtheme();
+		this.xsessiontime = user.getXsessiontime();
+		this.xsessiontype = user.getXsessiontype();
 		this.switchBusiness = Boolean.TRUE.equals(user.getZadmin()) ? true : false;
 		this.accountExpired = false;
 		this.credentialExpired = false;
@@ -164,5 +171,32 @@ public class MyUserDetails implements UserDetails {
 
 	public void setXtheme(String xtheme) {
 		this.xtheme = xtheme;
+	}
+
+	public Integer getXsessiontime() {
+		if("Default".equalsIgnoreCase(this.xsessiontype)) {
+			if(this.zbusiness != null && this.zbusiness.getXsessiontime() != null) {
+				this.xsessiontime = zbusiness.getXsessiontime();
+			}
+		}
+		return this.xsessiontime;
+	}
+
+	public Date getXsessionexpiry() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.SECOND, this.xsessiontime);
+		return cal.getTime();
+	}
+
+	public void setXsessiontime(Integer xsessiontime) {
+		this.xsessiontime = xsessiontime;
+	}
+
+	public String getXsessiontype() {
+		return xsessiontype;
+	}
+
+	public void setXsessiontype(String xsessiontype) {
+		this.xsessiontype = xsessiontype;
 	}
 }

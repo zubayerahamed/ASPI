@@ -2,6 +2,7 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ public class AD11 extends KitController{
 			zb.setImageBase64(Base64.getEncoder().encodeToString(zb.getXlogo()));
 		}
 
+		model.addAttribute("doctypesList", Arrays.asList(zb.getXdoctypes().split(",")));
 		model.addAttribute("business", zb);
 
 		if(isAjaxRequest(request) && frommenu == null) {
@@ -89,10 +91,29 @@ public class AD11 extends KitController{
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Zbusiness zbusiness, @RequestParam(value= "files[]", required = false) MultipartFile[] files, BindingResult bindingResult){
 
-		if(zbusiness.getXfilesize() == null) zbusiness.setXfilesize(1024);
+		if(StringUtils.isBlank(zbusiness.getZorg())) {
+			responseHelper.setErrorStatusAndMessage("Company name required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(zbusiness.getXmadd())) {
+			responseHelper.setErrorStatusAndMessage("Mailing address required");
+			return responseHelper.getResponse();
+		}
+
+		if(zbusiness.getXfilesize() == null || zbusiness.getXfilesize() <= 0) zbusiness.setXfilesize(1024);
+
 		if(StringUtils.isBlank(zbusiness.getXdocpath())) zbusiness.setXdocpath("C:\\Contents\\");
-		if(StringUtils.isBlank(zbusiness.getXrptpath())) {
-			responseHelper.setErrorStatusAndMessage("Report path required");
+
+		if(StringUtils.isBlank(zbusiness.getXrptpath())) zbusiness.setXdocpath("C:\\Reports\\");
+
+		if(StringUtils.isBlank(zbusiness.getXdoctypes())) {
+			responseHelper.setErrorStatusAndMessage("Supporting documents required");
+			return responseHelper.getResponse();
+		}
+
+		if(zbusiness.getXsessiontime() == null || zbusiness.getXsessiontime() <= 0) {
+			responseHelper.setErrorStatusAndMessage("Default session time required");
 			return responseHelper.getResponse();
 		}
 
@@ -108,7 +129,7 @@ public class AD11 extends KitController{
 			}
 		}
 
-		// VALIDATE XSCREENS
+		// VALIDATE
 		modelValidator.validateZbusiness(zbusiness, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 

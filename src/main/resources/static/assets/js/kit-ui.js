@@ -33,6 +33,13 @@ kit.ui.menu = function(){
 	})
 }
 
+kit.ui.config.multiselect = function(){
+	if(!$('.multiselect').hasClass('initialized')){
+		$('.multiselect').multiselect();
+		$('.multiselect').addClass('initialized');
+	}
+}
+
 kit.ui.config.datepicker = function(){
 	$.each($('.datepicker-date-format'), function(ind, elem){
 		var maxDate = undefined;
@@ -418,6 +425,7 @@ kit.ui.init = function(){
 	kit.ui.config.select2();
 	kit.ui.config.noty();
 	kit.ui.menu();
+	kit.ui.config.multiselect();
 	kit.ui.config.datepicker();
 	kit.ui.config.dateAndTimepicker();
 	kit.ui.config.searchSuggest.init();

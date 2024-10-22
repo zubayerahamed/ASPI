@@ -27,17 +27,3 @@
 
 </div>
 <!-- /inner content -->
-
-<script type="text/javascript">
-	$(document).ready(function(){
-		$('a.report-link').off('click').on('click', function(e){
-			e.preventDefault();
-
-			sectionReloadAjaxReq({
-				id : $(this).data('reloadid'),
-				url : $(this).data('reloadurl')
-			});
-
-		});
-	})
-</script>
