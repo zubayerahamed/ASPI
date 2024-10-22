@@ -54,6 +54,6 @@ spring:
     cache: true
   resources:
     cache:
-      period: 3600
+      period: 36000
     chain:
       cache: true
