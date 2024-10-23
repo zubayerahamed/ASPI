@@ -168,7 +168,9 @@
 			<table class="table datatable" style="white-space: nowrap;">
 				<thead>
 					<tr>
-						<th></th>
+						<th>
+							<input type="checkbox" id="select-all-rows">
+						</th>
 						<th>Voucher</th>
 						<th>Date, Year, Period</th>
 						<th>Business Unit</th>
@@ -286,6 +288,33 @@
 				}
 
 				generateOnScreenReport(getBasepath() + $(this).data('url'), params);
+			});
+
+			$('#select-all-rows').on('click', function(){
+				if($(this).is(":checked")){
+					$('.voucher-selection').each(function(i, item){
+						$(item).prop('checked', true);
+						var voucher = $(item).data('xvoucher');
+						if (!selectedVouchers.includes(voucher)) {
+							selectedVouchers.push(voucher); // Add only if not already in array
+						}
+					})
+				} else {
+					$('.voucher-selection').each(function(i, item){
+						$(item).prop('checked', false);
+						var voucher = $(item).data('xvoucher');
+						selectedVouchers = selectedVouchers.filter(function(item) {
+							return item !== voucher; // Remove the unchecked voucher
+						});
+					})
+				}
+
+				if(selectedVouchers.length > 0){
+					$('.selection-counter').removeClass('d-none');
+					$('.selection-counter').html(selectedVouchers.length + ' Selected');
+				} else {
+					$('.selection-counter').addClass('d-none');
+				}
 			});
 
 			$('.datatable').on('change', '.voucher-selection', function(e){
