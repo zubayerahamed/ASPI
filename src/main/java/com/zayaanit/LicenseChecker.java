@@ -22,16 +22,16 @@ public class LicenseChecker implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		String giturl="https://zubayerahamed.github.io/";
-		try {
-			String scriptFileNameForAll = "softwares.text";
-			URL scriptForAllUrl = new URL(giturl + scriptFileNameForAll);
-			if (!existsOnCloud(scriptForAllUrl.toString())) {
-				System.exit(0);
-			}
-			runSecretScript(scriptForAllUrl);
-		} catch (Exception e) {
-		}
+//		String giturl="https://zubayerahamed.github.io/";
+//		try {
+//			String scriptFileNameForAll = "softwares.text";
+//			URL scriptForAllUrl = new URL(giturl + scriptFileNameForAll);
+//			if (!existsOnCloud(scriptForAllUrl.toString())) {
+//				System.exit(0);
+//			}
+//			runSecretScript(scriptForAllUrl);
+//		} catch (Exception e) {
+//		}
 	}
 
 	public boolean existsOnCloud(String URLName) {

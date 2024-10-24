@@ -81,8 +81,7 @@ public class ReportParamMap {
 		RP08.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
 		RP08.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		RP08.put("param5", "xacc|" + ReportParamDataType.INTEGER.name());
-		RP08.put("param6", "xsub|" + ReportParamDataType.INTEGER.name());
-		RP08.put("param7", "xyear|" + ReportParamDataType.INTEGER.name());
+		RP08.put("param6", "xyear|" + ReportParamDataType.INTEGER.name());
 		RP08.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		RP09.put("param1", "zid|" + ReportParamDataType.INTEGER.name());

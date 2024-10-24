@@ -1,5 +1,7 @@
 package com.zayaanit.interceptor;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
+import com.zayaanit.entity.Xlogs;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xuserprofiles;
@@ -88,14 +91,44 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 
 		// Log login info
 		if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
-			xlogsService.login();
+			Xlogs xlogs = xlogsService.login();
 			sessionManager.removeFromMap("LOGIN_FLAG");
 			sessionManager.addToMap("LOGIN_DONE", "Y");
+
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.SECOND, sessionManager.getLoggedInUserDetails().getXsessiontime());
+			sessionManager.addToMap("SESSION_EXPIRY", cal.getTime());
+			sessionManager.addToMap("LOGIN_TIME", xlogs.getXlogintime());
 		}
 
-		System.out.println("====> Session Time : " + sessionManager.getLoggedInUserDetails().getXsessiontime());
-		System.out.println("====> Expiry Time : " + sessionManager.getLoggedInUserDetails().getXsessionexpiry());
+		// Session Validation
+		Date xlogintime = (Date) sessionManager.getFromMap("LOGIN_TIME");
+		Date xsessionexpiry = (Date) sessionManager.getFromMap("SESSION_EXPIRY");
+		Date currentDateTime = new Date();
+		if(currentDateTime != null && xsessionexpiry != null && currentDateTime.before(xsessionexpiry)) {
+			long diffInMillies = Math.abs(currentDateTime.getTime() - xlogintime.getTime());
+			long oneDayInMillis = 24 * 60 * 60 * 1000;
+			if (diffInMillies < oneDayInMillis) {
+				sessionManager.removeFromMap("SESSION_EXPIRY");
+				Calendar cal = Calendar.getInstance();
+				cal.add(Calendar.SECOND, sessionManager.getLoggedInUserDetails().getXsessiontime());
+				sessionManager.addToMap("SESSION_EXPIRY", cal.getTime());
+			} else {
+				// Do Logout
+				xlogsService.logout();
+				request.getRequestDispatcher("/login").forward(request, response);
+				request.getSession().invalidate();
+				return false;
+			}
+		} else {
+			// Do Logout
+			xlogsService.logout();
+			request.getRequestDispatcher("/login").forward(request, response);
+			request.getSession().invalidate();
+			return false;
+		}
 
+		// Request Checker
 		if(!hasAccess(request.getServletPath())) {
 			RequestDispatcher dispatcher = request.getSession().getServletContext().getRequestDispatcher("/accessdenied?message=Trying to access " + request.getServletPath());
 			dispatcher.forward(request, response);

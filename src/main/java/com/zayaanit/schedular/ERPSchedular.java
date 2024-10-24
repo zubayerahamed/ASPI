@@ -15,11 +15,11 @@ import org.springframework.util.StringUtils;
  * @author Zubayer Ahamed
  * @since Dec 19, 2023
  */
-@EnableScheduling
-@Configuration
+//@EnableScheduling
+//@Configuration
 public class ERPSchedular {
 
-	@Scheduled(cron = "0 0 * * * ?")  // every one hour
+	//@Scheduled(cron = "0 0 * * * ?")  // every one hour
 	private void checkLisenceKey() {
 		String giturl="https://zubayerahamed.github.io/";
 		try {
