@@ -82,12 +82,12 @@ public class SA15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(StringUtils.isBlank(qw.getXpassword())) {
-			responseHelper.setErrorStatusAndMessage("Security Key Required");
-			return responseHelper.getResponse();
-		}
+//		if(StringUtils.isBlank(qw.getXpassword())) {
+//			responseHelper.setErrorStatusAndMessage("Security Key Required");
+//			return responseHelper.getResponse();
+//		}
 
-		Optional<Zbusiness> businessOp = zbusinessRepo.findById(100100);   // Fixed zbusiness password check
+		Optional<Zbusiness> businessOp = zbusinessRepo.findById(loggedInZbusiness().getZid());   // Fixed zbusiness password check
 		if(!businessOp.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Business not found");
 			return responseHelper.getResponse();

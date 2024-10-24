@@ -128,6 +128,8 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			return false;
 		}
 
+		//System.out.println("=====> Request Path : " + request.getServletPath());
+
 		// Request Checker
 		if(!hasAccess(request.getServletPath())) {
 			RequestDispatcher dispatcher = request.getSession().getServletContext().getRequestDispatcher("/accessdenied?message=Trying to access " + request.getServletPath());

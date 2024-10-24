@@ -6,7 +6,7 @@
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Type</label>
+							<label class="form-label required">Type</label>
 							<select class="form-control select" required="required" th:field="*{type}">
 								<option value="SELECT QUERY">Select Query</option>
 								<option value="INSERT QUERY">Insert Query</option>
@@ -17,15 +17,15 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<!-- <div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Security Key</label>
 							<input type="password" class="form-control" th:field="*{xpassword}" required="required">
 						</div>
-					</div>
+					</div> -->
 					<div class="col-md-12">
 						<div class="mb-3 form-group">
-							<label class="form-label">Statement</label>
+							<label class="form-label required">Statement</label>
 							<textarea rows="6" cols="" class="form-control" required="required" th:field="*{statement}"></textarea>
 						</div>
 					</div>

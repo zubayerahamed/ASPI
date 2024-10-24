@@ -21,6 +21,9 @@ server:
   error:
     whitelabel:
       enabled: false
+  servlet:
+    session:
+      timeout: -1
   compression:
     enabled: true
     min-response-size: 1024

@@ -33,7 +33,7 @@ public class RP08_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true, null, "param6"));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true));
 
 		fieldsList.add(FormFieldBuilder.generateNumberField(6, "Year", BigDecimal.valueOf(acheaderService.getYearPeriod(new Date()).getYear()), true));
 

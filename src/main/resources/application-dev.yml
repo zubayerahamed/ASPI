@@ -21,6 +21,9 @@ server:
   error:
     whitelabel:
       enabled: false
+  servlet:
+    session:
+      timeout: -1
 spring: 
   datasource: 
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
