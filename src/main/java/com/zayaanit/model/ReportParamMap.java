@@ -39,7 +39,7 @@ public class ReportParamMap {
 		voucher.put("param2", "xvoucher|" + ReportParamDataType.INTEGER.name());
 
 		RP01.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
-		RP01.put("param2", "xstaff|" + ReportParamDataType.INTEGER.name());
+//		RP01.put("param2", "xstaff|" + ReportParamDataType.INTEGER.name());
 		RP01.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		RP02.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
