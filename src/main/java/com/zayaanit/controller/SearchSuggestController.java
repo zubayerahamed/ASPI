@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -90,7 +89,7 @@ public class SearchSuggestController {
 		return "search-fragments::" + fragmentcode + "-table";
 	}
 
-	@GetMapping("/LSA11/{suffix}")
+	@PostMapping("/LSA11/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Xmenus> LSA11(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -106,7 +105,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LSA12/{suffix}")
+	@PostMapping("/LSA12/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Xscreens> LSA12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -122,7 +121,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LAD12/{suffix}")
+	@PostMapping("/LAD12/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Xprofiles> LAD12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -138,7 +137,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LAD13/{suffix}")
+	@PostMapping("/LAD13/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Xusers> LAD13(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -154,7 +153,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LAD17/{suffix}")
+	@PostMapping("/LAD17/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Cabunit> LAD17(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -170,7 +169,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LFA12/{suffix}")
+	@PostMapping("/LFA12/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Acgroup> LFA12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -186,7 +185,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LFA13/{suffix}")
+	@PostMapping("/LFA13/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Acmst> LFA13(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -202,7 +201,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LFA14/{suffix}")
+	@PostMapping("/LFA14/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Acsub> LFA14(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
@@ -218,7 +217,7 @@ public class SearchSuggestController {
 		return response;
 	}
 
-	@GetMapping("/LFA15/{suffix}")
+	@PostMapping("/LFA15/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Acheader> LFA15(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);

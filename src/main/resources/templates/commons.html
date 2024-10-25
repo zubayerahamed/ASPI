@@ -306,7 +306,7 @@
 					</a>
 
 					<div class="flex-fill">
-						<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}" class="fw-bold screen-item" th:text="${f.screenName}"></a>
+						<a th:href="@{/} + ${f.xscreen}" th:attr="data-screen=${f.xscreen}, data-fav=Y" class="fw-bold screen-item" th:text="${f.screenName}"></a>
 					</div>
 
 					<div class="ms-3">

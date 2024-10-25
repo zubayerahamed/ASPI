@@ -59,7 +59,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	private String[] getMenuPaths(boolean forBusinessSelection) {
 		List<Xscreens> list = xscreenRepo.findAll();
-		list = list.stream().distinct().filter(l -> l.getXtype().equalsIgnoreCase("Screen"))
+		list = list.stream().distinct().filter(l -> !l.getXtype().equalsIgnoreCase("System"))
 				.collect(Collectors.toList());
 
 		List<String> paths = new ArrayList<>();

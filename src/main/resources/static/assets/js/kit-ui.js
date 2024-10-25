@@ -471,10 +471,14 @@ $(document).ready(function(){
 		$(this).addClass('active');
 
 		var screenCode = $(this).data('screen');
+		var fromfav = $(this).data('fav') != undefined && $(this).data('fav') != null && 'Y' == $(this).data('fav');
+
+		var url = '/' + screenCode + '?frommenu=';
+		if(fromfav) url = '/' + screenCode + '?fromfav=&frommenu=';
 
 		sectionReloadAjaxReq({
 			id : 'screen-container',
-			url : '/' + screenCode + '?frommenu='
+			url : url
 		}, () => {
 			$('.customize-aspi-offcanvas').click();
 			if($('.sidebar-mobile-expanded').length > 0){

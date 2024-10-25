@@ -93,7 +93,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LSA11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LSA11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -235,8 +238,11 @@
 				"processing" : true,
 				"serverSide" : true,
 				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LSA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"columnDefs": columnDefs, 
+				"ajax": {
+					"url": getBasepath() + "/search/LSA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -390,7 +396,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LSA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LSA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -527,7 +536,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LAD12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LAD12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -678,7 +690,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LAD13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LAD13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -822,7 +837,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LAD17/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LAD17/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -980,7 +998,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LFA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LFA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -1138,7 +1159,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LFA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LFA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -1303,7 +1327,10 @@
 				"serverSide" : true,
 				"order" : [0, 'desc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LFA14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LFA14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
@@ -1461,7 +1488,10 @@
 				"serverSide" : true,
 				"order" : [0, 'desc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LFA15/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+				"ajax": {
+					"url": getBasepath() + "/search/LFA15/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue

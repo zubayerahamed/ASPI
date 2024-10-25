@@ -2,19 +2,19 @@ package com.zayaanit.entity;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.zayaanit.entity.pk.XlogsdtPK;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Zubayer Ahaned
@@ -26,23 +26,25 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "xlogsdt")
-@IdClass(XlogsdtPK.class)
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Xlogsdt extends AbstractModel<String> {
 
 	private static final long serialVersionUID = -1624354019825186611L;
 
 	@Id
-	@Basic(optional = false)
-	@Column(name = "zid")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
+
+	@Column(name = "zid", nullable = false)
 	private Integer zid;
 
-	@Id
-	@Basic(optional = false)
-	@Column(name = "xsession")
+	@Column(name = "xsession", nullable = false)
 	private String xsession;
 
-	@Column(name = "xdatetime")
+	@Column(name = "xdatetime", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date xdatetime;
 
@@ -69,5 +71,17 @@ public class Xlogsdt extends AbstractModel<String> {
 
 	@Column(name = "xresult")
 	private String xresult;
+
+	public Xlogsdt(String xscreen, String xfunc, String xsource, String xfuncdt, String xdata, String xstatement,
+			String xmessage, String xresult) {
+		this.xscreen = xscreen;
+		this.xfunc = xfunc;
+		this.xsource = xsource;
+		this.xfuncdt = xfuncdt;
+		this.xdata = xdata;
+		this.xstatement = xstatement;
+		this.xmessage = xmessage;
+		this.xresult = xresult;
+	}
 
 }

@@ -178,7 +178,10 @@
 				"serverSide" : true,
 				"order" : [4, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LSA11/0",
+				"ajax": {
+					"url": getBasepath() + "/search/LSA11/0",
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 			});
 

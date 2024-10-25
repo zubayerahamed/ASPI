@@ -196,7 +196,10 @@
 				"serverSide" : true,
 				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
-				"ajax" : getBasepath() + "/search/LSA12/0",
+				"ajax": {
+					"url": getBasepath() + "/search/LSA12/0",
+					"type": 'POST'
+				},
 				"columns": dataRetreiver,
 			});
 

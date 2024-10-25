@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import com.zayaanit.entity.Xlogs;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xuserprofiles;
@@ -28,11 +29,15 @@ import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.XlogsService;
+import com.zayaanit.service.XlogsdtService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Zubayer Ahamed
  * @since Jul 11, 2023
  */
+@Slf4j
 public class MenuAccessAuthorizationInterceptor implements AsyncHandlerInterceptor {
 
 	private static final String OUTSIDE_USERS_NAME = "anonymousUser";
@@ -43,6 +48,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	@Autowired private XusersRepo usersRepo;
 	@Autowired private XuserprofilesRepo xuserprofileRepo;
 	@Autowired private XlogsService xlogsService;
+	@Autowired private XlogsdtService xlogsdtService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -105,16 +111,19 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		Date xlogintime = (Date) sessionManager.getFromMap("LOGIN_TIME");
 		Date xsessionexpiry = (Date) sessionManager.getFromMap("SESSION_EXPIRY");
 		Date currentDateTime = new Date();
+		System.out.println("Current date time : " + currentDateTime);
+		System.out.println("Expiry date time : " + xsessionexpiry);
 		if(currentDateTime != null && xsessionexpiry != null && currentDateTime.before(xsessionexpiry)) {
 			long diffInMillies = Math.abs(currentDateTime.getTime() - xlogintime.getTime());
 			long oneDayInMillis = 24 * 60 * 60 * 1000;
 			if (diffInMillies < oneDayInMillis) {
-				sessionManager.removeFromMap("SESSION_EXPIRY");
+				//sessionManager.removeFromMap("SESSION_EXPIRY");
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.SECOND, sessionManager.getLoggedInUserDetails().getXsessiontime());
 				sessionManager.addToMap("SESSION_EXPIRY", cal.getTime());
 			} else {
 				// Do Logout
+				log.debug("Logout from menuaccess interceptor");
 				xlogsService.logout();
 				request.getRequestDispatcher("/login").forward(request, response);
 				request.getSession().invalidate();
@@ -122,13 +131,15 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			}
 		} else {
 			// Do Logout
+			log.debug("Logout from menuaccess interceptor");
 			xlogsService.logout();
 			request.getRequestDispatcher("/login").forward(request, response);
 			request.getSession().invalidate();
 			return false;
 		}
 
-		//System.out.println("=====> Request Path : " + request.getServletPath());
+		System.out.println("=====> Request Path : " + request.getServletPath());
+		System.out.println("=====> Request Params : " + request.getQueryString());
 
 		// Request Checker
 		if(!hasAccess(request.getServletPath())) {
@@ -137,7 +148,28 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			return false;
 		}
 
+		// if the path has access, then create a log dt
+		if(isAjaxRequest(request)) {
+			if(request.getQueryString() != null && request.getQueryString().contains("frommenu=")) {  // Menu clicked
+				String xsource = "Menu";
+				if(request.getQueryString().contains("fromfav=")) xsource = "Favourite";
+				xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, xsource, "View Screen", null, null, null, "Success"));
+			}
+		} else {
+			xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, "URL", "View Screen", null, null, null, "Success"));
+		}
+
 		return true;
+	}
+
+	private String getXscreen(String path) {
+		if (path.equals("/")) {
+			return "HOME";
+		} else {
+			// Remove the "/" and return the first 4 characters
+			String result = path.replace("/", "");
+			return result.length() > 4 ? result.substring(0, 4) : result;
+		}
 	}
 
 	private boolean hasAccess(String modulePath) {
@@ -165,5 +197,10 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		}
 
 		return matchFound;
+	}
+
+	private boolean isAjaxRequest(HttpServletRequest request) {
+		String requestedWithHeader = request.getHeader("X-Requested-With");
+		return "XMLHttpRequest".equals(requestedWithHeader);
 	}
 }

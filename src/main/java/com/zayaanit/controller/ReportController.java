@@ -65,6 +65,10 @@ public class ReportController extends AbstractReportController{
 			rm = ReportMenu.valueOf(rptcode);
 		} catch (Exception e) {
 			log.error(ERROR, e.getMessage(), e);
+			if(!isAjaxRequest(request)) {
+				return "redirect:/";
+			}
+
 			model.addAttribute("error", "Unauthorized Access.");
 			model.addAttribute("status", "401");
 			return "pages/404";
