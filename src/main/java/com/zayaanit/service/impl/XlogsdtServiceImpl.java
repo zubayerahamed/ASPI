@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zayaanit.config.AppConfig;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.repository.XlogsdtRepo;
 import com.zayaanit.service.XlogsdtService;
@@ -20,9 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 public class XlogsdtServiceImpl extends AbstractGenericService implements XlogsdtService {
 
 	@Autowired private XlogsdtRepo xlogsdtRepo;
+	@Autowired private AppConfig appConfig;
 
 	@Override
 	public Xlogsdt save(Xlogsdt xlogsdt) {
+		if(!appConfig.isAuditEnable()) return xlogsdt;
+
 		xlogsdt.setZid(sessionManager.getBusinessId());
 		xlogsdt.setXsession(sessionManager.sessionId());
 		xlogsdt.setXdatetime(new Date());

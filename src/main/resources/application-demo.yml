@@ -10,6 +10,7 @@ logging:
       type: DEBUG
 
 app: 
+  audit-enable: false
   tomcat-service: Tomcat9
   logging-path: C:/KIT/ASPI/logs
   template-path: C:/cr_live_reports

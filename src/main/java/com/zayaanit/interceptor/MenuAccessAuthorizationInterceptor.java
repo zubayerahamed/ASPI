@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
+import com.zayaanit.config.AppConfig;
 import com.zayaanit.entity.Xlogs;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xprofiles;
@@ -49,6 +50,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	@Autowired private XuserprofilesRepo xuserprofileRepo;
 	@Autowired private XlogsService xlogsService;
 	@Autowired private XlogsdtService xlogsdtService;
+	@Autowired private AppConfig appConfig;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -138,8 +140,8 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			return false;
 		}
 
-		System.out.println("=====> Request Path : " + request.getServletPath());
-		System.out.println("=====> Request Params : " + request.getQueryString());
+		//System.out.println("=====> Request Path : " + request.getServletPath());
+		//System.out.println("=====> Request Params : " + request.getQueryString());
 
 		// Request Checker
 		if(!hasAccess(request.getServletPath())) {
@@ -149,14 +151,16 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		}
 
 		// if the path has access, then create a log dt
-		if(isAjaxRequest(request)) {
-			if(request.getQueryString() != null && request.getQueryString().contains("frommenu=")) {  // Menu clicked
-				String xsource = "Menu";
-				if(request.getQueryString().contains("fromfav=")) xsource = "Favourite";
-				xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, xsource, "View Screen", null, null, null, "Success"));
+		if(appConfig.isAuditEnable()) {
+			if(isAjaxRequest(request)) {
+				if(request.getQueryString() != null && request.getQueryString().contains("frommenu=")) {  // Menu clicked
+					String xsource = "Menu";
+					if(request.getQueryString().contains("fromfav=")) xsource = "Favourite";
+					xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, xsource, "View Screen", null, null, null, "Success"));
+				}
+			} else {
+				xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, "URL", "View Screen", null, null, null, "Success"));
 			}
-		} else {
-			xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, "URL", "View Screen", null, null, null, "Success"));
 		}
 
 		return true;
