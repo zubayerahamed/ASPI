@@ -476,14 +476,14 @@ $(document).ready(function(){
 		var url = '/' + screenCode + '?frommenu=';
 		if(fromfav) url = '/' + screenCode + '?fromfav=&frommenu=';
 
+		$('.customize-aspi-offcanvas').click();
+		if($('.sidebar-mobile-expanded').length > 0){
+			$('.mobile-nav-close').click();
+		}
+
 		sectionReloadAjaxReq({
 			id : 'screen-container',
 			url : url
-		}, () => {
-			$('.customize-aspi-offcanvas').click();
-			if($('.sidebar-mobile-expanded').length > 0){
-				$('.mobile-nav-close').click();
-			}
 		});
 	})
 
