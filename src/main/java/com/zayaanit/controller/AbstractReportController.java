@@ -121,6 +121,15 @@ public abstract class AbstractReportController extends KitController {
 		Optional<Zbusiness> z = zbusinessRepo.findById(sessionManager.getBusinessId());
 		String reportName = filePath(z.get().getXrptpath()).concat("/").concat(rm.getFileName());
 		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) reportName = filePath(z.get().getXrptdefautl()).concat("/").concat(rm.getFileName());
+		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) {
+			try {
+				reportName = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath())
+								.append(File.separator).append("cr").append(File.separator)
+								.append(rm.getFileName()).toString();
+			} catch (URISyntaxException e) {
+				log.error(ERROR, e.getMessage(), e);
+			}
+		}
 
 		String reportTitle = "Report";
 		boolean attachment = true;
