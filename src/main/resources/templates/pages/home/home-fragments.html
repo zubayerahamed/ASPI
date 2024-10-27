@@ -2,10 +2,12 @@
 	<!-- Module Selection area -->
 	<div class="row justify-content-center align-items-center">
 
+		<h4 class="text-center">Modules</h4>
+
 		<div class="col-sm-6 col-xl-3" th:each="master : ${masterMenus}" th:if="${not (#lists.isEmpty(master.screens) and #lists.isEmpty(master.subMenus))}">
-			<a class="p-2 pt-4 pb-4 module-menu-button card card-body bg-primary text-white align-items-center" href="#" th:attr="data-menucode=${master.menuCode}">
+			<a class="p-1 pt-2 pb-2 module-menu-button card card-body bg-primary text-white align-items-center" href="#" th:attr="data-menucode=${master.menuCode}">
 				<i class="fs-1 mb-2" th:classappend="${#strings.isEmpty(master.menuIcon) ? 'ph-house' : master.menuIcon}"></i>
-				<h4 th:text="${master.menuTitle}" class="m-0 p-0"></h4>
+				<h6 th:text="${master.menuTitle}" class="m-0 p-0"></h6>
 			</a>
 		</div>
 
@@ -48,9 +50,9 @@
 
 			<h4 class="text-center mt-3" th:if="${not #lists.isEmpty(master.subMenus)}">Sub Menus</h4>
 			<div class="col-sm-6 col-xl-3" th:each="sub : ${master.subMenus}" th:if="${not (#lists.isEmpty(sub.screens) and #lists.isEmpty(sub.subMenus))}">
-				<a class="p-2 pt-4 pb-4 module-menu-button card card-body bg-primary text-white align-items-center" href="#" th:attr="data-menucode=${sub.menuCode}">
+				<a class="p-1 pt-2 pb-2 module-menu-button card card-body bg-primary text-white align-items-center" href="#" th:attr="data-menucode=${sub.menuCode}">
 					<i class="fs-1 mb-2" th:classappend="${#strings.isEmpty(sub.menuIcon) ? 'ph-house' : sub.menuIcon}"></i>
-					<h4 th:text="${sub.menuTitle}" class="m-0 p-0"></h4>
+					<h6 th:text="${sub.menuTitle}" class="m-0 p-0"></h6>
 				</a>
 			</div>
 

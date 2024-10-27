@@ -302,6 +302,7 @@ class MenuScreenGroup{
 	private String menucode;
 	private String menuname;
 	private List<Xmenuscreens> menus = new ArrayList<>();
+	@SuppressWarnings("unused")
 	private boolean allSelected;
 
 	public boolean isAllSelected() {
