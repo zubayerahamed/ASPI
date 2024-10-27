@@ -113,8 +113,8 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		Date xlogintime = (Date) sessionManager.getFromMap("LOGIN_TIME");
 		Date xsessionexpiry = (Date) sessionManager.getFromMap("SESSION_EXPIRY");
 		Date currentDateTime = new Date();
-		System.out.println("Current date time : " + currentDateTime);
-		System.out.println("Expiry date time : " + xsessionexpiry);
+		//System.out.println("Current date time : " + currentDateTime);
+		//System.out.println("Expiry date time : " + xsessionexpiry);
 		if(currentDateTime != null && xsessionexpiry != null && currentDateTime.before(xsessionexpiry)) {
 			long diffInMillies = Math.abs(currentDateTime.getTime() - xlogintime.getTime());
 			long oneDayInMillis = 24 * 60 * 60 * 1000;
