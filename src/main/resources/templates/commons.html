@@ -75,7 +75,7 @@
 			<div class="navbar-brand flex-1 flex-lg-0">
 				<a th:href="@{/}" class="d-inline-flex align-items-center side-nav-link">
 					<!-- <img th:src="@{/login-assets/images/logo.png}" alt="" style="height: 38px;"> -->
-					<h3 class="m-0 p-0 text-white" th:text="${loggedInZbusiness.zorg}">DEMO</h3>
+					<h3 class="m-0 p-0 text-white" th:text="${loggedInZbusiness.zorg}">ASPI</h3>
 				</a>
 			</div>
 
@@ -217,17 +217,19 @@
 			<div class="sidebar-section">
 				<ul class="nav nav-sidebar" data-nav-type="accordion">
 
-					<div th:remove="tag" th:each="master : ${masterMeus}" th:if="${not (#lists.isEmpty(master.screens) and #lists.isEmpty(master.subMenus))}">
+					<div th:remove="tag" th:each="master : ${masterMenus}" th:if="${not (#lists.isEmpty(master.screens) and #lists.isEmpty(master.subMenus))}">
 
 						<li class="nav-item-header pt-3">
 							<div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide" th:text="${master.menuTitle}"></div>
 							<i class="ph-dots-three sidebar-resize-show"></i>
 						</li>
 
+						<a th:href="@{/home}" class="screen-item" id="home" data-screen="home"></a>
+
 						<!-- Main -->
 						<li class="nav-item" th:each="screen : ${master.screens}">
 							<a th:id="${screen.xscreen}" th:href="@{/} + ${screen.xscreen}" class="nav-link screen-item" th:attr="id=${screen.xscreen}, data-screen=${screen.xscreen}" th:classappend="${screen.xscreen eq screenCode ? 'active' : ''}">
-								<i th:classappend="${#strings.isEmpty(screen.xicon) ? 'ph-house' :screen.xicon}"></i>
+								<i th:classappend="${#strings.isEmpty(screen.xicon) ? 'ph-house' : screen.xicon}"></i>
 								<span th:text="${screen.xtitle}"></span>
 							</a>
 						</li>
@@ -282,7 +284,7 @@
 			<div class="d-flex">
 				<h4 class="page-title mb-0" th:text="${pageTitle}"></h4>
 			</div>
-			<a th:if="${not isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/add-to-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-add" title="Add to favorite"><i class="ph-heart fs-1"></i></a>
+			<a th:if="${not isFavorite and not loggedInUser.isAdmin and screenCode ne 'Home'}" th:href="@{/AD15/add-to-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-add" title="Add to favorite"><i class="ph-heart fs-1"></i></a>
 			<a th:if="${isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/remove-from-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-remove" title="Remove from favorite"><i class="ph-heart-break text-danger fs-1"></i></a>
 		</div>
 	</div>

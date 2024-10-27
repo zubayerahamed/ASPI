@@ -20,6 +20,7 @@ public class MenuTree {
 	private String menuCode;
 	private String menuTitle;
 	private String menuIcon;
+	private String parentCode;
 
 	private List<MenuTree> subMenus = new ArrayList<>();
 	private List<Xscreens> screens = new ArrayList<>();

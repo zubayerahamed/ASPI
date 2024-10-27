@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>DEMO</title>
+	<title>ASPI</title>
 	<meta th:remove="tag" th:include="commons :: common-meta"/>
 	<meta th:remove="tag" th:include="commons :: common-css"/>
 	<meta th:remove="tag" th:include="commons :: common-js"/>
@@ -28,7 +28,9 @@
 		<script type="text/javascript" th:inline="javascript">
 			$(document).ready(function(){
 				var favscreen = /*[[${favscreen}]]*/;
-				if(favscreen == undefined || favscreen == null || favscreen == '') return;
+				if(favscreen == undefined || favscreen == null || favscreen == ''){
+					favscreen = 'home';
+				}
 				$('#' + favscreen).click();
 			})
 		</script>

@@ -173,7 +173,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	}
 
 	private boolean hasAccess(String modulePath) {
-		if(modulePath.equals("/")) return true;	// For default path, it always true
+		if(modulePath.equals("/") || modulePath.equals("/home") || modulePath.startsWith("/home")) return true;	// For default path, it always true
 
 		// Filter menus, if uesr dont have access
 		if(sessionManager.getLoggedInUserDetails() == null) return false;

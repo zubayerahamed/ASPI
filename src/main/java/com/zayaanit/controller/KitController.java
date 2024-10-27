@@ -29,6 +29,7 @@ import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.XfavouritesPK;
+import com.zayaanit.entity.pk.XmenusPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
@@ -201,15 +202,26 @@ public abstract class KitController extends BaseController {
 		return favsList;
 	}
 
-	@ModelAttribute("masterMeus")
+	@ModelAttribute("masterMenus")
 	protected List<MenuTree> masterMenus(){
+		return getMenuTree(null);
+	}
+
+	protected List<MenuTree> getMenuTree(String menucode) {
 		MyUserDetails user = sessionManager.getLoggedInUserDetails();
 		if(user == null) return Collections.emptyList();
 
 		List<MenuTree> masterMenus = new ArrayList<MenuTree>();
 
 		if(user.isAdmin()) {
-			List<Xmenus> masters = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), "M");
+			List<Xmenus> masters = new ArrayList<>();
+			if(StringUtils.isBlank(menucode) || "M".equalsIgnoreCase(menucode)) {
+				 masters = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), "M");
+			} else {
+				Optional<Xmenus> xmenusOp = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), menucode));
+				if(xmenusOp.isPresent()) masters.add(xmenusOp.get());
+			}
+			if(StringUtils.isNotBlank(menucode)) masters = masters.stream().filter(f -> f.getXmenu().equalsIgnoreCase(menucode)).collect(Collectors.toList());
 			masters.sort(Comparator.comparing(Xmenus::getXsequence));
 			for(Xmenus xmenu : masters) {
 				MenuTree mtree = constractTheMenu(xmenu, null);
@@ -222,7 +234,12 @@ public abstract class KitController extends BaseController {
 			Optional<Xprofiles> profilesOp = xprofilesRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), user.getXprofile().getXprofile()));
 			if(!profilesOp.isPresent()) return Collections.emptyList();
 
-			List<Xprofilesdt> details = profiledtRepo.findAllByXprofileAndZid(user.getXprofile().getXprofile(), sessionManager.getBusinessId());
+			List<Xprofilesdt> details = new ArrayList<>();
+			if(StringUtils.isBlank(menucode) || "M".equalsIgnoreCase(menucode)) {
+				details = profiledtRepo.findAllByXprofileAndZid(user.getXprofile().getXprofile(), sessionManager.getBusinessId());
+			} else {
+				details = profiledtRepo.findAllByXprofileAndXmenuAndZid(user.getXprofile().getXprofile(), menucode, sessionManager.getBusinessId());
+			}
 			if(details.isEmpty()) return Collections.emptyList();
 
 			Map<String, List<String>> menuWithScreenMap = details.stream().collect(
@@ -246,6 +263,7 @@ public abstract class KitController extends BaseController {
 		mtree.setMenuCode(xmenu.getXmenu());
 		mtree.setMenuTitle(xmenu.getXtitle());
 		mtree.setMenuIcon(xmenu.getXicon());
+		mtree.setParentCode(xmenu.getXpmenu());
 
 		// get all the assigned screens
 		List<Xmenuscreens> screens = new ArrayList<>();
