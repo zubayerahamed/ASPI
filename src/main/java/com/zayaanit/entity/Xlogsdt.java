@@ -1,5 +1,6 @@
 package com.zayaanit.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -7,13 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -28,8 +29,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "xlogsdt")
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Xlogsdt extends AbstractModel<String> {
+public class Xlogsdt implements Serializable {
 
 	private static final long serialVersionUID = -1624354019825186611L;
 
@@ -41,35 +41,36 @@ public class Xlogsdt extends AbstractModel<String> {
 	@Column(name = "zid", nullable = false)
 	private Integer zid;
 
-	@Column(name = "xsession", nullable = false)
+	@Column(name = "xsession", nullable = false, length = 150)
 	private String xsession;
 
 	@Column(name = "xdatetime", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date xdatetime;
 
-	@Column(name = "xscreen")
+	@Column(name = "xscreen", length = 25)
 	private String xscreen;
 
-	@Column(name = "xfunc")
+	@Column(name = "xfunc", length = 25)
 	private String xfunc;
 
-	@Column(name = "xsource")
+	@Column(name = "xsource", length = 25)
 	private String xsource;
 
-	@Column(name = "xfuncdt")
+	@Column(name = "xfuncdt", length = 25)
 	private String xfuncdt;
 
 	@Column(name = "xdata")
 	private String xdata;
 
+	@Lob
 	@Column(name = "xstatement")
 	private String xstatement;
 
-	@Column(name = "xmessage")
+	@Column(name = "xmessage", length = 50)
 	private String xmessage;
 
-	@Column(name = "xresult")
+	@Column(name = "xresult", length = 25)
 	private String xresult;
 
 	public Xlogsdt(String xscreen, String xfunc, String xsource, String xfuncdt, String xdata, String xstatement,

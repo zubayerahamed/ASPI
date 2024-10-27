@@ -1,5 +1,6 @@
 package com.zayaanit.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -14,7 +15,6 @@ import javax.persistence.TemporalType;
 import com.zayaanit.entity.pk.XlogsPK;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author Zubayer Ahaned
@@ -27,8 +27,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "xlogs")
 @IdClass(XlogsPK.class)
-@EqualsAndHashCode(callSuper = true)
-public class Xlogs extends AbstractModel<String> {
+public class Xlogs implements Serializable {
 
 	private static final long serialVersionUID = -1624354019825186611L;
 
@@ -39,28 +38,28 @@ public class Xlogs extends AbstractModel<String> {
 
 	@Id
 	@Basic(optional = false)
-	@Column(name = "xsession")
+	@Column(name = "xsession", length = 100)
 	private String xsession;
 
-	@Column(name = "xsip")
+	@Column(name = "xsip", length = 50)
 	private String xsip;
 
-	@Column(name = "xcip")
+	@Column(name = "xcip", length = 50)
 	private String xcip;
 
-	@Column(name = "zemail")
+	@Column(name = "zemail", length = 25)
 	private String zemail;
 
-	@Column(name = "xprofile")
+	@Column(name = "xprofile", length = 25)
 	private String xprofile;
 
-	@Column(name = "xstaff")
+	@Column(name = "xstaff", length = 25)
 	private String xstaff;
 
-	@Column(name = "xuseragent")
+	@Column(name = "xuseragent", length = 255)
 	private String xuseragent;
 
-	@Column(name = "xexptype")
+	@Column(name = "xexptype", length = 25)
 	private String xexptype;
 
 	@Column(name = "xlogintime")
