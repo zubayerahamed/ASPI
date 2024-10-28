@@ -18,10 +18,10 @@ import com.zayaanit.security.SpringSecurityAuditorAware;
 @EnableScheduling
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
-public class DemoErpApplication {
+public class ASPIErpApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoErpApplication.class, args);
+		SpringApplication.run(ASPIErpApplication.class, args);
 	}
 
 	@Bean
