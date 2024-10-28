@@ -60,6 +60,9 @@ public class Zbusiness extends AbstractModel<String> {
 	@Column(name = "zactive")
 	private Boolean zactive;
 
+	@Column(name = "xisaudit")
+	private Boolean xisaudit;
+
 	@Column(name = "xsessiontime")
 	private Integer xsessiontime;
 

@@ -45,17 +45,19 @@ public class SwitchBusinessController extends BaseController {
 		Optional<Xusers> usersOp = xusersRepo.findByZemailAndZid(sessionManager.getLoggedInUserDetails().getUsername(), zbOp.get().getZid());
 		if(!usersOp.isPresent()) return "redirect:/";
 
-		// If already logged in and want to switch business only, just add a logout log from previous business
-		if(sessionManager.getFromMap("LOGIN_DONE") != null) {
-			xlogsService.logout();
-			renewSession();
+		// XLOGS If already logged in and want to switch business only, just add a logout log from previous business
+		if(appConfig.isAuditEnable()) {
+			if(sessionManager.getFromMap("LOGIN_DONE") != null) {
+				xlogsService.logout();
+				renewSession();
+			}
+			sessionManager.addToMap("LOGIN_FLAG", "Y");
 		}
 
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 		sessionManager.getLoggedInUserDetails().setZbusiness(zbOp.get());
 		sessionManager.getLoggedInUserDetails().setXprofile(null);
 		sessionManager.getLoggedInUserDetails().setLoginTime(new Date());
-		sessionManager.addToMap("LOGIN_FLAG", "Y");
 		return "redirect:/";
 	}
 

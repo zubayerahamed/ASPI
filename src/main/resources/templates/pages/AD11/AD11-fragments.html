@@ -82,6 +82,12 @@
 							<input type="number" class="form-control numeric-only" th:field="*{xsessiontime}" min="0" step="1" required>
 						</div>
 					</div>
+					<div class="col-md-3" th:if="${loggedInUser.admin}">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xisaudit">Enable Audit?</label>
+							<input type="checkbox" id="xisaudit" th:field="*{xisaudit}">
+						</div>
+					</div>
 					<div class="col-md-3">
 						<div class="form-group mb-3">
 							<label class="form-label">Logo</label>

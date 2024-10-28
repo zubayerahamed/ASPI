@@ -13,7 +13,7 @@ mvn clean install
 
 ## Deployment/Installation Process
 ```sh
-1. Install jdk-8u92
+1. Install jdk-8
 2. Set java environment variable
 3. Install MsSQL Server 2019
 4. Install Tomcat 9

@@ -97,32 +97,42 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 
-		// Log login info
-		if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
-			Xlogs xlogs = xlogsService.login();
-			sessionManager.removeFromMap("LOGIN_FLAG");
-			sessionManager.addToMap("LOGIN_DONE", "Y");
+		// XLOGS Log
+		if(appConfig.isAuditEnable()) {
+			// Log login info
+			if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
+				Xlogs xlogs = xlogsService.login();
+				sessionManager.removeFromMap("LOGIN_FLAG");
+				sessionManager.addToMap("LOGIN_DONE", "Y");
 
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.SECOND, sessionManager.getLoggedInUserDetails().getXsessiontime());
-			sessionManager.addToMap("SESSION_EXPIRY", cal.getTime());
-			sessionManager.addToMap("LOGIN_TIME", xlogs.getXlogintime());
-		}
-
-		// Session Validation
-		Date xlogintime = (Date) sessionManager.getFromMap("LOGIN_TIME");
-		Date xsessionexpiry = (Date) sessionManager.getFromMap("SESSION_EXPIRY");
-		Date currentDateTime = new Date();
-		//System.out.println("Current date time : " + currentDateTime);
-		//System.out.println("Expiry date time : " + xsessionexpiry);
-		if(currentDateTime != null && xsessionexpiry != null && currentDateTime.before(xsessionexpiry)) {
-			long diffInMillies = Math.abs(currentDateTime.getTime() - xlogintime.getTime());
-			long oneDayInMillis = 24 * 60 * 60 * 1000;
-			if (diffInMillies < oneDayInMillis) {
-				//sessionManager.removeFromMap("SESSION_EXPIRY");
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.SECOND, sessionManager.getLoggedInUserDetails().getXsessiontime());
 				sessionManager.addToMap("SESSION_EXPIRY", cal.getTime());
+				sessionManager.addToMap("LOGIN_TIME", xlogs.getXlogintime());
+			}
+
+			// Session Validation
+			Date xlogintime = (Date) sessionManager.getFromMap("LOGIN_TIME");
+			Date xsessionexpiry = (Date) sessionManager.getFromMap("SESSION_EXPIRY");
+			Date currentDateTime = new Date();
+			//System.out.println("Current date time : " + currentDateTime);
+			//System.out.println("Expiry date time : " + xsessionexpiry);
+			if(currentDateTime != null && xsessionexpiry != null && currentDateTime.before(xsessionexpiry)) {
+				long diffInMillies = Math.abs(currentDateTime.getTime() - xlogintime.getTime());
+				long oneDayInMillis = 24 * 60 * 60 * 1000;
+				if (diffInMillies < oneDayInMillis) {
+					//sessionManager.removeFromMap("SESSION_EXPIRY");
+					Calendar cal = Calendar.getInstance();
+					cal.add(Calendar.SECOND, sessionManager.getLoggedInUserDetails().getXsessiontime());
+					sessionManager.addToMap("SESSION_EXPIRY", cal.getTime());
+				} else {
+					// Do Logout
+					log.debug("Logout from menuaccess interceptor");
+					xlogsService.logout();
+					request.getRequestDispatcher("/login").forward(request, response);
+					request.getSession().invalidate();
+					return false;
+				}
 			} else {
 				// Do Logout
 				log.debug("Logout from menuaccess interceptor");
@@ -131,13 +141,6 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 				request.getSession().invalidate();
 				return false;
 			}
-		} else {
-			// Do Logout
-			log.debug("Logout from menuaccess interceptor");
-			xlogsService.logout();
-			request.getRequestDispatcher("/login").forward(request, response);
-			request.getSession().invalidate();
-			return false;
 		}
 
 		//System.out.println("=====> Request Path : " + request.getServletPath());
@@ -150,8 +153,8 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			return false;
 		}
 
-		// if the path has access, then create a log dt
-		if(appConfig.isAuditEnable()) {
+		// XLOGSDT Log
+		if(appConfig.isAuditEnable() && Boolean.TRUE.equals(sessionManager.getZbusiness().getXisaudit())) {
 			if(isAjaxRequest(request)) {
 				if(request.getQueryString() != null && request.getQueryString().contains("frommenu=")) {  // Menu clicked
 					String xsource = "Menu";

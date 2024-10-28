@@ -26,6 +26,7 @@ public class XlogsdtServiceImpl extends AbstractGenericService implements Xlogsd
 	@Override
 	public Xlogsdt save(Xlogsdt xlogsdt) {
 		if(!appConfig.isAuditEnable()) return xlogsdt;
+		if(Boolean.FALSE.equals(sessionManager.getZbusiness().getXisaudit())) return xlogsdt;
 
 		xlogsdt.setZid(sessionManager.getBusinessId());
 		xlogsdt.setXsession(sessionManager.sessionId());

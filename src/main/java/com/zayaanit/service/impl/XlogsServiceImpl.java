@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zayaanit.config.AppConfig;
 import com.zayaanit.entity.Xlogs;
 import com.zayaanit.repository.XlogsRepo;
 import com.zayaanit.service.XlogsService;
@@ -17,9 +18,12 @@ import com.zayaanit.service.XlogsService;
 public class XlogsServiceImpl extends AbstractGenericService implements XlogsService {
 
 	@Autowired private XlogsRepo xlogsRepo;
+	@Autowired private AppConfig appConfig;
 
 	@Override
 	public Xlogs login() {
+		if(!appConfig.isAuditEnable()) return new Xlogs();
+
 		Xlogs xlogs = new Xlogs();
 		xlogs.setZid(sessionManager.getBusinessId());
 		xlogs.setXsession(sessionManager.sessionId());
@@ -38,6 +42,8 @@ public class XlogsServiceImpl extends AbstractGenericService implements XlogsSer
 
 	@Override
 	public Xlogs logout() {
+		if(!appConfig.isAuditEnable()) return new Xlogs();
+
 		Xlogs xlogs = new Xlogs();
 		xlogs.setZid(sessionManager.getBusinessId());
 		xlogs.setXsession(sessionManager.sessionId());

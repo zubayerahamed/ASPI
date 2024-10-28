@@ -19,22 +19,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.exceptions.UnauthorizedException;
 import com.zayaanit.model.QueryWindow;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.repository.ZbusinessRepo;
 
 /**
- * @author Zubayer Ahamed
- * @since Jul 3, 2023
+ * @author Zubayer Ahaned
+ * @since Oct 28, 2024
+ * @contact +8801748562164
+ * @email zubayerahamed1990@gmail.com
+ * @website https://www.zubayerahamed.com
  */
 @Controller
 @RequestMapping("/SA15")
 public class SA15 extends KitController {
 
-	@Autowired private ZbusinessRepo zbusinessRepo;
 	@Autowired protected JdbcTemplate jdbcTemplate;
 
 	private String pageTitle = null;
@@ -66,6 +66,7 @@ public class SA15 extends KitController {
 
 		QueryWindow qw = new QueryWindow();
 		model.addAttribute("qw", qw);
+		model.addAttribute("displayTable", false);
 
 		if (isAjaxRequest(request)) {
 			return "pages/SA15/SA15-fragments::main-form";
@@ -82,25 +83,13 @@ public class SA15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-//		if(StringUtils.isBlank(qw.getXpassword())) {
-//			responseHelper.setErrorStatusAndMessage("Security Key Required");
-//			return responseHelper.getResponse();
-//		}
-
-		Optional<Zbusiness> businessOp = zbusinessRepo.findById(loggedInZbusiness().getZid());   // Fixed zbusiness password check
-		if(!businessOp.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Business not found");
+		if(StringUtils.isBlank(qw.getStatement())) {
+			responseHelper.setErrorStatusAndMessage("Statement required");
 			return responseHelper.getResponse();
 		}
 
-//		if(!qw.getXpassword().equals(businessOp.get().getZpassword())) {
-//			responseHelper.setErrorStatusAndMessage("Invalid Security Key");
-//			return responseHelper.getResponse();
-//		}
-
-		if(StringUtils.isBlank(qw.getStatement())) {
-			responseHelper.setErrorStatusAndMessage("Statement is empty");
-			return responseHelper.getResponse();
+		if(sessionManager.getFromMap("QW_SQL") != null) {
+			sessionManager.removeFromMap("QW_SQL");
 		}
 
 		String sql = qw.getStatement().trim();
@@ -108,17 +97,72 @@ public class SA15 extends KitController {
 		if("UPDATE QUERY".equalsIgnoreCase(qw.getType()) || "DELETE QUERY".equalsIgnoreCase(qw.getType()) || "INSERT QUERY".equalsIgnoreCase(qw.getType())) {
 			try {
 				int effectedRows = jdbcTemplate.update(sql);
+				List<ReloadSection> reloadSections = new ArrayList<>();
+				reloadSections.add(new ReloadSection("detail-table-container", "/SA15/detail-table"));
+				responseHelper.setReloadSections(reloadSections);
 				responseHelper.setSuccessStatusAndMessage("Process Successfull. Number of effected rows : " + effectedRows);
 				return responseHelper.getResponse();
 			} catch (Exception e) {
-				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : " + e.getMessage());
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : " + e.getCause().getMessage());
+				return responseHelper.getResponse();
+			}
+		} else if ("CLEAN BUSINESS".equalsIgnoreCase(qw.getType())) {
+			String[] params = sql.split(";");
+			if(params.length != 2) {
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : Invalid Statement");
+				return responseHelper.getResponse();
+			}
+			if(StringUtils.isBlank(params[0].trim()) || StringUtils.isBlank(params[1].trim())) {
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : Invalid Statement");
+				return responseHelper.getResponse();
+			}
+			try {
+				String procedureCall = "{call SA_CleanBusinessData(?, ?)}";
+				jdbcTemplate.update(procedureCall, params[0].trim(), params[1].trim());
+				List<ReloadSection> reloadSections = new ArrayList<>();
+				reloadSections.add(new ReloadSection("detail-table-container", "/SA15/detail-table"));
+				responseHelper.setReloadSections(reloadSections);
+				responseHelper.setSuccessStatusAndMessage("Process Successfull");
+				return responseHelper.getResponse();
+			} catch (Exception e) {
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : " + e.getCause().getMessage());
+				return responseHelper.getResponse();
+			}
+		} else if ("CLONE DATA".equalsIgnoreCase(qw.getType())) {
+			String[] params = sql.split(";");
+			if(params.length != 3) {
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : Invalid Statement");
+				return responseHelper.getResponse();
+			}
+			if(StringUtils.isBlank(params[0].trim()) || StringUtils.isBlank(params[1].trim()) || StringUtils.isBlank(params[2].trim())) {
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : Invalid Statement");
+				return responseHelper.getResponse();
+			}
+			try {
+				String procedureCall = "{call SA_CloneBusinessData(?, ?, ?)}";
+				jdbcTemplate.update(procedureCall, params[0].trim(), params[1].trim(), params[2].trim());
+				List<ReloadSection> reloadSections = new ArrayList<>();
+				reloadSections.add(new ReloadSection("detail-table-container", "/SA15/detail-table"));
+				responseHelper.setReloadSections(reloadSections);
+				responseHelper.setSuccessStatusAndMessage("Process Successfull");
+				return responseHelper.getResponse();
+			} catch (Exception e) {
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : " + e.getCause().getMessage());
+				return responseHelper.getResponse();
+			}
+		} else if ("EXECUTE QUERY".equalsIgnoreCase(qw.getType())) {
+			try {
+				jdbcTemplate.execute(sql);
+				List<ReloadSection> reloadSections = new ArrayList<>();
+				reloadSections.add(new ReloadSection("detail-table-container", "/SA15/detail-table"));
+				responseHelper.setReloadSections(reloadSections);
+				responseHelper.setSuccessStatusAndMessage("Process Successfull");
+				return responseHelper.getResponse();
+			} catch (Exception e) {
+				responseHelper.setErrorStatusAndMessage("Process Failed. Reason : " + e.getCause().getMessage());
 				return responseHelper.getResponse();
 			}
 		} 
-
-		if(sessionManager.getFromMap("QW_SQL") != null) {
-			sessionManager.removeFromMap("QW_SQL");
-		}
 
 		sessionManager.addToMap("QW_SQL", sql);
 
@@ -131,7 +175,7 @@ public class SA15 extends KitController {
 	}
 
 	@GetMapping("/detail-table")
-	public String detailFormFragment(@RequestParam(required = false) String clear, Model model) throws UnauthorizedException {
+	public String detailFormFragment(@RequestParam(required = false) String clear, Model model) throws Exception {
 		if("CLEAR".equals(clear)) {
 			model.addAttribute("detailSection", false);
 			return "pages/SA15/SA15-fragments::detail-table";
@@ -141,13 +185,17 @@ public class SA15 extends KitController {
 
 		if(!sessionManager.getLoggedInUserDetails().isAdmin()) {
 			model.addAttribute("dataFound", false);
+			model.addAttribute("displayTable", false);
 			return "pages/SA15/SA15-fragments::detail-table";
 		}
 
 		if(sessionManager.getFromMap("QW_SQL") == null) {
 			model.addAttribute("dataFound", false);
+			model.addAttribute("displayTable", false);
 			return "pages/SA15/SA15-fragments::detail-table";
 		}
+
+		model.addAttribute("displayTable", true);
 
 		String sql = (String) sessionManager.getFromMap("QW_SQL");
 		if (sql.endsWith(";")) sql = sql.substring(0, sql.length() - 1);
@@ -156,7 +204,12 @@ public class SA15 extends KitController {
 		}
 		sessionManager.removeFromMap("QW_SQL");
 
-		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(sql);
+		List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();
+		try {
+			resultList = jdbcTemplate.queryForList(sql);
+		} catch (Exception e) {
+			throw new Exception(e.getCause().getMessage());
+		}
 		if(resultList == null || resultList.isEmpty()) {
 			model.addAttribute("dataFound", false);
 			return "pages/SA15/SA15-fragments::detail-table";
