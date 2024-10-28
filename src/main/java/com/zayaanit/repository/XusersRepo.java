@@ -16,6 +16,9 @@ import com.zayaanit.entity.pk.XusersPK;
 @Repository
 public interface XusersRepo extends JpaRepository<Xusers, XusersPK>{
 
+	public long countByZid(Integer zid);
+
+	public long countByZidAndZactive(Integer zid, Boolean zactive);
 
 	public List<Xusers> findAllByZemailAndXpasswordAndZactive(String zemail, String xpassword, Boolean zactive);
 

@@ -29,6 +29,7 @@ import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.MyUserDetails;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.ZbusinessRepo;
+import com.zayaanit.service.WidgetService;
 
 /**
  * @author Zubayer Ahamed
@@ -38,9 +39,9 @@ import com.zayaanit.repository.ZbusinessRepo;
 @RequestMapping("/AD05")
 public class AD05 extends KitController{
 
-	private String pageTitle = null;
+	@Autowired private WidgetService widgetService;
 
-	@Autowired private ZbusinessRepo businessRepo;
+	private String pageTitle = null;
 
 	@Override
 	protected String screenCode() {
@@ -63,19 +64,11 @@ public class AD05 extends KitController{
 
 	@GetMapping
 	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) throws ResourceNotFoundException {
-		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
-		if(!op.isPresent()) throw new ResourceNotFoundException();
-
-		Zbusiness zb = op.get();
-		if(zb.getXfilesize() == null) zb.setXfilesize(0);
-		if(StringUtils.isBlank(zb.getXdocpath())) zb.setXdocpath("C:\\Contents\\");
-		if(StringUtils.isBlank(zb.getXdoctypes())) zb.setXdoctypes(".jpg,.jpeg,.png,.pdf");
-		if(StringUtils.isBlank(zb.getXrptpath())) zb.setXrptpath("C:\\Reports");
-		if(zb.getXlogo() != null && zb.getXlogo().length > 0) {
-			zb.setImageBase64(Base64.getEncoder().encodeToString(zb.getXlogo()));
-		}
-
-		model.addAttribute("business", zb);
+		model.addAttribute("AD05WG01", widgetService.AD05WG01());
+		model.addAttribute("AD05WG02", widgetService.AD05WG02());
+		model.addAttribute("AD05WG03", widgetService.AD05WG03());
+		model.addAttribute("AD05WG04", widgetService.AD05WG04());
+		model.addAttribute("AD05WG05", widgetService.AD05WG05());
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			return "pages/AD05/AD05-fragments::main-form";
@@ -86,58 +79,5 @@ public class AD05 extends KitController{
 		return "pages/AD05/AD05";
 	}
 
-	@PostMapping("/store")
-	public @ResponseBody Map<String, Object> store(Zbusiness zbusiness, @RequestParam(value= "files[]", required = false) MultipartFile[] files, BindingResult bindingResult){
-
-		if(zbusiness.getXfilesize() == null) zbusiness.setXfilesize(1024);
-		if(StringUtils.isBlank(zbusiness.getXdocpath())) zbusiness.setXdocpath("C:\\Contents\\");
-		if(StringUtils.isBlank(zbusiness.getXrptpath())) {
-			responseHelper.setErrorStatusAndMessage("Report path required");
-			return responseHelper.getResponse();
-		}
-
-		// Process image first
-		boolean imageChanged = false;
-		if(files != null && files.length > 0) {
-			try {
-				zbusiness.setXlogo(files[0].getBytes());
-				imageChanged = true;
-			} catch (IOException e) {
-				responseHelper.setErrorStatusAndMessage("Something wrong in image, please try again with new one");
-				return responseHelper.getResponse();
-			}
-		}
-
-		// VALIDATE XSCREENS
-		modelValidator.validateZbusiness(zbusiness, bindingResult, validator);
-		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
-
-		// Update existing
-		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
-		if(!op.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
-			return responseHelper.getResponse();
-		}
-
-		zbusiness.setXdocpath(zbusiness.getXdocpath().trim());
-		zbusiness.setXdoctypes(zbusiness.getXdoctypes().trim());
-
-		Zbusiness existObj = op.get();
-		if(imageChanged) {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "zuserid", "ztime", "xrptdefautl");
-		} else {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
-		}
-		existObj = businessRepo.save(existObj);
-
-		// Load newly updated zbusiness into session manager object
-		MyUserDetails my = sessionManager.getLoggedInUserDetails();
-		my.setZbusiness(existObj);
-
-		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/AD05"));
-		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Updated successfully");
-		return responseHelper.getResponse();
-	}
+	
 }
