@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -201,7 +202,20 @@ public class SA16 extends KitController {
 //			backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
 //		}
 //		return backupLocation;
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		return request.getServletContext().getRealPath("resources/db-backup");
+//		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+//		return request.getServletContext().getRealPath("resources/db-backup");
+//		
+		try {
+			String backupLocation = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath()).append(File.separator).append("db-backup").toString();
+			backupLocation = backupLocation.replace("/", File.separator).replace("\\", File.separator);
+			return backupLocation.replaceFirst("^\\\\", "");
+		} catch (URISyntaxException e) {
+			log.error(ERROR, e.getCause().getMessage());
+			String backupLocation = appConfig.getBackupLocation();
+			if (backupLocation.endsWith("\\")) {
+				backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
+			}
+			return backupLocation;
+		}
 	}
 }
