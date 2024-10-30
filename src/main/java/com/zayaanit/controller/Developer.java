@@ -200,7 +200,12 @@ public class Developer {
 			}
 		}
 
-		backupService.performBackup(appConfig.getDatabaseName(), backupLocation + "/" + fileName);
+		try {
+			backupService.performBackup(appConfig.getDatabaseName(), backupLocation + "/" + fileName);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		// Read the backup file into a byte array
 		// Replace the file path with the actual backup file path

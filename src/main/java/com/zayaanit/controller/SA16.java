@@ -89,6 +89,7 @@ public class SA16 extends KitController {
 		// get all the list of files
 		List<String> filesName = new ArrayList<String>();
 		Path directory = Paths.get(backupLocation());
+		System.out.println("===============> view : " + directory);
 		try {
 			// If dir not exist then create one
 			if(!Files.exists(directory)) {
@@ -129,19 +130,58 @@ public class SA16 extends KitController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd HHmmss");
 		String fileName = db.getXorg().concat(sdf.format(new Date())).concat(".bak");
 
-		// create path if not exist
-		Path directoryPath = Paths.get(backupLocation());
-		if (!Files.exists(directoryPath)) {
+		// Create a directory if not exist
+		File dir = new File(backupLocation());
+		if(!dir.exists()) {
+			dir.mkdirs();
+		}
+		
+		
+		System.out.println("===============> store : " + dir.getAbsolutePath());
+		
+		
+		String tempDir = System.getProperty("java.io.tmpdir").concat(File.separator).concat("ASPI-DB-BACKUP");
+		File temp = new File(tempDir);
+		if(!temp.exists()) {
+			temp.mkdirs();
+		}
+		System.out.println("============> temp dir : " + temp.getAbsolutePath());
+		int stat = 0;
+		try {
+			stat = backupService.performBackup(appConfig.getDatabaseName(), temp.getAbsolutePath() + File.separator + fileName);
+		} catch (Exception e1) {
+			responseHelper.setErrorStatusAndMessage(e1.getCause().getMessage());
+			return responseHelper.getResponse();
+		}
+		if(stat == 0) {
+			responseHelper.setErrorStatusAndMessage("Backup Failed");
+			return responseHelper.getResponse();
+		}
+
+		File backupedFile = new File(temp.getAbsolutePath() + File.separator + fileName);
+		if(backupedFile.exists()) {
 			try {
-				Files.createDirectories(directoryPath);
+				Files.copy(Paths.get(temp.getAbsolutePath(), fileName), Paths.get(dir.getAbsolutePath(), fileName));
 			} catch (IOException e) {
-				log.error(ERROR, e.getMessage(), e);
-				responseHelper.setErrorStatusAndMessage(e.getMessage());
-				return responseHelper.getResponse();
+				log.error(ERROR, e.getCause().getMessage());
 			}
 		}
 
-		backupService.performBackup(appConfig.getDatabaseName(), backupLocation() + "/" + fileName);
+		
+
+		// create path if not exist
+//		Path directoryPath = Paths.get(backupLocation());
+//		if (!Files.exists(directoryPath)) {
+//			try {
+//				Files.createDirectories(directoryPath);
+//			} catch (IOException e) {
+//				log.error(ERROR, e.getMessage(), e);
+//				responseHelper.setErrorStatusAndMessage(e.getMessage());
+//				return responseHelper.getResponse();
+//			}
+//		}
+
+		
 
 		// Set up the response for download
 		List<ReloadSection> reloadSections = new ArrayList<>();
@@ -156,6 +196,8 @@ public class SA16 extends KitController {
 	public void downloadBackupFile(HttpServletResponse response, @RequestParam("filename") String filename) throws IOException {
 
 		File file = new File(backupLocation() + File.separator + filename);
+		
+		System.out.println("===============> download : " + file.getAbsolutePath());
 
 		if (file.exists()) {
 			response.setContentType("application/octet-stream");
@@ -202,20 +244,20 @@ public class SA16 extends KitController {
 //			backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
 //		}
 //		return backupLocation;
-//		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-//		return request.getServletContext().getRealPath("resources/db-backup");
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		return request.getServletContext().getRealPath("resources/db-backup");
 //		
-		try {
-			String backupLocation = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath()).append(File.separator).append("db-backup").toString();
-			backupLocation = backupLocation.replace("/", File.separator).replace("\\", File.separator);
-			return backupLocation.replaceFirst("^\\\\", "");
-		} catch (URISyntaxException e) {
-			log.error(ERROR, e.getCause().getMessage());
-			String backupLocation = appConfig.getBackupLocation();
-			if (backupLocation.endsWith("\\")) {
-				backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
-			}
-			return backupLocation;
-		}
+//		try {
+//			String backupLocation = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath()).append(File.separator).append("db-backup").toString();
+//			backupLocation = backupLocation.replace("/", File.separator).replace("\\", File.separator);
+//			return backupLocation.replaceFirst("^\\\\", "");
+//		} catch (URISyntaxException e) {
+//			log.error(ERROR, e.getCause().getMessage());
+//			String backupLocation = appConfig.getBackupLocation();
+//			if (backupLocation.endsWith("\\")) {
+//				backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
+//			}
+//			return backupLocation;
+//		}
 	}
 }

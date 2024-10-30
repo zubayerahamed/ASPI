@@ -1,34 +1,19 @@
  package com.zayaanit.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.exceptions.ResourceNotFoundException;
-import com.zayaanit.model.MyUserDetails;
-import com.zayaanit.model.ReloadSection;
-import com.zayaanit.repository.ZbusinessRepo;
 import com.zayaanit.service.WidgetService;
 
 /**
