@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zayaanit.config.AppConfig;
@@ -87,6 +89,10 @@ public class SA16 extends KitController {
 		List<String> filesName = new ArrayList<String>();
 		Path directory = Paths.get(backupLocation());
 		try {
+			// If dir not exist then create one
+			if(!Files.exists(directory)) {
+				Files.createDirectories(directory);
+			}
 			// Get all files in the directory
 			Files.walk(directory).filter(Files::isRegularFile).forEach(file -> {
 				String fileName = file.getFileName().toString();
@@ -190,10 +196,12 @@ public class SA16 extends KitController {
 	}
 
 	private String backupLocation() {
-		String backupLocation = appConfig.getBackupLocation();
-		if (backupLocation.endsWith("\\")) {
-			backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
-		}
-		return backupLocation;
+//		String backupLocation = appConfig.getBackupLocation();
+//		if (backupLocation.endsWith("\\")) {
+//			backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
+//		}
+//		return backupLocation;
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		return request.getServletContext().getRealPath("resources/db-backup");
 	}
 }

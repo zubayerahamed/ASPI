@@ -51,14 +51,13 @@ public class ReportController extends AbstractReportController{
 	public String index(@PathVariable String rptcode, HttpServletRequest request, Model model) {
 		this.screenCode = rptcode;
 		model.addAttribute("isFavorite", isFavorite());
-		model.addAttribute("pageTitle", pageTitle());
-		model.addAttribute("screenCode", screenCode());
 
 		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), rptcode));
 		if(op.isPresent()) this.pageTitle = op.get().getXtitle();
 
 		model.addAttribute("pageTitle", pageTitle);
 		model.addAttribute("screenCode", rptcode);
+		model.addAttribute("xtitle", pageTitle);
 
 		ReportMenu rm = null;
 		try {

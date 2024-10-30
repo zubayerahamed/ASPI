@@ -4,6 +4,7 @@
 			<form id="reportform" th:action="@{/} +  ${group} + '/print'" method="POST" th:if="${reportCode ne 'BLANK'}">
 				<input type="hidden" id="reportName" th:value="${reportName}"/>
 				<input type="hidden" name="reportCode" th:value="${reportCode}"/>
+				<input type="hidden" name="xtitle" th:value="${xtitle}"/>
 				<div th:include="pages/RP/RP-fields :: report-fields" th:with="df=${'yyyy-MM-dd'}"></div>
 			</form>
 		</div>
