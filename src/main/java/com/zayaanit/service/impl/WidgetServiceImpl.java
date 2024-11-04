@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.zayaanit.model.AD05WG05;
 import com.zayaanit.repository.XlogsRepo;
-import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.service.WidgetService;
 
@@ -24,7 +23,6 @@ public class WidgetServiceImpl extends AbstractGenericService implements WidgetS
 
 	@Autowired private XusersRepo xusersRepo;
 	@Autowired private XlogsRepo xlogsRepo;
-	@Autowired private XprofilesRepo xprofilesRepo;
 
 	/**
 	 * Total Users
