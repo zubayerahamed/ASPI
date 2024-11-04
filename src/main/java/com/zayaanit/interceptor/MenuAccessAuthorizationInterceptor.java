@@ -54,7 +54,8 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		//System.out.println("====> session id : " + request.getSession().getId());
+
+//		System.out.println("====> session id : " + request.getSession().getId());
 		//System.out.println("===> from auth context " + SecurityContextHolder.getContext().getAuthentication().getDetails().toString());
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Autowired
 	private XscreensRepo xscreenRepo;
 	@Autowired
-    private SessionTimeoutInterceptor sessionTimeoutInterceptor;
+	private SessionTimeoutInterceptor sessionTimeoutInterceptor;
 
 	@Bean
 	MenuAccessAuthorizationInterceptor menuAccessInterceptor() {
@@ -52,7 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(sessionTimeoutInterceptor).addPathPatterns("/**");
+		registry.addInterceptor(sessionTimeoutInterceptor).addPathPatterns("/**").excludePathPatterns("/login-assets/**", "/error", "/assets/**");
 		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths(true));
 		registry.addInterceptor(localeChangeInterceptor());
 	}

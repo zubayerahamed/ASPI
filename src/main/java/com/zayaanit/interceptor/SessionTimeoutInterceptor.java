@@ -20,7 +20,7 @@ public class SessionTimeoutInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		//System.out.println("=====> Request Path : " + request.getServletPath());
+//		System.out.println("=====> Request Path : " + request.getServletPath());
 		if(isAjaxRequest(request)) {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
