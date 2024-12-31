@@ -1,21 +1,25 @@
 package com.zayaanit.service.rp.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zayaanit.model.DropdownOption;
 import com.zayaanit.model.FormFieldBuilder;
+import com.zayaanit.service.AcheaderService;
 
 /**
  * @author Zubayer Ahamed
  * @since Aug 29, 2023
  */
 @SuppressWarnings("rawtypes")
-@Service
-public class RP19_Service extends AbstractReportService {
+@Service(value = "R212_Service")
+public class R212_Service extends AbstractReportService {
+
+	@Autowired private AcheaderService acheaderService;
 
 	@Override
 	public List<FormFieldBuilder> getReportFields() {
@@ -29,13 +33,7 @@ public class RP19_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
-		List<DropdownOption> types = new ArrayList<>();
-		types.add(new DropdownOption("", "-- Select --"));
-		types.add(new DropdownOption("Customer", "Customer"));
-		types.add(new DropdownOption("Supplier", "Supplier"));
-		types.add(new DropdownOption("Employee", "Employee"));
-		types.add(new DropdownOption("Sub Account", "Sub Account"));
-		fieldsList.add(FormFieldBuilder.generateDropdownField(5, "Type", types, "", true));
+		fieldsList.add(FormFieldBuilder.generateNumberField(5, "Year", BigDecimal.valueOf(acheaderService.getYearPeriod(new Date()).getYear()), true));
 
 		return fieldsList;
 	}

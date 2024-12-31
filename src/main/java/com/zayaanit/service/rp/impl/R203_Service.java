@@ -13,8 +13,8 @@ import com.zayaanit.model.FormFieldBuilder;
  * @since Aug 29, 2023
  */
 @SuppressWarnings("rawtypes")
-@Service
-public class RP05_Service extends AbstractReportService {
+@Service(value = "R203_Service")
+public class R203_Service extends AbstractReportService {
 
 	@Override
 	public List<FormFieldBuilder> getReportFields() {

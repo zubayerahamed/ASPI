@@ -16,8 +16,8 @@ import com.zayaanit.service.AcheaderService;
  * @since Aug 29, 2023
  */
 @SuppressWarnings("rawtypes")
-@Service
-public class RP14_Service extends AbstractReportService {
+@Service(value = "R210_Service")
+public class R210_Service extends AbstractReportService {
 
 	@Autowired private AcheaderService acheaderService;
 

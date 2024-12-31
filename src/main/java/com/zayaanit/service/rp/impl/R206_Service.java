@@ -16,8 +16,8 @@ import com.zayaanit.service.AcheaderService;
  * @since Aug 29, 2023
  */
 @SuppressWarnings("rawtypes")
-@Service
-public class RP11_Service extends AbstractReportService {
+@Service(value = "R206_Service")
+public class R206_Service extends AbstractReportService {
 
 	@Autowired private AcheaderService acheaderService;
 
@@ -33,7 +33,9 @@ public class RP11_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
-		fieldsList.add(FormFieldBuilder.generateNumberField(5, "Year", BigDecimal.valueOf(acheaderService.getYearPeriod(new Date()).getYear()), true));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true));
+
+		fieldsList.add(FormFieldBuilder.generateNumberField(6, "Year", BigDecimal.valueOf(acheaderService.getYearPeriod(new Date()).getYear()), true));
 
 		return fieldsList;
 	}

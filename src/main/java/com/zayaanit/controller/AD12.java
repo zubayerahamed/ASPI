@@ -137,7 +137,7 @@ public class AD12 extends KitController {
 				f.setXscreenType(xscreensOp.get().getXtype());
 			}
 		});
-		list = list.stream().filter(f -> !f.getXscreenType().equalsIgnoreCase("System")).collect(Collectors.toList());
+		list = list.stream().filter(f -> !"System".equalsIgnoreCase(f.getXscreenType())).collect(Collectors.toList());
 		list.sort(Comparator.comparing(Xmenuscreens::getXmenuSequence));
 
 		List<Xprofilesdt> profileDetails =  profileDtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());

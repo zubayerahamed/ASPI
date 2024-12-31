@@ -901,6 +901,319 @@
 </div>
 
 
+<div th:fragment="LMD11-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="table-responsive">
+			<table class="table" th:classappend="${tablename}">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>Name</th>
+						<th>Location</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
+
+			var columns = [
+				{
+					suffix : [0],
+					name : 'xwh',
+					rendername : 'xwh',
+					render: function(data, type, row, meta) {
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LMD11?xwh=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] +'">' + data + '</a>';
+					}
+				}, {
+					suffix : [0],
+					name : 'xname',
+					rendername: 'xname',
+				}, {
+					suffix : [0],
+					name : 'xlocation',
+					rendername: 'xlocation',
+				}
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render,
+						class : el.class
+					});
+				} 
+			});
+
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"order" : [0, 'asc'],
+				"columnDefs": columnDefs,
+				"ajax": {
+					"url": getBasepath() + "/search/LMD11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
+				"columns": dataRetreiver,
+				"search": {
+					"search": searchValue
+				}
+			});
+
+			//make ajax to call server
+			dt.draw();
+
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
+				e.preventDefault();
+
+				if(mainscreen == true){
+					$('#searchSuggestTableModal').modal('hide');
+
+					var value = $(this).data('value');
+
+					sectionReloadAjaxReq({
+						id : mainreloadid,
+						url : mainreloadurl + value
+					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
+				} else {
+					var prompt = $(this).data('prompt');
+					var value = $(this).data('value');
+
+					$('#searchSuggestTableModal').modal('hide');
+
+					$('input[name="'+ fieldId +'"]').val(value);
+					$('#' + fieldId).val(prompt);
+
+					if(resetParam != undefined && resetParam != ''){
+						var resetFields = resetParam.split(',');
+						$.each(resetFields, function(i, j){
+							if(j != undefined && j != '') {
+								$('#' + j).val("");
+								$('input[name="'+ j +'"]').val("");
+							}
+						});
+					}
+				}
+			})
+		})
+	</script>
+</div>
+
+
+<div th:fragment="LMD12-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="table-responsive">
+			<table class="table" th:classappend="${tablename}">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>Name</th>
+						<th>Unit</th>
+						<th>Rate</th>
+						<th>Group</th>
+						<th>Category</th>
+						<th>Note</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
+
+			var columns = [
+				{
+					suffix : [0],
+					name : 'xitem',
+					rendername : 'xitem',
+					render: function(data, type, row, meta) {
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LMD12?xitem=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xdesc'] +'">' + data + '</a>';
+					}
+				}, {
+					suffix : [0],
+					name : 'xdesc',
+					rendername: 'xdesc',
+				}, {
+					suffix : [0],
+					name : 'xunit',
+					rendername: 'xunit',
+				}, {
+					suffix : [0],
+					name : 'xrate',
+					rendername: 'xrate',
+				}, {
+					suffix : [0],
+					name : 'xgitem',
+					rendername: 'xgitem',
+				}, {
+					suffix : [0],
+					name : 'xcatitem',
+					rendername: 'xcatitem',
+				}, {
+					suffix : [0],
+					name : 'xnote',
+					rendername: 'xnote',
+				}
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render,
+						class : el.class
+					});
+				} 
+			});
+
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"order" : [0, 'asc'],
+				"columnDefs": columnDefs,
+				"ajax": {
+					"url": getBasepath() + "/search/LMD12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
+				"columns": dataRetreiver,
+				"search": {
+					"search": searchValue
+				}
+			});
+
+			//make ajax to call server
+			dt.draw();
+
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
+				e.preventDefault();
+
+				if(mainscreen == true){
+					$('#searchSuggestTableModal').modal('hide');
+
+					var value = $(this).data('value');
+
+					sectionReloadAjaxReq({
+						id : mainreloadid,
+						url : mainreloadurl + value
+					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
+				} else {
+					var prompt = $(this).data('prompt');
+					var value = $(this).data('value');
+
+					$('#searchSuggestTableModal').modal('hide');
+
+					$('input[name="'+ fieldId +'"]').val(value);
+					$('#' + fieldId).val(prompt);
+
+					if(resetParam != undefined && resetParam != ''){
+						var resetFields = resetParam.split(',');
+						$.each(resetFields, function(i, j){
+							if(j != undefined && j != '') {
+								$('#' + j).val("");
+								$('input[name="'+ j +'"]').val("");
+							}
+						});
+					}
+				}
+			})
+		})
+	</script>
+</div>
+
 
 <div th:fragment="LFA12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">

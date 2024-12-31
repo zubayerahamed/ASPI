@@ -102,7 +102,6 @@ public class FA11 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(acdef.getSubmitFor())) {
-			
 			acdef.setZid(sessionManager.getBusinessId());
 			acdef = acdefRepo.save(acdef);
 

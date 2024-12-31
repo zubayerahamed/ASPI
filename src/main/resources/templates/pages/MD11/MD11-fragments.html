@@ -1,25 +1,24 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:if="${not #strings.isEmpty(xwhs.xwh)}" class="card-header d-sm-flex align-items-sm-center py-sm-0">
+		<div th:if="${xwhs.xwh ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
 
 		</div>
 
 		<div class="card-body">
-			<form id="mainform" class="form-validate-jquery" th:action="@{/MD11/store}" th:object="${xwhs}" method="POST">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/MD11/store}" th:object="${xwhs}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
-				<input type="hidden" th:if="${not #strings.isEmpty(xwhs.xwh)}" th:field="*{xwh}">
+				<input type="hidden" th:if="${xwhs.xwh ne null}" th:field="*{xwh}">
 
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Store Code</label>
+							<label class="form-label required">Store Code</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
 										name="xwh"
-										th:value="${xwhs.xwh != null ? xwhs.xwh : ''}"
-										th:disabled="${xwhs.xwh != null}"
-										th:required="${xwhs.xwh eq null}">
+										th:value="${xwhs.xwh ne null ? xwhs.xwh : ''}"
+										th:disabled="${xwhs.xwh != null}">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
 										data-reloadurl='/search/table/LMD11/0?hint=', 
@@ -27,33 +26,21 @@
 										data-fieldid='xwh',
 										data-mainscreen=true,
 										data-mainreloadurl='/MD11?xwh=',
-										data-mainreloadid='main-form-container'"
+										data-mainreloadid='main-form-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
 						</div>
 					</div>
-
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Store Name</label>
+							<label class="form-label required">Store Name</label>
 							<input type="text" class="form-control" th:field="*{xname}" required="required">
 						</div>
 					</div>
-
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Store Location</label>
-							<input type="text" class="form-control" th:field="*{xlocation}">
-						</div>
-					</div>
-
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Store Category</label>
-							<select class="form-control select" th:field="*{xwhcat}" required="required">
-								<option value="">-- Select --</option>
-								<option th:each="cat : ${storeCategories}" th:value="${cat.xcode}" th:text="${cat.xcode}"></option>
-							</select>
+							<label class="form-label required">Store Location</label>
+							<input type="text" class="form-control" th:field="*{xlocation}" required="required">
 						</div>
 					</div>
 				</div>
@@ -63,9 +50,9 @@
 						<button type="reset" th:attr="data-reloadurl='/MD11?xwh=RESET', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${not #strings.isEmpty(xwhs.xwh)}" th:attr="data-url=@{/MD11?xwh=} + ${xwhs.xwh}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${not #strings.isEmpty(xwhs.xwh)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${#strings.isEmpty(xwhs.xwh)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+						<button th:if="${xwhs.xwh ne null}" th:attr="data-url=@{/MD11?xwh=} + ${xwhs.xwh}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${xwhs.xwh ne null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${xwhs.xwh eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
 				</div>
 			</form>
@@ -95,6 +82,24 @@
 					return;
 				}
 				deleteRequest($(this).data('url'));
+			});
+
+		})
+	</script>
+</div>
+
+<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
+	<script>
+		$(document).ready(function(){
+			kit.ui.init();
+
+			sectionReloadAjaxPostReq({
+				id : 'list-table-container',
+				url : '/search/table/LMD11/0'
+			}, {
+				mainscreen: true, 
+				mainreloadurl: '/MD11?xwh=',
+				mainreloadid: 'main-form-container',
 			});
 		})
 	</script>

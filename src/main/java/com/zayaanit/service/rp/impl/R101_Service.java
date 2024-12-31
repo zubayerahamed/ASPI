@@ -12,8 +12,8 @@ import com.zayaanit.model.FormFieldBuilder;
  * @since Aug 29, 2023
  */
 @SuppressWarnings("rawtypes")
-@Service
-public class RP03_Service extends AbstractReportService {
+@Service(value = "R101_Service")
+public class R101_Service extends AbstractReportService {
 
 	@Override
 	public List<FormFieldBuilder> getReportFields() {
@@ -21,7 +21,7 @@ public class RP03_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
 
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(2, "Account Group", "/search/table/LFA12/0?hint=", "", false));
+		//fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(2, "Employee", "/search/table/LFA14/1?dependentparam=Employee&hint=", "", false));
 
 		return fieldsList;
 	}

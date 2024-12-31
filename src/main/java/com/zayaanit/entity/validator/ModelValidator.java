@@ -14,12 +14,14 @@ import com.zayaanit.entity.Acheader;
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
+import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xmenuscreens;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcmstPK;
@@ -30,6 +32,7 @@ import com.zayaanit.entity.pk.XmenusPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
+import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.AcmstRepo;
@@ -40,6 +43,7 @@ import com.zayaanit.repository.XmenusRepo;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
+import com.zayaanit.repository.XwhsRepo;
 import com.zayaanit.service.KitSessionManager;
 /**
  * @author Zubayer Ahamed
@@ -55,6 +59,7 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private XcodesRepo xcodesRepo;
 	@Autowired private XusersRepo xusersRepo;
 	@Autowired private CabunitRepo cabunitRepo;
+	@Autowired private XwhsRepo xwhsRepo;
 	@Autowired private AcgroupRepo acgroupRepo;
 	@Autowired private AcmstRepo acmstRepo;
 	@Autowired private AcsubRepo acsubRepo;
@@ -158,6 +163,21 @@ public class ModelValidator extends ConstraintValidator {
 		}
 	}
 
+	public void validateXwhs(Xwhs xwhs, Errors errors, Validator validator) {
+		if(xwhs == null) return;
+
+		super.validate(xwhs, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check profile already exist
+		Optional<Xwhs> op = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), xwhs.getXwh()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(xwhs.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xwh", "Store code exist in the system");
+		}
+	}
+
 	public void validateAcgroup(Acgroup acgroup, Errors errors, Validator validator) {
 		if(acgroup == null) return;
 
@@ -207,6 +227,13 @@ public class ModelValidator extends ConstraintValidator {
 		if(acheader == null) return;
 
 		super.validate(acheader, errors, validator);
+		if (errors.hasErrors()) return;
+	}
+
+	public void validateCaitem(Caitem caitem, Errors errors, Validator validator) {
+		if(caitem == null) return;
+
+		super.validate(caitem, errors, validator);
 		if (errors.hasErrors()) return;
 	}
 

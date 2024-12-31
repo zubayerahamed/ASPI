@@ -20,10 +20,12 @@ import com.zayaanit.entity.Acheader;
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
+import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Xwhs;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.service.AcgroupService;
@@ -31,10 +33,12 @@ import com.zayaanit.service.AcheaderService;
 import com.zayaanit.service.AcmstService;
 import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.CabunitService;
+import com.zayaanit.service.CaitemService;
 import com.zayaanit.service.XmenusService;
 import com.zayaanit.service.XprofilesService;
 import com.zayaanit.service.XscreensService;
 import com.zayaanit.service.XusersService;
+import com.zayaanit.service.XwhsService;
 
 /**
  * @author Zubayer Ahamed
@@ -53,6 +57,8 @@ public class SearchSuggestController {
 	@Autowired private AcmstService acmstService;
 	@Autowired private AcsubService acsubService;
 	@Autowired private AcheaderService acheaderService;
+	@Autowired private XwhsService xwhsService;
+	@Autowired private CaitemService caitemService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -104,6 +110,7 @@ public class SearchSuggestController {
 		response.setData(list);
 		return response;
 	}
+
 
 	@PostMapping("/LSA12/{suffix}")
 	public @ResponseBody DatatableResponseHelper<Xscreens> LSA12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
@@ -162,6 +169,38 @@ public class SearchSuggestController {
 		int totalRows = cabunitService.LAD17(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Cabunit> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LMD11/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Xwhs> LMD11(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Xwhs> list = xwhsService.LMD11(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = xwhsService.LMD11(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Xwhs> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LMD12/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Caitem> LMD12(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Caitem> list = caitemService.LMD12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = caitemService.LMD12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Caitem> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

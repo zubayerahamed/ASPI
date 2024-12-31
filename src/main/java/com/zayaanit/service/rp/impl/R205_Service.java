@@ -1,20 +1,25 @@
 package com.zayaanit.service.rp.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zayaanit.model.FormFieldBuilder;
+import com.zayaanit.service.AcheaderService;
 
 /**
  * @author Zubayer Ahamed
  * @since Aug 29, 2023
  */
 @SuppressWarnings("rawtypes")
-@Service
-public class RP18_Service extends AbstractReportService {
+@Service(value = "R205_Service")
+public class R205_Service extends AbstractReportService {
+
+	@Autowired private AcheaderService acheaderService;
 
 	@Override
 	public List<FormFieldBuilder> getReportFields() {
@@ -28,9 +33,11 @@ public class RP18_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Sub Account", "/search/table/LFA14/0?hint=", "", true));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true, null, "param6"));
 
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Account", "/search/table/LFA13/0?hint=", "", false));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Sub Account", "/search/table/LFA14/1?hint=", "", false, "param5", null));
+
+		fieldsList.add(FormFieldBuilder.generateNumberField(7, "Year", BigDecimal.valueOf(acheaderService.getYearPeriod(new Date()).getYear()), true));
 
 		return fieldsList;
 	}

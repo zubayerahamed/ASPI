@@ -1,3 +1,4 @@
+
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
@@ -65,6 +66,9 @@ public class FA14 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xsub, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		model.addAttribute("customerGroups", xcodesRepo.findAllByXtypeAndZactiveAndZid("Customer Group", Boolean.TRUE, sessionManager.getBusinessId()));
+		model.addAttribute("supplierGroups", xcodesRepo.findAllByXtypeAndZactiveAndZid("Supplier Group", Boolean.TRUE, sessionManager.getBusinessId()));
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xsub)) {
 				model.addAttribute("acsub", Acsub.getDefaultInstance());
@@ -121,6 +125,20 @@ public class FA14 extends KitController {
 		if("Sub Account".equals(acsub.getXtype())) {
 			if(acsub.getXacc() == null) {
 				responseHelper.setErrorStatusAndMessage("Account selection required if account type is Sub Account");
+				return responseHelper.getResponse();
+			}
+		}
+
+		if("Customer".equals(acsub.getXtype())) {
+			if(StringUtils.isBlank(acsub.getXgcus())) {
+				responseHelper.setErrorStatusAndMessage("Customer group selection required for Customer Type");
+				return responseHelper.getResponse();
+			}
+		}
+
+		if("Supplier".equals(acsub.getXtype())) {
+			if(StringUtils.isBlank(acsub.getXgsup())) {
+				responseHelper.setErrorStatusAndMessage("Supplier group selection required for Customer Type");
 				return responseHelper.getResponse();
 			}
 		}
