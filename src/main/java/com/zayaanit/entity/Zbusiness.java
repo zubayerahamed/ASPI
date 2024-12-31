@@ -66,6 +66,9 @@ public class Zbusiness extends AbstractModel<String> {
 	@Column(name = "xsessiontime")
 	private Integer xsessiontime;
 
+	@Column(name = "xposcus")
+	private Integer xposcus;
+
 	@Lob
 	@Column(name = "xlogo")
 	private byte[] xlogo;

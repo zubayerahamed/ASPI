@@ -8,7 +8,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.zayaanit.entity.pk.AcsubPK;
+import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
@@ -16,16 +16,16 @@ import lombok.EqualsAndHashCode;
 
 /**
  * @author Zubayer Ahamed
- * @since Aug 7, 2024
+ * @since Jul 2, 2023
  */
 @Data
 @Entity
-@Table(name = "acsub")
-@IdClass(AcsubPK.class)
+@Table(name = "xwhs")
+@IdClass(XwhsPK.class)
 @EqualsAndHashCode(callSuper = true)
-public class Acsub extends AbstractModel<String> {
+public class Xwhs extends AbstractModel<String> {
 
-	private static final long serialVersionUID = 1681419879800536070L;
+	private static final long serialVersionUID = 3403841971090795101L;
 
 	@Id
 	@Basic(optional = false)
@@ -34,35 +34,20 @@ public class Acsub extends AbstractModel<String> {
 
 	@Id
 	@Basic(optional = false)
-	@Column(name = "xsub")
-	private Integer xsub;
-
-	@Column(name = "xacc")
-	private Integer xacc;
+	@Column(name = "xwh")
+	private Integer xwh;
 
 	@Column(name = "xname", length = 100)
 	private String xname;
 
-	@Column(name = "xtype", length = 25)
-	private String xtype;
-
-	@Column(name = "xdesc", length = 100)
-	private String xdesc;
-
-	@Column(name = "xgcus", length = 25)
-	private String xgcus;
-
-	@Column(name = "xgsup", length = 25)
-	private String xgsup;
-
-	@Transient
-	private String accountName;
+	@Column(name = "xlocation", length = 100)
+	private String xlocation;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
-	public static Acsub getDefaultInstance() {
-		Acsub obj = new Acsub();
+	public static Xwhs getDefaultInstance() {
+		Xwhs obj = new Xwhs();
 		obj.setSubmitFor(SubmitFor.INSERT);
 		return obj;
 	}
