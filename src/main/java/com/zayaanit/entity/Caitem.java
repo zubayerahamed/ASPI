@@ -72,7 +72,7 @@ public class Caitem extends AbstractModel<String> {
 
 	@Column(name = "xbarcode", length = 50)
 	private String xbarcode;
-	
+
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 

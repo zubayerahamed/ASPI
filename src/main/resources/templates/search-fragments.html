@@ -1089,34 +1089,34 @@
 
 			var columns = [
 				{
-					suffix : [0],
+					suffix : [0,1,2,3,4,5],
 					name : 'xitem',
 					rendername : 'xitem',
 					render: function(data, type, row, meta) {
 						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LMD12?xitem=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xdesc'] +'">' + data + '</a>';
 					}
 				}, {
-					suffix : [0],
+					suffix : [0,1,2,3,4,5],
 					name : 'xdesc',
 					rendername: 'xdesc',
 				}, {
-					suffix : [0],
+					suffix : [0,1,2,3,4,5],
 					name : 'xunit',
 					rendername: 'xunit',
 				}, {
-					suffix : [0],
+					suffix : [0,1,2,3,4,5],
 					name : 'xrate',
 					rendername: 'xrate',
 				}, {
-					suffix : [0],
+					suffix : [0,1,2,3,4,5],
 					name : 'xgitem',
 					rendername: 'xgitem',
 				}, {
-					suffix : [0],
+					suffix : [0,1,2,3,4,5],
 					name : 'xcatitem',
 					rendername: 'xcatitem',
 				}, {
-					suffix : [0],
+					suffix : [0,1,2,3,4,5],
 					name : 'xnote',
 					rendername: 'xnote',
 				}
@@ -1553,9 +1553,9 @@
 					<tr>
 						<th>Code</th>
 						<th>Name</th>
-						<th>Type</th>
+						<th th:if="${suffix eq 0}">Type</th>
 						<th>Description</th>
-						<th>Account</th>
+						<th th:if="${suffix eq 1 or suffix eq 2}">Group</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -1583,31 +1583,32 @@
 
 			var columns = [
 				{
-					suffix : [0,1],
+					suffix : [0,1,2,3,4],
 					name : 'xsub',
 					rendername : 'xsub',
 					render: function(data, type, row, meta) {
 						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA13?xacc=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] + '">' + data + '</a>';
 					}
 				}, {
-					suffix : [0,1],
+					suffix : [0,1,2,3,4],
 					name : 'xname',
 					rendername: 'xname',
 				}, {
-					suffix : [0,1],
+					suffix : [0],
 					name : 'xtype',
 					rendername: 'xtype',
 				} , {
-					suffix : [0,1],
+					suffix : [0,1,2,3,4],
 					name : 'xdesc',
 					rendername: 'xdesc',
 				}, {
-					suffix : [0,1],
-					name : 'xacc',
-					rendername: 'xacc',
-					render: function(data, type, row, meta) {
-						return data != null && data != '' ? data + ' - ' + row['accountName'] : '';
-					}
+					suffix : [1],
+					name : 'xgcus',
+					rendername: 'xgcus',
+				}, {
+					suffix : [2],
+					name : 'xgsup',
+					rendername: 'xgsup',
 				},
 			];
 
@@ -1803,6 +1804,187 @@
 				"columnDefs": columnDefs,
 				"ajax": {
 					"url": getBasepath() + "/search/LFA15/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
+				"columns": dataRetreiver,
+				"search": {
+					"search": searchValue
+				}
+			});
+
+			//make ajax to call server
+			dt.draw();
+
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
+				e.preventDefault();
+
+				if(mainscreen == true){
+					$('#searchSuggestTableModal').modal('hide');
+
+					var value = $(this).data('value');
+
+					sectionReloadAjaxReq({
+						id : mainreloadid,
+						url : mainreloadurl + value
+					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
+				} else {
+					var prompt = $(this).data('prompt');
+					var value = $(this).data('value');
+
+					$('#searchSuggestTableModal').modal('hide');
+
+					$('input[name="'+ fieldId +'"]').val(value);
+					$('#' + fieldId).val(prompt);
+					
+					if(resetParam != undefined && resetParam != ''){
+						var resetFields = resetParam.split(',');
+						$.each(resetFields, function(i, j){
+							if(j != undefined && j != '') {
+								$('#' + j).val("");
+								$('input[name="'+ j +'"]').val("");
+							}
+						});
+					}
+				}
+			})
+		})
+	</script>
+</div>
+
+
+<div th:fragment="LPO12-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="table-responsive">
+			<table class="table" th:classappend="${tablename}">
+				<thead>
+					<tr>
+						<th>Order Number</th>
+						<th>Date</th>
+						<th>Supplier</th>
+						<th>Business</th>
+						<th>Store</th>
+						<th>Amount</th>
+						<th>Status</th>
+						<th>Order Status</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
+
+			var columns = [
+				{
+					suffix : [0,1],
+					name : 'xpornum',
+					rendername : 'xpornum',
+					render: function(data, type, row, meta) {
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LPO12?xpornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
+					}
+				}, {
+					suffix : [0,1],
+					name : 'xdate',
+					rendername: 'xdate',
+				}, {
+					suffix : [0,1],
+					name : 'xcus',
+					rendername: 'xcus',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['supplierName'];
+					}
+				}, {
+					suffix : [0,1],
+					name : 'xbuid',
+					rendername: 'xbuid',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['businessUnitName'];
+					}
+				} , {
+					suffix : [0,1],
+					name : 'xwh',
+					rendername: 'xwh',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['warehouseName'];
+					}
+				} , {
+					suffix : [0,1],
+					name : 'xtotamt',
+					rendername: 'xtotamt',
+				}, {
+					suffix : [0,1],
+					name : 'xstatus',
+					rendername: 'xstatus',
+				}, {
+					suffix : [0,1],
+					name : 'xstatusord',
+					rendername: 'xstatusord',
+				},
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render,
+						class : el.class
+					});
+				} 
+			});
+
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": columnDefs,
+				"ajax": {
+					"url": getBasepath() + "/search/LPO12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
 					"type": 'POST'
 				},
 				"columns": dataRetreiver,

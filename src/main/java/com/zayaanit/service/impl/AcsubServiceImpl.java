@@ -55,6 +55,8 @@ public class AcsubServiceImpl extends AbstractService implements AcsubService {
 		em.setXname((String) row.get("xname"));
 		em.setXtype((String) row.get("xtype"));
 		em.setAccountName((String) row.get("accountname"));
+		em.setXgcus((String) row.get("xgcus"));
+		em.setXgsup((String) row.get("xgsup"));
 		return em;
 	}
 
@@ -70,7 +72,7 @@ public class AcsubServiceImpl extends AbstractService implements AcsubService {
 	private StringBuilder whereClause(String searchText, int suffix, String dependentParam) {
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
 
-		if(suffix == 1) {
+		if(suffix == 4) {
 			String paramsValues[] = dependentParam.split(",");
 
 			if(paramsValues.length == 2 && "Sub Account".equals(paramsValues[0])) {
@@ -79,6 +81,12 @@ public class AcsubServiceImpl extends AbstractService implements AcsubService {
 			} else {
 				sql = sql.append(" AND im.xtype='"+ paramsValues[0] +"' ");
 			}
+		} else if(suffix == 2) {
+			sql = sql.append(" AND im.xtype='Supplier' ");
+		} else if(suffix == 1) {
+			sql = sql.append(" AND im.xtype='Customer' ");
+		} else if(suffix == 3) {
+			sql = sql.append(" AND im.xtype='Employee' ");
 		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;

@@ -53,7 +53,7 @@ public class CaitemServiceImpl extends AbstractService implements CaitemService 
 		em.setXitem((Integer) row.get("xitem"));
 		em.setXdesc((String) row.get("xdesc"));
 		em.setXunit((String) row.get("xunit"));
-		em.setXrate((BigDecimal) row.get("xrage"));
+		em.setXrate((BigDecimal) row.get("xrate"));
 		em.setXgitem((String) row.get("xgitem"));
 		em.setXcatitem((String) row.get("xcatitem"));
 		em.setXnote((String) row.get("xnote"));
@@ -70,6 +70,18 @@ public class CaitemServiceImpl extends AbstractService implements CaitemService 
 
 	private StringBuilder whereClause(String searchText, int suffix, String dependentParam) {
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+
+		if(suffix == 1) {
+			sql = sql.append(" AND im.xgitem <> 'Services' ");
+		} else if(suffix == 2) {
+			sql = sql.append(" AND im.xgitem = 'Services' ");
+		} else if(suffix == 3) {
+			sql = sql.append(" AND im.xispo = '1' ");
+		} else if(suffix == 4) {
+			sql = sql.append(" AND im.xisop = '1' ");
+		} else if(suffix == 5) {
+			sql = sql.append(" AND im.xisop = '1' AND im.xgitem <> 'Services' ");
+		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;
 

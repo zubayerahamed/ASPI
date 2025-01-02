@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PoordheaderPK implements Serializable {
-    private Integer zid;
-    private Integer xpornum;
+
+	private static final long serialVersionUID = -7750714595004628092L;
+
+	private Integer zid;
+	private Integer xpornum;
 }
