@@ -65,6 +65,9 @@ public class Pogrnheader extends AbstractModel<String> {
 	@Column(name = "xwh")
 	private Integer xwh;
 
+	@Column(name = "xpornum")
+	private Integer xpornum;
+
 	@Column(name = "xref", length = 100)
 	private String xref;
 

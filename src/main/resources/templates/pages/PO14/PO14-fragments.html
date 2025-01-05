@@ -44,7 +44,7 @@
 										id="xdate" 
 										class="form-control datepicker-date-format" 
 										placeholder="yyyy-mm-dd format" 
-										disabled="disabled"
+										required
 										th:value="${pogrnheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(pogrnheader.xdate, df)}">
 								<span class="input-group-text">
 									<i class="ph-calendar"></i>

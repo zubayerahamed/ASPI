@@ -206,6 +206,11 @@ public class PO14 extends KitController {
 		modelValidator.validatePogrnheader(pogrnheader, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
+		if(pogrnheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
+		}
+
 		if(pogrnheader.getXbuid() == null) {
 			responseHelper.setErrorStatusAndMessage("Business unit required");
 			return responseHelper.getResponse();
@@ -235,7 +240,7 @@ public class PO14 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(pogrnheader.getSubmitFor())) {
-			pogrnheader.setXdate(new Date());
+			//pogrnheader.setXdate(new Date());
 			pogrnheader.setXtotamt(BigDecimal.ZERO);
 			pogrnheader.setXstatus("Open");
 			pogrnheader.setXstatusim("Open");
@@ -267,7 +272,7 @@ public class PO14 extends KitController {
 		}
 
 		Pogrnheader existObj = op.get();
-		BeanUtils.copyProperties(pogrnheader, existObj, "zid", "zuserid", "ztime", "xgrnnum", "xdate", "xtotamt", "xgrnnum", "xstatus", "xstatusim", "xstatusjv", "xvoucher", "xstaffsubmit", "xsubmittime", "xtype");
+		BeanUtils.copyProperties(pogrnheader, existObj, "zid", "zuserid", "ztime", "xgrnnum", "xtotamt", "xgrnnum", "xstatus", "xstatusim", "xstatusjv", "xvoucher", "xstaffsubmit", "xsubmittime", "xtype");
 
 		// Calculate total amount
 		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXgrnnum());
