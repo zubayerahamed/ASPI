@@ -8,9 +8,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.zayaanit.entity.Poordheader;
 import com.zayaanit.enums.DatatableSortOrderType;
+import com.zayaanit.model.PO13SearchParam;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.PoordheaderService;
 
@@ -49,6 +51,33 @@ public class PoordheaderServiceImpl extends AbstractService implements Poordhead
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
+	@Override
+	public List<Poordheader> LPO13(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, PO13SearchParam param) {
+		searchText = searchText.replaceAll("'", "''");
+		StringBuilder sql = new StringBuilder();
+		sql.append(selectClause())
+		.append(fromClause("poordheader im"))
+		.append(whereClausePO13(searchText, suffix, param))
+		.append(orderbyClause(orderBy, orderType.name()))
+		.append(limitAndOffsetClause(limit, offset));
+
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString());
+		List<Poordheader> list = new ArrayList<>();
+		result.stream().forEach(row -> list.add(constractListOfXwhs(row)));
+
+		return list;
+	}
+
+	@Override
+	public int LPO13(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, PO13SearchParam param) {
+		searchText = searchText.replaceAll("'", "''");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) ")
+		.append(fromClause("poordheader im"))
+		.append(whereClausePO13(searchText, suffix, param));
+		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+	}
+
 	private Poordheader constractListOfXwhs(Map<String, Object> row) {
 		Poordheader em = new Poordheader();
 		em.setXpornum((Integer) row.get("xpornum"));
@@ -59,7 +88,6 @@ public class PoordheaderServiceImpl extends AbstractService implements Poordhead
 		em.setXtotamt((BigDecimal) row.get("xtotamt"));
 		em.setXstatus((String) row.get("xstatus"));
 		em.setXstatusord((String) row.get("xstatusord"));
-
 		em.setBusinessUnitName((String) row.get("businessUnitName"));
 		em.setSupplierName((String) row.get("supplierName"));
 		em.setWarehouseName((String) row.get("warehouseName"));
@@ -91,6 +119,24 @@ public class PoordheaderServiceImpl extends AbstractService implements Poordhead
 				+ "OR ac.xname LIKE '%" + searchText + "%' "
 				+ "OR xw.xname LIKE '%" + searchText + "%' "
 				+ "OR im.xwh LIKE '%" + searchText + "%') ");
+	}
+
+	private StringBuilder whereClausePO13(String searchText, int suffix, PO13SearchParam param) {
+		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+
+		sql.append(" AND (im.xdate between '"+ sdf.format(param.getXfdate()) +"' AND '"+ sdf.format(param.getXtdate()) +"') ");
+		sql.append(" AND im.xbuid = '"+ param.getXbuid() +"' ");
+		if(param.getXwh() != null) sql.append(" AND im.xwh = '"+ param.getXwh() +"' ");
+		if(param.getXcus() != null) sql.append(" AND im.xcus = '"+ param.getXcus() +"' ");
+		if(StringUtils.hasText(param.getXstatusord())) sql.append(" AND im.xstatusord = '"+ param.getXstatusord() +"' ");
+
+		if (searchText == null || searchText.isEmpty()) return sql;
+
+		return sql.append(" AND (im.xdate LIKE '%" + searchText + "%' "
+				+ "OR im.xwh LIKE '%" + searchText + "%' "
+				+ "OR im.xcus LIKE '%" + searchText + "%' "
+				+ "OR im.xbuid LIKE '%" + searchText + "%' "
+				+ "OR im.xstatusord LIKE '%" + searchText + "%') ");
 	}
 
 	private StringBuilder orderbyClause(String orderByField, String orderType) {

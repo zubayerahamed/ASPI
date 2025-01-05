@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PogrnheaderPK implements Serializable{
-    
-    private Integer zid;
-    private Integer xgrnnum;
+public class PogrnheaderPK implements Serializable {
+
+	private static final long serialVersionUID = 5082945769961600404L;
+
+	private Integer zid;
+	private Integer xgrnnum;
 }

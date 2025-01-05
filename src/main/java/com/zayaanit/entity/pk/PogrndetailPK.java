@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PogrndetailPK implements Serializable {
-    
-     private Integer zid;
-    private Integer xgrnnum;
-    private Integer xrow;
+
+	private static final long serialVersionUID = -8745647912511165222L;
+
+	private Integer zid;
+	private Integer xgrnnum;
+	private Integer xrow;
 }

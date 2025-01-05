@@ -12,6 +12,11 @@ public enum ReportMenu {
 
 	// ON SCREEN REPORT
 	voucher("FA15", "Voucher", "voucher.rpt", ReportParamMap.voucher, "Y", false),
+	
+	poord("PO12", "Print Order", "poord.rpt", ReportParamMap.poord, "Y", false),
+	poordgrn("PO12", "Print GRNs", "poordgrn.rpt", ReportParamMap.poordgrn, "Y", false),
+	pogrn("PO14", "Print GRN", "pogrn.rpt", ReportParamMap.pogrn, "Y", false),
+	pogrnbill("PO14", "Print Bill", "pogrnbill.rpt", ReportParamMap.pogrnbill, "Y", false),
 
 	// REPORT MODULES REPORT
 	R101("R101", "User Listing Report", "R101.rpt", ReportParamMap.R101, "Y", false),

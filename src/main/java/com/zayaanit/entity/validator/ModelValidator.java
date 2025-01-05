@@ -15,6 +15,7 @@ import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
+import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Poordheader;
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
@@ -235,6 +236,13 @@ public class ModelValidator extends ConstraintValidator {
 		if(poordheader == null) return;
 
 		super.validate(poordheader, errors, validator);
+		if (errors.hasErrors()) return;
+	}
+
+	public void validatePogrnheader(Pogrnheader pogrnheader, Errors errors, Validator validator) {
+		if(pogrnheader == null) return;
+
+		super.validate(pogrnheader, errors, validator);
 		if (errors.hasErrors()) return;
 	}
 

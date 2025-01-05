@@ -12,6 +12,10 @@ import com.zayaanit.enums.ReportParamDataType;
 public class ReportParamMap {
 
 	public static final Map<String, String> voucher = new HashMap<>();
+	public static final Map<String, String> poord = new HashMap<>();
+	public static final Map<String, String> poordgrn = new HashMap<>();
+	public static final Map<String, String> pogrn = new HashMap<>();
+	public static final Map<String, String> pogrnbill = new HashMap<>();
 
 	public static final Map<String, String> R101 = new HashMap<>();
 	public static final Map<String, String> R102 = new HashMap<>();
@@ -37,6 +41,19 @@ public class ReportParamMap {
 
 		voucher.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		voucher.put("param2", "xvoucher|" + ReportParamDataType.INTEGER.name());
+
+		poord.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		poord.put("param2", "xpornum|" + ReportParamDataType.INTEGER.name());
+
+		poordgrn.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		poordgrn.put("param2", "xpornum|" + ReportParamDataType.INTEGER.name());
+
+		pogrn.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		pogrn.put("param2", "xgrnnum|" + ReportParamDataType.INTEGER.name());
+
+		pogrnbill.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		pogrnbill.put("param2", "xcus|" + ReportParamDataType.INTEGER.name());
+		pogrnbill.put("param3", "xinvnum|" + ReportParamDataType.INTEGER.name());
 
 		R101.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R101.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());

@@ -8,6 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.NamedStoredProcedureQueries;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -22,6 +26,13 @@ import lombok.EqualsAndHashCode;
 @Table(name = "poordheader")
 @IdClass(PoordheaderPK.class)
 @EqualsAndHashCode(callSuper = true)
+@NamedStoredProcedureQueries({
+	@NamedStoredProcedureQuery(name = "PO_CreateGRNfromOrder", procedureName = "PO_CreateGRNfromOrder", parameters = {
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "pornum", type = Integer.class), 
+	}),
+})
 public class Poordheader extends AbstractModel<String> {
 
 	private static final long serialVersionUID = 1681419879800536071L;
@@ -93,12 +104,18 @@ public class Poordheader extends AbstractModel<String> {
 	private String staffName;
 
 	@Transient
+	private Integer xporeqnum;
+	@Transient
+	private Date xdatereq;
+
+	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
 	public static Poordheader getDefaultInstance() {
 		Poordheader obj = new Poordheader();
 		obj.setSubmitFor(SubmitFor.INSERT);
 		obj.setXdate(new Date());
+		obj.setXtotamt(BigDecimal.ZERO);
 		return obj;
 	}
 }

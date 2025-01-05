@@ -2045,3 +2045,190 @@
 		})
 	</script>
 </div>
+
+
+
+<div th:fragment="LPO14-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="table-responsive">
+			<table class="table" th:classappend="${tablename}">
+				<thead>
+					<tr>
+						<th>GRN Number</th>
+						<th>Date</th>
+						<th>Supplier</th>
+						<th>Business</th>
+						<th>Store</th>
+						<th>Amount</th>
+						<th>Status</th>
+						<th>Inventory Status</th>
+						<th>GL Status</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
+
+			var columns = [
+				{
+					suffix : [0,1],
+					name : 'xgrnnum',
+					rendername : 'xgrnnum',
+					render: function(data, type, row, meta) {
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LPO14?xgrnnum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
+					}
+				}, {
+					suffix : [0,1],
+					name : 'xdate',
+					rendername: 'xdate',
+				}, {
+					suffix : [0,1],
+					name : 'xcus',
+					rendername: 'xcus',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['supplierName'];
+					}
+				}, {
+					suffix : [0,1],
+					name : 'xbuid',
+					rendername: 'xbuid',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['businessUnitName'];
+					}
+				} , {
+					suffix : [0,1],
+					name : 'xwh',
+					rendername: 'xwh',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['warehouseName'];
+					}
+				} , {
+					suffix : [0,1],
+					name : 'xtotamt',
+					rendername: 'xtotamt',
+				}, {
+					suffix : [0,1],
+					name : 'xstatus',
+					rendername: 'xstatus',
+				}, {
+					suffix : [0,1],
+					name : 'xstatusim',
+					rendername: 'xstatusim',
+				}, {
+					suffix : [0,1],
+					name : 'xstatusjv',
+					rendername: 'xstatusjv',
+				},
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render,
+						class : el.class
+					});
+				} 
+			});
+
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": columnDefs,
+				"ajax": {
+					"url": getBasepath() + "/search/LPO14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
+				"columns": dataRetreiver,
+				"search": {
+					"search": searchValue
+				}
+			});
+
+			//make ajax to call server
+			dt.draw();
+
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
+				e.preventDefault();
+
+				if(mainscreen == true){
+					$('#searchSuggestTableModal').modal('hide');
+
+					var value = $(this).data('value');
+
+					sectionReloadAjaxReq({
+						id : mainreloadid,
+						url : mainreloadurl + value
+					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
+				} else {
+					var prompt = $(this).data('prompt');
+					var value = $(this).data('value');
+
+					$('#searchSuggestTableModal').modal('hide');
+
+					$('input[name="'+ fieldId +'"]').val(value);
+					$('#' + fieldId).val(prompt);
+					
+					if(resetParam != undefined && resetParam != ''){
+						var resetFields = resetParam.split(',');
+						$.each(resetFields, function(i, j){
+							if(j != undefined && j != '') {
+								$('#' + j).val("");
+								$('input[name="'+ j +'"]').val("");
+							}
+						});
+					}
+				}
+			})
+		})
+	</script>
+</div>

@@ -270,7 +270,7 @@ public class PO12 extends KitController {
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum="+ poordheader.getXpornum() +"&xrow=RESET"));
 		reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Purchaes order updated successfully");
+		responseHelper.setSuccessStatusAndMessage("Purchase order updated successfully");
 		return responseHelper.getResponse();
 	}
 
