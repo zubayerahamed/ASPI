@@ -125,7 +125,7 @@ public class PoordheaderServiceImpl extends AbstractService implements Poordhead
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
 
 		sql.append(" AND (im.xdate between '"+ sdf.format(param.getXfdate()) +"' AND '"+ sdf.format(param.getXtdate()) +"') ");
-		sql.append(" AND im.xbuid = '"+ param.getXbuid() +"' ");
+		if(param.getXbuid() != null) sql.append(" AND im.xbuid = '"+ param.getXbuid() +"' ");
 		if(param.getXwh() != null) sql.append(" AND im.xwh = '"+ param.getXwh() +"' ");
 		if(param.getXcus() != null) sql.append(" AND im.xcus = '"+ param.getXcus() +"' ");
 		if(StringUtils.hasText(param.getXstatusord())) sql.append(" AND im.xstatusord = '"+ param.getXstatusord() +"' ");

@@ -40,12 +40,12 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Business Unit</label>
+							<label class="form-label">Business Unit</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
 										id="xbuid">
-								<input 	type="hidden" class="search-val" name="xbuid" th:value="${searchParam.xbuid ne null ? searchParam.xbuid + ' - ' + searchParam.businessUnitName : ''}" required="required"/>
+								<input 	type="hidden" class="search-val" name="xbuid" th:value="${searchParam.xbuid ne null ? searchParam.xbuid + ' - ' + searchParam.businessUnitName : ''}"/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
 										data-reloadurl='/search/table/LAD17/0?hint=', 

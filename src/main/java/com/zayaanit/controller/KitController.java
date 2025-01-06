@@ -2,6 +2,7 @@ package com.zayaanit.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -239,18 +240,45 @@ public abstract class KitController extends BaseController {
 				details = profiledtRepo.findAllByXprofileAndZid(user.getXprofile().getXprofile(), sessionManager.getBusinessId());
 			} else {
 				details = profiledtRepo.findAllByXprofileAndXmenuAndZid(user.getXprofile().getXprofile(), menucode, sessionManager.getBusinessId());
+				
+				// if menu type is M then find all the child menus first
+				List<Xmenus> childMenus = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), menucode);
+				List<String> childMenusCode = childMenus.stream().map(m -> m.getXmenu()).collect(Collectors.toList());
+				if(childMenusCode != null && !childMenusCode.isEmpty()) {
+					details.addAll(profiledtRepo.findAllByZidAndXprofileAndXmenuIn(sessionManager.getBusinessId(), user.getXprofile().getXprofile(), childMenusCode));
+				}
 			}
 			if(details.isEmpty()) return Collections.emptyList();
 
 			Map<String, List<String>> menuWithScreenMap = details.stream().collect(
-				Collectors.groupingBy(Xprofilesdt::getXmenu, Collectors.mapping(Xprofilesdt::getXscreen, Collectors.toList())
-			));
+				Collectors.groupingBy(Xprofilesdt::getXmenu, Collectors.mapping(Xprofilesdt::getXscreen, Collectors.toList()))
+			);
+
+			//create a list of submenus with main manu andd add it to that menu with screen map
+			List<Xmenus> notParentMenus = new ArrayList<>();
+			menuWithScreenMap.entrySet().stream().forEach(f -> {
+				Optional<Xmenus> xmenusOp = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), f.getKey()));
+				if(xmenusOp.isPresent() && !"M".equals(xmenusOp.get().getXpmenu())) {
+					notParentMenus.add(xmenusOp.get());
+				}
+			});
+			notParentMenus.stream().forEach(f -> {
+				if(menuWithScreenMap.get(f.getXpmenu()) != null) {
+					menuWithScreenMap.get(f.getXpmenu()).add(f.getXmenu());
+				} else {
+					List<String> menus = new ArrayList<>();
+					menus.add(f.getXmenu());
+					menuWithScreenMap.put(f.getXpmenu(), menus);
+				}
+			});
+
 			Set<String> menus = details.stream().map(m -> m.getXmenu()).collect(Collectors.toSet());
-			List<Xmenus> masters = xmenusRepo.findAllByZidAndXpmenuAndXmenuIn(sessionManager.getBusinessId(), "M", menus);
+//			List<Xmenus> masters = xmenusRepo.findAllByZidAndXpmenuAndXmenuIn(sessionManager.getBusinessId(), "M", menus);
+			List<Xmenus> masters = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), "M");
 			masters.sort(Comparator.comparing(Xmenus::getXsequence));
 			for(Xmenus xmenu : masters) {
 				MenuTree mtree = constractTheMenu(xmenu, menuWithScreenMap);
-				masterMenus.add(mtree);
+				if(mtree != null) masterMenus.add(mtree);
 			}
 		}
 
@@ -258,6 +286,7 @@ public abstract class KitController extends BaseController {
 	}
 
 	private MenuTree constractTheMenu(Xmenus xmenu, Map<String, List<String>> menuWithScreenMap) {
+		if(menuWithScreenMap != null && menuWithScreenMap.get(xmenu.getXmenu()) == null) return null;
 
 		MenuTree mtree = new MenuTree();
 		mtree.setMenuCode(xmenu.getXmenu());
@@ -281,7 +310,8 @@ public abstract class KitController extends BaseController {
 		// get sub menus
 		List<Xmenus> subMenus = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), xmenu.getXmenu());
 		for(Xmenus subMenu : subMenus) {
-			mtree.getSubMenus().add(constractTheMenu(subMenu, menuWithScreenMap));
+			MenuTree mtreeR = constractTheMenu(subMenu, menuWithScreenMap);
+			if(mtreeR != null) mtree.getSubMenus().add(mtreeR);
 		}
 
 		return mtree;

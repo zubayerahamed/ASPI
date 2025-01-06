@@ -40,7 +40,7 @@
 
 		<div class="row justify-content-center align-items-center">
 
-			<h4 class="text-center">Screens</h4>
+			<h4 class="text-center" th:if="${not #lists.isEmpty(master.screens)}">Screens</h4>
 			<div class="col-sm-6 col-xl-3" th:each="screen : ${master.screens}">
 				<a class="p-1 pt-2 pb-2 screen-item card card-body bg-info text-white align-items-center" href="#" th:attr="data-screen=${screen.xscreen}">
 					<i class="fs-1 mb-2" th:classappend="${#strings.isEmpty(screen.xicon) ? 'ph-house' : screen.xicon}"></i>

@@ -31,7 +31,6 @@ import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.PO13SearchParam;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
-import com.zayaanit.repository.AcdetailRepo;
 import com.zayaanit.repository.PoordheaderRepo;
 import com.zayaanit.service.PoordheaderService;
 
@@ -47,7 +46,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PO13 extends KitController {
 
 	@Autowired private PoordheaderRepo poordheaderRepo;
-	@Autowired private AcdetailRepo acdetailRepo;
 	@Autowired private PoordheaderService poordheaderService;
 
 	private String pageTitle = null;
@@ -94,7 +92,7 @@ public class PO13 extends KitController {
 	public @ResponseBody DatatableResponseHelper<Poordheader> getAll(
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
-		@RequestParam Integer xbuid,
+		@RequestParam(required = false) Integer xbuid,
 		@RequestParam(required = false) Integer xwh,
 		@RequestParam(required = false) Integer xcus,
 		@RequestParam(required = false) String xstatusord
@@ -132,7 +130,7 @@ public class PO13 extends KitController {
 		@RequestParam Integer xpornum,
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
-		@RequestParam Integer xbuid,
+		@RequestParam(required = false) Integer xbuid,
 		@RequestParam(required = false) Integer xwh,
 		@RequestParam(required = false) Integer xcus,
 		@RequestParam(required = false) String xstatusord
@@ -196,7 +194,7 @@ public class PO13 extends KitController {
 		@RequestParam Integer xpornum,
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
-		@RequestParam Integer xbuid,
+		@RequestParam(required = false) Integer xbuid,
 		@RequestParam(required = false) Integer xwh,
 		@RequestParam(required = false) Integer xcus,
 		@RequestParam(required = false) String xstatusord
