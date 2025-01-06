@@ -3,11 +3,11 @@
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
 			<button th:if="${pogrnheader.xgrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pogrnheader.xgrnnum}, data-rptcode='pogrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print GRN</button>
 			<button th:if="${pogrnheader.xgrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pogrnheader.xcus}, data-param2=${pogrnheader.xinvnum}, data-rptcode='pogrnbill'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Bill</button>
-			<button th:if="${pogrnheader.xgrnnum ne null and pogrnheader.xstatus eq 'Open' and pogrnheader.xstatusim eq 'Open'}" th:attr="data-url=@{/PO14/confirm?xgrnnum=} + ${pogrnheader.xgrnnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
+			<button th:if="${pogrnheader.xgrnnum ne null and pogrnheader.xstatus eq 'Open' and pogrnheader.xstatusim eq 'Open'}" th:attr="data-url=@{/PO15/confirm?xgrnnum=} + ${pogrnheader.xgrnnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 
 		<div class="card-body">
-			<form id="mainform" class="form-validate-jquery" th:action="@{/PO14/store}" th:object="${pogrnheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/PO15/store}" th:object="${pogrnheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
 				<input type="hidden" th:if="${pogrnheader.xgrnnum ne null}" th:field="*{xgrnnum}">
 
@@ -23,13 +23,13 @@
 										disabled="disabled">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LPO14/3?hint=', 
+										data-reloadurl='/search/table/LPO14/4?hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xgrnnum',
 										data-mainscreen=true,
-										data-mainreloadurl='/PO14?xgrnnum=',
+										data-mainreloadurl='/PO15?xgrnnum=',
 										data-mainreloadid='main-form-container',
-										data-detailreloadurl='/PO14/detail-table?xrow=RESET&xgrnnum=',
+										data-detailreloadurl='/PO15/detail-table?xrow=RESET&xgrnnum=',
 										data-detailreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -73,25 +73,10 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Supplier</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xcus"
-										th:value="${pogrnheader.xcus != null ? pogrnheader.xcus + ' - ' + pogrnheader.supplierName : ''}">
-								<input 	type="hidden" class="search-val" name="xcus" th:value="*{xcus}" required/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LFA14/2?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xcus',
-										data-mainscreen=false" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
+							<input type="text" class="form-control" th:value="${pogrnheader.xcus ne null ? pogrnheader.xcus + ' - ' + pogrnheader.supplierName : ''}">
 						</div>
 					</div>
 					<div class="col-md-3">
@@ -121,7 +106,12 @@
 							<input type="text" class="form-control" th:field="*{xref}">
 						</div>
 					</div>
-					
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order No.</label>
+							<input type="text" class="form-control" th:value="*{xpornum}" disabled="disabled">
+						</div>
+					</div>
 					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Total Amount</label>
@@ -173,12 +163,11 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/PO14?xgrnnum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/PO14/detail-table?xgrnnum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/PO15?xgrnnum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/PO15/detail-table?xgrnnum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${pogrnheader.xgrnnum ne null and pogrnheader.xstatus eq 'Open'}" th:attr="data-url=@{/PO14?xgrnnum=} + ${pogrnheader.xgrnnum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${pogrnheader.xgrnnum ne null and pogrnheader.xstatus eq 'Open'}" th:attr="data-url=@{/PO15?xgrnnum=} + ${pogrnheader.xgrnnum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
 						<button th:if="${pogrnheader.xgrnnum ne null and pogrnheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${pogrnheader.xgrnnum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
 				</div>
 			</form>
@@ -238,7 +227,7 @@
 		</div>
 
 		<div class="card-body" th:if="${pogrnheader.xstatus eq 'Open'}">
-			<form id="detailform" class="form-validate-jquery" th:action="@{/PO14/detail/store}" th:object="${pogrndetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/PO15/detail/store}" th:object="${pogrndetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" name="submitFor" th:value="*{submitFor}"/>
 				<input type="hidden" name="xgrnnum" th:value="*{xgrnnum}">
 				<input type="hidden" name="xrow" th:value="*{xrow}">
@@ -261,7 +250,7 @@
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xitem',
 										data-mainscreen=true,
-										data-mainreloadurl='/PO14/detail-table?xgrnnum='+ ${pogrndetail.xgrnnum} +'&xrow='+ ${pogrndetail.xrow} +'&xitem=',
+										data-mainreloadurl='/PO15/detail-table?xgrnnum='+ ${pogrndetail.xgrnnum} +'&xrow='+ ${pogrndetail.xrow} +'&xitem=',
 										data-mainreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -306,10 +295,11 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/PO14/detail-table?xgrnnum='+ ${pogrndetail.xgrnnum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/PO15/detail-table?xgrnnum='+ ${pogrndetail.xgrnnum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${pogrndetail.xrow ne 0}" th:attr="data-url=@{/PO14/detail-table?xgrnnum=} + ${pogrndetail.xgrnnum} + '&xrow=' + ${pogrndetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${pogrndetail.xrow ne 0}" th:attr="data-url=@{/PO15/detail-table?xgrnnum=} + ${pogrndetail.xgrnnum} + '&xrow=' + ${pogrndetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${pogrndetail.xrow ne 0 and pogrndetail.xdocrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${pogrndetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
 				</div>
@@ -333,7 +323,7 @@
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
-							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/PO14/detail-table?xgrnnum=' + ${x.xgrnnum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:href="@{/PO14/detail-table?xgrnnum=} + ${x.xgrnnum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/PO15/detail-table?xgrnnum=' + ${x.xgrnnum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:href="@{/PO15/detail-table?xgrnnum=} + ${x.xgrnnum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
 						</td>
 						<td th:text="${x.xunit}"></td>
 						<td th:text="${x.xqty}"></td>
@@ -395,12 +385,12 @@
 
 			sectionReloadAjaxPostReq({
 				id : 'list-table-container',
-				url : '/search/table/LPO14/3'
+				url : '/search/table/LPO15/3'
 			}, {
 				mainscreen: true, 
-				mainreloadurl: '/PO14?xgrnnum=',
+				mainreloadurl: '/PO15?xgrnnum=',
 				mainreloadid: 'main-form-container',
-				detailreloadurl: '/PO14/detail-table?xrow=RESET&xgrnnum=',
+				detailreloadurl: '/PO15/detail-table?xrow=RESET&xgrnnum=',
 				detailreloadid: 'detail-table-container'
 			});
 		})

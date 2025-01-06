@@ -13,7 +13,12 @@ import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.zayaanit.entity.pk.PoordheaderPK;
 import com.zayaanit.enums.SubmitFor;
@@ -47,6 +52,8 @@ public class Poordheader extends AbstractModel<String> {
 	@Column(name = "xpornum")
 	private Integer xpornum;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	@Column(name = "xdate")
 	private Date xdate;
 
@@ -83,12 +90,16 @@ public class Poordheader extends AbstractModel<String> {
 	@Column(name = "xstaffsubmit")
 	private Integer xstaffsubmit;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	@Column(name = "xsubmittime")
 	private Date xsubmittime;
 
 	@Column(name = "xstaffappr")
 	private Integer xstaffappr;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	@Column(name = "xapprovertime")
 	private Date xapprovertime;
 
@@ -102,11 +113,6 @@ public class Poordheader extends AbstractModel<String> {
 	private String employeeName;
 	@Transient
 	private String staffName;
-
-	@Transient
-	private Integer xporeqnum;
-	@Transient
-	private Date xdatereq;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;

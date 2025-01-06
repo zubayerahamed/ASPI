@@ -184,8 +184,6 @@
 						<th>Business Unit</th>
 						<th>Store/Warehouse</th>
 						<th>Supplier</th>
-						<th>Req No.</th>
-						<th>Requisition Date</th>
 						<th>Last GRN</th>
 						<th>Order Status</th>
 						<th>Action</th>
@@ -224,11 +222,9 @@
 					{ "name": "xbuid",  "targets": 3 },
 					{ "name": "xwh",  "targets": 4 },
 					{ "name": "xcus",  "targets": 5 },
-					{ "name": "xporeqnum",  "targets": 6 },
-					{ "name": "xdatereq",  "targets": 7 },
-					{ "name": "xgrnnum",  "targets": 8 },
-					{ "name": "xstatusord",  "targets": 9 },
-					{ "name": "xstatusord",  "targets": 10 }
+					{ "name": "xgrnnum",  "targets": 6 },
+					{ "name": "xstatusord",  "targets": 7 },
+					{ "name": "xstatusord",  "targets": 8 }
 				],
 				"ajax": {
 					"url": getBasepath() + "/PO13/all",
@@ -266,8 +262,6 @@
 							return data + ' - ' +  row['supplierName'];
 						},
 					},
-					{ "data": "xporeqnum" },
-					{ "data": "xdatereq" },
 					{ "data": "xgrnnum" },
 					{ "data": "xstatusord" },
 					{ 

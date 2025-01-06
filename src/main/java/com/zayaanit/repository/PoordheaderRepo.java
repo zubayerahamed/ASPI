@@ -26,5 +26,8 @@ public interface PoordheaderRepo extends JpaRepository<Poordheader, PoordheaderP
 	public void PO_CreateGRNfromOrder(@Param("zid") Integer zid, @Param("user") String user, @Param("pornum") Integer pornum);
 
 	@Query(value = "select count(*) from pogrnheader h where h.zid=?1 and h.xpornum=?2 and h.xstatusim='Open'", nativeQuery = true)
-	public Long getPendingGrnCount(Integer zid, Integer xpornum); 
+	public Long getOpenGRNCount(Integer zid, Integer xpornum); 
+
+	@Query(value = "select count(*) from pogrnheader h where h.zid=?1 and h.xpornum=?2 and h.xstatusim='Confirmed'", nativeQuery = true)
+	public Long getConfirmedGRNCount(Integer zid, Integer xpornum); 
 }

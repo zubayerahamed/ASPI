@@ -13,7 +13,12 @@ import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.zayaanit.entity.pk.PogrnheaderPK;
 import com.zayaanit.enums.SubmitFor;
@@ -53,6 +58,8 @@ public class Pogrnheader extends AbstractModel<String> {
 	@Column(name = "xgrnnum")
 	private Integer xgrnnum;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	@Column(name = "xdate")
 	private Date xdate;
 
@@ -96,6 +103,8 @@ public class Pogrnheader extends AbstractModel<String> {
 	private String xnote;
 
 	@Column(name = "xsubmittime")
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	private Date xsubmittime;
 
 	@Column(name = "xstaffsubmit")

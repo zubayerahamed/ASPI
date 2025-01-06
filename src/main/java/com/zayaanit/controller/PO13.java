@@ -2,16 +2,14 @@ package com.zayaanit.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,23 +22,17 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ibm.icu.text.SimpleDateFormat;
-import com.zayaanit.entity.Acheader;
-import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Poordheader;
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.pk.AcheaderPK;
 import com.zayaanit.entity.pk.PoordheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.PO13SearchParam;
-import com.zayaanit.model.PO13SearchParam;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
 import com.zayaanit.repository.AcdetailRepo;
-import com.zayaanit.repository.AcheaderRepo;
 import com.zayaanit.repository.PoordheaderRepo;
-import com.zayaanit.service.AcheaderService;
 import com.zayaanit.service.PoordheaderService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -176,7 +168,7 @@ public class PO13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(poordheaderRepo.getPendingGrnCount(sessionManager.getBusinessId(), xpornum) > 0) {
+		if(poordheaderRepo.getOpenGRNCount(sessionManager.getBusinessId(), xpornum) > 0) {
 			responseHelper.setErrorStatusAndMessage("Pending GRN found. Confirm/delete pending GRN first");
 			return responseHelper.getResponse();
 		}
@@ -210,6 +202,11 @@ public class PO13 extends KitController {
 		@RequestParam(required = false) String xstatusord
 		) {
 
+		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
+			responseHelper.setErrorStatusAndMessage("You are not staff and you don't have any access to do confirm action.");
+			return responseHelper.getResponse();
+		}
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		PO13SearchParam param = new PO13SearchParam();
 		try {
@@ -240,14 +237,29 @@ public class PO13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(poordheaderRepo.getPendingGrnCount(sessionManager.getBusinessId(), xpornum) > 0) {
+		if(poordheaderRepo.getOpenGRNCount(sessionManager.getBusinessId(), xpornum) > 0) {
 			responseHelper.setErrorStatusAndMessage("Pending GRN found. Confirm/delete pending GRN first");
 			return responseHelper.getResponse();
 		}
 
 
-//		acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), xvoucher);
-//		acheaderRepo.delete(acheader);
+		Long confirmedGrnCount = poordheaderRepo.getConfirmedGRNCount(sessionManager.getBusinessId(), xpornum);
+
+		if("Open".equals(poordheader.getXstatusord())) {
+			poordheader.setXstatusord("Dismissed");
+			poordheader.setXstaffappr(sessionManager.getLoggedInUserDetails().getXstaff());
+			poordheader.setXapprovertime(new Date());
+		} else if ("GRN Created".equals(poordheader.getXstatusord()) && confirmedGrnCount == 0) {
+			poordheader.setXstatusord("Dismissed");
+			poordheader.setXstaffappr(sessionManager.getLoggedInUserDetails().getXstaff());
+			poordheader.setXapprovertime(new Date());
+		} else if ("GRN Created".equals(poordheader.getXstatusord()) && confirmedGrnCount > 0) {
+			poordheader.setXstatusord("GRN Created & Dismissed");
+			poordheader.setXstaffappr(sessionManager.getLoggedInUserDetails().getXstaff());
+			poordheader.setXapprovertime(new Date());
+		}
+
+		poordheaderRepo.save(poordheader);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
