@@ -13,23 +13,6 @@
 
 	</div>
 	<!-- /Module Selection area -->
-
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$('.module-menu-button').off('click').on('click', function(e){
-				e.preventDefault();
-
-				var menucode = $(this).data('menucode');
-
-				var url = '/home?menucode=' + menucode;
-
-				sectionReloadAjaxReq({
-					id : 'main-form-container',
-					url : url
-				});
-			})
-		})
-	</script>
 </div>
 
 
@@ -58,21 +41,4 @@
 
 		</div>
 	</div>
-	<!-- /Module Selection area -->
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$('.module-menu-button').off('click').on('click', function(e){
-				e.preventDefault();
-
-				var menucode = $(this).data('menucode');
-
-				var url = '/home?menucode=' + menucode;
-
-				sectionReloadAjaxReq({
-					id : 'main-form-container',
-					url : url
-				});
-			})
-		})
-	</script>
 </div>
