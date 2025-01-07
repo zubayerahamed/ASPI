@@ -256,8 +256,8 @@
 
 
 <li class="nav-item nav-item-submenu" th:fragment="submenu-fragment(master)" xmlns:th="http://www.thymeleaf.org">
-	<a href="#" class="nav-link"><i th:classappend="${#strings.isEmpty(master.menuIcon) ? 'ph-house' :master.menuIcon}"></i><span th:text="${master.menuTitle}"></span></a>
-	<ul class="nav-group-sub collapse">
+	<a href="#" class="nav-link" th:if="${not (#lists.isEmpty(master.subMenus) and #lists.isEmpty(master.screens))}"><i th:classappend="${#strings.isEmpty(master.menuIcon) ? 'ph-house' :master.menuIcon}"></i><span th:text="${master.menuTitle}"></span></a>
+	<ul class="nav-group-sub collapse" th:if="${not (#lists.isEmpty(master.subMenus) and #lists.isEmpty(master.screens))}">
 
 		<!-- screens -->
 		<li class="nav-item" th:each="screen : ${master.screens}">
