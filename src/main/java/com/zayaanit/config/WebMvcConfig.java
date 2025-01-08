@@ -53,14 +53,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(sessionTimeoutInterceptor).addPathPatterns("/**").excludePathPatterns("/login-assets/**", "/error", "/assets/**");
-		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths(true));
+		registry.addInterceptor(menuAccessInterceptor()).addPathPatterns(getMenuPaths(true)).excludePathPatterns("/AD15/**");
 		registry.addInterceptor(localeChangeInterceptor());
 	}
 
 	private String[] getMenuPaths(boolean forBusinessSelection) {
 		List<Xscreens> list = xscreenRepo.findAll();
-		list = list.stream().distinct().filter(l -> !l.getXtype().equalsIgnoreCase("System"))
-				.collect(Collectors.toList());
+		list = list.stream().distinct().filter(l -> !l.getXtype().equalsIgnoreCase("System")).collect(Collectors.toList());
 
 		List<String> paths = new ArrayList<>();
 		for (Xscreens screen : list) {

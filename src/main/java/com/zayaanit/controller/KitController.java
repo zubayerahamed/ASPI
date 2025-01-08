@@ -233,31 +233,57 @@ public abstract class KitController extends BaseController {
 		} else {
 			if(user.getXprofile() == null) return Collections.emptyList();
 
-			// check xprofile suddenly delete by admin or not
-			Optional<Xprofiles> profilesOp = xprofilesRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), user.getXprofile().getXprofile()));
-			if(!profilesOp.isPresent()) return Collections.emptyList();
+			List<Xprofilesdt> profileDetails = profiledtRepo.findAllByXprofileAndZid(user.getXprofile().getXprofile(), sessionManager.getBusinessId());
+			if(profileDetails.isEmpty()) return Collections.emptyList();
 
-			List<Xprofilesdt> details = new ArrayList<>();
+			List<Xmenus> masters = new ArrayList<>();
 			if(StringUtils.isBlank(menucode) || "M".equalsIgnoreCase(menucode)) {
-				details = profiledtRepo.findAllByXprofileAndZid(user.getXprofile().getXprofile(), sessionManager.getBusinessId());
+				 masters = xmenusRepo.findAllByZidAndXpmenu(sessionManager.getBusinessId(), "M");
 			} else {
-				details = profiledtRepo.findAllByXprofileAndXmenuAndZid(user.getXprofile().getXprofile(), menucode, sessionManager.getBusinessId());
+				Optional<Xmenus> xmenusOp = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), menucode));
+				if(xmenusOp.isPresent()) masters.add(xmenusOp.get());
 			}
-			if(details.isEmpty()) return Collections.emptyList();
-
-			Map<String, List<String>> menuWithScreenMap = details.stream().collect(
-				Collectors.groupingBy(Xprofilesdt::getXmenu, Collectors.mapping(Xprofilesdt::getXscreen, Collectors.toList())
-			));
-			Set<String> menus = details.stream().map(m -> m.getXmenu()).collect(Collectors.toSet());
-			List<Xmenus> masters = xmenusRepo.findAllByZidAndXpmenuAndXmenuIn(sessionManager.getBusinessId(), "M", menus);
+			if(StringUtils.isNotBlank(menucode)) masters = masters.stream().filter(f -> f.getXmenu().equalsIgnoreCase(menucode)).collect(Collectors.toList());
 			masters.sort(Comparator.comparing(Xmenus::getXsequence));
 			for(Xmenus xmenu : masters) {
-				MenuTree mtree = constractTheMenu(xmenu, menuWithScreenMap);
+				MenuTree mtree = constractTheMenuUsingProfile(xmenu, profileDetails);
 				masterMenus.add(mtree);
 			}
 		}
 
 		return masterMenus;
+	}
+
+	private MenuTree constractTheMenuUsingProfile(Xmenus xmenu, List<Xprofilesdt> profileDetails) {
+		MenuTree mtree = new MenuTree();
+		mtree.setMenuCode(xmenu.getXmenu());
+		mtree.setMenuTitle(xmenu.getXtitle());
+		mtree.setMenuIcon(xmenu.getXicon());
+		mtree.setParentCode(xmenu.getXpmenu());
+
+		// get all the assigned screens
+		List<Xmenuscreens> screens = new ArrayList<>();
+		if(profileDetails.stream().filter(f -> f.getXmenu().equals(xmenu.getXmenu())).count() > 0) {
+			List<String> approvedScreens = profileDetails.stream().filter(f -> f.getXmenu().equals(xmenu.getXmenu())).collect(Collectors.mapping(Xprofilesdt::getXscreen, Collectors.toList()));
+			if(approvedScreens != null && !approvedScreens.isEmpty()) { 
+				screens = xmenuscreensRepo.findAllByZidAndXmenuAndXscreenIn(sessionManager.getBusinessId(), xmenu.getXmenu(), approvedScreens);
+			}
+		}
+		screens.sort(Comparator.comparing(Xmenuscreens::getXsequence));
+		for(Xmenuscreens screen : screens) {
+			Optional<Xscreens> xscreenOp = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), screen.getXscreen()));
+			if(xscreenOp.isPresent()) mtree.getScreens().add(xscreenOp.get());
+		}
+
+		// get all the submenus
+		Set<String> approvedMenus = profileDetails.stream().collect(Collectors.mapping(Xprofilesdt::getXmenu, Collectors.toSet()));
+		List<Xmenus> subMenus = xmenusRepo.findAllByZidAndXpmenuAndXmenuIn(sessionManager.getBusinessId(), xmenu.getXmenu(), approvedMenus);
+		subMenus.sort(Comparator.comparing(Xmenus::getXsequence));
+		for(Xmenus subMenu : subMenus) {
+			mtree.getSubMenus().add(constractTheMenuUsingProfile(subMenu, profileDetails));
+		}
+
+		return mtree;
 	}
 
 	private MenuTree constractTheMenu(Xmenus xmenu, Map<String, List<String>> menuWithScreenMap) {

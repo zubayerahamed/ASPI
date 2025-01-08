@@ -11,7 +11,6 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,8 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Pogrndetail;
 import com.zayaanit.entity.Pogrnheader;
+import com.zayaanit.entity.Poorddetail;
+import com.zayaanit.entity.Poordheader;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -36,6 +37,8 @@ import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.PogrndetailPK;
 import com.zayaanit.entity.pk.PogrnheaderPK;
+import com.zayaanit.entity.pk.PoorddetailPK;
+import com.zayaanit.entity.pk.PoordheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
@@ -45,6 +48,8 @@ import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
 import com.zayaanit.repository.PogrndetailRepo;
 import com.zayaanit.repository.PogrnheaderRepo;
+import com.zayaanit.repository.PoorddetailRepo;
+import com.zayaanit.repository.PoordheaderRepo;
 import com.zayaanit.repository.XwhsRepo;
 
 /**
@@ -61,6 +66,8 @@ public class PO15 extends KitController {
 	@Autowired private PogrndetailRepo pogrndetailRepo;
 	@Autowired private XwhsRepo xwhsRepo;
 	@Autowired private CaitemRepo caitemRepo;
+	@Autowired private PoorddetailRepo poorddetailRepo;
+	@Autowired private PoordheaderRepo poordheaderRepo;
 
 	private String pageTitle = null;
 
@@ -257,12 +264,14 @@ public class PO15 extends KitController {
 		}
 
 		Pogrnheader existObj = op.get();
-		BeanUtils.copyProperties(pogrnheader, existObj, "zid", "zuserid", "ztime", "xgrnnum", "xcus", "xpornum", "xtotamt", "xstatus", "xstatusim", "xstatusjv", "xvoucher", "xstaffsubmit", "xsubmittime", "xtype");
+//		BeanUtils.copyProperties(pogrnheader, existObj, "zid", "zuserid", "ztime", "xgrnnum", "xcus", "xpornum", "xtotamt", "xstatus", "xstatusim", "xstatusjv", "xvoucher", "xstaffsubmit", "xsubmittime", "xtype");
 
-		// Calculate total amount
-		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXgrnnum());
-		existObj.setXtotamt(xtotamt);
-
+		existObj.setXtotamt(pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXgrnnum()));
+		existObj.setXdate(pogrnheader.getXdate());
+		existObj.setXwh(pogrnheader.getXwh());
+		existObj.setXref(pogrnheader.getXref());
+		existObj.setXinvnum(pogrnheader.getXinvnum());
+		existObj.setXnote(pogrnheader.getXnote());
 		existObj = pogrnheaderRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
@@ -353,19 +362,78 @@ public class PO15 extends KitController {
 
 
 		if(pogrndetail.getXqty().compareTo(existObj.getXqtyord()) == 1) {
-			responseHelper.setErrorStatusAndMessage("Invalid quantity");
+			responseHelper.setErrorStatusAndMessage("GRN quantity must be less thant order quantity");
 			return responseHelper.getResponse();
 		}
+
+		// cross checking
+		Optional<Poordheader> orderOp = poordheaderRepo.findById(new PoordheaderPK(sessionManager.getBusinessId(), pogrnheader.getXpornum()));
+		if(!orderOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Order not found related with this GRN");
+			return responseHelper.getResponse();
+		}
+		Poordheader order = orderOp.get();
+
+		Optional<Poorddetail> poorddetailOp = poorddetailRepo.findById(new PoorddetailPK(sessionManager.getBusinessId(), pogrnheader.getXpornum(), existObj.getXdocrow()));
+		if(!poorddetailOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Order detail not found for this detail row");
+			return responseHelper.getResponse();
+		}
+		Poorddetail orderdetail = poorddetailOp.get();
+
+		BigDecimal difference = pogrndetail.getXqty().subtract(existObj.getXqty());
+		if(difference.compareTo(BigDecimal.ZERO) == 0) {
+			
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == 1 && difference.add(orderdetail.getXqtygrn()).compareTo(orderdetail.getXqty()) == 1) {
+			responseHelper.setErrorStatusAndMessage("GRN quantity should not more than Order quantity!");
+			return responseHelper.getResponse();
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == 1) {
+			orderdetail.setXqtygrn(orderdetail.getXqtygrn().add(pogrndetail.getXqty().subtract(existObj.getXqty())));
+			poorddetailRepo.save(orderdetail);
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == -1) {
+			orderdetail.setXqtygrn(orderdetail.getXqtygrn().subtract(existObj.getXqty().subtract(pogrndetail.getXqty())));
+			poorddetailRepo.save(orderdetail);
+		}
+		// Recheck complete here
 
 		existObj.setXqty(pogrndetail.getXqty());
 		existObj.setXrate(pogrndetail.getXrate());
 		existObj.setXlineamt(existObj.getXqty().multiply(existObj.getXrate()));
 		existObj.setXnote(pogrndetail.getXnote());
 		existObj = pogrndetailRepo.save(existObj);
-		
-		// TODO: need to add recheck part here
 
-		responseHelper.setErrorStatusAndMessage("Update is not available in this moment!");
+		// Update purchase order status here
+		List<Poorddetail> poorddetails = poorddetailRepo.findAllByZidAndXpornum(sessionManager.getBusinessId(), pogrnheader.getXpornum());
+		BigDecimal tord = poorddetails.stream().map(Poorddetail::getXqty).reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal tgrn = poorddetails.stream().map(Poorddetail::getXqtygrn).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		long count = pogrnheaderRepo.findAllByZidAndXpornum(sessionManager.getBusinessId(), pogrnheader.getXpornum()).stream().count();
+
+		if(tord.compareTo(tgrn) == 0) {
+			order.setXstatusord("Full Received");
+		} else if (tgrn.compareTo(BigDecimal.ZERO) == 0 && count == 0) {
+			order.setXstatusord("Open");
+		} else {
+			order.setXstatusord("GRN Created");
+		}
+		poordheaderRepo.save(order);
+
+		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXgrnnum());
+		pogrnheader.setXtotamt(xtotamt);
+		pogrnheaderRepo.save(pogrnheader);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + existObj.getXgrnnum()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/PO15/detail-table?xgrnnum=" + existObj.getXgrnnum() + "&xrow=" + existObj.getXrow()));
+		reloadSections.add(new ReloadSection("list-table-container", "/PO15/list-table"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Purchase order detail added successfully");
 		return responseHelper.getResponse();
 	}
 
@@ -383,10 +451,10 @@ public class PO15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-//		if(pogrndetailRepo.getTotalQty(sessionManager.getBusinessId(), xgrnnum).compareTo(BigDecimal.ZERO) == 1) {
-//			responseHelper.setErrorStatusAndMessage("Please delete detail record first!");
-//			return responseHelper.getResponse();
-//		}
+		if(pogrndetailRepo.getTotalQty(sessionManager.getBusinessId(), xgrnnum).compareTo(BigDecimal.ZERO) == 1) {
+			responseHelper.setErrorStatusAndMessage("Please delete detail record first, or make the total quantity 0");
+			return responseHelper.getResponse();
+		}
 
 		pogrndetailRepo.deleteAllByZidAndXgrnnum(sessionManager.getBusinessId(), xgrnnum);
 
@@ -425,6 +493,12 @@ public class PO15 extends KitController {
 		}
 
 		Pogrndetail obj = op.get();
+
+		if(obj.getXdocrow() != 0) {
+			responseHelper.setErrorStatusAndMessage("Order detail reference item can't be deleted");
+			return responseHelper.getResponse();
+		}
+
 		pogrndetailRepo.delete(obj);
 
 		// Update line amount and total amount of header

@@ -298,7 +298,7 @@
 						<button type="reset" th:attr="data-reloadurl='/PO15/detail-table?xgrnnum='+ ${pogrndetail.xgrnnum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${pogrndetail.xrow ne 0}" th:attr="data-url=@{/PO15/detail-table?xgrnnum=} + ${pogrndetail.xgrnnum} + '&xrow=' + ${pogrndetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${pogrndetail.xrow ne 0 and pogrndetail.xdocrow eq 0}" th:attr="data-url=@{/PO15/detail-table?xgrnnum=} + ${pogrndetail.xgrnnum} + '&xrow=' + ${pogrndetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
 						<button th:if="${pogrndetail.xrow ne 0 and pogrndetail.xdocrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${pogrndetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>

@@ -1,5 +1,7 @@
 package com.zayaanit.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +25,6 @@ public interface PogrnheaderRepo extends JpaRepository<Pogrnheader, PogrnheaderP
 	@Transactional
 	@Procedure(name = "PO_ConfirmGRN")
 	public void PO_ConfirmGRN(@Param("zid") Integer zid, @Param("user") String user, @Param("grnnum") Integer grnnum);
+
+	public List<Pogrnheader> findAllByZidAndXpornum(Integer zid, Integer xpornum);
 }
