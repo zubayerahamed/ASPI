@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PotogliPK implements Serializable {
-    
-    private Integer zid;
-    private String xtype;
-    private String xgsup;
-    private String xgitem;
+
+	private static final long serialVersionUID = -3273524600628592834L;
+
+	private Integer zid;
+	private String xtype;
+	private String xgsup;
+	private String xgitem;
 }

@@ -118,7 +118,7 @@
 						<button type="reset" th:attr="data-reloadurl='/PO13', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button type="submit" class="btn btn-primary btn-sm btn-search-vouchers ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-search-purchase-order ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
 					</div>
 				</div>
 			</form>
@@ -139,7 +139,7 @@
 				});
 			});
 
-			$('.btn-search-vouchers').off('click').on('click', function(e){
+			$('.btn-search-purchase-order').off('click').on('click', function(e){
 				e.preventDefault();
 				console.log("here");
 
@@ -155,7 +155,7 @@
 					"xbuid" : $('input[name="xbuid"]').val(),
 					"xwh" : $('input[name="xwh"]').val(),
 					"xcus" : $('input[name="xcus"]').val(),
-					"xstatusjv" :  $('#xstatusord').val(),
+					"xstatusord" :  $('#xstatusord').val(),
 				});
 			});
 		})

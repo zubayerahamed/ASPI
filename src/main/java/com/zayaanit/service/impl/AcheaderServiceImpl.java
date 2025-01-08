@@ -15,7 +15,7 @@ import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Acheader;
 import com.zayaanit.entity.pk.AcdefPK;
 import com.zayaanit.enums.DatatableSortOrderType;
-import com.zayaanit.model.FA17SearchParam;
+import com.zayaanit.model.FA18SearchParam;
 import com.zayaanit.model.YearPeriodResult;
 import com.zayaanit.repository.AcdefRepo;
 import com.zayaanit.service.AcheaderService;
@@ -58,12 +58,12 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 	}
 
 	@Override
-	public List<Acheader> LFA17(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, FA17SearchParam param) {
+	public List<Acheader> LFA18(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, FA18SearchParam param) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
 		.append(fromClause("acheader im"))
-		.append(whereClauseLFA17(searchText, suffix, param))
+		.append(whereClauseLFA18(searchText, suffix, param))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
 
@@ -75,12 +75,12 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 	}
 
 	@Override
-	public int LFA17(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, FA17SearchParam param) {
+	public int LFA18(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, FA18SearchParam param) {
 		searchText = searchText.replaceAll("'", "''");
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
 		.append(fromClause("acheader im"))
-		.append(whereClauseLFA17(searchText, suffix, param));
+		.append(whereClauseLFA18(searchText, suffix, param));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
@@ -127,7 +127,7 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 				+ "OR im.xref LIKE '%" + searchText + "%') ");
 	}
 
-	private StringBuilder whereClauseLFA17(String searchText, int suffix, FA17SearchParam param) {
+	private StringBuilder whereClauseLFA18(String searchText, int suffix, FA18SearchParam param) {
 		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
 
 		sql.append(" AND (im.xdate between '"+ sdf.format(param.getXfdate()) +"' AND '"+ sdf.format(param.getXtdate()) +"') ");

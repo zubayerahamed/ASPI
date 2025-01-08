@@ -85,6 +85,7 @@ public class PoordheaderServiceImpl extends AbstractService implements Poordhead
 		em.setXcus((Integer) row.get("xcus"));
 		em.setXbuid((Integer) row.get("xbuid"));
 		em.setXwh((Integer) row.get("xwh"));
+		em.setXgrnnum((Integer) row.get("xgrnnum"));
 		em.setXtotamt((BigDecimal) row.get("xtotamt"));
 		em.setXstatus((String) row.get("xstatus"));
 		em.setXstatusord((String) row.get("xstatusord"));

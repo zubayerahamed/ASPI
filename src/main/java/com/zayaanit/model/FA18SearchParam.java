@@ -19,7 +19,7 @@ import lombok.Data;
  * @website https://www.zubayerahamed.com
  */
 @Data
-public class FA17SearchParam implements Serializable {
+public class FA18SearchParam implements Serializable {
 
 	private static final long serialVersionUID = -6505241000742451543L;
 
@@ -37,8 +37,8 @@ public class FA17SearchParam implements Serializable {
 
 	private String businessUnitName;
 
-	public static FA17SearchParam getDefaultInstance() {
-		FA17SearchParam param = new FA17SearchParam();
+	public static FA18SearchParam getDefaultInstance() {
+		FA18SearchParam param = new FA18SearchParam();
 		param.setXfdate(new Date());
 		param.setXtdate(new Date());
 		return param;

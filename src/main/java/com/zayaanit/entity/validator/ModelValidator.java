@@ -18,6 +18,7 @@ import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Pocrnheader;
 import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Poordheader;
+import com.zayaanit.entity.Potogli;
 import com.zayaanit.entity.Xcodes;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xmenuscreens;
@@ -30,6 +31,7 @@ import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.CabunitPK;
+import com.zayaanit.entity.pk.PotogliPK;
 import com.zayaanit.entity.pk.XcodesPK;
 import com.zayaanit.entity.pk.XmenusPK;
 import com.zayaanit.entity.pk.XprofilesPK;
@@ -41,6 +43,7 @@ import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
+import com.zayaanit.repository.PotogliRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XmenusRepo;
 import com.zayaanit.repository.XprofilesRepo;
@@ -66,6 +69,7 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private AcgroupRepo acgroupRepo;
 	@Autowired private AcmstRepo acmstRepo;
 	@Autowired private AcsubRepo acsubRepo;
+	@Autowired private PotogliRepo potogliRepo;
 
 	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
 		if(xmenus == null) return;
@@ -94,6 +98,21 @@ public class ModelValidator extends ConstraintValidator {
 
 		if(SubmitFor.INSERT.equals(xcodes.getSubmitFor()) && op.isPresent()) {
 			errors.rejectValue("xcode", "Code already exist in the system");
+		}
+	}
+
+	public void validatePotogli(Potogli potogli, Errors errors, Validator validator) {
+		if(potogli == null) return;
+
+		super.validate(potogli, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check xscreen already exist
+		Optional<Potogli> op = potogliRepo.findById(new PotogliPK(sessionManager.getBusinessId(), potogli.getXtype(), potogli.getXgsup(), potogli.getXgitem()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(potogli.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xtype", "Data already exist in the system");
 		}
 	}
 

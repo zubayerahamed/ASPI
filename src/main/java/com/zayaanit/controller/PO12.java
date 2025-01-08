@@ -83,8 +83,6 @@ public class PO12 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xpornum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
-		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
-
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xpornum)) {
 				model.addAttribute("poordheader", Poordheader.getDefaultInstance());
@@ -203,6 +201,11 @@ public class PO12 extends KitController {
 		modelValidator.validatePoordheader(poordheader, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
+		if(poordheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
+		}
+
 		if(poordheader.getXbuid() == null) {
 			responseHelper.setErrorStatusAndMessage("Business unit required");
 			return responseHelper.getResponse();
@@ -227,7 +230,6 @@ public class PO12 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(poordheader.getSubmitFor())) {
-			poordheader.setXdate(new Date());
 			poordheader.setXtotamt(BigDecimal.ZERO);
 			poordheader.setXstatus("Open");
 			poordheader.setXstatusord("Open");
@@ -257,7 +259,7 @@ public class PO12 extends KitController {
 		}
 
 		Poordheader existObj = op.get();
-		BeanUtils.copyProperties(poordheader, existObj, "zid", "zuserid", "ztime", "xpornum", "xdate", "xtotamt", "xgrnnum", "xstatus", "xstatusord", "xstaffsubmit", "xsubmittime", "xstaffappr", "xapprovertime");
+		BeanUtils.copyProperties(poordheader, existObj, "zid", "zuserid", "ztime", "xpornum", "xtotamt", "xgrnnum", "xstatus", "xstatusord", "xstaffsubmit", "xsubmittime", "xstaffappr", "xapprovertime");
 
 		// Calculate total amount
 		BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXpornum());

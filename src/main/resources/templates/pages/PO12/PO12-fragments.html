@@ -37,14 +37,14 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Order Date</label>
+							<label class="form-label required">Order Date</label>
 							<div class="input-group">
 								<input 	type="text" 
 										name="xdate" 
 										id="xdate" 
 										class="form-control datepicker-date-format" 
 										placeholder="yyyy-mm-dd format" 
-										disabled="disabled"
+										required
 										th:value="${poordheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(poordheader.xdate, df)}">
 								<span class="input-group-text">
 									<i class="ph-calendar"></i>
