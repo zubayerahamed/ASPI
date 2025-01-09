@@ -8,27 +8,47 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.NamedStoredProcedureQueries;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.zayaanit.entity.pk.OpordheaderPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Entity for Order Header.
- * 
- * @author Zubayer
- * @since Dec 31, 2024
+ * @author Zubayer Ahaned
+ * @since Jan 9, 2025
+ * @contact +8801748562164
+ * @email zubayerahamed1990@gmail.com
+ * @website https://www.zubayerahamed.com
  */
+
 @Data
 @Entity
 @Table(name = "opordheader")
 @IdClass(OpordheaderPK.class)
 @EqualsAndHashCode(callSuper = true)
+@NamedStoredProcedureQueries({
+	@NamedStoredProcedureQuery(name = "SO_CreateDOfromOrder", procedureName = "SO_CreateDOfromOrder", parameters = {
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "ordernum", type = Integer.class), 
+	}),
+})
 public class Opordheader extends AbstractModel<String> {
 
-	private static final long serialVersionUID = 1681419879800536083L;
+	private static final long serialVersionUID = 1685761788841395819L;
 
 	@Id
 	@Basic(optional = false)
@@ -40,6 +60,8 @@ public class Opordheader extends AbstractModel<String> {
 	@Column(name = "xordernum")
 	private Integer xordernum;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	@Column(name = "xdate")
 	private Date xdate;
 
@@ -82,18 +104,43 @@ public class Opordheader extends AbstractModel<String> {
 	@Column(name = "xstaffsubmit")
 	private Integer xstaffsubmit;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	@Column(name = "xsubmittime")
 	private Date xsubmittime;
 
 	@Column(name = "xstaffappr")
 	private Integer xstaffappr;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
 	@Column(name = "xapprovertime")
 	private Date xapprovertime;
 
+	@Transient
+	private String businessUnitName;
+	@Transient
+	private String customerName;
+	@Transient
+	private String warehouseName;
+	@Transient
+	private String employeeName;
+	@Transient
+	private String staffName;
+	@Transient
+	private String submitStaffName;
+	@Transient
+	private String apprStaffName;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
 	public static Opordheader getDefaultInstance() {
 		Opordheader obj = new Opordheader();
-		// Set default values here if needed
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXdate(new Date());
+		obj.setXtotamt(BigDecimal.ZERO);
+		obj.setXdiscamt(BigDecimal.ZERO);
 		return obj;
 	}
 }

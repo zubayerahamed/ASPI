@@ -35,8 +35,11 @@ import com.zayaanit.repository.XusersRepo;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author Zubayer Ahamed
- * @since Jul 3, 2023
+ * @author Zubayer Ahaned
+ * @since Jan 9, 2025
+ * @contact +8801748562164
+ * @email zubayerahamed1990@gmail.com
+ * @website https://www.zubayerahamed.com
  */
 @Slf4j
 @Controller

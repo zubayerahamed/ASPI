@@ -347,10 +347,6 @@ public class PO12 extends KitController {
 		Poorddetail exist = existOp.get();
 		BeanUtils.copyProperties(poorddetail, exist, "zid", "zuserid", "ztime", "xpornum", "xrow", "xitem");
 		exist = poorddetailRepo.save(exist);
-		if(exist == null) {
-			responseHelper.setErrorStatusAndMessage("Update failed");
-			return responseHelper.getResponse();
-		}
 
 		BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), exist.getXpornum());
 		poordheader.setXtotamt(xtotamt);
@@ -435,7 +431,7 @@ public class PO12 extends KitController {
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xpornum) {
 		Optional<Poordheader> oph = poordheaderRepo.findById(new PoordheaderPK(sessionManager.getBusinessId(), xpornum));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
+			responseHelper.setErrorStatusAndMessage("Order not found");
 			return responseHelper.getResponse();
 		}
 

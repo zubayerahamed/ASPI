@@ -26,6 +26,15 @@ import com.zayaanit.enums.SubmitFor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * 
+ * @author Zubayer Ahaned
+ * @since Jan 9, 2025
+ * @contact +8801748562164
+ * @email zubayerahamed1990@gmail.com
+ * @website https://www.zubayerahamed.com
+ */
+
 @Data
 @Entity
 @Table(name = "poordheader")
@@ -40,7 +49,7 @@ import lombok.EqualsAndHashCode;
 })
 public class Poordheader extends AbstractModel<String> {
 
-	private static final long serialVersionUID = 1681419879800536071L;
+	private static final long serialVersionUID = -4564620786450303044L;
 
 	@Id
 	@Basic(optional = false)
@@ -113,6 +122,10 @@ public class Poordheader extends AbstractModel<String> {
 	private String employeeName;
 	@Transient
 	private String staffName;
+	@Transient
+	private String submitStaffName;
+	@Transient
+	private String apprStaffName;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
