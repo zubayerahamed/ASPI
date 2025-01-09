@@ -113,6 +113,16 @@ public class SO12 extends KitController {
 					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), opordheader.getXstaff()));
 					if(acsubOp.isPresent()) opordheader.setStaffName(acsubOp.get().getXname());
 				}
+
+				if(opordheader.getXstaffsubmit() != null) {
+					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), opordheader.getXstaffsubmit()));
+					if(acsubOp.isPresent()) opordheader.setSubmitStaffName(acsubOp.get().getXname());
+				}
+
+				if(opordheader.getXstaffappr() != null) {
+					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), opordheader.getXstaffappr()));
+					if(acsubOp.isPresent()) opordheader.setApprStaffName(acsubOp.get().getXname());
+				}
 			}
 			model.addAttribute("opordheader", opordheader != null ? opordheader : Opordheader.getDefaultInstance());
 
@@ -419,8 +429,9 @@ public class SO12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@javax.transaction.Transactional
 	@DeleteMapping("/detail-table")
-	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xordernum, @RequestParam Integer xrow){
+	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xordernum, @RequestParam Integer xrow) throws Exception{
 		Optional<Opordheader> oph = opordheaderRepo.findById(new OpordheaderPK(sessionManager.getBusinessId(), xordernum));
 		if(!oph.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Voucher not found");
@@ -445,6 +456,9 @@ public class SO12 extends KitController {
 
 		// Update line amount and total amount of header
 		BigDecimal lineAmt = oporddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opordheader.getXordernum());
+		if(opordheader.getXdiscamt().compareTo(lineAmt) == 1) {
+			throw new IllegalStateException("Can't delete this item. After delete this item, discount amount will be greater than Subtotal amount. You should update discount amount first");
+		}
 		opordheader.setXlineamt(lineAmt);
 		opordheader.setXtotamt(opordheader.getXlineamt().subtract(opordheader.getXdiscamt()));
 		opordheaderRepo.save(opordheader);

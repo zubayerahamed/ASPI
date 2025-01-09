@@ -65,8 +65,8 @@ public class Opdodetail extends AbstractModel<String> {
 	@Column(name = "xqtycrn", precision = 15, scale = 2)
 	private BigDecimal xqtycrn;
 
-	@Column(name = "xratecost", precision = 15, scale = 2)
-	private BigDecimal xratecost;
+	@Column(name = "xrategrn", precision = 15, scale = 2)
+	private BigDecimal xrategrn;
 
 	@Column(name = "xnote", length = 200)
 	private String xnote;
