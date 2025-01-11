@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImtordetailPK implements Serializable {
-    
-    private Integer zid;
-    private Integer xtornum;
-    private Integer xrow;
+
+	private static final long serialVersionUID = 7156793082845726014L;
+
+	private Integer zid;
+	private Integer xtornum;
+	private Integer xrow;
 }

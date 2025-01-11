@@ -2234,6 +2234,189 @@
 </div>
 
 
+<div th:fragment="LIM11-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="table-responsive">
+			<table class="table" th:classappend="${tablename}">
+				<thead>
+					<tr>
+						<th>Transfer No</th>
+						<th>Date</th>
+						<th th:if="${suffix eq '3'}">From Business</th>
+						<th>From Store</th>
+						<th th:if="${suffix eq '3'}">To Business</th>
+						<th>To Store</th>
+						<th>Status</th>
+						<th>Inventory Status</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			kit.ui.init();
+
+			var fieldId = /*[[${fieldId}]]*/;
+			var suffix = /*[[${suffix}]]*/;
+			var mainscreen = /*[[${mainscreen}]]*/;
+			var mainreloadurl = /*[[${mainreloadurl}]]*/;
+			var mainreloadid = /*[[${mainreloadid}]]*/;
+			var detailreloadurl = /*[[${detailreloadurl}]]*/;
+			var detailreloadid = /*[[${detailreloadid}]]*/;
+			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+			var additionalreloadid = /*[[${additionalreloadid}]]*/;
+			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+			var dependentParam = /*[[${dependentParam}]]*/;
+			var resetParam = /*[[${resetParam}]]*/;
+			var searchValue = /*[[${searchValue}]]*/;
+
+			var columns = [
+				{
+					suffix : [0,1,2,3],
+					name : 'xtornum',
+					rendername : 'xtornum',
+					render: function(data, type, row, meta) {
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM11?xtornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
+					}
+				}, {
+					suffix : [0,1,2,3],
+					name : 'xdate',
+					rendername: 'xdate',
+				}, {
+					suffix : [3],
+					name : 'xfbuid',
+					rendername: 'xfbuid',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['fromBusinessUnitName'];
+					}
+				} , {
+					suffix : [0,1,2,3],
+					name : 'xfwh',
+					rendername: 'xfwh',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['fromWarehouseName'];
+					}
+				} , {
+					suffix : [3],
+					name : 'xtbuid',
+					rendername: 'xtbuid',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['toBusinessUnitName'];
+					}
+				} , {
+					suffix : [0,1,2,3],
+					name : 'xtwh',
+					rendername: 'xtwh',
+					render: function(data, type, row, meta) {
+						return data + ' - ' + row['toWarehouseName'];
+					}
+				}, {
+					suffix : [0,1,2,3],
+					name : 'xstatus',
+					rendername: 'xstatus',
+				}, {
+					suffix : [0,1,2,3],
+					name : 'xstatusim',
+					rendername: 'xstatusim',
+				},
+			];
+
+			var columnDefs = [];
+			var targetCounter = 0;
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					columnDefs.push({
+						name : el.name,
+						targets : targetCounter++,
+					});
+				} 
+			});
+
+			var dataRetreiver = [];
+			$.each(columns, function(index, el){
+				if(el.suffix.includes(0)) {
+					dataRetreiver.push({
+						data : el.rendername,
+						render : el.render,
+						class : el.class
+					});
+				} 
+			});
+
+			var tablename = /*[[${tablename}]]*/;
+			var dt = $('.' + tablename).DataTable({
+				"deferLoading": true,
+				"processing" : true,
+				"serverSide" : true,
+				"order" : [0, 'desc'],
+				"columnDefs": columnDefs,
+				"ajax": {
+					"url": getBasepath() + "/search/LIM11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
+					"type": 'POST'
+				},
+				"columns": dataRetreiver,
+				"search": {
+					"search": searchValue
+				}
+			});
+
+			//make ajax to call server
+			dt.draw();
+
+			$('.' + tablename).on('click', 'a.dataindex', function(e){
+				e.preventDefault();
+
+				if(mainscreen == true){
+					$('#searchSuggestTableModal').modal('hide');
+
+					var value = $(this).data('value');
+
+					sectionReloadAjaxReq({
+						id : mainreloadid,
+						url : mainreloadurl + value
+					});
+
+					if(detailreloadid){
+						sectionReloadAjaxReq({
+							id : detailreloadid,
+							url : detailreloadurl + value
+						});
+					}
+
+					if(additionalreloadid){
+						sectionReloadAjaxReq({
+							id : additionalreloadid,
+							url : additionalreloadurl + value
+						});
+					}
+				} else {
+					var prompt = $(this).data('prompt');
+					var value = $(this).data('value');
+
+					$('#searchSuggestTableModal').modal('hide');
+
+					$('input[name="'+ fieldId +'"]').val(value);
+					$('#' + fieldId).val(prompt);
+					
+					if(resetParam != undefined && resetParam != ''){
+						var resetFields = resetParam.split(',');
+						$.each(resetFields, function(i, j){
+							if(j != undefined && j != '') {
+								$('#' + j).val("");
+								$('input[name="'+ j +'"]').val("");
+							}
+						});
+					}
+				}
+			})
+		})
+	</script>
+</div>
+
 
 <div th:fragment="LSO12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">

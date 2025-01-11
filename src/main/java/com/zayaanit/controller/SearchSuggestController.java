@@ -21,6 +21,7 @@ import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
+import com.zayaanit.entity.Imtorheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
 import com.zayaanit.entity.Pogrnheader;
@@ -38,6 +39,7 @@ import com.zayaanit.service.AcmstService;
 import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.CabunitService;
 import com.zayaanit.service.CaitemService;
+import com.zayaanit.service.ImtorheaderService;
 import com.zayaanit.service.OpdoheaderService;
 import com.zayaanit.service.OpordheaderService;
 import com.zayaanit.service.PogrnheaderService;
@@ -71,6 +73,7 @@ public class SearchSuggestController {
 	@Autowired private PogrnheaderService pogrnheaderService;
 	@Autowired private OpordheaderService opordheaderService;
 	@Autowired private OpdoheaderService opdoheaderService;
+	@Autowired private ImtorheaderService imtorheaderService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -309,6 +312,22 @@ public class SearchSuggestController {
 		int totalRows = pogrnheaderService.LPO14(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Pogrnheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LIM11/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Imtorheader> LIM11(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Imtorheader> list = imtorheaderService.LIM11(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = imtorheaderService.LIM11(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Imtorheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);
