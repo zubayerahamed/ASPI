@@ -124,8 +124,6 @@ public class Opordheader extends AbstractModel<String> {
 	@Transient
 	private String warehouseName;
 	@Transient
-	private String employeeName;
-	@Transient
 	private String staffName;
 	@Transient
 	private String submitStaffName;

@@ -15,6 +15,7 @@ import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
+import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
 import com.zayaanit.entity.Pocrnheader;
 import com.zayaanit.entity.Pogrnheader;
@@ -264,6 +265,13 @@ public class ModelValidator extends ConstraintValidator {
 		if(opordheader == null) return;
 
 		super.validate(opordheader, errors, validator);
+		if (errors.hasErrors()) return;
+	}
+
+	public void validateOpdoheader(Opdoheader opdoheader, Errors errors, Validator validator) {
+		if(opdoheader == null) return;
+
+		super.validate(opdoheader, errors, validator);
 		if (errors.hasErrors()) return;
 	}
 

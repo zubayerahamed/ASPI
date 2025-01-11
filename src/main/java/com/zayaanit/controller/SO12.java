@@ -222,7 +222,7 @@ public class SO12 extends KitController {
 		}
 
 		if(opordheader.getXcus() == null) {
-			responseHelper.setErrorStatusAndMessage("Supplier required");
+			responseHelper.setErrorStatusAndMessage("Customer required");
 			return responseHelper.getResponse();
 		}
 
@@ -434,7 +434,7 @@ public class SO12 extends KitController {
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xordernum, @RequestParam Integer xrow) throws Exception{
 		Optional<Opordheader> oph = opordheaderRepo.findById(new OpordheaderPK(sessionManager.getBusinessId(), xordernum));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
+			responseHelper.setErrorStatusAndMessage("Sales order not found");
 			return responseHelper.getResponse();
 		}
 

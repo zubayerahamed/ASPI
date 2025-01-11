@@ -8,8 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.OpdodetailPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -71,9 +73,27 @@ public class Opdodetail extends AbstractModel<String> {
 	@Column(name = "xnote", length = 200)
 	private String xnote;
 
-	public static Opdodetail getDefaultInstance() {
+	@Transient
+	private String xunit;
+
+	@Transient
+	private String itemName;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Opdodetail getDefaultInstance(Integer xdornum) {
 		Opdodetail obj = new Opdodetail();
-		// Set default values if needed
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXrow(0);
+		obj.setXdocrow(0);
+		obj.setXdornum(xdornum);
+		obj.setXqty(BigDecimal.ZERO);
+		obj.setXrate(BigDecimal.ZERO);
+		obj.setXlineamt(BigDecimal.ZERO);
+		obj.setXqtyord(BigDecimal.ZERO);
+		obj.setXqtycrn(BigDecimal.ZERO);
+		obj.setXrategrn(BigDecimal.ZERO);
 		return obj;
 	}
 }
