@@ -1,21 +1,19 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:if="${imtorheader.xtornum ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open'}" th:attr="data-url=@{/IM11/confirm?xtornum=} + ${imtorheader.xtornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
-			<button th:if="${imtorheader.xtornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imtorheader.xtornum}, data-rptcode='imtor'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
-			<button th:if="${imtorheader.xtornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imtorheader.xtornum}, data-rptcode='imtorprev'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Preview</button>
+		<div class="card-header d-sm-flex align-items-sm-center p-0">
+			<button th:if="${imtorheader.xtornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imtorheader.xtornum}, data-rptcode='imtor'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Challan</button>
+			<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open' and imtorheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM11/confirm?xtornum=} + ${imtorheader.xtornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Transfer</button>
 		</div>
 
 		<div class="card-body">
 			<form id="mainform" class="form-validate-jquery" th:action="@{/IM11/store}" th:object="${imtorheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
-				<input type="hidden" th:field="*{xscreen}"/>
 				<input type="hidden" th:if="${imtorheader.xtornum ne null}" th:field="*{xtornum}">
 
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Transfer No</label>
+							<label class="form-label">Transfer No.</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
@@ -38,14 +36,14 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Transfer Date</label>
+							<label class="form-label required">Transfer Date</label>
 							<div class="input-group">
 								<input 	type="text" 
 										name="xdate" 
 										id="xdate" 
 										class="form-control datepicker-date-format" 
 										placeholder="yyyy-mm-dd format" 
-										required="required"
+										required
 										th:value="${imtorheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(imtorheader.xdate, df)}">
 								<span class="input-group-text">
 									<i class="ph-calendar"></i>
@@ -55,21 +53,19 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">From Store</label>
+							<label class="form-label required">Business Unit</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
-										id="xfwh"
-										th:value="${imtorheader.xfwh != null ? imtorheader.xfwh + ' - ' + imtorheader.fromStore : ''}">
-								<input 	type="hidden" class="search-val" name="xfwh" th:value="*{xfwh}" required="required"/>
+										id="xfbuid"
+										th:value="${imtorheader.xfbuid != null ? imtorheader.xfbuid + ' - ' + imtorheader.fromBusinessUnitName : ''}">
+								<input 	type="hidden" class="search-val" name="xfbuid" th:value="*{xfbuid}" required/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LMD1101/0?hint=', 
+										data-reloadurl='/search/table/LAD17/0?hint=', 
 										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xfwh',
-										data-mainscreen=false,
-										data-mainreloadurl='/MD11?xwh=',
-										data-mainreloadid='main-form-container'" 
+										data-fieldid='xfbuid',
+										data-mainscreen=false" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 								<span 	class="input-group-text btn-search-clear" 
 										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
@@ -78,21 +74,40 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">To Store</label>
+							<label class="form-label required">From Store</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xfwh"
+										th:value="${imtorheader.xfwh != null ? imtorheader.xfwh + ' - ' + imtorheader.fromWarehouseName : ''}">
+								<input 	type="hidden" class="search-val" name="xfwh" th:value="*{xfwh}" required/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD11/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xfwh',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label required">To Store</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
 										id="xtwh"
-										th:value="${imtorheader.xtwh != null ? imtorheader.xtwh + ' - ' + imtorheader.toStore : ''}">
-								<input 	type="hidden" class="search-val" name="xtwh" th:value="*{xtwh}" required="required"/>
+										th:value="${imtorheader.xtwh != null ? imtorheader.xtwh + ' - ' + imtorheader.toWarehouseName : ''}">
+								<input 	type="hidden" class="search-val" name="xtwh" th:value="*{xtwh}" required/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LMD1101/0?hint=', 
+										data-reloadurl='/search/table/LMD11/0?hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xtwh',
-										data-mainscreen=false,
-										data-mainreloadurl='/MD11?xwh=',
-										data-mainreloadid='main-form-container'" 
+										data-mainscreen=false" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 								<span 	class="input-group-text btn-search-clear" 
 										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
@@ -105,45 +120,41 @@
 							<input type="text" class="form-control" th:field="*{xref}">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${imtorheader.xtornum ne null}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Shipping Address</label>
-							<textarea rows="1" cols="" class="form-control" th:field="*{xsadd}"></textarea>
+							<label class="form-label">Status</label>
+							<input type="text" class="form-control" th:value="*{xstatus}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${imtorheader.xtornum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Inventory Status</label>
+							<input type="text" class="form-control" th:value="*{xstatusim}" disabled>
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
-							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Status</label>
-							<input type="text" class="form-control" th:value="${imtorheader.xstatus}" disabled="disabled">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Inventory Status</label>
-							<input type="text" class="form-control" th:value="${imtorheader.xstatusim}" disabled="disabled">
+							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
 						</div>
 					</div>
 				</div>
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/IM11?xtornum=RESET', data-reloadid='main-form-container', data-detailreloadurl='/IM11/detail-table?xtornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/IM11?xtornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/IM11/detail-table?xtornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open'}" th:attr="data-url=@{/IM11?xtornum=} + ${imtorheader.xtornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open' and imtorheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM11?xtornum=} + ${imtorheader.xtornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open' and imtorheader.xstatusim eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${imtorheader.xtornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
 				</div>
 			</form>
 		</div>
+
 	</div>
+
 	<script type="text/javascript">
 		$(document).ready(function(){
 			kit.ui.init();
@@ -177,71 +188,73 @@
 
 			$('.btn-confirm').off('click').on('click', function(e){
 				e.preventDefault();
+				if(!confirm("Are you sure?")){
+					return;
+				}
 				actionPostRequest($(this).data('url'));
 			});
-
 		})
 	</script>
 </div>
 
+
+
+
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
-	<div class="card" th:if="${imtordetail}">
+	<div class="card" th:if="${imtorheader.xtornum ne null}">
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
-			<h6 class="py-sm-3 mb-sm-auto">Details of Inventory Transfer <span th:text="${imtordetail.xtornum}"></span> </h6>
+			<h6 class="py-sm-3 mb-sm-auto">Transfer Details</h6>
 		</div>
 
 		<div class="card-body" th:if="${imtorheader.xstatus eq 'Open'}">
-			<form id="detailform" class="form-validate-jquery" th:action="@{/IM11/detail/store}" th:object="${imtordetail}" method="POST">
-				<input type="hidden" th:field="*{submitFor}"/>
-				<input type="hidden" th:field="*{xtornum}">
-				<input type="hidden" th:field="*{xrow}">
-				<input type="hidden" th:field="*{xitem}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/IM11/detail/store}" th:object="${imtordetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" name="submitFor" th:value="*{submitFor}"/>
+				<input type="hidden" name="xtornum" th:value="*{xtornum}">
+				<input type="hidden" name="xrow" th:value="*{xrow}">
+				<input type="hidden" th:if="${imtordetail.xrow ne 0}" th:field="*{xitem}">
 
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Item Code</label>
-							<div class="input-group">
+							<label class="form-label required">Item</label>
+							<input th:if="${imtordetail.xrow ne 0}" class="form-control" type="text" th:value="${imtordetail.xitem ne null ? imtordetail.xitem + ' - ' + imtordetail.itemName : ''}" disabled>
+							<div class="input-group" th:if="${imtordetail.xrow eq 0}">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
-										name="xitem"
-										th:value="${imtordetail.xitem ne null ? imtordetail.xitem : ''}"
-										disabled="disabled">
+										id="xitem"
+										th:value="${imtordetail.xitem ne null ? imtordetail.xitem + ' - ' + imtordetail.itemName : ''}">
+								<input 	type="hidden" class="search-val" name="xitem" th:value="*{xitem}" required/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LMD1301/0?dependentparam=' + ${imtorheader.xorgim} + '&hint=', 
+										data-reloadurl='/search/table/LMD12/1?hint=',  
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xitem',
 										data-mainscreen=true,
 										data-mainreloadurl='/IM11/detail-table?xtornum='+ ${imtordetail.xtornum} +'&xrow='+ ${imtordetail.xrow} +'&xitem=',
-										data-mainreloadid='detail-table-container',
-										data-extrafieldcontroller='IM11'" 
+										data-mainreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Item Name</label>
-							<input type="text" class="form-control" th:field="*{itemName}" disabled="disabled">
-						</div>
-					</div>
+
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Unit</label>
-							<input type="text" class="form-control" th:field="*{xunit}" disabled="disabled">
+							<input type="text" class="form-control" th:value="*{xunit}" disabled="disabled">
 						</div>
 					</div>
+
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Quantity</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required" min="0">
+							<label class="form-label required">Quantity</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xqty}" min="0" required="required">
 						</div>
 					</div>
+
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
-							<textarea rows="1" cols="" class="form-control" th:field="*{xnote}"></textarea>
+							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
 						</div>
 					</div>
 				</div>
@@ -252,7 +265,6 @@
 					</div>
 					<div>
 						<button th:if="${imtordetail.xrow ne 0}" th:attr="data-url=@{/IM11/detail-table?xtornum=} + ${imtordetail.xtornum} + '&xrow=' + ${imtordetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${imtordetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${imtordetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
 				</div>
@@ -265,38 +277,21 @@
 					<tr>
 						<th>Item</th>
 						<th>Unit</th>
-						<th class="text-end">Quantity</th>
+						<th>Quantity</th>
+						<th>Note</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
-							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/IM11/detail-table?xtornum=' + ${x.xtornum} + '&xrow=' + ${x.xrow}" th:href="@{/IM11/detail-table?xtornum=} + ${x.xtornum} + '&xrow=' + ${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/IM11/detail-table?xtornum=' + ${x.xtornum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:href="@{/IM11/detail-table?xtornum=} + ${x.xtornum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
 						</td>
 						<td th:text="${x.xunit}"></td>
-						<td class="text-end" th:text="${x.xqty}"></td>
+						<td th:text="${x.xqty}"></td>
+						<td th:text="${x.xnote}"></td>
 					</tr>
 				</tbody>
 			</table>
-		</div>
-
-		<div id="searchResultModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="true">
-			<div class="modal-dialog modal-xl">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Search Results</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-					</div>
-	
-					<div class="modal-body">
-						<div class="search-results-container"></div>
-					</div>
-	
-					<div class="modal-footer">
-						<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
 		</div>
 
 	</div>

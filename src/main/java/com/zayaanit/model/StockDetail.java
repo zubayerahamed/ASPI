@@ -20,6 +20,8 @@ public class StockDetail {
 	private BigDecimal reqQty;
 	private BigDecimal availableQty;
 	private BigDecimal deviation;
-	private Integer storeCode;
-	private String storeName;
+	private Integer fromStoreCode;
+	private String fromStoreName;
+	private Integer fromBusienssCode;
+	private String fromBusinessUnitName;
 }

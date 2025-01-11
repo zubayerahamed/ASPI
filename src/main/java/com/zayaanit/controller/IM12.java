@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +28,6 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imtordetail;
 import com.zayaanit.entity.Imtorheader;
-import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -41,7 +39,6 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.model.StockDetail;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -54,8 +51,8 @@ import com.zayaanit.repository.XwhsRepo;
  * @since Jul 3, 2023
  */
 @Controller
-@RequestMapping("/IM11")
-public class IM11 extends KitController {
+@RequestMapping("/IM12")
+public class IM12 extends KitController {
 
 	@Autowired private ImtorheaderRepo imtorheaderRepo;
 	@Autowired private ImtordetailRepo imtordetailRepo;
@@ -68,7 +65,7 @@ public class IM11 extends KitController {
 
 	@Override
 	protected String screenCode() {
-		return "IM11";
+		return "IM12";
 	}
 
 	@Override
@@ -79,7 +76,7 @@ public class IM11 extends KitController {
 	@Override
 	protected String pageTitle() {
 		if(this.pageTitle != null) return this.pageTitle;
-		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "IM11"));
+		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "IM12"));
 		if(!op.isPresent()) return null;
 		this.pageTitle = op.get().getXtitle();
 		return this.pageTitle;
@@ -90,7 +87,7 @@ public class IM11 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xtornum)) {
 				model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
-				return "pages/IM11/IM11-fragments::main-form";
+				return "pages/IM12/IM12-fragments::main-form";
 			}
 
 			Optional<Imtorheader> op = imtorheaderRepo.findById(new ImtorheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xtornum)));
@@ -130,26 +127,26 @@ public class IM11 extends KitController {
 			}
 			model.addAttribute("imtorheader", imtorheader != null ? imtorheader : Imtorheader.getDefaultInstance());
 
-			return "pages/IM11/IM11-fragments::main-form";
+			return "pages/IM12/IM12-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
-		return "pages/IM11/IM11";
+		return "pages/IM12/IM12";
 	}
 
 	@GetMapping("/detail-table")
 	public String detailFormFragment(@RequestParam String xtornum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xtornum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
-			return "pages/IM11/IM11-fragments::detail-table";
+			return "pages/IM12/IM12-fragments::detail-table";
 		}
 
 		Optional<Imtorheader> oph = imtorheaderRepo.findById(new ImtorheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xtornum)));
 		if(!oph.isPresent()) {
 			model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
-			return "pages/IM11/IM11-fragments::detail-table";
+			return "pages/IM12/IM12-fragments::detail-table";
 		}
 		model.addAttribute("imtorheader", oph.get());
 
@@ -178,7 +175,7 @@ public class IM11 extends KitController {
 			}
 
 			model.addAttribute("imtordetail", imtrodetail);
-			return "pages/IM11/IM11-fragments::detail-table";
+			return "pages/IM12/IM12-fragments::detail-table";
 		}
 
 		Optional<Imtordetail> imtrodetailOp = imtordetailRepo.findById(new ImtordetailPK(sessionManager.getBusinessId(), Integer.parseInt(xtornum), Integer.parseInt(xrow)));
@@ -194,12 +191,12 @@ public class IM11 extends KitController {
 		}
 
 		model.addAttribute("imtordetail", imtrodetail);
-		return "pages/IM11/IM11-fragments::detail-table";
+		return "pages/IM12/IM12-fragments::detail-table";
 	}
 
 	@GetMapping("/list-table")
 	public String loadListTableFragment(Model model) {
-		return "pages/IM11/IM11-fragments::list-table";
+		return "pages/IM12/IM12-fragments::list-table";
 	}
 
 	@PostMapping("/store")
@@ -246,15 +243,15 @@ public class IM11 extends KitController {
 			imtorheader.setXtotamt(BigDecimal.ZERO);
 			imtorheader.setXstatus("Open");
 			imtorheader.setXstatusim("Open");
-			imtorheader.setXtornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM11"));
+			imtorheader.setXtornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM12"));
 			imtorheader.setZid(sessionManager.getBusinessId());
 			imtorheader.setXtype("Direct Transfer");
 			imtorheader = imtorheaderRepo.save(imtorheader);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + imtorheader.getXtornum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/IM11/detail-table?xtornum="+ imtorheader.getXtornum() +"&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/IM11/list-table"));
+			reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + imtorheader.getXtornum()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum="+ imtorheader.getXtornum() +"&xrow=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/IM12/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Inventory transfer created successfully");
 			return responseHelper.getResponse();
@@ -302,9 +299,9 @@ public class IM11 extends KitController {
 		existObj = imtorheaderRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + existObj.getXtornum()));
-		reloadSections.add(new ReloadSection("detail-table-container", "/IM11/detail-table?xtornum="+ imtorheader.getXtornum() +"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/IM11/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + existObj.getXtornum()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum="+ imtorheader.getXtornum() +"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/IM12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Inventory transfer updated successfully");
 		return responseHelper.getResponse();
@@ -354,9 +351,9 @@ public class IM11 extends KitController {
 			imtrodetail = imtordetailRepo.save(imtrodetail);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + imtrodetail.getXtornum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/IM11/detail-table?xtornum=" + imtrodetail.getXtornum() + "&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/IM11/list-table"));
+			reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + imtrodetail.getXtornum()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum=" + imtrodetail.getXtornum() + "&xrow=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/IM12/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Transfer detail added successfully");
 			return responseHelper.getResponse();
@@ -391,9 +388,9 @@ public class IM11 extends KitController {
 		imtorheaderRepo.delete(obj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=RESET"));
-		reloadSections.add(new ReloadSection("detail-table-container", "/IM11/detail-table?xtornum=RESET&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/IM11/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=RESET"));
+		reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum=RESET&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/IM12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -425,9 +422,9 @@ public class IM11 extends KitController {
 		imtordetailRepo.delete(obj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + xtornum));
-		reloadSections.add(new ReloadSection("detail-table-container", "/IM11/detail-table?xtornum="+xtornum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/IM11/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + xtornum));
+		reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum="+xtornum+"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/IM12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -458,8 +455,7 @@ public class IM11 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		List<Imtordetail> details = imtordetailRepo.findAllByZidAndXtornum(sessionManager.getBusinessId(), xtornum);
-		if(details == null || details.isEmpty()) {
+		if(imtordetailRepo.findAllByZidAndXtornum(sessionManager.getBusinessId(), xtornum).stream().count() <= 0) {
 			responseHelper.setErrorStatusAndMessage("Detail items not found, Please add item!");
 			return responseHelper.getResponse();
 		}
@@ -476,68 +472,14 @@ public class IM11 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		// Check qty is exist in all details 
-		BigDecimal totalQty = BigDecimal.ZERO;
-		for(Imtordetail detail : details) {
-			if(detail.getXqty() == null) continue;
-			totalQty = totalQty.add(detail.getXqty());
-		}
-		if(totalQty.compareTo(BigDecimal.ZERO) == 0) {
-			responseHelper.setErrorStatusAndMessage("No items found!");
-			return responseHelper.getResponse();
-		}
-
-		// check inventory
-		Map<Integer, BigDecimal> qtyMap = new HashMap<>();
-		for(Imtordetail item : details) {
-			if(qtyMap.get(item.getXitem()) != null) {
-				BigDecimal prevQty = qtyMap.get(item.getXitem());
-				BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
-				qtyMap.put(item.getXitem(), newQty);
-			} else {
-				qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
-			}
-		}
-		unavailableStockList = new ArrayList<>();
-		for(Map.Entry<Integer, BigDecimal> itemMap : qtyMap.entrySet()) {
-			BigDecimal stock = stockRepo.getCurrentStock(sessionManager.getBusinessId(), imtorheader.getXfbuid(), imtorheader.getXfwh(), itemMap.getKey());
-
-			if(stock.compareTo(itemMap.getValue()) == -1) {
-				StockDetail sd = new StockDetail();
-				sd.setItemCode(itemMap.getKey());
-				sd.setReqQty(itemMap.getValue());
-				sd.setAvailableQty(stock);
-				sd.setDeviation(itemMap.getValue().subtract(stock));
-				sd.setFromStoreCode(imtorheader.getXfwh());
-				sd.setFromBusienssCode(imtorheader.getXfbuid());
-
-				Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), itemMap.getKey()));
-				if(caitemOp.isPresent()) sd.setItemName(caitemOp.get().getXdesc());
-
-				Optional<Xwhs> storeOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), imtorheader.getXfwh()));
-				if(storeOp.isPresent()) sd.setFromStoreName(storeOp.get().getXname());
-
-				Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), imtorheader.getXfbuid()));
-				if(cabunitOp.isPresent()) sd.setFromBusinessUnitName(cabunitOp.get().getXname());
-
-				unavailableStockList.add(sd);
-			}
-		}
-
-		if(!unavailableStockList.isEmpty()) {
-			responseHelper.setShowErrorDetailModal(true);
-			responseHelper.setErrorDetailsList(unavailableStockList);
-			responseHelper.setErrorStatusAndMessage("Stock not available");
-			responseHelper.setReloadSectionIdWithUrl("error-details-container", "/IM11/error-details");
-			return responseHelper.getResponse();
-		}
+		// TODO: inventory check process
 
 		imtorheaderRepo.IM_ConfirmDirectTO(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xtornum);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + xtornum));
-		reloadSections.add(new ReloadSection("detail-table-container", "/IM11/detail-table?xtornum="+xtornum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/IM11/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + xtornum));
+		reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum="+xtornum+"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/IM12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Confirmed successfully");
 		return responseHelper.getResponse();

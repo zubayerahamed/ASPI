@@ -15,6 +15,8 @@ import javax.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.zayaanit.entity.Acsub;
@@ -36,7 +38,9 @@ import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.entity.validator.ModelValidator;
 import com.zayaanit.model.MenuTree;
 import com.zayaanit.model.MyUserDetails;
+import com.zayaanit.model.StockDetail;
 import com.zayaanit.repository.AcsubRepo;
+import com.zayaanit.repository.ImcurstockviewRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XfavouritesRepo;
 import com.zayaanit.repository.XmenusRepo;
@@ -73,6 +77,9 @@ public abstract class KitController extends BaseController {
 	@Autowired protected XuserprofilesRepo xuserprofilesRepo;
 	@Autowired protected XfavouritesRepo xfavouritesRepo;
 	@Autowired protected XprofilesdtRepo xprofilesdtRepo;
+	@Autowired protected ImcurstockviewRepo stockRepo;
+
+	protected List<StockDetail> unavailableStockList = new ArrayList<>();
 
 	@ModelAttribute("appVersion")
 	protected String appVersion() {
@@ -347,5 +354,11 @@ public abstract class KitController extends BaseController {
 
 		Optional<Xfavourites> favOp = xfavouritesRepo.findById(new XfavouritesPK(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile(), screenCode));
 		return favOp.isPresent();
+	}
+
+	@GetMapping("/error-details")
+	public String errorDetails(Model model) {
+		model.addAttribute("stockErrors", unavailableStockList);
+		return "commons::error-details";
 	}
 }

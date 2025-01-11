@@ -603,7 +603,8 @@
 			<thead>
 				<tr>
 					<th>Item</th>
-					<th>Store</th>
+					<th>From Business</th>
+					<th>From Store</th>
 					<th class="text-end">Quantity Need</th>
 					<th class="text-end">Quantity Available</th>
 					<th class="text-end">Quantity Diviation</th>
@@ -612,7 +613,8 @@
 			<tbody>
 				<tr th:each="error : ${stockErrors}">
 					<td th:text="${error.itemCode + ' - ' + error.itemName}"></td>
-					<td th:text="${error.storeCode + ' - ' + error.storeName}"></td>
+					<td th:text="${error.fromBusienssCode + ' - ' + error.fromBusinessUnitName}"></td>
+					<td th:text="${error.fromStoreCode + ' - ' + error.fromStoreName}"></td>
 					<td class="text-end" th:text="${error.reqQty}"></td>
 					<td class="text-end" th:text="${error.availableQty}"></td>
 					<td class="text-end" th:text="${error.deviation}"></td>
