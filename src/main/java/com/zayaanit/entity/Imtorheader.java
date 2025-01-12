@@ -43,6 +43,11 @@ import lombok.EqualsAndHashCode;
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "tornum", type = Integer.class), 
 	}),
+	@NamedStoredProcedureQuery(name = "IM_ConfirmBusinessTO", procedureName = "IM_ConfirmBusinessTO", parameters = {
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "tornum", type = Integer.class), 
+	}),
 })
 public class Imtorheader extends AbstractModel<String> {
 
@@ -92,6 +97,12 @@ public class Imtorheader extends AbstractModel<String> {
 
 	@Column(name = "xstaff")
 	private Integer xstaff;
+
+	@Column(name = "xfvoucher")
+	private Integer xfvoucher;
+
+	@Column(name = "xtvoucher")
+	private Integer xtvoucher;
 
 	@Column(name = "xnote", length = 200)
 	private String xnote;

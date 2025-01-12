@@ -3,6 +3,7 @@ server:
     context-path: /aspi/
     session: 
       persistent: true
+      cookie.name: JSESSIONID_ASPI
   port: 8081
 spring:
   mvc:

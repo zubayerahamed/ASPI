@@ -21,6 +21,9 @@ import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
+import com.zayaanit.entity.Imadjheader;
+import com.zayaanit.entity.Imissueheader;
+import com.zayaanit.entity.Imopenheader;
 import com.zayaanit.entity.Imtorheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
@@ -39,6 +42,9 @@ import com.zayaanit.service.AcmstService;
 import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.CabunitService;
 import com.zayaanit.service.CaitemService;
+import com.zayaanit.service.ImadjheaderService;
+import com.zayaanit.service.ImissueheaderService;
+import com.zayaanit.service.ImopenheaderService;
 import com.zayaanit.service.ImtorheaderService;
 import com.zayaanit.service.OpdoheaderService;
 import com.zayaanit.service.OpordheaderService;
@@ -74,6 +80,9 @@ public class SearchSuggestController {
 	@Autowired private OpordheaderService opordheaderService;
 	@Autowired private OpdoheaderService opdoheaderService;
 	@Autowired private ImtorheaderService imtorheaderService;
+	@Autowired private ImissueheaderService imissueheaderService;
+	@Autowired private ImadjheaderService imadjheaderService;
+	@Autowired private ImopenheaderService imopenheaderService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -328,6 +337,54 @@ public class SearchSuggestController {
 		int totalRows = imtorheaderService.LIM11(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Imtorheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LIM13/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Imissueheader> LIM13(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Imissueheader> list = imissueheaderService.LIM13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = imissueheaderService.LIM13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Imissueheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LIM15/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Imadjheader> LIM15(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Imadjheader> list = imadjheaderService.LIM15(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = imadjheaderService.LIM15(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Imadjheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LIM16/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Imopenheader> LIM16(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Imopenheader> list = imopenheaderService.LIM16(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = imopenheaderService.LIM16(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Imopenheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

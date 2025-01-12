@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +40,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.StockDetail;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -212,7 +214,17 @@ public class IM12 extends KitController {
 		}
 
 		if(imtorheader.getXfbuid() == null) {
-			responseHelper.setErrorStatusAndMessage("Business unit required");
+			responseHelper.setErrorStatusAndMessage("From business unit required");
+			return responseHelper.getResponse();
+		}
+
+		if(imtorheader.getXtbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("To business unit required");
+			return responseHelper.getResponse();
+		}
+
+		if(imtorheader.getXfbuid().equals(imtorheader.getXtbuid())) {
+			responseHelper.setErrorStatusAndMessage("Inventory cannot be transferred to same business");
 			return responseHelper.getResponse();
 		}
 
@@ -243,9 +255,10 @@ public class IM12 extends KitController {
 			imtorheader.setXtotamt(BigDecimal.ZERO);
 			imtorheader.setXstatus("Open");
 			imtorheader.setXstatusim("Open");
-			imtorheader.setXtornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM12"));
+			imtorheader.setXstatusjv("Open");
+			imtorheader.setXtornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM11"));
 			imtorheader.setZid(sessionManager.getBusinessId());
-			imtorheader.setXtype("Direct Transfer");
+			imtorheader.setXtype("Inter Business");
 			imtorheader = imtorheaderRepo.save(imtorheader);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
@@ -280,7 +293,6 @@ public class IM12 extends KitController {
 		String[] ignoreProperties = new String[] {
 			"zid", "zuserid", "ztime",
 			"xtornum", 
-			"xtbuid",
 			"xtotamt",
 			"xstatus", 
 			"xstatusim",
@@ -292,10 +304,6 @@ public class IM12 extends KitController {
 			"xtype",
 		};
 		BeanUtils.copyProperties(imtorheader, existObj, ignoreProperties);
-
-		// Calculate total amount
-		BigDecimal totalAmt = imtordetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXtornum());
-		existObj.setXtotamt(totalAmt);
 		existObj = imtorheaderRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
@@ -450,12 +458,18 @@ public class IM12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		if(imtorheader.getXfbuid().equals(imtorheader.getXtbuid())) {
+			responseHelper.setErrorStatusAndMessage("Inventory cannot be transferred to same business");
+			return responseHelper.getResponse();
+		}
+
 		if(imtorheader.getXfwh().equals(imtorheader.getXtwh())) {
 			responseHelper.setErrorStatusAndMessage("Inventory cannot be transferred to same store");
 			return responseHelper.getResponse();
 		}
 
-		if(imtordetailRepo.findAllByZidAndXtornum(sessionManager.getBusinessId(), xtornum).stream().count() <= 0) {
+		List<Imtordetail> details = imtordetailRepo.findAllByZidAndXtornum(sessionManager.getBusinessId(), xtornum);
+		if(details == null || details.isEmpty()) {
 			responseHelper.setErrorStatusAndMessage("Detail items not found, Please add item!");
 			return responseHelper.getResponse();
 		}
@@ -472,9 +486,63 @@ public class IM12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		// TODO: inventory check process
+		// Check qty is exist in all details 
+		BigDecimal totalQty = BigDecimal.ZERO;
+		for(Imtordetail detail : details) {
+			if(detail.getXqty() == null) continue;
+			totalQty = totalQty.add(detail.getXqty());
+		}
+		if(totalQty.compareTo(BigDecimal.ZERO) == 0) {
+			responseHelper.setErrorStatusAndMessage("No items found!");
+			return responseHelper.getResponse();
+		}
 
-		imtorheaderRepo.IM_ConfirmDirectTO(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xtornum);
+		// check inventory
+		Map<Integer, BigDecimal> qtyMap = new HashMap<>();
+		for(Imtordetail item : details) {
+			if(qtyMap.get(item.getXitem()) != null) {
+				BigDecimal prevQty = qtyMap.get(item.getXitem());
+				BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+				qtyMap.put(item.getXitem(), newQty);
+			} else {
+				qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+			}
+		}
+		unavailableStockList = new ArrayList<>();
+		for(Map.Entry<Integer, BigDecimal> itemMap : qtyMap.entrySet()) {
+			BigDecimal stock = stockRepo.getCurrentStock(sessionManager.getBusinessId(), imtorheader.getXfbuid(), imtorheader.getXfwh(), itemMap.getKey());
+
+			if(stock.compareTo(itemMap.getValue()) == -1) {
+				StockDetail sd = new StockDetail();
+				sd.setItemCode(itemMap.getKey());
+				sd.setReqQty(itemMap.getValue());
+				sd.setAvailableQty(stock);
+				sd.setDeviation(itemMap.getValue().subtract(stock));
+				sd.setFromStoreCode(imtorheader.getXfwh());
+				sd.setFromBusienssCode(imtorheader.getXfbuid());
+
+				Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), itemMap.getKey()));
+				if(caitemOp.isPresent()) sd.setItemName(caitemOp.get().getXdesc());
+
+				Optional<Xwhs> storeOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), imtorheader.getXfwh()));
+				if(storeOp.isPresent()) sd.setFromStoreName(storeOp.get().getXname());
+
+				Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), imtorheader.getXfbuid()));
+				if(cabunitOp.isPresent()) sd.setFromBusinessUnitName(cabunitOp.get().getXname());
+
+				unavailableStockList.add(sd);
+			}
+		}
+
+		if(!unavailableStockList.isEmpty()) {
+			responseHelper.setShowErrorDetailModal(true);
+			responseHelper.setErrorDetailsList(unavailableStockList);
+			responseHelper.setErrorStatusAndMessage("Stock not available");
+			responseHelper.setReloadSectionIdWithUrl("error-details-container", "/IM12/error-details");
+			return responseHelper.getResponse();
+		}
+
+		imtorheaderRepo.IM_ConfirmBusinessTO(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xtornum);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + xtornum));

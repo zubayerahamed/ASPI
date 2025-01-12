@@ -29,7 +29,6 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imtordetail;
 import com.zayaanit.entity.Imtorheader;
-import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -295,10 +294,6 @@ public class IM11 extends KitController {
 			"xtype",
 		};
 		BeanUtils.copyProperties(imtorheader, existObj, ignoreProperties);
-
-		// Calculate total amount
-		BigDecimal totalAmt = imtordetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXtornum());
-		existObj.setXtotamt(totalAmt);
 		existObj = imtorheaderRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();

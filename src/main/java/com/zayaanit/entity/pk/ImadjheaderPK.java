@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImadjheaderPK implements Serializable {
-    
-    private Integer zid;
-    private Integer xadjnum;
+
+	private static final long serialVersionUID = -4162001801485204580L;
+
+	private Integer zid;
+	private Integer xadjnum;
 }

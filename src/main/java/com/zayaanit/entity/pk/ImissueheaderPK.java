@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImissueheaderPK implements Serializable {
-    
-    private Integer zid;
-    private Integer xissuenum;
+
+	private static final long serialVersionUID = -4018860529889781551L;
+
+	private Integer zid;
+	private Integer xissuenum;
 }

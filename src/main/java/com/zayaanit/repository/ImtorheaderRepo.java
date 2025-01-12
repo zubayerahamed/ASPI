@@ -20,4 +20,8 @@ public interface ImtorheaderRepo extends JpaRepository<Imtorheader, ImtorheaderP
 	@Transactional
 	@Procedure(name = "IM_ConfirmDirectTO")
 	public void IM_ConfirmDirectTO(@Param("zid") Integer zid, @Param("user") String user, @Param("tornum") Integer tornum);
+
+	@Transactional
+	@Procedure(name = "IM_ConfirmBusinessTO")
+	public void IM_ConfirmBusinessTO(@Param("zid") Integer zid, @Param("user") String user, @Param("tornum") Integer tornum);
 }
