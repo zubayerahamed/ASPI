@@ -41,7 +41,7 @@ import lombok.EqualsAndHashCode;
 	@NamedStoredProcedureQuery(name = "IM_ConfirmOpening", procedureName = "IM_ConfirmOpening", parameters = {
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
-			@StoredProcedureParameter(mode = ParameterMode.IN, name = "xopennum", type = Integer.class), 
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "opennum", type = Integer.class), 
 	}),
 })
 public class Imopenheader extends AbstractModel<String> {

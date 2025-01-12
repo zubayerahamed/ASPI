@@ -161,7 +161,11 @@
 					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
-							<input type="text" class="form-control" th:value="*{xvoucher}" disabled>
+							<a 	href="#" 
+								th:attr="data-screen='FA17?xvoucher=' + ${opdoheader.xvoucher}" 
+								class="screen-item form-control" 
+								th:text="${opdoheader.xvoucher}">
+							</a>
 						</div>
 					</div>
 					<div class="col-md-3">

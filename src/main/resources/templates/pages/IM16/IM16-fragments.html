@@ -1,34 +1,34 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${imissueheader.xissuenum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imissueheader.xissuenum}, data-rptcode='imiss'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
-			<button th:if="${imissueheader.xissuenum ne null and imissueheader.xstatus eq 'Open' and imissueheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM13/confirm?xissuenum=} + ${imissueheader.xissuenum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Issue</button>
+			<button th:if="${imopenheader.xopennum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imopenheader.xopennum}, data-rptcode='imopen'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+			<button th:if="${imopenheader.xopennum ne null and imopenheader.xstatus eq 'Open' and imopenheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM16/confirm?xopennum=} + ${imopenheader.xopennum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Issue</button>
 		</div>
 
 		<div class="card-body">
-			<form id="mainform" class="form-validate-jquery" th:action="@{/IM13/store}" th:object="${imissueheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/IM16/store}" th:object="${imopenheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
-				<input type="hidden" th:if="${imissueheader.xissuenum ne null}" th:field="*{xissuenum}">
+				<input type="hidden" th:if="${imopenheader.xopennum ne null}" th:field="*{xopennum}">
 
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Issue No.</label>
+							<label class="form-label">Opening No.</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
-										name="xissuenum"
-										th:value="${imissueheader.xissuenum ne null ? imissueheader.xissuenum : ''}"
+										name="xopennum"
+										th:value="${imopenheader.xopennum ne null ? imopenheader.xopennum : ''}"
 										disabled="disabled">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LIM13/0?hint=', 
+										data-reloadurl='/search/table/LIM16/0?hint=', 
 										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xissuenum',
+										data-fieldid='xopennum',
 										data-mainscreen=true,
-										data-mainreloadurl='/IM13?xissuenum=',
+										data-mainreloadurl='/IM16?xopennum=',
 										data-mainreloadid='main-form-container',
-										data-detailreloadurl='/IM13/detail-table?xrow=RESET&xissuenum=',
+										data-detailreloadurl='/IM16/detail-table?xrow=RESET&xopennum=',
 										data-detailreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -36,7 +36,7 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Issue Date</label>
+							<label class="form-label required">Opening Date</label>
 							<div class="input-group">
 								<input 	type="text" 
 										name="xdate" 
@@ -44,7 +44,7 @@
 										class="form-control datepicker-date-format" 
 										placeholder="yyyy-mm-dd format" 
 										required
-										th:value="${imissueheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(imissueheader.xdate, df)}">
+										th:value="${imopenheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(imopenheader.xdate, df)}">
 								<span class="input-group-text">
 									<i class="ph-calendar"></i>
 								</span>
@@ -58,7 +58,7 @@
 								<input 	type="text" 
 										class="form-control searchsuggest2"
 										id="xbuid"
-										th:value="${imissueheader.xbuid != null ? imissueheader.xbuid + ' - ' + imissueheader.businessUnitName : ''}">
+										th:value="${imopenheader.xbuid != null ? imopenheader.xbuid + ' - ' + imopenheader.businessUnitName : ''}">
 								<input 	type="hidden" class="search-val" name="xbuid" th:value="*{xbuid}" required/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
@@ -79,7 +79,7 @@
 								<input 	type="text" 
 										class="form-control searchsuggest2"
 										id="xwh"
-										th:value="${imissueheader.xwh != null ? imissueheader.xwh + ' - ' + imissueheader.warehouseName : ''}">
+										th:value="${imopenheader.xwh != null ? imopenheader.xwh + ' - ' + imopenheader.warehouseName : ''}">
 								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}" required/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
@@ -95,44 +95,35 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Issue Type</label>
-							<select class="form-control select" th:field="*{xisstype}" required="required">
-								<option value="">-- Select --</option>
-								<option th:each="iss : ${issueTypes}" th:value="${iss.xcode}" th:text="${iss.xcode}"></option>
-							</select>
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
 							<label class="form-label">Reference</label>
 							<input type="text" class="form-control" th:field="*{xref}">
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${imissueheader.xissuenum ne null}">
+					<div class="col-md-3" th:if="${imopenheader.xopennum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Status</label>
 							<input type="text" class="form-control" th:value="*{xstatus}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${imissueheader.xissuenum ne null}">
+					<div class="col-md-3" th:if="${imopenheader.xopennum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Inventory Status</label>
 							<input type="text" class="form-control" th:value="*{xstatusim}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${imissueheader.xissuenum ne null}">
+					<div class="col-md-3" th:if="${imopenheader.xopennum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Status</label>
 							<input type="text" class="form-control" th:value="*{xstatusjv}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${imissueheader.xissuenum ne null}">
+					<div class="col-md-3" th:if="${imopenheader.xopennum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
 							<a 	href="#" 
-								th:attr="data-screen='FA17?xvoucher=' + ${imissueheader.xvoucher}" 
+								th:attr="data-screen='FA17?xvoucher=' + ${imopenheader.xvoucher}" 
 								class="screen-item form-control" 
-								th:text="${imissueheader.xvoucher}">
+								th:text="${imopenheader.xvoucher}">
 							</a>
 						</div>
 					</div>
@@ -146,12 +137,12 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/IM13?xissuenum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/IM13/detail-table?xissuenum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/IM16?xopennum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/IM16/detail-table?xopennum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${imissueheader.xissuenum ne null and imissueheader.xstatus eq 'Open'}" th:attr="data-url=@{/IM13?xissuenum=} + ${imissueheader.xissuenum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${imissueheader.xissuenum ne null and imissueheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${imissueheader.xissuenum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+						<button th:if="${imopenheader.xopennum ne null and imopenheader.xstatus eq 'Open'}" th:attr="data-url=@{/IM16?xopennum=} + ${imopenheader.xopennum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${imopenheader.xopennum ne null and imopenheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${imopenheader.xopennum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
 				</div>
 			</form>
@@ -205,28 +196,28 @@
 
 
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
-	<div class="card" th:if="${imissueheader.xissuenum ne null}">
+	<div class="card" th:if="${imopenheader.xopennum ne null}">
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
 			<h6 class="py-sm-3 mb-sm-auto">Transfer Details</h6>
 		</div>
 
-		<div class="card-body" th:if="${imissueheader.xstatus eq 'Open'}">
-			<form id="detailform" class="form-validate-jquery" th:action="@{/IM13/detail/store}" th:object="${imissuedetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+		<div class="card-body" th:if="${imopenheader.xstatus eq 'Open'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/IM16/detail/store}" th:object="${imopendetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" name="submitFor" th:value="*{submitFor}"/>
-				<input type="hidden" name="xissuenum" th:value="*{xissuenum}">
+				<input type="hidden" name="xopennum" th:value="*{xopennum}">
 				<input type="hidden" name="xrow" th:value="*{xrow}">
-				<input type="hidden" th:if="${imissuedetail.xrow ne 0}" th:field="*{xitem}">
+				<input type="hidden" th:if="${imopendetail.xrow ne 0}" th:field="*{xitem}">
 
 				<div class="row">
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Item</label>
-							<input th:if="${imissuedetail.xrow ne 0}" class="form-control" type="text" th:value="${imissuedetail.xitem ne null ? imissuedetail.xitem + ' - ' + imissuedetail.itemName : ''}" disabled>
-							<div class="input-group" th:if="${imissuedetail.xrow eq 0}">
+							<input th:if="${imopendetail.xrow ne 0}" class="form-control" type="text" th:value="${imopendetail.xitem ne null ? imopendetail.xitem + ' - ' + imopendetail.itemName : ''}" disabled>
+							<div class="input-group" th:if="${imopendetail.xrow eq 0}">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
 										id="xitem"
-										th:value="${imissuedetail.xitem ne null ? imissuedetail.xitem + ' - ' + imissuedetail.itemName : ''}">
+										th:value="${imopendetail.xitem ne null ? imopendetail.xitem + ' - ' + imopendetail.itemName : ''}">
 								<input 	type="hidden" class="search-val" name="xitem" th:value="*{xitem}" required/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
@@ -234,7 +225,7 @@
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xitem',
 										data-mainscreen=true,
-										data-mainreloadurl='/IM13/detail-table?xissuenum='+ ${imissuedetail.xissuenum} +'&xrow='+ ${imissuedetail.xrow} +'&xitem=',
+										data-mainreloadurl='/IM16/detail-table?xopennum='+ ${imopendetail.xopennum} +'&xrow='+ ${imopendetail.xrow} +'&xitem=',
 										data-mainreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -255,7 +246,13 @@
 						</div>
 					</div>
 
-					<div class="col-md-3" th:if="${imissuedetail.xrow ne 0}">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Rate</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xrate}" min="0">
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${imopendetail.xrow ne 0}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Line Amount</label>
 							<input type="number" class="form-control numeric-only" th:value="*{xlineamt}" disabled="disabled">
@@ -272,11 +269,12 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/IM13/detail-table?xissuenum='+ ${imissuedetail.xissuenum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/IM16/detail-table?xopennum='+ ${imopendetail.xopennum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${imissuedetail.xrow ne 0}" th:attr="data-url=@{/IM13/detail-table?xissuenum=} + ${imissuedetail.xissuenum} + '&xrow=' + ${imissuedetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${imissuedetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
+						<button th:if="${imopendetail.xrow ne 0}" th:attr="data-url=@{/IM16/detail-table?xopennum=} + ${imopendetail.xopennum} + '&xrow=' + ${imopendetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${imopendetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${imopendetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
 				</div>
 			</form>
@@ -289,6 +287,7 @@
 						<th>Item</th>
 						<th>Unit</th>
 						<th>Quantity</th>
+						<th>Rate</th>
 						<th>Line Amount</th>
 						<th>Note</th>
 					</tr>
@@ -296,10 +295,11 @@
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
-							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/IM13/detail-table?xissuenum=' + ${x.xissuenum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:href="@{/IM13/detail-table?xissuenum=} + ${x.xissuenum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/IM16/detail-table?xopennum=' + ${x.xopennum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:href="@{/IM16/detail-table?xopennum=} + ${x.xopennum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
 						</td>
 						<td th:text="${x.xunit}"></td>
 						<td th:text="${x.xqty}"></td>
+						<td th:text="${x.xrate}"></td>
 						<td th:text="${x.xlineamt}"></td>
 						<td th:text="${x.xnote}"></td>
 					</tr>

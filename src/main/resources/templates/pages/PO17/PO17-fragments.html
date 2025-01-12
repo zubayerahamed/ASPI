@@ -147,6 +147,16 @@
 							<input type="text" class="form-control" th:value="*{xstatusjv}" disabled>
 						</div>
 					</div>
+					<div class="col-md-3" th:if="${pocrnheader.xcrnnum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">GL Voucher</label>
+							<a 	href="#" 
+								th:attr="data-screen='FA17?xvoucher=' + ${pocrnheader.xvoucher}" 
+								class="screen-item form-control" 
+								th:text="${pocrnheader.xvoucher}">
+							</a>
+						</div>
+					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>

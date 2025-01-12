@@ -473,8 +473,15 @@ $(document).ready(function(){
 		var screenCode = $(this).data('screen');
 		var fromfav = $(this).data('fav') != undefined && $(this).data('fav') != null && 'Y' == $(this).data('fav');
 
-		var url = '/' + screenCode + '?frommenu=';
-		if(fromfav) url = '/' + screenCode + '?fromfav=&frommenu=';
+		var url = '/' + screenCode;
+		const questionCount = url.split("?").length - 1;
+		if (questionCount === 1) {
+			url = url + '&frommenu=';
+			if(fromfav) url = url + '&fromfav=&frommenu=';
+		} else {
+			url = url + '?frommenu=';
+			if(fromfav) url = url + '?fromfav=&frommenu=';
+		}
 
 		$('.customize-aspi-offcanvas').click();
 		if($('.sidebar-mobile-expanded').length > 0){

@@ -86,8 +86,6 @@ public class IM15 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xadjnum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
-		model.addAttribute("issueTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("IM Issue Type", Boolean.TRUE, sessionManager.getBusinessId()));
-
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xadjnum)) {
 				model.addAttribute("imadjheader", Imadjheader.getDefaultInstance());
@@ -161,30 +159,30 @@ public class IM15 extends KitController {
 		}
 
 		if("RESET".equalsIgnoreCase(xrow)) {
-			Imadjdetail imtrodetail = Imadjdetail.getDefaultInstance(Integer.parseInt(xadjnum));
+			Imadjdetail imadjdetail = Imadjdetail.getDefaultInstance(Integer.parseInt(xadjnum));
 			if(caitem != null) {
-				imtrodetail.setXitem(xitem);
-				imtrodetail.setItemName(caitem.getXdesc());
-				imtrodetail.setXunit(caitem.getXunit());
+				imadjdetail.setXitem(xitem);
+				imadjdetail.setItemName(caitem.getXdesc());
+				imadjdetail.setXunit(caitem.getXunit());
 			}
 
-			model.addAttribute("imadjdetail", imtrodetail);
+			model.addAttribute("imadjdetail", imadjdetail);
 			return "pages/IM15/IM15-fragments::detail-table";
 		}
 
-		Optional<Imadjdetail> imtrodetailOp = imadjdetailRepo.findById(new ImadjdetailPK(sessionManager.getBusinessId(), Integer.parseInt(xadjnum), Integer.parseInt(xrow)));
-		Imadjdetail imtrodetail = imtrodetailOp.isPresent() ? imtrodetailOp.get() : Imadjdetail.getDefaultInstance(Integer.parseInt(xadjnum));
-		if(imtrodetail != null && imtrodetail.getXitem() != null) {
-			Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtrodetail.getXitem()));
+		Optional<Imadjdetail> imadjdetailOp = imadjdetailRepo.findById(new ImadjdetailPK(sessionManager.getBusinessId(), Integer.parseInt(xadjnum), Integer.parseInt(xrow)));
+		Imadjdetail imadjdetail = imadjdetailOp.isPresent() ? imadjdetailOp.get() : Imadjdetail.getDefaultInstance(Integer.parseInt(xadjnum));
+		if(imadjdetail != null && imadjdetail.getXitem() != null) {
+			Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imadjdetail.getXitem()));
 			caitem = caitemOp.isPresent() ? caitemOp.get() : null;
 		}
-		if(caitem != null && imtrodetail != null) {
-			imtrodetail.setXitem(caitem.getXitem());
-			imtrodetail.setItemName(caitem.getXdesc());
-			imtrodetail.setXunit(caitem.getXunit());
+		if(caitem != null && imadjdetail != null) {
+			imadjdetail.setXitem(caitem.getXitem());
+			imadjdetail.setItemName(caitem.getXdesc());
+			imadjdetail.setXunit(caitem.getXunit());
 		}
 
-		model.addAttribute("imadjdetail", imtrodetail);
+		model.addAttribute("imadjdetail", imadjdetail);
 		return "pages/IM15/IM15-fragments::detail-table";
 	}
 
@@ -206,12 +204,12 @@ public class IM15 extends KitController {
 		}
 
 		if(imadjheader.getXbuid() == null) {
-			responseHelper.setErrorStatusAndMessage("From business unit required");
+			responseHelper.setErrorStatusAndMessage("Business unit required");
 			return responseHelper.getResponse();
 		}
 
 		if(imadjheader.getXwh() == null) {
-			responseHelper.setErrorStatusAndMessage("From store required");
+			responseHelper.setErrorStatusAndMessage("Store required");
 			return responseHelper.getResponse();
 		}
 
@@ -279,51 +277,61 @@ public class IM15 extends KitController {
 	}
 
 	@PostMapping("/detail/store")
-	public @ResponseBody Map<String, Object> storeDetail(Imadjdetail imtrodetail, BindingResult bindingResult){
-		if(imtrodetail.getXadjnum() == null) {
-			responseHelper.setErrorStatusAndMessage("Issue not found");
+	public @ResponseBody Map<String, Object> storeDetail(Imadjdetail imadjdetail, BindingResult bindingResult){
+		if(imadjdetail.getXadjnum() == null) {
+			responseHelper.setErrorStatusAndMessage("Adjustment not found");
 			return responseHelper.getResponse();
 		}
 
-		Optional<Imadjheader> oph = imadjheaderRepo.findById(new ImadjheaderPK(sessionManager.getBusinessId(), imtrodetail.getXadjnum()));
+		Optional<Imadjheader> oph = imadjheaderRepo.findById(new ImadjheaderPK(sessionManager.getBusinessId(), imadjdetail.getXadjnum()));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Issue not found");
+			responseHelper.setErrorStatusAndMessage("Adjustment not found");
 			return responseHelper.getResponse();
 		}
 
 		Imadjheader imadjheader = oph.get();
 		if(!"Open".equals(imadjheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Issue not open");
+			responseHelper.setErrorStatusAndMessage("Adjustment status not open");
 			return responseHelper.getResponse();
 		}
 
-		if(imtrodetail.getXitem() == null) {
+		if(imadjdetail.getXitem() == null) {
 			responseHelper.setErrorStatusAndMessage("Item requried");
 			return responseHelper.getResponse();
 		}
 
-		Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtrodetail.getXitem()));
+		Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imadjdetail.getXitem()));
 		if(!caitemOp.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Invalid item");
 			return responseHelper.getResponse();
 		}
 
-		if(imtrodetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(imadjdetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
 
+		if(imadjdetail.getXsign() == null) {
+			responseHelper.setErrorStatusAndMessage("Adjustment type required");
+			return responseHelper.getResponse();
+		}
+
+		if(!(imadjdetail.getXsign().equals(1) || imadjdetail.getXsign().equals(-1))) {
+			responseHelper.setErrorStatusAndMessage("Invalid adjustment type");
+			return responseHelper.getResponse();
+		}
+
 		// Create new
-		if(SubmitFor.INSERT.equals(imtrodetail.getSubmitFor())) {
-			imtrodetail.setXrow(imadjdetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), imtrodetail.getXadjnum()));
-			imtrodetail.setZid(sessionManager.getBusinessId());
-			imtrodetail.setXrate(BigDecimal.ZERO);
-			imtrodetail.setXlineamt(BigDecimal.ZERO);
-			imtrodetail = imadjdetailRepo.save(imtrodetail);
+		if(SubmitFor.INSERT.equals(imadjdetail.getSubmitFor())) {
+			imadjdetail.setXrow(imadjdetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), imadjdetail.getXadjnum()));
+			imadjdetail.setZid(sessionManager.getBusinessId());
+			imadjdetail.setXrate(BigDecimal.ZERO);
+			imadjdetail.setXlineamt(BigDecimal.ZERO);
+			imadjdetail = imadjdetailRepo.save(imadjdetail);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + imtrodetail.getXadjnum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/IM15/detail-table?xadjnum=" + imtrodetail.getXadjnum() + "&xrow=RESET"));
+			reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + imadjdetail.getXadjnum()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/IM15/detail-table?xadjnum=" + imadjdetail.getXadjnum() + "&xrow=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/IM15/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Transfer detail added successfully");
@@ -400,7 +408,7 @@ public class IM15 extends KitController {
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xadjnum) {
 		Optional<Imadjheader> oph = imadjheaderRepo.findById(new ImadjheaderPK(sessionManager.getBusinessId(), xadjnum));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Issue not found");
+			responseHelper.setErrorStatusAndMessage("Adjustment not found");
 			return responseHelper.getResponse();
 		}
 
