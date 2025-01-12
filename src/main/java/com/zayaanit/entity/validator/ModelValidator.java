@@ -15,7 +15,9 @@ import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
+import com.zayaanit.entity.Imadjheader;
 import com.zayaanit.entity.Imissueheader;
+import com.zayaanit.entity.Imopenheader;
 import com.zayaanit.entity.Imtorheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
@@ -295,6 +297,20 @@ public class ModelValidator extends ConstraintValidator {
 		if(imissueheader == null) return;
 
 		super.validate(imissueheader, errors, validator);
+		if (errors.hasErrors()) return;
+	}
+
+	public void validateImadjheader(Imadjheader imadjheader, Errors errors, Validator validator) {
+		if(imadjheader == null) return;
+
+		super.validate(imadjheader, errors, validator);
+		if (errors.hasErrors()) return;
+	}
+
+	public void validateImopenheader(Imopenheader imopenheader, Errors errors, Validator validator) {
+		if(imopenheader == null) return;
+
+		super.validate(imopenheader, errors, validator);
 		if (errors.hasErrors()) return;
 	}
 
