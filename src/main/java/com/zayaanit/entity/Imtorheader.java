@@ -84,6 +84,9 @@ public class Imtorheader extends AbstractModel<String> {
 	@Column(name = "xstatusim", length = 25)
 	private String xstatusim;
 
+	@Column(name = "xstatusjv", length = 25)
+	private String xstatusjv;
+
 	@Column(name = "xtotamt", precision = 15, scale = 2)
 	private BigDecimal xtotamt;
 
@@ -128,6 +131,18 @@ public class Imtorheader extends AbstractModel<String> {
 		obj.setXstatus("Open");
 		obj.setXstatusim("Open");
 		obj.setXtype("Direct Transfer");
+		return obj;
+	}
+
+	public static Imtorheader getIM12DefaultInstance() {
+		Imtorheader obj = new Imtorheader();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXdate(new Date());
+		obj.setXtotamt(BigDecimal.ZERO);
+		obj.setXstatus("Open");
+		obj.setXstatusim("Open");
+		obj.setXstatusjv("Open");
+		obj.setXtype("Inter Business");
 		return obj;
 	}
 }

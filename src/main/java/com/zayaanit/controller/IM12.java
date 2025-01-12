@@ -86,7 +86,7 @@ public class IM12 extends KitController {
 	public String index(@RequestParam (required = false) String xtornum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xtornum)) {
-				model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
+				model.addAttribute("imtorheader", Imtorheader.getIM12DefaultInstance());
 				return "pages/IM12/IM12-fragments::main-form";
 			}
 
@@ -125,27 +125,27 @@ public class IM12 extends KitController {
 					if(acsubOp.isPresent()) imtorheader.setSubmitStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("imtorheader", imtorheader != null ? imtorheader : Imtorheader.getDefaultInstance());
+			model.addAttribute("imtorheader", imtorheader != null ? imtorheader : Imtorheader.getIM12DefaultInstance());
 
 			return "pages/IM12/IM12-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
+		model.addAttribute("imtorheader", Imtorheader.getIM12DefaultInstance());
 		return "pages/IM12/IM12";
 	}
 
 	@GetMapping("/detail-table")
 	public String detailFormFragment(@RequestParam String xtornum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xtornum) && "RESET".equalsIgnoreCase(xrow)) {
-			model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
+			model.addAttribute("imtorheader", Imtorheader.getIM12DefaultInstance());
 			return "pages/IM12/IM12-fragments::detail-table";
 		}
 
 		Optional<Imtorheader> oph = imtorheaderRepo.findById(new ImtorheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xtornum)));
 		if(!oph.isPresent()) {
-			model.addAttribute("imtorheader", Imtorheader.getDefaultInstance());
+			model.addAttribute("imtorheader", Imtorheader.getIM12DefaultInstance());
 			return "pages/IM12/IM12-fragments::detail-table";
 		}
 		model.addAttribute("imtorheader", oph.get());
@@ -167,7 +167,7 @@ public class IM12 extends KitController {
 		}
 
 		if("RESET".equalsIgnoreCase(xrow)) {
-			Imtordetail imtrodetail = Imtordetail.getDefaultInstance(Integer.parseInt(xtornum));
+			Imtordetail imtrodetail = Imtordetail.getIM12DefaultInstance(Integer.parseInt(xtornum));
 			if(caitem != null) {
 				imtrodetail.setXitem(xitem);
 				imtrodetail.setItemName(caitem.getXdesc());
@@ -179,7 +179,7 @@ public class IM12 extends KitController {
 		}
 
 		Optional<Imtordetail> imtrodetailOp = imtordetailRepo.findById(new ImtordetailPK(sessionManager.getBusinessId(), Integer.parseInt(xtornum), Integer.parseInt(xrow)));
-		Imtordetail imtrodetail = imtrodetailOp.isPresent() ? imtrodetailOp.get() : Imtordetail.getDefaultInstance(Integer.parseInt(xtornum));
+		Imtordetail imtrodetail = imtrodetailOp.isPresent() ? imtrodetailOp.get() : Imtordetail.getIM12DefaultInstance(Integer.parseInt(xtornum));
 		if(imtrodetail != null && imtrodetail.getXitem() != null) {
 			Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtrodetail.getXitem()));
 			caitem = caitemOp.isPresent() ? caitemOp.get() : null;

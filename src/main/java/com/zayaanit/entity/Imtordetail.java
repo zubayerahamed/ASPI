@@ -80,4 +80,15 @@ public class Imtordetail extends AbstractModel<String> {
 		obj.setXlineamt(BigDecimal.ZERO);
 		return obj;
 	}
+
+	public static Imtordetail getIM12DefaultInstance(Integer xtornum) {
+		Imtordetail obj = new Imtordetail();
+		obj.setXtornum(xtornum);
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXrow(0);
+		obj.setXqty(BigDecimal.ZERO);
+		obj.setXrate(BigDecimal.ZERO);
+		obj.setXlineamt(BigDecimal.ZERO);
+		return obj;
+	}
 }

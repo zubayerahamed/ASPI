@@ -53,7 +53,7 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Business Unit</label>
+							<label class="form-label required">From Business Unit</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
@@ -65,6 +65,27 @@
 										data-reloadurl='/search/table/LAD17/0?hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xfbuid',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label required">To Business Unit</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xtbuid"
+										th:value="${imtorheader.xtbuid != null ? imtorheader.xtbuid + ' - ' + imtorheader.toBusinessUnitName : ''}">
+								<input 	type="hidden" class="search-val" name="xtbuid" th:value="*{xtbuid}" required/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LAD17/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xtbuid',
 										data-mainscreen=false" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 								<span 	class="input-group-text btn-search-clear" 
@@ -132,6 +153,25 @@
 							<input type="text" class="form-control" th:value="*{xstatusim}" disabled>
 						</div>
 					</div>
+					<div class="col-md-3" th:if="${imtorheader.xtornum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">GL Status</label>
+							<input type="text" class="form-control" th:value="*{xstatusjv}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${imtorheader.xtornum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">GL Voucher (Issue)</label>
+							<input type="text" class="form-control" th:value="*{xfvoucher}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${imtorheader.xtornum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">GL Voucher (Receive)</label>
+							<input type="text" class="form-control" th:value="*{xtvoucher}" disabled>
+						</div>
+					</div>
+					
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
