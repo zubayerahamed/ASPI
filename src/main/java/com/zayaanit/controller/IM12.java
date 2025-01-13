@@ -345,7 +345,7 @@ public class IM12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(imtrodetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(imtrodetail.getXqty() == null || imtrodetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}

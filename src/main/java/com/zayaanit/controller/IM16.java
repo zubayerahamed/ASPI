@@ -307,12 +307,12 @@ public class IM16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(imopendetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
+		if(imopendetail.getXqty() == null || imopendetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
 
-		if(imopendetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
+		if(imopendetail.getXrate() == null || imopendetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid rate");
 			return responseHelper.getResponse();
 		}

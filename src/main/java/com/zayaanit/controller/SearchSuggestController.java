@@ -25,6 +25,7 @@ import com.zayaanit.entity.Imadjheader;
 import com.zayaanit.entity.Imissueheader;
 import com.zayaanit.entity.Imopenheader;
 import com.zayaanit.entity.Imtorheader;
+import com.zayaanit.entity.Moheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
 import com.zayaanit.entity.Pogrnheader;
@@ -46,6 +47,7 @@ import com.zayaanit.service.ImadjheaderService;
 import com.zayaanit.service.ImissueheaderService;
 import com.zayaanit.service.ImopenheaderService;
 import com.zayaanit.service.ImtorheaderService;
+import com.zayaanit.service.MoheaderService;
 import com.zayaanit.service.OpdoheaderService;
 import com.zayaanit.service.OpordheaderService;
 import com.zayaanit.service.PogrnheaderService;
@@ -83,6 +85,7 @@ public class SearchSuggestController {
 	@Autowired private ImissueheaderService imissueheaderService;
 	@Autowired private ImadjheaderService imadjheaderService;
 	@Autowired private ImopenheaderService imopenheaderService;
+	@Autowired private MoheaderService moheaderService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -353,6 +356,22 @@ public class SearchSuggestController {
 		int totalRows = imissueheaderService.LIM13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Imissueheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LIM14/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Moheader> LIM14(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Moheader> list = moheaderService.LIM14(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = moheaderService.LIM14(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Moheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

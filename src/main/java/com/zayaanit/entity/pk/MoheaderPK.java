@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MoheaderPK implements Serializable {
-    
-    private Integer zid;
-    private Integer xbatch;
+
+	private static final long serialVersionUID = 2170844024916752971L;
+
+	private Integer zid;
+	private Integer xbatch;
 }

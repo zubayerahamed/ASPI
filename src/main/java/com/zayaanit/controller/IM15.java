@@ -306,7 +306,7 @@ public class IM15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(imadjdetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(imadjdetail.getXqty() == null || imadjdetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}

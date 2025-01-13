@@ -20,6 +20,7 @@ import com.zayaanit.entity.Imissueheader;
 import com.zayaanit.entity.Imopenheader;
 import com.zayaanit.entity.Imtogli;
 import com.zayaanit.entity.Imtorheader;
+import com.zayaanit.entity.Moheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
 import com.zayaanit.entity.Optogli;
@@ -335,6 +336,13 @@ public class ModelValidator extends ConstraintValidator {
 		if(imissueheader == null) return;
 
 		super.validate(imissueheader, errors, validator);
+		if (errors.hasErrors()) return;
+	}
+
+	public void validateMoheader(Moheader moheader, Errors errors, Validator validator) {
+		if(moheader == null) return;
+
+		super.validate(moheader, errors, validator);
 		if (errors.hasErrors()) return;
 	}
 

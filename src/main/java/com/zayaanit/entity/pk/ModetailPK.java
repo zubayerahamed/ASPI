@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModetailPK implements Serializable {
-    
-    private Integer zid;
-    private Integer xbatch;
-    private Integer xrow;
+
+	private static final long serialVersionUID = -6824595076160671087L;
+
+	private Integer zid;
+	private Integer xbatch;
+	private Integer xrow;
 }
