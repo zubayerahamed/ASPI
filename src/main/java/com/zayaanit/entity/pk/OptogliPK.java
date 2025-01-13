@@ -10,9 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OptogliPK implements Serializable {
-    
-    private Integer zid;
-    private String xtype;
-    private String xgcus;
-    private String xgitem;
+
+	private static final long serialVersionUID = 8921870221028939994L;
+
+	private Integer zid;
+	private String xtype;
+	private String xgcus;
 }

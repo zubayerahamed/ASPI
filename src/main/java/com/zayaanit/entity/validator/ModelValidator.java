@@ -18,9 +18,11 @@ import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imadjheader;
 import com.zayaanit.entity.Imissueheader;
 import com.zayaanit.entity.Imopenheader;
+import com.zayaanit.entity.Imtogli;
 import com.zayaanit.entity.Imtorheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
+import com.zayaanit.entity.Optogli;
 import com.zayaanit.entity.Pocrnheader;
 import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Poordheader;
@@ -37,6 +39,8 @@ import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.CabunitPK;
+import com.zayaanit.entity.pk.ImtogliPK;
+import com.zayaanit.entity.pk.OptogliPK;
 import com.zayaanit.entity.pk.PotogliPK;
 import com.zayaanit.entity.pk.XcodesPK;
 import com.zayaanit.entity.pk.XmenusPK;
@@ -49,6 +53,8 @@ import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
+import com.zayaanit.repository.ImtogliRepo;
+import com.zayaanit.repository.OptogliRepo;
 import com.zayaanit.repository.PotogliRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XmenusRepo;
@@ -76,6 +82,8 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private AcmstRepo acmstRepo;
 	@Autowired private AcsubRepo acsubRepo;
 	@Autowired private PotogliRepo potogliRepo;
+	@Autowired private OptogliRepo optogliRepo;
+	@Autowired private ImtogliRepo imtogliRepo;
 
 	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
 		if(xmenus == null) return;
@@ -118,6 +126,36 @@ public class ModelValidator extends ConstraintValidator {
 		if(!op.isPresent()) return;
 
 		if(SubmitFor.INSERT.equals(potogli.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xtype", "Data already exist in the system");
+		}
+	}
+
+	public void validateOptogli(Optogli potogli, Errors errors, Validator validator) {
+		if(potogli == null) return;
+
+		super.validate(potogli, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check xscreen already exist
+		Optional<Optogli> op = optogliRepo.findById(new OptogliPK(sessionManager.getBusinessId(), potogli.getXtype(), potogli.getXgcus()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(potogli.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xtype", "Data already exist in the system");
+		}
+	}
+
+	public void validateImtogli(Imtogli imtogli, Errors errors, Validator validator) {
+		if(imtogli == null) return;
+
+		super.validate(imtogli, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check xscreen already exist
+		Optional<Imtogli> op = imtogliRepo.findById(new ImtogliPK(sessionManager.getBusinessId(), imtogli.getXtype(), imtogli.getXgitem()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(imtogli.getSubmitFor()) && op.isPresent()) {
 			errors.rejectValue("xtype", "Data already exist in the system");
 		}
 	}
