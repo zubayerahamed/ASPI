@@ -26,7 +26,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 		StringBuilder sql = new StringBuilder();
 		sql.append(selectClause())
 		.append(fromClause("xscreens im"))
-		.append(whereClause(searchText))
+		.append(whereClause(searchText, suffix))
 		.append(orderbyClause(orderBy, orderType.name()))
 		.append(limitAndOffsetClause(limit, offset));
 
@@ -43,7 +43,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(*) ")
 		.append(fromClause("xscreens im"))
-		.append(whereClause(searchText));
+		.append(whereClause(searchText, suffix));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
@@ -66,8 +66,12 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 		return new StringBuilder(" FROM " + tableName + " ");
 	}
 
-	private StringBuilder whereClause(String searchText) {
+	private StringBuilder whereClause(String searchText, int suffix) {
 		StringBuilder sql = new StringBuilder(" WHERE zid="+sessionManager.getBusinessId()+" ");
+
+		if(suffix == 1) {
+			sql = sql.append(" AND xtype in ('Screen', 'Default') ");
+		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;
 

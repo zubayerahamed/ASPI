@@ -117,12 +117,12 @@ public class FA14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(StringUtils.isBlank(acsub.getXtype())) {
+		if(acsub.getXsub() == null && StringUtils.isBlank(acsub.getXtype())) {
 			responseHelper.setErrorStatusAndMessage("Account Type required");
 			return responseHelper.getResponse();
 		}
 
-		if("Sub Account".equals(acsub.getXtype())) {
+		if(acsub.getXsub() == null && "Sub Account".equals(acsub.getXtype())) {
 			if(acsub.getXacc() == null) {
 				responseHelper.setErrorStatusAndMessage("Account selection required if account type is Sub Account");
 				return responseHelper.getResponse();
@@ -157,7 +157,7 @@ public class FA14 extends KitController {
 		}
 
 		// Update existing
-		Optional<Acsub> op = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), acsub.getXacc()));
+		Optional<Acsub> op = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), acsub.getXsub()));
 		if(!op.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
 			return responseHelper.getResponse();
@@ -169,7 +169,7 @@ public class FA14 extends KitController {
 		existObj = acsubRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=" + existObj.getXacc()));
+		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=" + existObj.getXsub()));
 		reloadSections.add(new ReloadSection("list-table-container", "/FA14/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
@@ -200,6 +200,8 @@ public class FA14 extends KitController {
 		Acsub acsub = Acsub.getDefaultInstance();
 		acsub.setXtype(xtype);
 		model.addAttribute("acsub", acsub);
+		if("Customer".equals(xtype)) model.addAttribute("customerGroups", xcodesRepo.findAllByXtypeAndZactiveAndZid("Customer Group", Boolean.TRUE, sessionManager.getBusinessId()));
+		if("Supplier".equals(xtype)) model.addAttribute("supplierGroups", xcodesRepo.findAllByXtypeAndZactiveAndZid("Supplier Group", Boolean.TRUE, sessionManager.getBusinessId()));
 		return "pages/FA14/FA14-fragments::xacc-field";
 	}
 }
