@@ -1,3 +1,24 @@
+<div th:fragment="script-variables" xmlns:th="http://www.thymeleaf.org">
+	<script type="text/javascript" th:inline="javascript">
+		var fieldId = /*[[${fieldId}]]*/;
+		var suffix = /*[[${suffix}]]*/;
+		var mainscreen = /*[[${mainscreen}]]*/;
+		var mainreloadurl = /*[[${mainreloadurl}]]*/;
+		var mainreloadid = /*[[${mainreloadid}]]*/;
+		var detailreloadurl = /*[[${detailreloadurl}]]*/;
+		var detailreloadid = /*[[${detailreloadid}]]*/;
+		var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
+		var additionalreloadid = /*[[${additionalreloadid}]]*/;
+		var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
+		var dependentParam = /*[[${dependentParam}]]*/;
+		var resetParam = /*[[${resetParam}]]*/;
+		var searchValue = /*[[${searchValue}]]*/;
+		var tablename = /*[[${tablename}]]*/;
+		var fragmentcode = /*[[${fragmentcode}]]*/;
+		var orderarr = [0, 'desc'];
+	</script>
+</div>
+
 <div th:fragment="LSA11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 
@@ -16,149 +37,44 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'xmenu',
-					rendername : 'xmenu',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA11?xmenu=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xtitle'] +'">' + data + '</a>';
-					}
-				}, {
-					suffix : [0],
-					name : 'xtitle',
-					rendername: 'xtitle',
-				}, {
-					suffix : [0],
-					class: 'text-center',
-					name : 'xpmenu',
-					rendername: 'xpmenu',
-				}, {
-					suffix : [0],
-					name : 'xicon',
-					rendername: 'xicon',
-				}, {
-					suffix : [0],
-					class: 'text-end',
-					name : 'xsequence',
-					rendername: 'xsequence',
+		var columns = [
+			{
+				suffix : [0],
+				name : 'xmenu',
+				rendername : 'xmenu',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA11?xmenu=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xtitle'] +'">' + data + '</a>';
 				}
-			];
+			}, {
+				suffix : [0],
+				name : 'xtitle',
+				rendername: 'xtitle',
+			}, {
+				suffix : [0],
+				class: 'text-center',
+				name : 'xpmenu',
+				rendername: 'xpmenu',
+			}, {
+				suffix : [0],
+				name : 'xicon',
+				rendername: 'xicon',
+			}, {
+				suffix : [0],
+				class: 'text-end',
+				name : 'xsequence',
+				rendername: 'xsequence',
+			}
+		];
 
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LSA11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
-				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
 
 <div th:fragment="LSA12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -172,139 +88,34 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'xscreen',
-					rendername : 'xscreen',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA12?xscreen=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xtitle'] +'">' + data + '</a>';
-					}
-				}, {
-					suffix : [0],
-					name : 'xtitle',
-					rendername: 'xtitle',
-				}, {
-					suffix : [0],
-					name : 'xtype',
-					rendername: 'xtype',
+		var columns = [
+			{
+				suffix : [0],
+				name : 'xscreen',
+				rendername : 'xscreen',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA12?xscreen=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xtitle'] +'">' + data + '</a>';
 				}
-			];
+			}, {
+				suffix : [0],
+				name : 'xtitle',
+				rendername: 'xtitle',
+			}, {
+				suffix : [0],
+				name : 'xtype',
+				rendername: 'xtype',
+			}
+		];
 
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs, 
-				"ajax": {
-					"url": getBasepath() + "/search/LSA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
-				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
 
 <div th:fragment="LSA13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -320,148 +131,43 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'xmenu',
-					rendername : 'xmenu',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA13?xrow=" data-value="'+ row['xrow'] +'" data-prompt="'+ data + ' - ' + row['xscreen'] +'">' + data + '</a>';
-					}
-				}, {
-					suffix : [0],
-					name : 'xscreen',
-					rendername: 'xscreen',
-				}, {
-					suffix : [0],
-					name : 'xscreentitle',
-					rendername: 'xscreentitle',
-				}, {
-					suffix : [0],
-					class: 'text-end',
-					name : 'xscreentype',
-					rendername: 'xscreentype',
-				}, {
-					suffix : [0],
-					name : 'xsequence',
-					rendername: 'xsequence',
+		var columns = [
+			{
+				suffix : [0],
+				name : 'xmenu',
+				rendername : 'xmenu',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA13?xrow=" data-value="'+ row['xrow'] +'" data-prompt="'+ data + ' - ' + row['xscreen'] +'">' + data + '</a>';
 				}
-			];
+			}, {
+				suffix : [0],
+				name : 'xscreen',
+				rendername: 'xscreen',
+			}, {
+				suffix : [0],
+				name : 'xscreentitle',
+				rendername: 'xscreentitle',
+			}, {
+				suffix : [0],
+				class: 'text-end',
+				name : 'xscreentype',
+				rendername: 'xscreentype',
+			}, {
+				suffix : [0],
+				name : 'xsequence',
+				rendername: 'xsequence',
+			}
+		];
 
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LSA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
-				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
 
 <div th:fragment="LAD12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -474,137 +180,30 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'xprofile',
-					rendername : 'xprofile',
-					render: function(data, type, row, meta) {
-						return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
-					}
-				}, {
-					suffix : [0],
-					name : 'xnote',
-					rendername: 'xnote',
+		var columns = [
+			{
+				suffix : [0],
+				name : 'xprofile',
+				rendername : 'xprofile',
+				render: function(data, type, row, meta) {
+					return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
 				}
-			];
+			}, {
+				suffix : [0],
+				name : 'xnote',
+				rendername: 'xnote',
+			}
+		];
 
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(Number(suffix))) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(Number(suffix))) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LAD12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
-				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-					
-					console.log("here");
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LAD13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -618,145 +217,40 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'zemail',
-					rendername : 'zemail',
-					render: function(data, type, row, meta) {
-						return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
-					}
-				}, {
-					suffix : [0],
-					name : 'xstaff',
-					rendername : 'xstaff',
-					render: function(data, type, row, meta) {
-						return data != null && data != '' ? data + ' - ' + row['employeeName'] : '';
-					}
-				}, {
-					suffix : [0],
-					name : 'zactive',
-					rendername: 'zactive',
-					render: function(data, type, row, meta) {
-						return data == true ? 'Y' : 'N';
-					}
+		var columns = [
+			{
+				suffix : [0],
+				name : 'zemail',
+				rendername : 'zemail',
+				render: function(data, type, row, meta) {
+					return "<a style='text-decoration: underline; cursor: pointer;' class='dataindex' href='#' data-value='"+data+"' data-prompt='"+ data +"'>" + data + "</a>";
 				}
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(Number(suffix))) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(Number(suffix))) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LAD13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+			}, {
+				suffix : [0],
+				name : 'xstaff',
+				rendername : 'xstaff',
+				render: function(data, type, row, meta) {
+					return data != null && data != '' ? data + ' - ' + row['employeeName'] : '';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0],
+				name : 'zactive',
+				rendername: 'zactive',
+				render: function(data, type, row, meta) {
+					return data == true ? 'Y' : 'N';
 				}
-			})
-		})
+			}
+		];
+
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LAD17-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -770,140 +264,34 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'xbuid',
-					rendername : 'xbuid',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/AD17?xbuid=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] +'">' + data + '</a>';
-					}
-				}, {
-					suffix : [0],
-					name : 'xname',
-					rendername: 'xname',
-				}, {
-					suffix : [0],
-					name : 'xmadd',
-					rendername: 'xmadd',
+		var columns = [
+			{
+				suffix : [0],
+				name : 'xbuid',
+				rendername : 'xbuid',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/AD17?xbuid=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] +'">' + data + '</a>';
 				}
-			];
+			}, {
+				suffix : [0],
+				name : 'xname',
+				rendername: 'xname',
+			}, {
+				suffix : [0],
+				name : 'xmadd',
+				rendername: 'xmadd',
+			}
+		];
 
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LAD17/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
-				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LMD11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -917,140 +305,34 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'xwh',
-					rendername : 'xwh',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LMD11?xwh=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] +'">' + data + '</a>';
-					}
-				}, {
-					suffix : [0],
-					name : 'xname',
-					rendername: 'xname',
-				}, {
-					suffix : [0],
-					name : 'xlocation',
-					rendername: 'xlocation',
+		var columns = [
+			{
+				suffix : [0],
+				name : 'xwh',
+				rendername : 'xwh',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LMD11?xwh=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] +'">' + data + '</a>';
 				}
-			];
+			}, {
+				suffix : [0],
+				name : 'xname',
+				rendername: 'xname',
+			}, {
+				suffix : [0],
+				name : 'xlocation',
+				rendername: 'xlocation',
+			}
+		];
 
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LMD11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
-				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LMD12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -1068,156 +350,50 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1,2,3,4,5],
-					name : 'xitem',
-					rendername : 'xitem',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LMD12?xitem=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xdesc'] +'">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1,2,3,4,5],
-					name : 'xdesc',
-					rendername: 'xdesc',
-				}, {
-					suffix : [0,1,2,3,4,5],
-					name : 'xunit',
-					rendername: 'xunit',
-				}, {
-					suffix : [0,1,2,3,4,5],
-					name : 'xrate',
-					rendername: 'xrate',
-				}, {
-					suffix : [0,1,2,3,4,5],
-					name : 'xgitem',
-					rendername: 'xgitem',
-				}, {
-					suffix : [0,1,2,3,4,5],
-					name : 'xcatitem',
-					rendername: 'xcatitem',
-				}, {
-					suffix : [0,1,2,3,4,5],
-					name : 'xnote',
-					rendername: 'xnote',
+		var columns = [
+			{
+				suffix : [0,1,2,3,4,5],
+				name : 'xitem',
+				rendername : 'xitem',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LMD12?xitem=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xdesc'] +'">' + data + '</a>';
 				}
-			];
+			}, {
+				suffix : [0,1,2,3,4,5],
+				name : 'xdesc',
+				rendername: 'xdesc',
+			}, {
+				suffix : [0,1,2,3,4,5],
+				name : 'xunit',
+				rendername: 'xunit',
+			}, {
+				suffix : [0,1,2,3,4,5],
+				name : 'xrate',
+				rendername: 'xrate',
+			}, {
+				suffix : [0,1,2,3,4,5],
+				name : 'xgitem',
+				rendername: 'xgitem',
+			}, {
+				suffix : [0,1,2,3,4,5],
+				name : 'xcatitem',
+				rendername: 'xcatitem',
+			}, {
+				suffix : [0,1,2,3,4,5],
+				name : 'xnote',
+				rendername: 'xnote',
+			}
+		];
 
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LMD12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
-				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LFA12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -1233,152 +409,45 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0],
-					name : 'xagcode',
-					rendername : 'xagcode',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA12?xagcode=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0],
-					name : 'xagname',
-					rendername: 'xagname',
-				}, {
-					suffix : [0],
-					name : 'xagtype',
-					rendername: 'xagtype',
-				} , {
-					suffix : [0],
-					name : 'xaglevel',
-					rendername: 'xaglevel',
-				} , {
-					suffix : [0],
-					name : 'xagparent',
-					rendername: 'xagparent',
-					render: function(data, type, row, meta) {
-						return data == null ? '' : data + ' - ' + row['parentName'];
-					}
+		var columns = [
+			{
+				suffix : [0],
+				name : 'xagcode',
+				rendername : 'xagcode',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA12?xagcode=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LFA12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+			}, {
+				suffix : [0],
+				name : 'xagname',
+				rendername: 'xagname',
+			}, {
+				suffix : [0],
+				name : 'xagtype',
+				rendername: 'xagtype',
+			} , {
+				suffix : [0],
+				name : 'xaglevel',
+				rendername: 'xaglevel',
+			} , {
+				suffix : [0],
+				name : 'xagparent',
+				rendername: 'xagparent',
+				render: function(data, type, row, meta) {
+					return data == null ? '' : data + ' - ' + row['parentName'];
 				}
-			});
+			}
+		];
 
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
-
 
 <div th:fragment="LFA13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -1394,159 +463,45 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0, 1],
-					name : 'xacc',
-					rendername : 'xacc',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA13?xacc=" dependentex="'+ row['xaccusage'] +'" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xdesc'] + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0, 1],
-					name : 'xdesc',
-					rendername: 'xdesc',
-				}, {
-					suffix : [0, 1],
-					name : 'xacctype',
-					rendername: 'xacctype',
-				} , {
-					suffix : [0, 1],
-					name : 'xgroup',
-					rendername: 'xgroup',
-					render: function(data, type, row, meta) {
-						return data == null ? '' : data + ' - ' + row['groupName'];
-					}
-				},  {
-					suffix : [0, 1],
-					name : 'xaccusage',
-					rendername: 'xaccusage',
+		var columns = [
+			{
+				suffix : [0, 1],
+				name : 'xacc',
+				rendername : 'xacc',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA13?xacc=" dependentex="'+ row['xaccusage'] +'" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xdesc'] + '">' + data + '</a>';
 				}
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'asc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LFA13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+			}, {
+				suffix : [0, 1],
+				name : 'xdesc',
+				rendername: 'xdesc',
+			}, {
+				suffix : [0, 1],
+				name : 'xacctype',
+				rendername: 'xacctype',
+			} , {
+				suffix : [0, 1],
+				name : 'xgroup',
+				rendername: 'xgroup',
+				render: function(data, type, row, meta) {
+					return data == null ? '' : data + ' - ' + row['groupName'];
 				}
-			});
+			},  {
+				suffix : [0, 1],
+				name : 'xaccusage',
+				rendername: 'xaccusage',
+			}
+		];
 
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					var dependentex = $(this).attr('dependentex');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-
-					if(dependentex){
-						$('input[name="'+ fieldId +'"]').attr('dependentex', dependentex);
-					}
-
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+		orderarr = [0, 'asc'];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
-
-
 
 <div th:fragment="LFA14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -1562,153 +517,44 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1,2,3,4],
-					name : 'xsub',
-					rendername : 'xsub',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA13?xacc=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1,2,3,4],
-					name : 'xname',
-					rendername: 'xname',
-				}, {
-					suffix : [0],
-					name : 'xtype',
-					rendername: 'xtype',
-				} , {
-					suffix : [0,1,2,3,4],
-					name : 'xdesc',
-					rendername: 'xdesc',
-				}, {
-					suffix : [1],
-					name : 'xgcus',
-					rendername: 'xgcus',
-				}, {
-					suffix : [2],
-					name : 'xgsup',
-					rendername: 'xgsup',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LFA14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1,2,3,4],
+				name : 'xsub',
+				rendername : 'xsub',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LFA13?xacc=" data-value="'+ data +'" data-prompt="'+ data + ' - ' + row['xname'] + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
-				}
-			})
-		})
+			}, {
+				suffix : [0,1,2,3,4],
+				name : 'xname',
+				rendername: 'xname',
+			}, {
+				suffix : [0],
+				name : 'xtype',
+				rendername: 'xtype',
+			} , {
+				suffix : [0,1,2,3,4],
+				name : 'xdesc',
+				rendername: 'xdesc',
+			}, {
+				suffix : [1],
+				name : 'xgcus',
+				rendername: 'xgcus',
+			}, {
+				suffix : [2],
+				name : 'xgsup',
+				rendername: 'xgsup',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
-
 
 <div th:fragment="LFA15-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -1724,7 +570,7 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
 			kit.ui.init();
@@ -1865,10 +711,8 @@
 	</script>
 </div>
 
-
 <div th:fragment="LPO12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -1887,170 +731,61 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1],
-					name : 'xpornum',
-					rendername : 'xpornum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LPO12?xpornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1],
-					name : 'xcus',
-					rendername: 'xcus',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['supplierName'];
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xbuid',
-					rendername: 'xbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['businessUnitName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xtotamt',
-					rendername: 'xtotamt',
-				}, {
-					suffix : [0,1],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusord',
-					rendername: 'xstatusord',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LPO12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1],
+				name : 'xpornum',
+				rendername : 'xpornum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LPO12?xpornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1],
+				name : 'xcus',
+				rendername: 'xcus',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['supplierName'];
 				}
-			})
-		})
+			}, {
+				suffix : [0,1],
+				name : 'xbuid',
+				rendername: 'xbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['businessUnitName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xtotamt',
+				rendername: 'xtotamt',
+			}, {
+				suffix : [0,1],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusord',
+				rendername: 'xstatusord',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
-
 
 <div th:fragment="LPO14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -2070,173 +805,65 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1],
-					name : 'xgrnnum',
-					rendername : 'xgrnnum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LPO14?xgrnnum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1],
-					name : 'xcus',
-					rendername: 'xcus',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['supplierName'];
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xbuid',
-					rendername: 'xbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['businessUnitName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xtotamt',
-					rendername: 'xtotamt',
-				}, {
-					suffix : [0,1],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusim',
-					rendername: 'xstatusim',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusjv',
-					rendername: 'xstatusjv',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LPO14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1],
+				name : 'xgrnnum',
+				rendername : 'xgrnnum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LPO14?xgrnnum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1],
+				name : 'xcus',
+				rendername: 'xcus',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['supplierName'];
 				}
-			})
-		})
+			}, {
+				suffix : [0,1],
+				name : 'xbuid',
+				rendername: 'xbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['businessUnitName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xtotamt',
+				rendername: 'xtotamt',
+			}, {
+				suffix : [0,1],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusim',
+				rendername: 'xstatusim',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusjv',
+				rendername: 'xstatusjv',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LIM11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -2255,172 +882,64 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1,2,3],
-					name : 'xtornum',
-					rendername : 'xtornum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM11?xtornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1,2,3],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [3],
-					name : 'xfbuid',
-					rendername: 'xfbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['fromBusinessUnitName'];
-					}
-				} , {
-					suffix : [0,1,2,3],
-					name : 'xfwh',
-					rendername: 'xfwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['fromWarehouseName'];
-					}
-				} , {
-					suffix : [3],
-					name : 'xtbuid',
-					rendername: 'xtbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['toBusinessUnitName'];
-					}
-				} , {
-					suffix : [0,1,2,3],
-					name : 'xtwh',
-					rendername: 'xtwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['toWarehouseName'];
-					}
-				}, {
-					suffix : [0,1,2,3],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1,2,3],
-					name : 'xstatusim',
-					rendername: 'xstatusim',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LIM11/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1,2,3],
+				name : 'xtornum',
+				rendername : 'xtornum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM11?xtornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1,2,3],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [3],
+				name : 'xfbuid',
+				rendername: 'xfbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['fromBusinessUnitName'];
 				}
-			})
-		})
+			} , {
+				suffix : [0,1,2,3],
+				name : 'xfwh',
+				rendername: 'xfwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['fromWarehouseName'];
+				}
+			} , {
+				suffix : [3],
+				name : 'xtbuid',
+				rendername: 'xtbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['toBusinessUnitName'];
+				}
+			} , {
+				suffix : [0,1,2,3],
+				name : 'xtwh',
+				rendername: 'xtwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['toWarehouseName'];
+				}
+			}, {
+				suffix : [0,1,2,3],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1,2,3],
+				name : 'xstatusim',
+				rendername: 'xstatusim',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LIM13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -2438,162 +957,54 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1],
-					name : 'xissuenum',
-					rendername : 'xissuenum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM13?xissuenum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1],
-					name : 'xbuid',
-					rendername: 'xbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['businessUnitName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xisstype',
-					rendername: 'xisstype',
-				} , {
-					suffix : [0,1],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusim',
-					rendername: 'xstatusim',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LIM13/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1],
+				name : 'xissuenum',
+				rendername : 'xissuenum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM13?xissuenum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1],
+				name : 'xbuid',
+				rendername: 'xbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['businessUnitName'];
 				}
-			})
-		})
+			} , {
+				suffix : [0,1],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xisstype',
+				rendername: 'xisstype',
+			} , {
+				suffix : [0,1],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusim',
+				rendername: 'xstatusim',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LIM14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -2611,165 +1022,57 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1],
-					name : 'xbatch',
-					rendername : 'xbatch',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM14?xbatch=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1],
-					name : 'xbuid',
-					rendername: 'xbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['businessUnitName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xitem',
-					rendername: 'xitem',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['itemName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusim',
-					rendername: 'xstatusim',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LIM14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1],
+				name : 'xbatch',
+				rendername : 'xbatch',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM14?xbatch=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1],
+				name : 'xbuid',
+				rendername: 'xbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['businessUnitName'];
 				}
-			})
-		})
+			} , {
+				suffix : [0,1],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xitem',
+				rendername: 'xitem',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['itemName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusim',
+				rendername: 'xstatusim',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LIM15-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -2786,157 +1089,50 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1],
-					name : 'xadjnum',
-					rendername : 'xadjnum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM15?xadjnum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1],
-					name : 'xbuid',
-					rendername: 'xbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['businessUnitName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusim',
-					rendername: 'xstatusim',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LIM15/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1],
+				name : 'xadjnum',
+				rendername : 'xadjnum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM15?xadjnum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1],
+				name : 'xbuid',
+				rendername: 'xbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['businessUnitName'];
 				}
-			})
-		})
+			} , {
+				suffix : [0,1],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusim',
+				rendername: 'xstatusim',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
 
 <div th:fragment="LIM16-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -2953,157 +1149,50 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1],
-					name : 'xopennum',
-					rendername : 'xopennum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM16?xopennum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1],
-					name : 'xbuid',
-					rendername: 'xbuid',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['businessUnitName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusim',
-					rendername: 'xstatusim',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LIM16/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1],
+				name : 'xopennum',
+				rendername : 'xopennum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LIM16?xopennum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1],
+				name : 'xbuid',
+				rendername: 'xbuid',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['businessUnitName'];
 				}
-			})
-		})
+			} , {
+				suffix : [0,1],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusim',
+				rendername: 'xstatusim',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
 
 <div th:fragment="LSO12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -3120,158 +1209,50 @@
 			</table>
 		</div>
 	</div>
-
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
 	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1],
-					name : 'xordernum',
-					rendername : 'xordernum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LSO12?xpornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1],
-					name : 'xcus',
-					rendername: 'xcus',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['customerName'];
-					}
-				}, {
-					suffix : [0,1],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1],
-					name : 'xstatusord',
-					rendername: 'xstatusord',
-				},
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LSO12/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+		var columns = [
+			{
+				suffix : [0,1],
+				name : 'xordernum',
+				rendername : 'xordernum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LSO12?xpornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1],
+				name : 'xcus',
+				rendername: 'xcus',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['customerName'];
 				}
-			})
-		})
+			}, {
+				suffix : [0,1],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1],
+				name : 'xstatusord',
+				rendername: 'xstatusord',
+			},
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
-
 
 <div th:fragment="LSO14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-
 		<div class="table-responsive">
 			<table class="table" th:classappend="${tablename}">
 				<thead>
@@ -3288,151 +1269,45 @@
 			</table>
 		</div>
 	</div>
-
-	<script type="text/javascript" th:inline="javascript">
-		$(document).ready(function() {
-			kit.ui.init();
-
-			var fieldId = /*[[${fieldId}]]*/;
-			var suffix = /*[[${suffix}]]*/;
-			var mainscreen = /*[[${mainscreen}]]*/;
-			var mainreloadurl = /*[[${mainreloadurl}]]*/;
-			var mainreloadid = /*[[${mainreloadid}]]*/;
-			var detailreloadurl = /*[[${detailreloadurl}]]*/;
-			var detailreloadid = /*[[${detailreloadid}]]*/;
-			var additionalreloadurl = /*[[${additionalreloadurl}]]*/;
-			var additionalreloadid = /*[[${additionalreloadid}]]*/;
-			var extrafieldcontroller = /*[[${extrafieldcontroller}]]*/;
-			var dependentParam = /*[[${dependentParam}]]*/;
-			var resetParam = /*[[${resetParam}]]*/;
-			var searchValue = /*[[${searchValue}]]*/;
-
-			var columns = [
-				{
-					suffix : [0,1,2,3,4],
-					name : 'xdornum',
-					rendername : 'xdornum',
-					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LSO14?xdornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
-					}
-				}, {
-					suffix : [0,1,2,3,4],
-					name : 'xdate',
-					rendername: 'xdate',
-				}, {
-					suffix : [0,1,2,3,4],
-					name : 'xcus',
-					rendername: 'xcus',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['customerName'];
-					}
-				}, {
-					suffix : [0,1,2,3,4],
-					name : 'xwh',
-					rendername: 'xwh',
-					render: function(data, type, row, meta) {
-						return data + ' - ' + row['warehouseName'];
-					}
-				} , {
-					suffix : [0,1,2,3,4],
-					name : 'xstatus',
-					rendername: 'xstatus',
-				}, {
-					suffix : [0,1,2,3,4],
-					name : 'xstatusim',
-					rendername: 'xstatusim',
-				}, 
-			];
-
-			var columnDefs = [];
-			var targetCounter = 0;
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					columnDefs.push({
-						name : el.name,
-						targets : targetCounter++,
-					});
-				} 
-			});
-
-			var dataRetreiver = [];
-			$.each(columns, function(index, el){
-				if(el.suffix.includes(0)) {
-					dataRetreiver.push({
-						data : el.rendername,
-						render : el.render,
-						class : el.class
-					});
-				} 
-			});
-
-			var tablename = /*[[${tablename}]]*/;
-			var dt = $('.' + tablename).DataTable({
-				"deferLoading": true,
-				"processing" : true,
-				"serverSide" : true,
-				"order" : [0, 'desc'],
-				"columnDefs": columnDefs,
-				"ajax": {
-					"url": getBasepath() + "/search/LSO14/" + suffix  + '?dependentParam=' + (dependentParam == undefined ? '' : dependentParam),
-					"type": 'POST'
-				},
-				"columns": dataRetreiver,
-				"search": {
-					"search": searchValue
+	<div th:remove="tag" th:include="search-fragments :: script-variables"></div>
+	<script type="text/javascript">
+		var columns = [
+			{
+				suffix : [0,1,2,3,4],
+				name : 'xdornum',
+				rendername : 'xdornum',
+				render: function(data, type, row, meta) {
+					return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/LSO14?xdornum=" data-value="'+ data +'" data-prompt="'+ data + '">' + data + '</a>';
 				}
-			});
-
-			//make ajax to call server
-			dt.draw();
-
-			$('.' + tablename).on('click', 'a.dataindex', function(e){
-				e.preventDefault();
-
-				if(mainscreen == true){
-					$('#searchSuggestTableModal').modal('hide');
-
-					var value = $(this).data('value');
-
-					sectionReloadAjaxReq({
-						id : mainreloadid,
-						url : mainreloadurl + value
-					});
-
-					if(detailreloadid){
-						sectionReloadAjaxReq({
-							id : detailreloadid,
-							url : detailreloadurl + value
-						});
-					}
-
-					if(additionalreloadid){
-						sectionReloadAjaxReq({
-							id : additionalreloadid,
-							url : additionalreloadurl + value
-						});
-					}
-				} else {
-					var prompt = $(this).data('prompt');
-					var value = $(this).data('value');
-
-					$('#searchSuggestTableModal').modal('hide');
-
-					$('input[name="'+ fieldId +'"]').val(value);
-					$('#' + fieldId).val(prompt);
-					
-					if(resetParam != undefined && resetParam != ''){
-						var resetFields = resetParam.split(',');
-						$.each(resetFields, function(i, j){
-							if(j != undefined && j != '') {
-								$('#' + j).val("");
-								$('input[name="'+ j +'"]').val("");
-							}
-						});
-					}
+			}, {
+				suffix : [0,1,2,3,4],
+				name : 'xdate',
+				rendername: 'xdate',
+			}, {
+				suffix : [0,1,2,3,4],
+				name : 'xcus',
+				rendername: 'xcus',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['customerName'];
 				}
-			})
-		})
+			}, {
+				suffix : [0,1,2,3,4],
+				name : 'xwh',
+				rendername: 'xwh',
+				render: function(data, type, row, meta) {
+					return data + ' - ' + row['warehouseName'];
+				}
+			} , {
+				suffix : [0,1,2,3,4],
+				name : 'xstatus',
+				rendername: 'xstatus',
+			}, {
+				suffix : [0,1,2,3,4],
+				name : 'xstatusim',
+				rendername: 'xstatusim',
+			}, 
+		];
 	</script>
+	<script type="text/javascript" th:src="@{/assets/js/kit-search-fragments.js}"></script>
 </div>
 
