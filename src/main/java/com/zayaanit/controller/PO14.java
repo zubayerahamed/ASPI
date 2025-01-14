@@ -272,7 +272,20 @@ public class PO14 extends KitController {
 		}
 
 		Pogrnheader existObj = op.get();
-		BeanUtils.copyProperties(pogrnheader, existObj, "zid", "zuserid", "ztime", "xgrnnum", "xtotamt", "xpornum", "xstatus", "xstatusim", "xstatusjv", "xvoucher", "xstaffsubmit", "xsubmittime", "xtype");
+		String[] ignoreProperties = new String[] {
+			"zid", "zuserid", "ztime",
+			"xgrnnum", 
+			"xtotamt", 
+			"xpornum", 
+			"xstatus", 
+			"xstatusim", 
+			"xstatusjv", 
+			"xvoucher", 
+			"xstaffsubmit", 
+			"xsubmittime", 
+			"xtype"
+		};
+		BeanUtils.copyProperties(pogrnheader, existObj, ignoreProperties);
 
 		// Calculate total amount
 		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXgrnnum());
@@ -320,12 +333,12 @@ public class PO14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(pogrndetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
+		if(pogrndetail.getXrate() == null || pogrndetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid rate");
 			return responseHelper.getResponse();
 		}
 
-		if(pogrndetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(pogrndetail.getXqty() == null || pogrndetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
@@ -334,10 +347,10 @@ public class PO14 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(pogrndetail.getSubmitFor())) {
-			pogrndetail.setXqtyord(BigDecimal.ZERO);
-			pogrndetail.setXqtycrn(BigDecimal.ZERO);
 			pogrndetail.setXdocrow(0);
 			pogrndetail.setXrow(pogrndetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), pogrndetail.getXgrnnum()));
+			pogrndetail.setXqtyord(BigDecimal.ZERO);
+			pogrndetail.setXqtycrn(BigDecimal.ZERO);
 			pogrndetail.setZid(sessionManager.getBusinessId());
 			pogrndetail = pogrndetailRepo.save(pogrndetail);
 
@@ -350,11 +363,29 @@ public class PO14 extends KitController {
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO14/detail-table?xgrnnum=" + pogrndetail.getXgrnnum() + "&xrow=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/PO14/list-table"));
 			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Purchase order detail added successfully");
+			responseHelper.setSuccessStatusAndMessage("Detail added successfully");
 			return responseHelper.getResponse();
 		}
 
-		responseHelper.setErrorStatusAndMessage("Update is not available in this moment!");
+		Optional<Pogrndetail> existOp = pogrndetailRepo.findById(new PogrndetailPK(sessionManager.getBusinessId(), pogrndetail.getXgrnnum(), pogrndetail.getXrow()));
+		if(!existOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Detail not found to do update");
+			return responseHelper.getResponse();
+		}
+
+		Pogrndetail exist = existOp.get();
+		exist.setXqty(pogrndetail.getXqty());
+		exist.setXrate(pogrndetail.getXrate());
+		exist.setXlineamt(exist.getXqty().multiply(exist.getXrate()));
+		exist.setXnote(pogrndetail.getXnote());
+		pogrndetailRepo.save(exist);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=" + exist.getXgrnnum()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/PO14/detail-table?xgrnnum=" + exist.getXgrnnum() + "&xrow=" + exist.getXrow()));
+		reloadSections.add(new ReloadSection("list-table-container", "/PO14/list-table"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Detail updated successfully");
 		return responseHelper.getResponse();
 	}
 
@@ -430,32 +461,45 @@ public class PO14 extends KitController {
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xgrnnum) {
 		Optional<Pogrnheader> oph = pogrnheaderRepo.findById(new PogrnheaderPK(sessionManager.getBusinessId(), xgrnnum));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
+			responseHelper.setErrorStatusAndMessage("Header data not found");
 			return responseHelper.getResponse();
 		}
 
 		Pogrnheader pogrnheader = oph.get();
 
 		if(!"Open".equals(pogrnheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Purchase status not open");
+			responseHelper.setErrorStatusAndMessage("Status not open");
 			return responseHelper.getResponse();
 		}
 
 		if(!"Open".equals(pogrnheader.getXstatusim())) {
-			responseHelper.setErrorStatusAndMessage("Purchase inventory status not open");
+			responseHelper.setErrorStatusAndMessage("Inventory status not open");
 			return responseHelper.getResponse();
 		}
 
-		BigDecimal totalQty = pogrndetailRepo.getTotalQty(sessionManager.getBusinessId(), xgrnnum);
-		if(totalQty.compareTo(BigDecimal.ZERO) == 0 || totalQty.compareTo(BigDecimal.ZERO) == -1) {
-			responseHelper.setErrorStatusAndMessage("Please add item");
+		// validate screen data
+		if(pogrnheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
 			return responseHelper.getResponse();
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String currentDate = sdf.format(new Date());
-		if(!(sdf.format(pogrnheader.getXdate()).equalsIgnoreCase(currentDate))) {
-			responseHelper.setErrorStatusAndMessage("Invalid date");
+		if(pogrnheader.getXbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("Business unit required");
+			return responseHelper.getResponse();
+		}
+
+		if(pogrnheader.getXcus() == null) {
+			responseHelper.setErrorStatusAndMessage("Supplier required");
+			return responseHelper.getResponse();
+		}
+
+		if(pogrnheader.getXwh() == null) {
+			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isBlank(pogrnheader.getXinvnum())) {
+			responseHelper.setErrorStatusAndMessage("Supplier Bill No. required");
 			return responseHelper.getResponse();
 		}
 
@@ -464,10 +508,20 @@ public class PO14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-//		pogrnheader.setXstaffsubmit(sessionManager.getLoggedInUserDetails().getXstaff());
-//		pogrnheader.setXsubmittime(new Date());
-//		pogrnheader.setXstatus("Confirmed");
-//		pogrnheaderRepo.save(pogrnheader);
+		// Detail quantity validation
+		BigDecimal totalQty = pogrndetailRepo.getTotalQty(sessionManager.getBusinessId(), xgrnnum);
+		if(totalQty.compareTo(BigDecimal.ZERO) == 0 || totalQty.compareTo(BigDecimal.ZERO) == -1) {
+			responseHelper.setErrorStatusAndMessage("Please add item");
+			return responseHelper.getResponse();
+		}
+
+		// Is current date
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String currentDate = sdf.format(new Date());
+		if(!(sdf.format(pogrnheader.getXdate()).equalsIgnoreCase(currentDate))) {
+			responseHelper.setErrorStatusAndMessage("Invalid date");
+			return responseHelper.getResponse();
+		}
 
 		// Call the procedure
 		pogrnheaderRepo.PO_ConfirmGRN(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xgrnnum);

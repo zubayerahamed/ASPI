@@ -86,6 +86,7 @@ public class Pogrndetail extends AbstractModel<String> {
 		obj.setXgrnnum(xgrnnum);
 		obj.setSubmitFor(SubmitFor.INSERT);
 		obj.setXqty(BigDecimal.ZERO);
+		obj.setXrate(BigDecimal.ZERO);
 		obj.setXqtyord(BigDecimal.ZERO);
 		obj.setXqtycrn(BigDecimal.ZERO);
 		return obj;

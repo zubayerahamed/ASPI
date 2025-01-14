@@ -100,9 +100,9 @@ public class FA17 extends KitController {
 			return "pages/FA17/FA17-fragments::main-form";
 		}
 
-		if(frommenu == null) return "redirect:/";
+		if(frommenu == null) return "blank";
 
-		if(StringUtils.isNotBlank(xvoucher) && !"RESET".equalsIgnoreCase(xvoucher)) {
+		if(isAjaxRequest(request) && StringUtils.isNotBlank(xvoucher) && !"RESET".equalsIgnoreCase(xvoucher)) {
 			Optional<Acheader> op = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xvoucher)));
 			Acheader acheader = null;
 
@@ -124,6 +124,7 @@ public class FA17 extends KitController {
 			List<Cadoc> cdocList = cadocRepo.findAllByZidAndXscreenAndXtrnnum(sessionManager.getBusinessId(), "FA17", Integer.valueOf(xvoucher));
 			model.addAttribute("documents", cdocList);
 
+			// Details
 			List<Acdetail> detailList = acdetailRepo.findAllByZidAndXvoucher(sessionManager.getBusinessId(), Integer.parseInt(xvoucher));
 			for(Acdetail detail : detailList) {
 				Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), detail.getXacc()));
@@ -136,6 +137,8 @@ public class FA17 extends KitController {
 				if(subAccountOp.isPresent()) detail.setSubAccountName(subAccountOp.get().getXname());
 			}
 			model.addAttribute("detailList", detailList);
+
+			model.addAttribute("acdetail", Acdetail.getDefaultInstance(Integer.parseInt(xvoucher)));
 
 			return "pages/FA17/FA17";
 		}

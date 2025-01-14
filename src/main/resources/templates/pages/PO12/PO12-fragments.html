@@ -275,21 +275,21 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${poorddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Unit</label>
 							<input type="text" class="form-control" th:value="*{xunit}" disabled="disabled">
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${poorddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Quantity</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required">
 						</div>
 					</div>
 					
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${poorddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Rate</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xrate}" required="required">
@@ -303,7 +303,7 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${poorddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
 							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
@@ -335,6 +335,7 @@
 						<th>Line Amount</th>
 						<th>GRN Quantity</th>
 						<th>Note</th>
+						<th th:if="${poordheader.xstatus eq 'Open'}">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -348,6 +349,9 @@
 						<td th:text="${x.xlineamt}"></td>
 						<td th:text="${x.xqtygrn}"></td>
 						<td th:text="${x.xnote}"></td>
+						<td class="text-end" th:if="${poordheader.xstatus eq 'Open'}">
+							<button th:if="${poordheader.xstatus eq 'Open'}" th:attr="data-url=@{/PO12/detail-table?xpornum=} + ${x.xpornum} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -392,23 +396,3 @@
 		})
 	</script>
 </div>
-
-
-<!--<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
-	<script>
-		$(document).ready(function(){
-			kit.ui.init();
-
-			sectionReloadAjaxPostReq({
-				id : 'list-table-container',
-				url : '/search/table/LPO12/0'
-			}, {
-				mainscreen: true, 
-				mainreloadurl: '/PO12?xpornum=',
-				mainreloadid: 'main-form-container',
-				detailreloadurl: '/PO12/detail-table?xrow=RESET&xpornum=',
-				detailreloadid: 'detail-table-container'
-			});
-		})
-	</script>
-</div>-->

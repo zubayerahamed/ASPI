@@ -262,7 +262,12 @@
 							return data + ' - ' +  row['supplierName'];
 						},
 					},
-					{ "data": "xgrnnum" },
+					{ 
+						"data": "xgrnnum", 
+						render: function(data, type, row, meta) {
+							return data == null ? '' : '<a href="#" data-screen="PO15?xgrnnum='+ data +'" class="screen-item">'+ data +'</a>';
+						},
+					},
 					{ "data": "xstatusord" },
 					{ 
 						"data": "xstatusord" ,

@@ -306,12 +306,12 @@ public class PO12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(poorddetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
+		if(poorddetail.getXrate() == null || poorddetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid rate");
 			return responseHelper.getResponse();
 		}
 
-		if(poorddetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(poorddetail.getXqty() == null || poorddetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
@@ -438,23 +438,45 @@ public class PO12 extends KitController {
 		Poordheader poordheader = oph.get();
 
 		if(!"Open".equals(poordheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Purchase order status not open");
+			responseHelper.setErrorStatusAndMessage("Status not open");
 			return responseHelper.getResponse();
 		}
 
 		if(!"Open".equals(poordheader.getXstatusord())) {
-			responseHelper.setErrorStatusAndMessage("Purchase order Order status not open");
+			responseHelper.setErrorStatusAndMessage("Order Order status not open");
 			return responseHelper.getResponse();
 		}
 
-		BigDecimal totalQty = poorddetailRepo.getTotalQty(sessionManager.getBusinessId(), xpornum);
-		if(totalQty.compareTo(BigDecimal.ZERO) == 0 || totalQty.compareTo(BigDecimal.ZERO) == -1) {
-			responseHelper.setErrorStatusAndMessage("Please add item");
+		// Screen data validation
+		if(poordheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
+		}
+
+		if(poordheader.getXbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("Business unit required");
+			return responseHelper.getResponse();
+		}
+
+		if(poordheader.getXcus() == null) {
+			responseHelper.setErrorStatusAndMessage("Supplier required");
+			return responseHelper.getResponse();
+		}
+
+		if(poordheader.getXwh() == null) {
+			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
 			return responseHelper.getResponse();
 		}
 
 		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
 			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
+			return responseHelper.getResponse();
+		}
+
+		// Quantity validation
+		BigDecimal totalQty = poorddetailRepo.getTotalQty(sessionManager.getBusinessId(), xpornum);
+		if(totalQty.compareTo(BigDecimal.ZERO) == 0 || totalQty.compareTo(BigDecimal.ZERO) == -1) {
+			responseHelper.setErrorStatusAndMessage("Please add item");
 			return responseHelper.getResponse();
 		}
 

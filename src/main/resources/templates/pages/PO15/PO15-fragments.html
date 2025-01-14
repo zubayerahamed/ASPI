@@ -35,7 +35,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Date</label>
 							<div class="input-group">
@@ -52,7 +52,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Business Unit</label>
 							<div class="input-group">
@@ -75,11 +75,11 @@
 					</div>
 					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Supplier</label>
-							<input type="text" class="form-control" th:value="${pogrnheader.xcus ne null ? pogrnheader.xcus + ' - ' + pogrnheader.supplierName : ''}">
+							<label class="form-label">Supplier</label>
+							<input type="text" class="form-control" th:value="${pogrnheader.xcus ne null ? pogrnheader.xcus + ' - ' + pogrnheader.supplierName : ''}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Store/Warehouse</label>
 							<div class="input-group">
@@ -100,7 +100,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Reference</label>
 							<input type="text" class="form-control" th:field="*{xref}">
@@ -119,7 +119,7 @@
 						</div>
 					</div>
 					
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Supplier Bill No.</label>
 							<input type="text" class="form-control" th:field="*{xinvnum}" required="required">
@@ -150,10 +150,16 @@
 					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
-							<a href="#" th:attr="data-screen='FA17?xvoucher=' + ${pogrnheader.xvoucher}" class="screen-item form-control" th:text="${pogrnheader.xvoucher}"></a>
+							<input type="text" th:if="${pogrnheader.xvoucher eq null}" class="form-control" disabled>
+							<a 	href="#" 
+								th:if="${pogrnheader.xvoucher ne null}" 
+								th:attr="data-screen='FA17?xvoucher=' + ${pogrnheader.xvoucher}" 
+								class="screen-item form-control" 
+								th:text="${pogrnheader.xvoucher}">
+							</a>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
 							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
@@ -257,21 +263,21 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Unit</label>
 							<input type="text" class="form-control" th:value="*{xunit}" disabled="disabled">
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Quantity</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required">
 						</div>
 					</div>
 					
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Rate</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xrate}" required="required">
@@ -285,7 +291,7 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
 							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
@@ -313,9 +319,9 @@
 						<th>Item</th>
 						<th>Unit</th>
 						<th>Quantity</th>
-						<th>Order Quantity</th>
 						<th>Rate</th>
 						<th>Line Amount</th>
+						<th>Order Quantity</th>
 						<th>Return Quantity</th>
 						<th>Note</th>
 					</tr>
@@ -327,9 +333,9 @@
 						</td>
 						<td th:text="${x.xunit}"></td>
 						<td th:text="${x.xqty}"></td>
-						<td th:text="${x.xqtyord}"></td>
 						<td th:text="${x.xrate}"></td>
 						<td th:text="${x.xlineamt}"></td>
+						<td th:text="${x.xqtyord}"></td>
 						<td th:text="${x.xqtycrn}"></td>
 						<td th:text="${x.xnote}"></td>
 					</tr>

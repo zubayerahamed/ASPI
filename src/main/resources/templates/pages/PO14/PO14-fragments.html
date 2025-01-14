@@ -159,7 +159,13 @@
 					<div class="col-md-3" th:if="${pogrnheader.xgrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
-							<a href="#" th:attr="data-screen='FA17?xvoucher=' + ${pogrnheader.xvoucher}" class="screen-item form-control" th:text="${pogrnheader.xvoucher}"></a>
+							<input type="text" th:if="${pogrnheader.xvoucher eq null}" class="form-control" disabled>
+							<a 	href="#" 
+								th:if="${pogrnheader.xvoucher ne null}" 
+								th:attr="data-screen='FA17?xvoucher=' + ${pogrnheader.xvoucher}" 
+								class="screen-item form-control" 
+								th:text="${pogrnheader.xvoucher}">
+							</a>
 						</div>
 					</div>
 					<div class="col-md-3">
@@ -267,21 +273,21 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Unit</label>
 							<input type="text" class="form-control" th:value="*{xunit}" disabled="disabled">
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Quantity</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required">
 						</div>
 					</div>
 					
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Rate</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xrate}" required="required">
@@ -295,7 +301,7 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pogrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
 							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
@@ -309,6 +315,7 @@
 					</div>
 					<div>
 						<button th:if="${pogrndetail.xrow ne 0}" th:attr="data-url=@{/PO14/detail-table?xgrnnum=} + ${pogrndetail.xgrnnum} + '&xrow=' + ${pogrndetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${pogrndetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${pogrndetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
 				</div>
@@ -322,11 +329,11 @@
 						<th>Item</th>
 						<th>Unit</th>
 						<th>Quantity</th>
-						<th>Order Quantity</th>
 						<th>Rate</th>
 						<th>Line Amount</th>
 						<th>Return Quantity</th>
 						<th>Note</th>
+						<th th:if="${pogrnheader.xstatus eq 'Open'}"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -336,11 +343,13 @@
 						</td>
 						<td th:text="${x.xunit}"></td>
 						<td th:text="${x.xqty}"></td>
-						<td th:text="${x.xqtyord}"></td>
 						<td th:text="${x.xrate}"></td>
 						<td th:text="${x.xlineamt}"></td>
 						<td th:text="${x.xqtycrn}"></td>
 						<td th:text="${x.xnote}"></td>
+						<td th:if="${pogrnheader.xstatus eq 'Open'}" class="text-end">
+							<button th:if="${x.xrow ne 0}" th:attr="data-url=@{/PO14/detail-table?xgrnnum=} + ${x.xgrnnum} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
