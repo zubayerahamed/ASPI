@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.MyUserDetails;
@@ -74,6 +76,10 @@ public class AD11 extends KitController{
 		if(StringUtils.isBlank(zb.getXrptpath())) zb.setXrptpath("C:\\Reports");
 		if(zb.getXlogo() != null && zb.getXlogo().length > 0) {
 			zb.setImageBase64(Base64.getEncoder().encodeToString(zb.getXlogo()));
+		}
+		if(zb.getXposcus() != null) {
+			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), zb.getXposcus()));
+			if(acsubOp.isPresent()) zb.setCustomerName(acsubOp.get().getXname());
 		}
 
 		model.addAttribute("doctypesList", Arrays.asList(zb.getXdoctypes().split(",")));

@@ -1,6 +1,7 @@
 package com.zayaanit.controller;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Cabunit;
+import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Xfavourites;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xmenuscreens;
@@ -28,18 +31,24 @@ import com.zayaanit.entity.Xprofilesdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserprofiles;
 import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcsubPK;
+import com.zayaanit.entity.pk.CabunitPK;
+import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.XfavouritesPK;
 import com.zayaanit.entity.pk.XmenusPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
+import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.entity.validator.ModelValidator;
 import com.zayaanit.model.MenuTree;
 import com.zayaanit.model.MyUserDetails;
 import com.zayaanit.model.StockDetail;
 import com.zayaanit.repository.AcsubRepo;
+import com.zayaanit.repository.CabunitRepo;
+import com.zayaanit.repository.CaitemRepo;
 import com.zayaanit.repository.ImcurstockviewRepo;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.repository.XfavouritesRepo;
@@ -50,6 +59,7 @@ import com.zayaanit.repository.XprofilesdtRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
+import com.zayaanit.repository.XwhsRepo;
 import com.zayaanit.repository.ZbusinessRepo;
 import com.zayaanit.service.PrintingService;
 
@@ -78,6 +88,9 @@ public abstract class KitController extends BaseController {
 	@Autowired protected XfavouritesRepo xfavouritesRepo;
 	@Autowired protected XprofilesdtRepo xprofilesdtRepo;
 	@Autowired protected ImcurstockviewRepo stockRepo;
+	@Autowired private CaitemRepo caitemRepo;
+	@Autowired private XwhsRepo xwhsRepo;
+	@Autowired private CabunitRepo cabunitRepo;
 
 	protected List<StockDetail> unavailableStockList = new ArrayList<>();
 
@@ -360,5 +373,38 @@ public abstract class KitController extends BaseController {
 	public String errorDetails(Model model) {
 		model.addAttribute("stockErrors", unavailableStockList);
 		return "commons::error-details";
+	}
+
+	protected void prepareUnavailableStockList(Map<Integer, BigDecimal> qtyMap, Integer business, Integer store) {
+		if(unavailableStockList != null && !unavailableStockList.isEmpty()) {
+			unavailableStockList.clear();
+		} else {
+			unavailableStockList = new ArrayList<>();
+		}
+
+		for(Map.Entry<Integer, BigDecimal> itemMap : qtyMap.entrySet()) {
+			BigDecimal stock = stockRepo.getCurrentStock(sessionManager.getBusinessId(), business, store, itemMap.getKey());
+
+			if(stock.compareTo(itemMap.getValue()) == -1) {
+				StockDetail sd = new StockDetail();
+				sd.setItemCode(itemMap.getKey());
+				sd.setReqQty(itemMap.getValue());
+				sd.setAvailableQty(stock);
+				sd.setDeviation(itemMap.getValue().subtract(stock));
+				sd.setFromStoreCode(store);
+				sd.setFromBusienssCode(business);
+
+				Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), itemMap.getKey()));
+				if(caitemOp.isPresent()) sd.setItemName(caitemOp.get().getXdesc());
+
+				Optional<Xwhs> storeOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), store));
+				if(storeOp.isPresent()) sd.setFromStoreName(storeOp.get().getXname());
+
+				Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), business));
+				if(cabunitOp.isPresent()) sd.setFromBusinessUnitName(cabunitOp.get().getXname());
+
+				unavailableStockList.add(sd);
+			}
+		}
 	}
 }

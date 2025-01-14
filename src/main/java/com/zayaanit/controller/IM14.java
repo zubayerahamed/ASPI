@@ -688,31 +688,8 @@ public class IM14 extends KitController {
 				qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
 			}
 		}
-		unavailableStockList = new ArrayList<>();
-		for(Map.Entry<Integer, BigDecimal> itemMap : qtyMap.entrySet()) {
-			BigDecimal stock = stockRepo.getCurrentStock(sessionManager.getBusinessId(), moheader.getXbuid(), moheader.getXwh(), itemMap.getKey());
 
-			if(stock.compareTo(itemMap.getValue()) == -1) {
-				StockDetail sd = new StockDetail();
-				sd.setItemCode(itemMap.getKey());
-				sd.setReqQty(itemMap.getValue());
-				sd.setAvailableQty(stock);
-				sd.setDeviation(itemMap.getValue().subtract(stock));
-				sd.setFromStoreCode(moheader.getXwh());
-				sd.setFromBusienssCode(moheader.getXbuid());
-
-				Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), itemMap.getKey()));
-				if(caitemOp.isPresent()) sd.setItemName(caitemOp.get().getXdesc());
-
-				Optional<Xwhs> storeOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), moheader.getXwh()));
-				if(storeOp.isPresent()) sd.setFromStoreName(storeOp.get().getXname());
-
-				Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), moheader.getXbuid()));
-				if(cabunitOp.isPresent()) sd.setFromBusinessUnitName(cabunitOp.get().getXname());
-
-				unavailableStockList.add(sd);
-			}
-		}
+		prepareUnavailableStockList(qtyMap, moheader.getXbuid(), moheader.getXwh());
 
 		if(!unavailableStockList.isEmpty()) {
 			responseHelper.setShowErrorDetailModal(true);

@@ -70,6 +70,10 @@ public class FA11 extends KitController {
 			Optional<Acmst> acmstOp = acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), acdef.getXaccpl()));
 			if(acmstOp.isPresent()) acdef.setAccountName(acmstOp.get().getXdesc());
 		}
+		if(acdef.getXaccmc() != null) {
+			Optional<Acmst> acmstOp = acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), acdef.getXaccmc()));
+			if(acmstOp.isPresent()) acdef.setCostAccountName(acmstOp.get().getXdesc());
+		}
 		model.addAttribute("acdef", acdef);
 		if(isAjaxRequest(request) && frommenu == null) return "pages/FA11/FA11-fragments::main-form";
 		if(frommenu == null) return "redirect:/";

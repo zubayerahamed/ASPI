@@ -49,8 +49,14 @@ public class Acdef extends AbstractModel<String> {
 	@Column(name = "xcldate")
 	private Date xcldate;
 
+	@Column(name = "xaccmc")
+	private Integer xaccmc;
+
 	@Transient
 	private String accountName;
+
+	@Transient
+	private String costAccountName;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;

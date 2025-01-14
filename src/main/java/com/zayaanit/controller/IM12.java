@@ -40,7 +40,6 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.model.StockDetail;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -508,31 +507,8 @@ public class IM12 extends KitController {
 				qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
 			}
 		}
-		unavailableStockList = new ArrayList<>();
-		for(Map.Entry<Integer, BigDecimal> itemMap : qtyMap.entrySet()) {
-			BigDecimal stock = stockRepo.getCurrentStock(sessionManager.getBusinessId(), imtorheader.getXfbuid(), imtorheader.getXfwh(), itemMap.getKey());
 
-			if(stock.compareTo(itemMap.getValue()) == -1) {
-				StockDetail sd = new StockDetail();
-				sd.setItemCode(itemMap.getKey());
-				sd.setReqQty(itemMap.getValue());
-				sd.setAvailableQty(stock);
-				sd.setDeviation(itemMap.getValue().subtract(stock));
-				sd.setFromStoreCode(imtorheader.getXfwh());
-				sd.setFromBusienssCode(imtorheader.getXfbuid());
-
-				Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), itemMap.getKey()));
-				if(caitemOp.isPresent()) sd.setItemName(caitemOp.get().getXdesc());
-
-				Optional<Xwhs> storeOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), imtorheader.getXfwh()));
-				if(storeOp.isPresent()) sd.setFromStoreName(storeOp.get().getXname());
-
-				Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), imtorheader.getXfbuid()));
-				if(cabunitOp.isPresent()) sd.setFromBusinessUnitName(cabunitOp.get().getXname());
-
-				unavailableStockList.add(sd);
-			}
-		}
+		prepareUnavailableStockList(qtyMap, imtorheader.getXfbuid(), imtorheader.getXfwh());
 
 		if(!unavailableStockList.isEmpty()) {
 			responseHelper.setShowErrorDetailModal(true);

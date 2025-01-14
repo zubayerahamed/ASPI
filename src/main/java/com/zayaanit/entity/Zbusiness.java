@@ -84,4 +84,7 @@ public class Zbusiness extends AbstractModel<String> {
 
 	@Transient
 	private String imageBase64;
+
+	@Transient
+	private String customerName;
 }

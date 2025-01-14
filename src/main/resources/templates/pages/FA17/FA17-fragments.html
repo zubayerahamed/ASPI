@@ -166,8 +166,6 @@
 					<tr>
 						<th>Account</th>
 						<th>Sub Account</th>
-						<th>Particular</th>
-						<th>Prime Amount</th>
 						<th>Debit</th>
 						<th>Credit</th>
 					</tr>
@@ -176,8 +174,6 @@
 					<tr th:each="x : ${detailList}">
 						<td th:text="${x.xacc ne null ? x.xacc + ' - ' + x.accountName : ''}"></td>
 						<td th:text="${x.xsub != null ? x.xsub + ' - ' + x.subAccountName : ''}"></td>
-						<td th:text="${x.xnote}"></td>
-						<td th:text="${x.xprime}"></td>
 						<td th:text="${x.xdebit}"></td>
 						<td th:text="${x.xcredit}"></td>
 					</tr>
