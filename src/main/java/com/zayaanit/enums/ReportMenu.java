@@ -22,6 +22,9 @@ public enum ReportMenu {
 	pocrn("PO16", "Print Return", "pocrn.rpt", ReportParamMap.pocrn, "Y", false),
 	opcrn("PO16", "Print Return", "opcrn.rpt", ReportParamMap.opcrn, "Y", false),
 
+	opord("SO12", "Print Order", "opord.rpt", ReportParamMap.opord, "Y", false),
+	opordinv("SO12", "Print Invoice", "opordinv.rpt", ReportParamMap.opordinv, "Y", false),
+
 	// REPORT MODULES REPORT
 	R101("R101", "User Listing Report", "R101.rpt", ReportParamMap.R101, "Y", false),
 	R102("R102", "Profile Wise Access Report", "R102.rpt", ReportParamMap.R102, "Y", false),

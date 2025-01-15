@@ -1,8 +1,8 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='poord'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Order</button>
-			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='poordgrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print GRNs</button>
+			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opord'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Order</button>
+			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opordinv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Invoice</button>
 			<button th:if="${opordheader.xordernum ne null and opordheader.xstatus eq 'Open' and opordheader.xstatusord eq 'Open'}" th:attr="data-url=@{/SO12/confirm?xordernum=} + ${opordheader.xordernum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 
@@ -287,21 +287,21 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${oporddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Unit</label>
 							<input type="text" class="form-control" th:value="*{xunit}" disabled="disabled">
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${oporddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Quantity</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required">
 						</div>
 					</div>
 					
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${oporddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Rate</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xrate}" required="required">
@@ -315,7 +315,7 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${oporddetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
 							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
@@ -329,7 +329,6 @@
 					</div>
 					<div>
 						<button th:if="${oporddetail.xrow ne 0}" th:attr="data-url=@{/SO12/detail-table?xordernum=} + ${oporddetail.xordernum} + '&xrow=' + ${oporddetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<!-- <button th:if="${oporddetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button> -->
 						<button th:if="${oporddetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
 				</div>
@@ -347,6 +346,7 @@
 						<th>Line Amount</th>
 						<th>Invoice Quantity</th>
 						<th>Note</th>
+						<th th:if="${opordheader.xstatus eq 'Open'}"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -360,6 +360,9 @@
 						<td th:text="${x.xlineamt}"></td>
 						<td th:text="${x.xqtydel}"></td>
 						<td th:text="${x.xnote}"></td>
+						<td th:if="${opordheader.xstatus eq 'Open'}" class="text-end">
+							<button th:if="${x.xrow ne 0}" th:attr="data-url=@{/SO12/detail-table?xordernum=} + ${x.xordernum} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -404,23 +407,3 @@
 		})
 	</script>
 </div>
-
-
-<!--<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
-	<script>
-		$(document).ready(function(){
-			kit.ui.init();
-
-			sectionReloadAjaxPostReq({
-				id : 'list-table-container',
-				url : '/search/table/LSO12/0'
-			}, {
-				mainscreen: true, 
-				mainreloadurl: '/SO12?xordernum=',
-				mainreloadid: 'main-form-container',
-				detailreloadurl: '/SO12/detail-table?xrow=RESET&xordernum=',
-				detailreloadid: 'detail-table-container'
-			});
-		})
-	</script>
-</div>-->

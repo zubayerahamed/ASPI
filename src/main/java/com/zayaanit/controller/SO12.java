@@ -241,7 +241,7 @@ public class SO12 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(opordheader.getSubmitFor())) {
 			opordheader.setXlineamt(BigDecimal.ZERO);
-			if(opordheader.getXdiscamt() == null) opordheader.setXdiscamt(BigDecimal.ZERO);
+			opordheader.setXdiscamt(BigDecimal.ZERO);
 			opordheader.setXtotamt(BigDecimal.ZERO);
 			opordheader.setXstatus("Open");
 			opordheader.setXstatusord("Open");
@@ -271,6 +271,8 @@ public class SO12 extends KitController {
 		}
 
 		Opordheader existObj = op.get();
+
+		if(opordheader.getXdiscamt() == null) opordheader.setXdiscamt(BigDecimal.ZERO);
 
 		if(opordheader.getXdiscamt().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid discount amount.");
@@ -342,12 +344,12 @@ public class SO12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(oporddetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
+		if(oporddetail.getXrate() == null || oporddetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid rate");
 			return responseHelper.getResponse();
 		}
 
-		if(oporddetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(oporddetail.getXqty() == null || oporddetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
@@ -377,28 +379,6 @@ public class SO12 extends KitController {
 
 		responseHelper.setErrorStatusAndMessage("Update is not applicatble here");
 		return responseHelper.getResponse();
-
-//		Optional<Oporddetail> existOp = oporddetailRepo.findById(new OporddetailPK(sessionManager.getBusinessId(), oporddetail.getXordernum(), oporddetail.getXrow()));
-//		if(!existOp.isPresent()) {
-//			responseHelper.setErrorStatusAndMessage("Detail not found in this system");
-//			return responseHelper.getResponse();
-//		}
-//
-//		Oporddetail exist = existOp.get();
-//		BeanUtils.copyProperties(oporddetail, exist, "zid", "zuserid", "ztime", "xordernum", "xrow", "xitem", "xqtydel");
-//		exist = oporddetailRepo.save(exist);
-//
-//		BigDecimal xtotamt = oporddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), exist.getXordernum());
-//		opordheader.setXtotamt(xtotamt);
-//		opordheaderRepo.save(opordheader);
-//
-//		List<ReloadSection> reloadSections = new ArrayList<>();
-//		reloadSections.add(new ReloadSection("main-form-container", "/SO12?xordernum=" + oporddetail.getXordernum()));
-//		reloadSections.add(new ReloadSection("detail-table-container", "/SO12/detail-table?xordernum=" + oporddetail.getXordernum() + "&xrow=" + exist.getXrow()));
-//		reloadSections.add(new ReloadSection("list-table-container", "/SO12/list-table"));
-//		responseHelper.setReloadSections(reloadSections);
-//		responseHelper.setSuccessStatusAndMessage("Detail updated successfully");
-//		return responseHelper.getResponse();
 	}
 
 	@Transactional
@@ -492,6 +472,28 @@ public class SO12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		// Check screen data
+		if(opordheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
+		}
+
+		if(opordheader.getXbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("Business unit required");
+			return responseHelper.getResponse();
+		}
+
+		if(opordheader.getXcus() == null) {
+			responseHelper.setErrorStatusAndMessage("Customer required");
+			return responseHelper.getResponse();
+		}
+
+		if(opordheader.getXwh() == null) {
+			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
+			return responseHelper.getResponse();
+		}
+
+		// validate quantity
 		BigDecimal totalQty = oporddetailRepo.getTotalQty(sessionManager.getBusinessId(), xordernum);
 		if(totalQty.compareTo(BigDecimal.ZERO) == 0 || totalQty.compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Please add item");
