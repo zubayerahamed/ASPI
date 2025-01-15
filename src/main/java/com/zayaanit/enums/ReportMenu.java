@@ -15,8 +15,12 @@ public enum ReportMenu {
 
 	poord("PO12", "Print Order", "poord.rpt", ReportParamMap.poord, "Y", false),
 	poordgrn("PO12", "Print GRNs", "poordgrn.rpt", ReportParamMap.poordgrn, "Y", false),
+
 	pogrn("PO14", "Print GRN", "pogrn.rpt", ReportParamMap.pogrn, "Y", false),
 	pogrnbill("PO14", "Print Bill", "pogrnbill.rpt", ReportParamMap.pogrnbill, "Y", false),
+
+	pocrn("PO16", "Print Return", "pocrn.rpt", ReportParamMap.pocrn, "Y", false),
+	opcrn("PO16", "Print Return", "opcrn.rpt", ReportParamMap.opcrn, "Y", false),
 
 	// REPORT MODULES REPORT
 	R101("R101", "User Listing Report", "R101.rpt", ReportParamMap.R101, "Y", false),

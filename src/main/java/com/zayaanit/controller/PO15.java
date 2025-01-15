@@ -419,7 +419,7 @@ public class PO15 extends KitController {
 
 		BigDecimal difference = pogrndetail.getXqty().subtract(existObj.getXqty());
 		if(difference.compareTo(BigDecimal.ZERO) == 0) {
-			
+			// Do nothing
 		}
 
 		if(difference.compareTo(BigDecimal.ZERO) == 1 && difference.add(orderdetail.getXqtygrn()).compareTo(orderdetail.getXqty()) == 1) {
@@ -589,7 +589,7 @@ public class PO15 extends KitController {
 		}
 
 		if(StringUtils.isBlank(pogrnheader.getXinvnum())) {
-			responseHelper.setErrorStatusAndMessage("Supplier Bill No. required");
+			responseHelper.setErrorStatusAndMessage("Supplier Bill No. required, Please add supplier bill no and update the header");
 			return responseHelper.getResponse();
 		}
 

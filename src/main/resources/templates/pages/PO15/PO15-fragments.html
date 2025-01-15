@@ -324,6 +324,7 @@
 						<th>Order Quantity</th>
 						<th>Return Quantity</th>
 						<th>Note</th>
+						<th th:if="${pogrnheader.xstatus eq 'Open'}"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -338,6 +339,9 @@
 						<td th:text="${x.xqtyord}"></td>
 						<td th:text="${x.xqtycrn}"></td>
 						<td th:text="${x.xnote}"></td>
+						<td th:if="${pogrnheader.xstatus eq 'Open'}" class="text-end">
+							<button th:if="${x.xrow ne 0 and x.xdocrow eq 0}" th:attr="data-url=@{/PO15/detail-table?xgrnnum=} + ${x.xgrnnum} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -379,26 +383,6 @@
 				});
 			});
 
-		})
-	</script>
-</div>
-
-
-<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
-	<script>
-		$(document).ready(function(){
-			kit.ui.init();
-
-			sectionReloadAjaxPostReq({
-				id : 'list-table-container',
-				url : '/search/table/LPO15/3'
-			}, {
-				mainscreen: true, 
-				mainreloadurl: '/PO15?xgrnnum=',
-				mainreloadid: 'main-form-container',
-				detailreloadurl: '/PO15/detail-table?xrow=RESET&xgrnnum=',
-				detailreloadid: 'detail-table-container'
-			});
 		})
 	</script>
 </div>

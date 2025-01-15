@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +28,8 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Pocrndetail;
 import com.zayaanit.entity.Pocrnheader;
+import com.zayaanit.entity.Pogrndetail;
+import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -35,6 +37,8 @@ import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.PocrndetailPK;
 import com.zayaanit.entity.pk.PocrnheaderPK;
+import com.zayaanit.entity.pk.PogrndetailPK;
+import com.zayaanit.entity.pk.PogrnheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
@@ -44,6 +48,8 @@ import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
 import com.zayaanit.repository.PocrndetailRepo;
 import com.zayaanit.repository.PocrnheaderRepo;
+import com.zayaanit.repository.PogrndetailRepo;
+import com.zayaanit.repository.PogrnheaderRepo;
 import com.zayaanit.repository.XwhsRepo;
 
 /**
@@ -63,6 +69,8 @@ public class PO17 extends KitController {
 	@Autowired private PocrndetailRepo pocrndetailRepo;
 	@Autowired private XwhsRepo xwhsRepo;
 	@Autowired private CaitemRepo caitemRepo;
+	@Autowired private PogrnheaderRepo pogrnheaderRepo;
+	@Autowired private PogrndetailRepo pogrndetailRepo;
 
 	private String pageTitle = null;
 
@@ -208,18 +216,44 @@ public class PO17 extends KitController {
 		modelValidator.validatePocrnheader(pocrnheader, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
+		if(pocrnheader.getXgrnnum() == null) {
+			responseHelper.setErrorStatusAndMessage("GRN No. required");
+			return responseHelper.getResponse();
+		}
+
+		Optional<Pogrnheader> pogrnheaderOp = pogrnheaderRepo.findById(new PogrnheaderPK(sessionManager.getBusinessId(), pocrnheader.getXgrnnum()));
+		if(!pogrnheaderOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Invalid GRN number");
+			return responseHelper.getResponse();
+		}
+
+		Pogrnheader pogrnheader = pogrnheaderOp.get();
+
+		// check pending return
+		if(pocrnheader.getXcrnnum() == null) {
+			if(pocrnheaderRepo.getTotalPendingReturn(sessionManager.getBusinessId(), pogrnheader.getXgrnnum()) > 0) {
+				responseHelper.setErrorStatusAndMessage("Pending return found. Confirm/delete pending return first");
+				return responseHelper.getResponse();
+			}
+
+			if(pogrnheaderRepo.isInvalidGRN(sessionManager.getBusinessId(), pogrnheader.getXgrnnum()) == 0) {
+				responseHelper.setErrorStatusAndMessage("Invalid GRN Number");
+				return responseHelper.getResponse();
+			}
+		} else {
+			if(pocrnheaderRepo.getTotalPendingReturn(sessionManager.getBusinessId(), pogrnheader.getXgrnnum(), pocrnheader.getXcrnnum()) > 0) {
+				responseHelper.setErrorStatusAndMessage("Pending return found. Confirm/delete pending return first");
+				return responseHelper.getResponse();
+			}
+		}
+
 		if(pocrnheader.getXdate() == null) {
 			responseHelper.setErrorStatusAndMessage("Date required");
 			return responseHelper.getResponse();
 		}
 
-		if(pocrnheader.getXbuid() == null) {
-			responseHelper.setErrorStatusAndMessage("Business unit required");
-			return responseHelper.getResponse();
-		}
-
-		if(pocrnheader.getXcus() == null) {
-			responseHelper.setErrorStatusAndMessage("Supplier required");
+		if(pocrnheader.getXdate().before(pogrnheader.getXdate())) {
+			responseHelper.setErrorStatusAndMessage("Date can't be before GRN date");
 			return responseHelper.getResponse();
 		}
 
@@ -237,21 +271,30 @@ public class PO17 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(pocrnheader.getSubmitFor())) {
-			pocrnheader.setXtotamt(BigDecimal.ZERO);
-			pocrnheader.setXstatus("Open");
-			pocrnheader.setXstatusim("Open");
-			pocrnheader.setXstatusjv("Open");
-			pocrnheader.setXtype("Direct Return");
-			pocrnheader.setXcrnnum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "PO17"));
-			pocrnheader.setZid(sessionManager.getBusinessId());
-			pocrnheader = pocrnheaderRepo.save(pocrnheader);
+			Integer xcrnnum = xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "PO16");
+			pocrnheaderRepo.PO_CreateReturnfromGRN(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum, pogrnheader.getXgrnnum());
+
+			Optional<Pocrnheader> pocrnheaderOp = pocrnheaderRepo.findById(new PocrnheaderPK(sessionManager.getBusinessId(), xcrnnum));
+			if(!pocrnheaderOp.isPresent()) {
+				responseHelper.setErrorStatusAndMessage("Header data not found with Return No. " + xcrnnum);
+				return responseHelper.getResponse();
+			}
+
+			Pocrnheader exist = pocrnheaderOp.get();
+			exist.setXdate(pocrnheader.getXdate());
+			exist.setXwh(pocrnheader.getXwh());
+			exist.setXref(pocrnheader.getXref());
+			exist.setXnote(pocrnheader.getXnote());
+			exist.setXtype("GRN Return");
+			exist.setXstaff(pocrnheader.getXstaff());
+			exist = pocrnheaderRepo.save(exist);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + pocrnheader.getXcrnnum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+ pocrnheader.getXcrnnum() +"&xrow=RESET"));
+			reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + exist.getXcrnnum()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+ exist.getXcrnnum() +"&xrow=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Purchase created successfully");
+			responseHelper.setSuccessStatusAndMessage("Return created successfully");
 			return responseHelper.getResponse();
 		}
 
@@ -268,21 +311,11 @@ public class PO17 extends KitController {
 		}
 
 		Pocrnheader existObj = op.get();
-		String[] ignoreProperties = new String[] {
-			"zid", "zuserid", "ztime",
-			"xcrnnum", 
-			"xtotamt",
-			"xtotcost",
-			"xgrnnum",
-			"xstatus", 
-			"xstatusim", 
-			"xstatusjv",
-			"xvoucher",
-			"xstaffsubmit", 
-			"xsubmittime", 
-			"xtype"
-		};
-		BeanUtils.copyProperties(pocrnheader, existObj, ignoreProperties);
+		existObj.setXdate(pocrnheader.getXdate());
+		existObj.setXwh(pocrnheader.getXwh());
+		existObj.setXref(pocrnheader.getXref());
+		existObj.setXnote(pocrnheader.getXnote());
+		existObj.setXstaff(pocrnheader.getXstaff());
 
 		// Calculate total amount
 		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXcrnnum());
@@ -292,10 +325,10 @@ public class PO17 extends KitController {
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + existObj.getXcrnnum()));
-		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+ pocrnheader.getXcrnnum() +"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+ existObj.getXcrnnum() +"&xrow=RESET"));
 		reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Purchase updated successfully");
+		responseHelper.setSuccessStatusAndMessage("Return updated successfully");
 		return responseHelper.getResponse();
 	}
 
@@ -303,19 +336,19 @@ public class PO17 extends KitController {
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Pocrndetail pocrndetail, BindingResult bindingResult){
 		if(pocrndetail.getXcrnnum() == null) {
-			responseHelper.setErrorStatusAndMessage("Purchase not found");
+			responseHelper.setErrorStatusAndMessage("Return header not found");
 			return responseHelper.getResponse();
 		}
 
 		Optional<Pocrnheader> oph = pocrnheaderRepo.findById(new PocrnheaderPK(sessionManager.getBusinessId(), pocrndetail.getXcrnnum()));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Purchase not found");
+			responseHelper.setErrorStatusAndMessage("Return header not found");
 			return responseHelper.getResponse();
 		}
 
 		Pocrnheader pocrnheader = oph.get();
 		if(!"Open".equals(pocrnheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Purchase status not open");
+			responseHelper.setErrorStatusAndMessage("Status not open");
 			return responseHelper.getResponse();
 		}
 
@@ -330,37 +363,15 @@ public class PO17 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(pocrndetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
-			responseHelper.setErrorStatusAndMessage("Invalid rate");
-			return responseHelper.getResponse();
-		}
-
-		if(pocrndetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(pocrndetail.getXqty() == null || pocrndetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
 
-		pocrndetail.setXlineamt(pocrndetail.getXrate().multiply(pocrndetail.getXqty()));
 
 		// Create new
 		if(SubmitFor.INSERT.equals(pocrndetail.getSubmitFor())) {
-			pocrndetail.setXqtygrn(BigDecimal.ZERO);
-			pocrndetail.setXrategrn(BigDecimal.ZERO);
-			pocrndetail.setXdocrow(0);
-			pocrndetail.setXrow(pocrndetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), pocrndetail.getXcrnnum()));
-			pocrndetail.setZid(sessionManager.getBusinessId());
-			pocrndetail = pocrndetailRepo.save(pocrndetail);
-
-			BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrndetail.getXcrnnum());
-			pocrnheader.setXtotamt(xtotamt);
-			pocrnheaderRepo.save(pocrnheader);
-
-			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + pocrndetail.getXcrnnum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum=" + pocrndetail.getXcrnnum() + "&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
-			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Purchase order detail added successfully");
+			responseHelper.setSuccessStatusAndMessage("Insert is not applicable");
 			return responseHelper.getResponse();
 		}
 
@@ -371,9 +382,44 @@ public class PO17 extends KitController {
 		}
 
 		Pocrndetail existObj = pocrndetailOp.get();
+
+		if(pocrndetail.getXqty().compareTo(existObj.getXqtygrn()) == 1) {
+			responseHelper.setErrorStatusAndMessage("Return quantity can't be greater than Eligible quantity");
+			return responseHelper.getResponse();
+		}
+
+		pocrndetail.setXlineamt(existObj.getXrate().multiply(pocrndetail.getXqty()));
+
+		// Do some cross check work here first
+		Optional<Pogrndetail> pogrndetailOp = pogrndetailRepo.findById(new PogrndetailPK(sessionManager.getBusinessId(), pocrnheader.getXgrnnum(), existObj.getXdocrow()));
+		if(!pogrndetailOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("GRN detail not found for this detail row");
+			return responseHelper.getResponse();
+		}
+		Pogrndetail pogrndetail = pogrndetailOp.get();
+
+		BigDecimal difference = pocrndetail.getXqty().subtract(existObj.getXqty());  // 5
+		if(difference.compareTo(BigDecimal.ZERO) == 0) {
+			// Do nothing
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == 1 && difference.add(pogrndetail.getXqtycrn()).compareTo(pogrndetail.getXqty()) == 1) {
+			responseHelper.setErrorStatusAndMessage("Return quantity should not more than GRN quantity!");
+			return responseHelper.getResponse();
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == 1) {
+			pogrndetail.setXqtycrn(pogrndetail.getXqtycrn().add(pocrndetail.getXqty().subtract(existObj.getXqty())));
+			pogrndetailRepo.save(pogrndetail);
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == -1) {
+			pogrndetail.setXqtycrn(pogrndetail.getXqtycrn().subtract(existObj.getXqty().subtract(pocrndetail.getXqty())));
+			pogrndetailRepo.save(pogrndetail);
+		}
+
 		existObj.setXqty(pocrndetail.getXqty());
-		existObj.setXrate(pocrndetail.getXrate());
-		existObj.setXlineamt(pocrndetail.getXqty().multiply(pocrndetail.getXrate()));
+		existObj.setXlineamt(pocrndetail.getXlineamt());
 		existObj.setXnote(pocrndetail.getXnote());
 		existObj = pocrndetailRepo.save(existObj);
 
@@ -404,6 +450,11 @@ public class PO17 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		if(pocrndetailRepo.getTotalQty(sessionManager.getBusinessId(), xcrnnum).compareTo(BigDecimal.ZERO) == 1) {
+			responseHelper.setErrorStatusAndMessage("Please delete detail record first! or make quantity 0");
+			return responseHelper.getResponse();
+		}
+
 		pocrndetailRepo.deleteAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
 
 		Pocrnheader obj = op.get();
@@ -412,45 +463,6 @@ public class PO17 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum=RESET&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
-		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
-		return responseHelper.getResponse();
-	}
-
-	@Transactional
-	@DeleteMapping("/detail-table")
-	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xcrnnum, @RequestParam Integer xrow){
-		Optional<Pocrnheader> oph = pocrnheaderRepo.findById(new PocrnheaderPK(sessionManager.getBusinessId(), xcrnnum));
-		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
-			return responseHelper.getResponse();
-		}
-
-		Pocrnheader pocrnheader = oph.get();
-
-		if(!"Open".equals(pocrnheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Purchase status not open");
-			return responseHelper.getResponse();
-		}
-
-		Optional<Pocrndetail> op = pocrndetailRepo.findById(new PocrndetailPK(sessionManager.getBusinessId(), xcrnnum, xrow));
-		if(!op.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Detail not found");
-			return responseHelper.getResponse();
-		}
-
-		Pocrndetail obj = op.get();
-		pocrndetailRepo.delete(obj);
-
-		// Update line amount and total amount of header
-		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrnheader.getXcrnnum());
-		pocrnheader.setXtotamt(xtotamt);
-		pocrnheaderRepo.save(pocrnheader);
-
-		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + xcrnnum));
-		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+xcrnnum+"&xrow=RESET"));
 		reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
@@ -478,16 +490,44 @@ public class PO17 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		BigDecimal totalQty = pocrndetailRepo.getTotalQty(sessionManager.getBusinessId(), xcrnnum);
-		if(totalQty.compareTo(BigDecimal.ZERO) == 0 || totalQty.compareTo(BigDecimal.ZERO) == -1) {
+		List<Pocrndetail> details = pocrndetailRepo.findAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		if(details == null || details.isEmpty()) {
 			responseHelper.setErrorStatusAndMessage("Please add item");
 			return responseHelper.getResponse();
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String currentDate = sdf.format(new Date());
-		if(!(sdf.format(pocrnheader.getXdate()).equalsIgnoreCase(currentDate))) {
-			responseHelper.setErrorStatusAndMessage("Invalid date");
+		// screen data validation
+		if(pocrnheader.getXgrnnum() == null) {
+			responseHelper.setErrorStatusAndMessage("GRN No. required");
+			return responseHelper.getResponse();
+		}
+
+		Optional<Pogrnheader> pogrnheaderOp = pogrnheaderRepo.findById(new PogrnheaderPK(sessionManager.getBusinessId(), pocrnheader.getXgrnnum()));
+		if(!pogrnheaderOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Invalid GRN number");
+			return responseHelper.getResponse();
+		}
+
+		Pogrnheader pogrnheader = pogrnheaderOp.get();
+
+		// check pending return
+		if(pocrnheaderRepo.getTotalPendingReturn(sessionManager.getBusinessId(), pogrnheader.getXgrnnum(), xcrnnum) > 0) {
+			responseHelper.setErrorStatusAndMessage("Pending return found. Confirm/delete pending return first");
+			return responseHelper.getResponse();
+		}
+
+		if(pocrnheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
+		}
+
+		if(pocrnheader.getXdate().before(pogrnheader.getXdate())) {
+			responseHelper.setErrorStatusAndMessage("Date can't be before GRN date");
+			return responseHelper.getResponse();
+		}
+
+		if(pocrnheader.getXwh() == null) {
+			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
 			return responseHelper.getResponse();
 		}
 
@@ -496,7 +536,46 @@ public class PO17 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		// TODO: check stock process
+		// Date validation
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String currentDate = sdf.format(new Date());
+		if(!(sdf.format(pocrnheader.getXdate()).equalsIgnoreCase(currentDate))) {
+			responseHelper.setErrorStatusAndMessage("Invalid date");
+			return responseHelper.getResponse();
+		}
+
+		// Check qty is exist in all details 
+		BigDecimal totalQty = BigDecimal.ZERO;
+		for(Pocrndetail detail : details) {
+			if(detail.getXqty() == null) continue;
+			totalQty = totalQty.add(detail.getXqty());
+		}
+		if(totalQty.compareTo(BigDecimal.ZERO) == 0) {
+			responseHelper.setErrorStatusAndMessage("No items found!");
+			return responseHelper.getResponse();
+		}
+
+		// check inventory
+		Map<Integer, BigDecimal> qtyMap = new HashMap<>();
+		for(Pocrndetail item : details) {
+			if(qtyMap.get(item.getXitem()) != null) {
+				BigDecimal prevQty = qtyMap.get(item.getXitem());
+				BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+				qtyMap.put(item.getXitem(), newQty);
+			} else {
+				qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+			}
+		}
+
+		prepareUnavailableStockList(qtyMap, pocrnheader.getXbuid(), pocrnheader.getXwh());
+
+		if(!unavailableStockList.isEmpty()) {
+			responseHelper.setShowErrorDetailModal(true);
+			responseHelper.setErrorDetailsList(unavailableStockList);
+			responseHelper.setErrorStatusAndMessage("Stock not available");
+			responseHelper.setReloadSectionIdWithUrl("error-details-container", "/PO17/error-details");
+			return responseHelper.getResponse();
+		}
 
 		// Call the procedure
 		pocrnheaderRepo.PO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);

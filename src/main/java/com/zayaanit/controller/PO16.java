@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -251,7 +252,7 @@ public class PO16 extends KitController {
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO16/detail-table?xcrnnum="+ pocrnheader.getXcrnnum() +"&xrow=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/PO16/list-table"));
 			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Purchase created successfully");
+			responseHelper.setSuccessStatusAndMessage("Return created successfully");
 			return responseHelper.getResponse();
 		}
 
@@ -271,9 +272,9 @@ public class PO16 extends KitController {
 		String[] ignoreProperties = new String[] {
 			"zid", "zuserid", "ztime",
 			"xcrnnum", 
+			"xgrnnum",
 			"xtotamt",
 			"xtotcost",
-			"xgrnnum",
 			"xstatus", 
 			"xstatusim", 
 			"xstatusjv",
@@ -295,7 +296,7 @@ public class PO16 extends KitController {
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO16/detail-table?xcrnnum="+ pocrnheader.getXcrnnum() +"&xrow=RESET"));
 		reloadSections.add(new ReloadSection("list-table-container", "/PO16/list-table"));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Purchase updated successfully");
+		responseHelper.setSuccessStatusAndMessage("Return updated successfully");
 		return responseHelper.getResponse();
 	}
 
@@ -303,19 +304,19 @@ public class PO16 extends KitController {
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Pocrndetail pocrndetail, BindingResult bindingResult){
 		if(pocrndetail.getXcrnnum() == null) {
-			responseHelper.setErrorStatusAndMessage("Purchase not found");
+			responseHelper.setErrorStatusAndMessage("Return header data not found");
 			return responseHelper.getResponse();
 		}
 
 		Optional<Pocrnheader> oph = pocrnheaderRepo.findById(new PocrnheaderPK(sessionManager.getBusinessId(), pocrndetail.getXcrnnum()));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Purchase not found");
+			responseHelper.setErrorStatusAndMessage("Return header data not found");
 			return responseHelper.getResponse();
 		}
 
 		Pocrnheader pocrnheader = oph.get();
 		if(!"Open".equals(pocrnheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Purchase status not open");
+			responseHelper.setErrorStatusAndMessage("Status not open");
 			return responseHelper.getResponse();
 		}
 
@@ -330,12 +331,12 @@ public class PO16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(pocrndetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
+		if(pocrndetail.getXrate() == null || pocrndetail.getXrate().compareTo(BigDecimal.ZERO) == -1) {
 			responseHelper.setErrorStatusAndMessage("Invalid rate");
 			return responseHelper.getResponse();
 		}
 
-		if(pocrndetail.getXqty().compareTo(BigDecimal.ZERO) == -1) {
+		if(pocrndetail.getXqty() == null || pocrndetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
@@ -344,10 +345,10 @@ public class PO16 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(pocrndetail.getSubmitFor())) {
-			pocrndetail.setXqtygrn(BigDecimal.ZERO);
-			pocrndetail.setXrategrn(BigDecimal.ZERO);
 			pocrndetail.setXdocrow(0);
 			pocrndetail.setXrow(pocrndetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), pocrndetail.getXcrnnum()));
+			pocrndetail.setXqtygrn(BigDecimal.ZERO);
+			pocrndetail.setXrategrn(BigDecimal.ZERO);
 			pocrndetail.setZid(sessionManager.getBusinessId());
 			pocrndetail = pocrndetailRepo.save(pocrndetail);
 
@@ -360,7 +361,7 @@ public class PO16 extends KitController {
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO16/detail-table?xcrnnum=" + pocrndetail.getXcrnnum() + "&xrow=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/PO16/list-table"));
 			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Purchase order detail added successfully");
+			responseHelper.setSuccessStatusAndMessage("Detail added successfully");
 			return responseHelper.getResponse();
 		}
 
@@ -423,14 +424,14 @@ public class PO16 extends KitController {
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xcrnnum, @RequestParam Integer xrow){
 		Optional<Pocrnheader> oph = pocrnheaderRepo.findById(new PocrnheaderPK(sessionManager.getBusinessId(), xcrnnum));
 		if(!oph.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
+			responseHelper.setErrorStatusAndMessage("Return header data not found");
 			return responseHelper.getResponse();
 		}
 
 		Pocrnheader pocrnheader = oph.get();
 
 		if(!"Open".equals(pocrnheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Purchase status not open");
+			responseHelper.setErrorStatusAndMessage("Status not open");
 			return responseHelper.getResponse();
 		}
 
@@ -478,9 +479,36 @@ public class PO16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		BigDecimal totalQty = pocrndetailRepo.getTotalQty(sessionManager.getBusinessId(), xcrnnum);
-		if(totalQty.compareTo(BigDecimal.ZERO) == 0 || totalQty.compareTo(BigDecimal.ZERO) == -1) {
-			responseHelper.setErrorStatusAndMessage("Please add item");
+		// check screen data validation
+		if(pocrnheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
+		}
+
+		if(pocrnheader.getXbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("Business unit required");
+			return responseHelper.getResponse();
+		}
+
+		if(pocrnheader.getXcus() == null) {
+			responseHelper.setErrorStatusAndMessage("Supplier required");
+			return responseHelper.getResponse();
+		}
+
+		if(pocrnheader.getXwh() == null) {
+			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
+			return responseHelper.getResponse();
+		}
+
+		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
+			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
+			return responseHelper.getResponse();
+		}
+
+		// quantity validation
+		List<Pocrndetail> details = pocrndetailRepo.findAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		if(details == null || details.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("Detail items not found, Please add item!");
 			return responseHelper.getResponse();
 		}
 
@@ -491,12 +519,38 @@ public class PO16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
-			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
+		// Check qty is exist in all details 
+		BigDecimal totalQty = BigDecimal.ZERO;
+		for(Pocrndetail detail : details) {
+			if(detail.getXqty() == null) continue;
+			totalQty = totalQty.add(detail.getXqty());
+		}
+		if(totalQty.compareTo(BigDecimal.ZERO) == 0) {
+			responseHelper.setErrorStatusAndMessage("No items found!");
 			return responseHelper.getResponse();
 		}
 
-		// TODO: check stock process
+		// check inventory
+		Map<Integer, BigDecimal> qtyMap = new HashMap<>();
+		for(Pocrndetail item : details) {
+			if(qtyMap.get(item.getXitem()) != null) {
+				BigDecimal prevQty = qtyMap.get(item.getXitem());
+				BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+				qtyMap.put(item.getXitem(), newQty);
+			} else {
+				qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+			}
+		}
+
+		prepareUnavailableStockList(qtyMap, pocrnheader.getXbuid(), pocrnheader.getXwh());
+
+		if(!unavailableStockList.isEmpty()) {
+			responseHelper.setShowErrorDetailModal(true);
+			responseHelper.setErrorDetailsList(unavailableStockList);
+			responseHelper.setErrorStatusAndMessage("Stock not available");
+			responseHelper.setReloadSectionIdWithUrl("error-details-container", "/PO16/error-details");
+			return responseHelper.getResponse();
+		}
 
 		// Call the procedure
 		pocrnheaderRepo.PO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);

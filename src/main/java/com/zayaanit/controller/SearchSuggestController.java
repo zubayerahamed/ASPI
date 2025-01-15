@@ -28,6 +28,7 @@ import com.zayaanit.entity.Imtorheader;
 import com.zayaanit.entity.Moheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
+import com.zayaanit.entity.Pocrnheader;
 import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Poordheader;
 import com.zayaanit.entity.Xmenus;
@@ -50,6 +51,7 @@ import com.zayaanit.service.ImtorheaderService;
 import com.zayaanit.service.MoheaderService;
 import com.zayaanit.service.OpdoheaderService;
 import com.zayaanit.service.OpordheaderService;
+import com.zayaanit.service.PocrnheaderService;
 import com.zayaanit.service.PogrnheaderService;
 import com.zayaanit.service.PoordheaderService;
 import com.zayaanit.service.XmenusService;
@@ -79,6 +81,7 @@ public class SearchSuggestController {
 	@Autowired private CaitemService caitemService;
 	@Autowired private PoordheaderService poordheaderService;
 	@Autowired private PogrnheaderService pogrnheaderService;
+	@Autowired private PocrnheaderService pocrnheaderService;
 	@Autowired private OpordheaderService opordheaderService;
 	@Autowired private OpdoheaderService opdoheaderService;
 	@Autowired private ImtorheaderService imtorheaderService;
@@ -325,6 +328,22 @@ public class SearchSuggestController {
 		int totalRows = pogrnheaderService.LPO14(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Pogrnheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LPO16/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Pocrnheader> LPO16(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Pocrnheader> list = pocrnheaderService.LPO16(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = pocrnheaderService.LPO16(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Pocrnheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

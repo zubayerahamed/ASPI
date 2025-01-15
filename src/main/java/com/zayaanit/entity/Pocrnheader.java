@@ -43,6 +43,12 @@ import lombok.EqualsAndHashCode;
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "crnnum", type = Integer.class), 
 	}),
+	@NamedStoredProcedureQuery(name = "PO_CreateReturnfromGRN", procedureName = "PO_CreateReturnfromGRN", parameters = {
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "crnnum", type = Integer.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "grnnum", type = Integer.class),
+	}),
 })
 public class Pocrnheader extends AbstractModel<String> {
 

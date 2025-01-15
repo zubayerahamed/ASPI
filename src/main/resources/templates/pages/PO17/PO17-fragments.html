@@ -1,7 +1,7 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${pocrnheader.xcrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pocrnheader.xcrnnum}, data-rptcode='pocrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+			<button th:if="${pocrnheader.xcrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pocrnheader.xcrnnum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
 			<button th:if="${pocrnheader.xcrnnum ne null and pocrnheader.xstatus eq 'Open' and pocrnheader.xstatusim eq 'Open'}" th:attr="data-url=@{/PO17/confirm?xcrnnum=} + ${pocrnheader.xcrnnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 
@@ -9,6 +9,7 @@
 			<form id="mainform" class="form-validate-jquery" th:action="@{/PO17/store}" th:object="${pocrnheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
 				<input type="hidden" th:if="${pocrnheader.xcrnnum ne null}" th:field="*{xcrnnum}">
+				<input type="hidden" th:if="${pocrnheader.xcrnnum ne null}" th:field="*{xgrnnum}">
 
 				<div class="row">
 					<div class="col-md-3">
@@ -57,15 +58,16 @@
 							<input type="text" class="form-control" th:value="${pocrnheader.xbuid != null ? pocrnheader.xbuid + ' - ' + pocrnheader.businessUnitName : ''}" disabled="disabled">
 						</div>
 					</div>
+
 					<div class="col-md-3" th:if="${pocrnheader.xcrnnum ne null}">
 						<div class="mb-3 form-group">
-							<label class="form-label">GRN No</label>
+							<label class="form-label">GRN No.</label>
 							<input type="text" class="form-control" th:value="${pocrnheader.xgrnnum != null ? pocrnheader.xgrnnum : ''}" disabled="disabled">
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${pocrnheader.xcrnnum eq null}">
 						<div class="mb-3 form-group">
-							<label class="form-label required">GRN No</label>
+							<label class="form-label required">GRN No.</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control searchsuggest2"
@@ -84,6 +86,7 @@
 							</div>
 						</div>
 					</div>
+
 					<div class="col-md-3" th:if="${pocrnheader.xcrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Supplier</label>
@@ -150,7 +153,9 @@
 					<div class="col-md-3" th:if="${pocrnheader.xcrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
+							<input type="text" th:if="${pocrnheader.xvoucher eq null}" class="form-control" disabled>
 							<a 	href="#" 
+								th:if="${pocrnheader.xvoucher ne null}" 
 								th:attr="data-screen='FA17?xvoucher=' + ${pocrnheader.xvoucher}" 
 								class="screen-item form-control" 
 								th:text="${pocrnheader.xvoucher}">
@@ -228,7 +233,7 @@
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card" th:if="${pocrnheader.xcrnnum ne null}">
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
-			<h6 class="py-sm-3 mb-sm-auto">Order Details</h6>
+			<h6 class="py-sm-3 mb-sm-auto">Return Details</h6>
 		</div>
 
 		<div class="card-body" th:if="${pocrnheader.xstatus eq 'Open'}">
@@ -246,17 +251,17 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pocrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Unit</label>
 							<input type="text" class="form-control" th:value="*{xunit}" disabled="disabled">
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pocrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Quantity</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required">
+							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required" min="0" th:attr="max=${pocrndetail.xqtygrn}">
 						</div>
 					</div>
 
@@ -267,7 +272,7 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pocrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Rate</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xrate}" required="required">
@@ -281,7 +286,7 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pocrndetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
 							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
@@ -294,7 +299,7 @@
 						<button type="reset" th:attr="data-reloadurl='/PO17/detail-table?xcrnnum='+ ${pocrndetail.xcrnnum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${pocrndetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Update</button>
+						<button th:if="${pocrndetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 					</div>
 				</div>
 			</form>
@@ -308,7 +313,9 @@
 						<th>Unit</th>
 						<th>Quantity</th>
 						<th>Rate</th>
-						<th>Amount</th>
+						<th>Line Amount</th>
+						<th>Eligible Quantity</th>
+						<th>Note</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -320,6 +327,8 @@
 						<td th:text="${x.xqty}"></td>
 						<td th:text="${x.xrate}"></td>
 						<td th:text="${x.xlineamt}"></td>
+						<td th:text="${x.xqtygrn}"></td>
+						<td th:text="${x.xnote}"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -361,26 +370,6 @@
 				});
 			});
 
-		})
-	</script>
-</div>
-
-
-<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
-	<script>
-		$(document).ready(function(){
-			kit.ui.init();
-
-			sectionReloadAjaxPostReq({
-				id : 'list-table-container',
-				url : '/search/table/LPO16/3'
-			}, {
-				mainscreen: true, 
-				mainreloadurl: '/PO17?xcrnnum=',
-				mainreloadid: 'main-form-container',
-				detailreloadurl: '/PO17/detail-table?xrow=RESET&xcrnnum=',
-				detailreloadid: 'detail-table-container'
-			});
 		})
 	</script>
 </div>
