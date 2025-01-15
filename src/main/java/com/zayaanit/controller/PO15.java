@@ -277,13 +277,6 @@ public class PO15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
-			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
-			return responseHelper.getResponse();
-		}
-
-		pogrnheader.setXstaff(sessionManager.getLoggedInUserDetails().getXstaff());
-
 		// Create new
 		if(SubmitFor.INSERT.equals(pogrnheader.getSubmitFor())) {
 			responseHelper.setErrorStatusAndMessage("Insert is not acceptable for this functional screen");

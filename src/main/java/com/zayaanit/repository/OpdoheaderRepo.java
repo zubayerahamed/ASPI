@@ -24,4 +24,6 @@ public interface OpdoheaderRepo extends JpaRepository<Opdoheader, OpdoheaderPK> 
 	public void SO_ConfirmInvoice(@Param("zid") Integer zid, @Param("user") String user, @Param("dornum") Integer dornum);
 
 	public List<Opdoheader> findAllByZidAndXdornum(Integer zid, Integer xdornum);
+
+	public List<Opdoheader> findAllByZidAndXordernum(Integer zid, Integer xordernum);
 }

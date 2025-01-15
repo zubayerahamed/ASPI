@@ -262,7 +262,12 @@
 							return data + ' - ' +  row['customerName'];
 						},
 					},
-					{ "data": "xdornum" },
+					{ 
+						"data": "xdornum",
+						render: function(data, type, row, meta) {
+							return data == null ? '' : '<a href="#" data-screen="SO15?xdornum='+ data +'" class="screen-item">'+ data +'</a>';
+						},
+					},
 					{ "data": "xstatusord" },
 					{ 
 						"data": "xstatusord" ,

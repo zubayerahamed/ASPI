@@ -20,6 +20,9 @@ public class ReportParamMap {
 	public static final Map<String, String> opcrn = new HashMap<>();
 	public static final Map<String, String> opord = new HashMap<>();
 	public static final Map<String, String> opordinv = new HashMap<>();
+	public static final Map<String, String> opdoinv = new HashMap<>();
+	public static final Map<String, String> opdocln = new HashMap<>();
+	
 
 	public static final Map<String, String> R101 = new HashMap<>();
 	public static final Map<String, String> R102 = new HashMap<>();
@@ -70,6 +73,12 @@ public class ReportParamMap {
 
 		opordinv.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		opordinv.put("param2", "xordernum|" + ReportParamDataType.INTEGER.name());
+
+		opdoinv.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		opdoinv.put("param2", "xdornum|" + ReportParamDataType.INTEGER.name());
+
+		opdocln.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		opdocln.put("param2", "xdornum|" + ReportParamDataType.INTEGER.name());
 
 		R101.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R101.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());

@@ -161,12 +161,12 @@ public class SO13 extends KitController {
 
 		Opordheader opordheader = opordheaderOp.get();
 		if(!"Confirmed".equals(opordheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Order not confirmed");
+			responseHelper.setErrorStatusAndMessage("Status not confirmed");
 			return responseHelper.getResponse();
 		}
 
 		if(!("Open".equals(opordheader.getXstatusord()) || "Invoice Created".equals(opordheader.getXstatusord()))) {
-			responseHelper.setErrorStatusAndMessage("Order status not Open or Invoice Created");
+			responseHelper.setErrorStatusAndMessage("Order status not in Open or Invoice Created");
 			return responseHelper.getResponse();
 		}
 
@@ -230,12 +230,12 @@ public class SO13 extends KitController {
 
 		Opordheader opordheader = opordheaderOp.get();
 		if(!"Confirmed".equals(opordheader.getXstatus())) {
-			responseHelper.setErrorStatusAndMessage("Order not confirmed");
+			responseHelper.setErrorStatusAndMessage("Status not confirmed");
 			return responseHelper.getResponse();
 		}
 
 		if(!("Open".equals(opordheader.getXstatusord()) || "Invoice Created".equals(opordheader.getXstatusord()))) {
-			responseHelper.setErrorStatusAndMessage("Order status not Open or Invoice Created");
+			responseHelper.setErrorStatusAndMessage("Order status not in Open or Invoice Created");
 			return responseHelper.getResponse();
 		}
 

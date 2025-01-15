@@ -3,11 +3,11 @@
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
 			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opdoinv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Invoice</button>
 			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opdocln'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Challan</button>
-			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO14/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Invoice</button>
+			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO15/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Invoice</button>
 		</div>
 
 		<div class="card-body">
-			<form id="mainform" class="form-validate-jquery" th:action="@{/SO14/store}" th:object="${opdoheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/SO15/store}" th:object="${opdoheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
 				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
 
@@ -23,19 +23,19 @@
 										disabled="disabled">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LSO14/2?hint=', 
+										data-reloadurl='/search/table/LSO14/3?hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xdornum',
 										data-mainscreen=true,
-										data-mainreloadurl='/SO14?xdornum=',
+										data-mainreloadurl='/SO15?xdornum=',
 										data-mainreloadid='main-form-container',
-										data-detailreloadurl='/SO14/detail-table?xrow=RESET&xdornum=',
+										data-detailreloadurl='/SO15/detail-table?xrow=RESET&xdornum=',
 										data-detailreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Invoice Date</label>
 							<div class="input-group">
@@ -52,7 +52,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Business Unit</label>
 							<div class="input-group">
@@ -73,28 +73,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Customer</label>
-							<div class="input-group">
-								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xcus"
-										th:value="${opdoheader.xcus != null ? opdoheader.xcus + ' - ' + opdoheader.customerName : ''}">
-								<input 	type="hidden" class="search-val" name="xcus" th:value="*{xcus}" required/>
-								<span 	class="input-group-text btn-search" 
-										th:attr="
-										data-reloadurl='/search/table/LFA14/1?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xcus',
-										data-mainscreen=false" 
-										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span 	class="input-group-text btn-search-clear" 
-										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
-							</div>
+							<label class="form-label">Customer</label>
+							<input type="text" class="form-control" th:value="${opdoheader.xcus != null ? opdoheader.xcus + ' - ' + opdoheader.customerName : ''}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3">
+
+					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Store/Warehouse</label>
 							<div class="input-group">
@@ -115,7 +101,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Reference</label>
 							<input type="text" class="form-control" th:field="*{xref}">
@@ -170,7 +156,13 @@
 							</a>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Number</label>
+							<input type="text" class="form-control" th:value="*{xordernum}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3" th:if="${opdoheader.xdornum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Note</label>
 							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
@@ -180,12 +172,11 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/SO14?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO14/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/SO15?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO15/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO14?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO15?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
 						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
 				</div>
 			</form>
@@ -245,7 +236,7 @@
 		</div>
 
 		<div class="card-body" th:if="${opdoheader.xstatus eq 'Open'}">
-			<form id="detailform" class="form-validate-jquery" th:action="@{/SO14/detail/store}" th:object="${opdodetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/SO15/detail/store}" th:object="${opdodetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" name="submitFor" th:value="*{submitFor}"/>
 				<input type="hidden" name="xdornum" th:value="*{xdornum}">
 				<input type="hidden" name="xrow" th:value="*{xrow}">
@@ -268,7 +259,7 @@
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xitem',
 										data-mainscreen=true,
-										data-mainreloadurl='/SO14/detail-table?xdornum='+ ${opdodetail.xdornum} +'&xrow='+ ${opdodetail.xrow} +'&xitem=',
+										data-mainreloadurl='/SO15/detail-table?xdornum='+ ${opdodetail.xdornum} +'&xrow='+ ${opdodetail.xrow} +'&xitem=',
 										data-mainreloadid='detail-table-container'" 
 										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 							</div>
@@ -282,13 +273,21 @@
 						</div>
 					</div>
 
+					<div class="col-md-3" th:if="${opdodetail.xrow ne 0}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Order Quantity</label>
+							<input type="number" class="form-control numeric-only" th:value="*{xqtyord}" disabled="disabled">
+						</div>
+					</div>
+
 					<div class="col-md-3" th:if="${opdodetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Quantity</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xqty}" required="required">
+							<input th:if="${opdodetail.xdocrow eq 0}" type="number" class="form-control numeric-only" th:field="*{xqty}" min="0" required="required">
+							<input th:if="${opdodetail.xdocrow ne 0}" type="number" class="form-control numeric-only" th:field="*{xqty}" min="0" th:attr="max=${opdodetail.xqtyord}" required="required">
 						</div>
 					</div>
-					
+
 					<div class="col-md-3" th:if="${opdodetail.xitem ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Rate</label>
@@ -313,10 +312,11 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/SO14/detail-table?xdornum='+ ${opdodetail.xdornum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/SO15/detail-table?xdornum='+ ${opdodetail.xdornum} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${opdodetail.xrow ne 0}" th:attr="data-url=@{/SO14/detail-table?xdornum=} + ${opdodetail.xdornum} + '&xrow=' + ${opdodetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opdodetail.xrow ne 0 and opdodetail.xdocrow eq 0}" th:attr="data-url=@{/SO15/detail-table?xdornum=} + ${opdodetail.xdornum} + '&xrow=' + ${opdodetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opdodetail.xrow ne 0 and opdodetail.xdocrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${opdodetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
 					</div>
 				</div>
@@ -332,6 +332,7 @@
 						<th>Quantity</th>
 						<th>Rate</th>
 						<th>Line Amount</th>
+						<th>Order Quantity</th>
 						<th>Return Quantity</th>
 						<th>Note</th>
 						<th th:if="${opdoheader.xstatus eq 'Open'}"></th>
@@ -340,16 +341,17 @@
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
-							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SO14/detail-table?xdornum=' + ${x.xdornum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:href="@{/SO14/detail-table?xdornum=} + ${x.xdornum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SO15/detail-table?xdornum=' + ${x.xdornum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:href="@{/SO15/detail-table?xdornum=} + ${x.xdornum} + '&xrow=' + ${x.xrow} + '&xitem=' + ${x.xitem}" th:text="${x.xitem + ' - ' + x.itemName}"></a>
 						</td>
 						<td th:text="${x.xunit}"></td>
 						<td th:text="${x.xqty}"></td>
 						<td th:text="${x.xrate}"></td>
 						<td th:text="${x.xlineamt}"></td>
+						<td th:text="${x.xqtyord}"></td>
 						<td th:text="${x.xqtycrn}"></td>
 						<td th:text="${x.xnote}"></td>
 						<td th:if="${opdoheader.xstatus eq 'Open'}" class="text-end">
-							<button th:if="${x.xrow ne 0}" th:attr="data-url=@{/SO14/detail-table?xdornum=} + ${x.xdornum} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
+							<button th:if="${x.xrow ne 0 and x.xdocrow eq 0}" th:attr="data-url=@{/SO15/detail-table?xdornum=} + ${x.xdornum} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
 						</td>
 					</tr>
 				</tbody>

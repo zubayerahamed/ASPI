@@ -29,6 +29,9 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Opdoheader;
+import com.zayaanit.entity.Oporddetail;
+import com.zayaanit.entity.Opordheader;
+import com.zayaanit.entity.Poorddetail;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -36,6 +39,8 @@ import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.OpdodetailPK;
 import com.zayaanit.entity.pk.OpdoheaderPK;
+import com.zayaanit.entity.pk.OporddetailPK;
+import com.zayaanit.entity.pk.OpordheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
@@ -45,6 +50,8 @@ import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
 import com.zayaanit.repository.OpdodetailRepo;
 import com.zayaanit.repository.OpdoheaderRepo;
+import com.zayaanit.repository.OporddetailRepo;
+import com.zayaanit.repository.OpordheaderRepo;
 import com.zayaanit.repository.XwhsRepo;
 
 /**
@@ -52,8 +59,8 @@ import com.zayaanit.repository.XwhsRepo;
  * @since Jul 3, 2023
  */
 @Controller
-@RequestMapping("/SO14")
-public class SO14 extends KitController {
+@RequestMapping("/SO15")
+public class SO15 extends KitController {
 
 	@Autowired private OpdoheaderRepo opdoheaderRepo;
 	@Autowired private OpdodetailRepo opdodetailRepo;
@@ -61,12 +68,14 @@ public class SO14 extends KitController {
 	@Autowired private AcsubRepo acsubRepo;
 	@Autowired private XwhsRepo xwhsRepo;
 	@Autowired private CaitemRepo caitemRepo;
+	@Autowired private OporddetailRepo oporddetailRepo;
+	@Autowired private OpordheaderRepo opordheaderRepo;
 
 	private String pageTitle = null;
 
 	@Override
 	protected String screenCode() {
-		return "SO14";
+		return "SO15";
 	}
 
 	@Override
@@ -77,7 +86,7 @@ public class SO14 extends KitController {
 	@Override
 	protected String pageTitle() {
 		if(this.pageTitle != null) return this.pageTitle;
-		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "SO14"));
+		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), "SO15"));
 		if(!op.isPresent()) return null;
 		this.pageTitle = op.get().getXtitle();
 		return this.pageTitle;
@@ -88,7 +97,7 @@ public class SO14 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xdornum)) {
 				model.addAttribute("opdoheader", Opdoheader.getDefaultInstance());
-				return "pages/SO14/SO14-fragments::main-form";
+				return "pages/SO15/SO15-fragments::main-form";
 			}
 
 			Optional<Opdoheader> op = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xdornum)));
@@ -124,26 +133,26 @@ public class SO14 extends KitController {
 			}
 			model.addAttribute("opdoheader", opdoheader != null ? opdoheader : Opdoheader.getDefaultInstance());
 
-			return "pages/SO14/SO14-fragments::main-form";
+			return "pages/SO15/SO15-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
 		model.addAttribute("opdoheader", Opdoheader.getDefaultInstance());
-		return "pages/SO14/SO14";
+		return "pages/SO15/SO15";
 	}
 
 	@GetMapping("/detail-table")
 	public String detailFormFragment(@RequestParam String xdornum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xdornum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("opdoheader", Opdoheader.getDefaultInstance());
-			return "pages/SO14/SO14-fragments::detail-table";
+			return "pages/SO15/SO15-fragments::detail-table";
 		}
 
 		Optional<Opdoheader> oph = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xdornum)));
 		if(!oph.isPresent()) {
 			model.addAttribute("opdoheader", Opdoheader.getDefaultInstance());
-			return "pages/SO14/SO14-fragments::detail-table";
+			return "pages/SO15/SO15-fragments::detail-table";
 		}
 		model.addAttribute("opdoheader", oph.get());
 
@@ -174,7 +183,7 @@ public class SO14 extends KitController {
 			}
 
 			model.addAttribute("opdodetail", opdodetail);
-			return "pages/SO14/SO14-fragments::detail-table";
+			return "pages/SO15/SO15-fragments::detail-table";
 		}
 
 		Optional<Opdodetail> opdodetailOp = opdodetailRepo.findById(new OpdodetailPK(sessionManager.getBusinessId(), Integer.parseInt(xdornum), Integer.parseInt(xrow)));
@@ -194,12 +203,12 @@ public class SO14 extends KitController {
 		}
 
 		model.addAttribute("opdodetail", opdodetail);
-		return "pages/SO14/SO14-fragments::detail-table";
+		return "pages/SO15/SO15-fragments::detail-table";
 	}
 
 	@GetMapping("/list-table")
 	public String loadListTableFragment(Model model) {
-		return "pages/SO14/SO14-fragments::list-table";
+		return "pages/SO15/SO15-fragments::list-table";
 	}
 
 	@PostMapping("/store")
@@ -219,43 +228,14 @@ public class SO14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(opdoheader.getXcus() == null) {
-			responseHelper.setErrorStatusAndMessage("Customer required");
-			return responseHelper.getResponse();
-		}
-
 		if(opdoheader.getXwh() == null) {
 			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
 			return responseHelper.getResponse();
 		}
 
-		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
-			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
-			return responseHelper.getResponse();
-		}
-
-		opdoheader.setXstaff(sessionManager.getLoggedInUserDetails().getXstaff());
-
 		// Create new
 		if(SubmitFor.INSERT.equals(opdoheader.getSubmitFor())) {
-			opdoheader.setXlineamt(BigDecimal.ZERO);
-			opdoheader.setXdiscamt(BigDecimal.ZERO);
-			opdoheader.setXtotamt(BigDecimal.ZERO);
-			opdoheader.setXtotcost(BigDecimal.ZERO);
-			opdoheader.setXstatus("Open");
-			opdoheader.setXstatusim("Open");
-			opdoheader.setXstatusjv("Open");
-			opdoheader.setXtype("Direct Invoice");
-			opdoheader.setXdornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "SO14"));
-			opdoheader.setZid(sessionManager.getBusinessId());
-			opdoheader = opdoheaderRepo.save(opdoheader);
-
-			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + opdoheader.getXdornum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/SO14/detail-table?xdornum="+ opdoheader.getXdornum() +"&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/SO14/list-table"));
-			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Invoice created successfully");
+			responseHelper.setSuccessStatusAndMessage("Insert new record is not applicable here.");
 			return responseHelper.getResponse();
 		}
 
@@ -285,22 +265,12 @@ public class SO14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		String[] ignoreProperties = new String[] {
-			"zid", "zuserid", "ztime",
-			"xdornum", 
-			"xlineamt",
-			"xtotamt",
-			"xstatus", 
-			"xstatusim",
-			"xstatusjv",
-			"xvoucher",
-			"xordernum",
-			"xstaffsubmit", 
-			"xsubmittime", 
-			"xtotcost", 
-			"xtype"
-		};
-		BeanUtils.copyProperties(opdoheader, existObj, ignoreProperties);
+		existObj.setXdate(opdoheader.getXdate());
+		existObj.setXbuid(opdoheader.getXbuid());
+		existObj.setXwh(opdoheader.getXwh());
+		existObj.setXref(opdoheader.getXref());
+		existObj.setXdiscamt(opdoheader.getXdiscamt());
+		existObj.setXnote(opdoheader.getXnote());
 
 		// Calculate line and total amount
 		BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXdornum());
@@ -309,9 +279,9 @@ public class SO14 extends KitController {
 		existObj = opdoheaderRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + existObj.getXdornum()));
-		reloadSections.add(new ReloadSection("detail-table-container", "/SO14/detail-table?xdornum="+ opdoheader.getXdornum() +"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO14/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + existObj.getXdornum()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SO15/detail-table?xdornum="+ opdoheader.getXdornum() +"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/SO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Invoice updated successfully");
 		return responseHelper.getResponse();
@@ -375,15 +345,101 @@ public class SO14 extends KitController {
 			opdoheaderRepo.save(opdoheader);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + opdodetail.getXdornum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/SO14/detail-table?xdornum=" + opdodetail.getXdornum() + "&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/SO14/list-table"));
+			reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + opdodetail.getXdornum()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/SO15/detail-table?xdornum=" + opdodetail.getXdornum() + "&xrow=RESET"));
+			reloadSections.add(new ReloadSection("list-table-container", "/SO15/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Invoice detail added successfully");
 			return responseHelper.getResponse();
 		}
 
-		responseHelper.setErrorStatusAndMessage("Update is not applicatble here");
+		Optional<Opdodetail> detailOp = opdodetailRepo.findById(new OpdodetailPK(sessionManager.getBusinessId(), opdodetail.getXdornum(), opdodetail.getXrow()));
+		if(!detailOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Data not found to do update");
+			return responseHelper.getResponse();
+		}
+
+		Opdodetail existObj = detailOp.get();
+		if(existObj.getXdocrow() == 0) {
+			responseHelper.setErrorStatusAndMessage("This detail is not for update");
+			return responseHelper.getResponse();
+		}
+
+		if(opdodetail.getXqty().compareTo(existObj.getXqtyord()) == 1) {
+			responseHelper.setErrorStatusAndMessage("Quantity must be less thant Order quantity");
+			return responseHelper.getResponse();
+		}
+
+		// cross checking
+		Optional<Opordheader> orderOp = opordheaderRepo.findById(new OpordheaderPK(sessionManager.getBusinessId(), opdoheader.getXordernum()));
+		if(!orderOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Order not found related with this order number");
+			return responseHelper.getResponse();
+		}
+		Opordheader order = orderOp.get();
+
+		Optional<Oporddetail> oporddetailOp = oporddetailRepo.findById(new OporddetailPK(sessionManager.getBusinessId(), opdoheader.getXordernum(), existObj.getXdocrow()));
+		if(!oporddetailOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Order detail not found for this detail row");
+			return responseHelper.getResponse();
+		}
+
+		Oporddetail oporddetail = oporddetailOp.get();
+
+		BigDecimal difference = opdodetail.getXqty().subtract(existObj.getXqty());
+		if(difference.compareTo(BigDecimal.ZERO) == 0) {
+			// Do nothing
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == 1 && difference.add(oporddetail.getXqtydel()).compareTo(oporddetail.getXqty()) == 1) {
+			responseHelper.setErrorStatusAndMessage("Invoice quantity should not more than Order quantity!");
+			return responseHelper.getResponse();
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == 1) {
+			oporddetail.setXqtydel(oporddetail.getXqtydel().add(opdodetail.getXqty().subtract(existObj.getXqty())));
+			oporddetailRepo.save(oporddetail);
+		}
+
+		if(difference.compareTo(BigDecimal.ZERO) == -1) {
+			oporddetail.setXqtydel(oporddetail.getXqtydel().subtract(existObj.getXqty().subtract(opdodetail.getXqty())));
+			oporddetailRepo.save(oporddetail);
+		}
+		// Recheck complete here
+
+		existObj.setXqty(opdodetail.getXqty());
+		existObj.setXrate(opdodetail.getXrate());
+		existObj.setXlineamt(existObj.getXqty().multiply(existObj.getXrate()));
+		existObj.setXnote(opdodetail.getXnote());
+		existObj = opdodetailRepo.save(existObj);
+
+		// update sales order status here
+		List<Oporddetail> oporddetails = oporddetailRepo.findAllByZidAndXordernum(sessionManager.getBusinessId(), opdoheader.getXordernum());
+		BigDecimal tord = oporddetails.stream().map(Oporddetail::getXqty).reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal tgrn = oporddetails.stream().map(Oporddetail::getXqtydel).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		long count = opdoheaderRepo.findAllByZidAndXordernum(sessionManager.getBusinessId(), opdoheader.getXordernum()).stream().count();
+
+		if(tord.compareTo(tgrn) == 0) {
+			order.setXstatusord("Full Delivered");
+		} else if (tgrn.compareTo(BigDecimal.ZERO) == 0 && count == 0) {
+			order.setXstatusord("Open");
+		} else {
+			order.setXstatusord("Invoice Created");
+		}
+		opordheaderRepo.save(order);
+
+		BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opdodetail.getXdornum());
+		opdoheader.setXlineamt(lineAmt);
+		opdoheader.setXtotamt(opdoheader.getXlineamt().subtract(opdoheader.getXdiscamt()));
+		opdoheaderRepo.save(opdoheader);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + existObj.getXdornum()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SO15/detail-table?xdornum=" + existObj.getXdornum() + "&xrow=" + existObj.getXrow()));
+		reloadSections.add(new ReloadSection("list-table-container", "/SO15/list-table"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Invoice detail updated successfully");
 		return responseHelper.getResponse();
 	}
 
@@ -401,15 +457,20 @@ public class SO14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		if(opdodetailRepo.getTotalQty(sessionManager.getBusinessId(), xdornum).compareTo(BigDecimal.ZERO) == 1) {
+			responseHelper.setErrorStatusAndMessage("Please delete detail record first, or make the total quantity 0");
+			return responseHelper.getResponse();
+		}
+
 		opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
 
 		Opdoheader obj = op.get();
 		opdoheaderRepo.delete(obj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=RESET"));
-		reloadSections.add(new ReloadSection("detail-table-container", "/SO14/detail-table?xdornum=RESET&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO14/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=RESET"));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SO15/detail-table?xdornum=RESET&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/SO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -438,6 +499,12 @@ public class SO14 extends KitController {
 		}
 
 		Opdodetail obj = op.get();
+
+		if(obj.getXdocrow() != 0) {
+			responseHelper.setErrorStatusAndMessage("Order reference detail item can't be deleted");
+			return responseHelper.getResponse();
+		}
+
 		opdodetailRepo.delete(obj);
 
 		// Update line amount and total amount of header
@@ -450,9 +517,9 @@ public class SO14 extends KitController {
 		opdoheaderRepo.save(opdoheader);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + xdornum));
-		reloadSections.add(new ReloadSection("detail-table-container", "/SO14/detail-table?xdornum="+xdornum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO14/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + xdornum));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SO15/detail-table?xdornum="+xdornum+"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/SO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -495,18 +562,8 @@ public class SO14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(opdoheader.getXcus() == null) {
-			responseHelper.setErrorStatusAndMessage("Customer required");
-			return responseHelper.getResponse();
-		}
-
 		if(opdoheader.getXwh() == null) {
 			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
-			return responseHelper.getResponse();
-		}
-
-		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
-			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
 			return responseHelper.getResponse();
 		}
 
@@ -546,16 +603,16 @@ public class SO14 extends KitController {
 			responseHelper.setShowErrorDetailModal(true);
 			responseHelper.setErrorDetailsList(unavailableStockList);
 			responseHelper.setErrorStatusAndMessage("Stock not available");
-			responseHelper.setReloadSectionIdWithUrl("error-details-container", "/SO14/error-details");
+			responseHelper.setReloadSectionIdWithUrl("error-details-container", "/SO15/error-details");
 			return responseHelper.getResponse();
 		}
 
 		opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xdornum);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + xdornum));
-		reloadSections.add(new ReloadSection("detail-table-container", "/SO14/detail-table?xdornum="+xdornum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO14/list-table"));
+		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + xdornum));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SO15/detail-table?xdornum="+xdornum+"&xrow=RESET"));
+		reloadSections.add(new ReloadSection("list-table-container", "/SO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Confirmed successfully");
 		return responseHelper.getResponse();
