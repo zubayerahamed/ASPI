@@ -24,7 +24,7 @@ public enum ReportMenu {
 
 	opord("SO12", "Print Order", "opord.rpt", ReportParamMap.opord, "Y", false),
 	opordinv("SO12", "Print Invoice", "opordinv.rpt", ReportParamMap.opordinv, "Y", false),
-	
+
 	opdoinv("SO14", "Print Invoice", "opdoinv.rpt", ReportParamMap.opdoinv, "Y", false),
 	opdocln("SO14", "Print Challan", "opdocln.rpt", ReportParamMap.opdocln, "Y", false),
 

@@ -26,6 +26,7 @@ import com.zayaanit.entity.Imissueheader;
 import com.zayaanit.entity.Imopenheader;
 import com.zayaanit.entity.Imtorheader;
 import com.zayaanit.entity.Moheader;
+import com.zayaanit.entity.Opcrnheader;
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Opordheader;
 import com.zayaanit.entity.Pocrnheader;
@@ -49,6 +50,7 @@ import com.zayaanit.service.ImissueheaderService;
 import com.zayaanit.service.ImopenheaderService;
 import com.zayaanit.service.ImtorheaderService;
 import com.zayaanit.service.MoheaderService;
+import com.zayaanit.service.OpcrnheaderService;
 import com.zayaanit.service.OpdoheaderService;
 import com.zayaanit.service.OpordheaderService;
 import com.zayaanit.service.PocrnheaderService;
@@ -89,6 +91,7 @@ public class SearchSuggestController {
 	@Autowired private ImadjheaderService imadjheaderService;
 	@Autowired private ImopenheaderService imopenheaderService;
 	@Autowired private MoheaderService moheaderService;
+	@Autowired private OpcrnheaderService opcrnheaderService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -456,6 +459,22 @@ public class SearchSuggestController {
 		int totalRows = opdoheaderService.LSO14(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Opdoheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LSO16/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Opcrnheader> LSO16(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Opcrnheader> list = opcrnheaderService.LSO16(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = opcrnheaderService.LSO16(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Opcrnheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

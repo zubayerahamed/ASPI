@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OpcrnheaderPK implements Serializable {
-    
-    private Integer zid;
-    private Integer xcrnnum;
+
+	private static final long serialVersionUID = -635795862013119360L;
+
+	private Integer zid;
+	private Integer xcrnnum;
 }
