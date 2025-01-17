@@ -143,6 +143,7 @@ kit.ui.config.searchSuggest = {
 	},
 	adjustSelectedItem : function(swithc){
 		if(swithc == 'ENTR'){
+			//console.log("here im am");
 			kit.ui.config.searchSuggest.selectItemAndSetValue($('tr.search-item.selected-search-item'), $('.searchsuggest'), $('.search-suggest-table-container'));
 			return;
 		}
@@ -359,9 +360,56 @@ kit.ui.config.onscreenPrintBtn = function(){
 kit.ui.config.advancedSearchBtInit = function(){
 	$('input.searchsuggest2').off('keypress').on("keypress", function(e) {
 		var keycode = (e.keyCode ? e.keyCode : e.which);
-		if(keycode == '13'){
+		if(keycode == '13'){   // Enter pressed
 			e.preventDefault();
 			$(this).siblings('.btn-search').trigger('click');
+		}
+	});
+
+	// Special for POS item search
+	$('input.searchsuggest3').off('keypress').on("keypress", function(e) {
+		var keycode = (e.keyCode ? e.keyCode : e.which);
+		if(keycode == '13'){   // Enter pressed
+			e.preventDefault();
+
+			var searchCountUrl = $(this).data('searchcounturl');
+			var searchValue = $(this).val();
+
+			var mainreloadid = $(this).siblings('.btn-search').data('mainreloadid');
+			var mainreloadurl = $(this).siblings('.btn-search').data('mainreloadurl');
+
+			loadingMask2.show();
+			$.ajax({
+				url: getBasepath() + searchCountUrl + searchValue,
+				type: "GET",
+				success: function (data) {
+					loadingMask2.hide();
+
+					if(Number(data) == 0){
+						showMessage("error", "Item not found");
+					} else if (Number(data) == 1) {
+
+						// Reload sections with item data
+						sectionReloadAjaxReq({
+							id : mainreloadid,
+							url : mainreloadurl + searchValue
+						});
+
+					} else if (Number(data) > 1){
+						$(this).siblings('.btn-search').trigger('click');
+					}
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+
 		}
 	});
 
@@ -491,6 +539,11 @@ $(document).ready(function(){
 		sectionReloadAjaxReq({
 			id : 'screen-container',
 			url : url
+		}, () => {
+			// if left sidebar menu is collapsed, then forcefully expand it
+			//if($('.sidebar-main-resized').length > 0){
+			//	$('.sidebar-main-resize').click();
+			//}
 		});
 	})
 

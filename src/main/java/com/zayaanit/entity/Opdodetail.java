@@ -96,4 +96,19 @@ public class Opdodetail extends AbstractModel<String> {
 		obj.setXrategrn(BigDecimal.ZERO);
 		return obj;
 	}
+
+	public static Opdodetail getPOSInstance(Integer xdornum) {
+		Opdodetail obj = new Opdodetail();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXrow(0);
+		obj.setXdocrow(0);
+		obj.setXdornum(xdornum);
+		obj.setXqty(BigDecimal.ZERO);
+		obj.setXrate(BigDecimal.ZERO);
+		obj.setXlineamt(BigDecimal.ZERO);
+		obj.setXqtyord(BigDecimal.ZERO);
+		obj.setXqtycrn(BigDecimal.ZERO);
+		obj.setXrategrn(BigDecimal.ZERO);
+		return obj;
+	}
 }

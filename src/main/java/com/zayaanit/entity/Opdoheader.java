@@ -149,4 +149,21 @@ public class Opdoheader extends AbstractModel<String> {
 		obj.setXtype("Direct Invoice");
 		return obj;
 	}
+
+	public static Opdoheader getPOSInstance(Acsub staff) {
+		Opdoheader obj = new Opdoheader();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXdate(new Date());
+		obj.setXstaff(staff.getXsub());
+		obj.setStaffName(staff.getXname());
+		obj.setXlineamt(BigDecimal.ZERO);
+		obj.setXdiscamt(BigDecimal.ZERO);
+		obj.setXtotamt(obj.getXlineamt().subtract(obj.getXdiscamt()));
+		obj.setXstatus("Open");
+		obj.setXstatusim("Open");
+		obj.setXstatusjv("Open");
+		obj.setXtotcost(BigDecimal.ZERO);
+		obj.setXtype("Direct Invoice");
+		return obj;
+	}
 }

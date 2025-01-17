@@ -1,0 +1,294 @@
+<div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-header d-sm-flex align-items-sm-center p-0">
+			<button type="reset" th:attr="data-reloadurl='/SO18?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset my-2 ms-3">Clear</button>
+			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO18/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
+		</div>
+
+		<div class="card-body">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/SO18/store}" th:object="${opdoheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" th:field="*{submitFor}"/>
+				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
+				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Invoice</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										name="xdornum"
+										th:value="${opdoheader.xdornum ne null ? opdoheader.xdornum : ''}"
+										disabled="disabled">
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LSO18/4?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xdornum',
+										data-mainscreen=true,
+										data-mainreloadurl='/SO18?xdornum=',
+										data-mainreloadid='main-form-container',
+										data-detailreloadurl='/SO18/detail-table?xrow=RESET&xdornum=',
+										data-detailreloadid='detail-table-container'" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdate" 
+										id="xdate" 
+										class="form-control datepicker-date-format" 
+										placeholder="yyyy-mm-dd format" 
+										required
+										th:value="${opdoheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opdoheader.xdate, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Business</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xbuid"
+										th:value="${opdoheader.xbuid != null ? opdoheader.xbuid + ' - ' + opdoheader.businessUnitName : ''}">
+								<input 	type="hidden" class="search-val" name="xbuid" th:value="*{xbuid}" required/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LAD17/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xbuid',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Outlet</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control searchsuggest2"
+										id="xwh"
+										th:value="${opdoheader.xwh != null ? opdoheader.xwh + ' - ' + opdoheader.warehouseName : ''}">
+								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}" required/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD11/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xwh',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Staff</label>
+							<input type="text" class="form-control" th:value="${opdoheader.xstaff != null ? opdoheader.xstaff + ' - ' + opdoheader.staffName : ''}" disabled>
+						</div>
+					</div>
+					
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Total Amount</label>
+							<input type="number" class="form-control numeric-only" th:value="*{xtotamt}" disabled>
+						</div>
+					</div>
+					
+					
+				</div>
+
+			</form>
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+
+				sectionReloadAjaxReq({
+					id : $(this).data('detailreloadid'),
+					url : $(this).data('detailreloadurl')
+				});
+			});
+
+			$('.btn-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm();
+			});
+
+			$('.btn-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.btn-confirm').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure?")){
+					return;
+				}
+				actionPostRequest($(this).data('url'));
+			});
+		})
+	</script>
+</div>
+
+
+
+
+<div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						<th width="5%" class="text-center">SL</th>
+						<th width="25%">Item</th>
+						<th width="15%" class="text-center">Unit</th>
+						<th width="15%" class="text-center">Qty</th>
+						<th width="20%" class="text-end">Rate</th>
+						<th width="20%" class="text-end">S. Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="x, c : ${detailList}">
+						<td th:text="${c.count}" class="text-center"></td>
+						<td th:attr="data-xrow=${x.xrow}" th:text="${x.xitem + ' - ' x.itemName}"></td>
+						<td th:text="${x.xunit}" class="text-center"></td>
+						<td th:text="${x.xqty}" class="text-center"></td>
+						<td th:text="${x.xrate}" class="text-end"></td>
+						<td th:text="${x.xlineamt}" class="text-end"></td>
+					</tr>
+					<tr>
+						<td class="text-center" th:text="${detailList == null ? 1 : (#lists.size(detailList) + 1)}"></td>
+						<td>
+							<div class="col-md-12">
+								<div class="form-group">
+									<div class="input-group" th:if="${opdodetail.xrow eq 0}">
+										<input 	type="text" 
+												class="form-control searchsuggest3"
+												id="xitem"
+												placeholder="Search Items"
+												th:value="${opdodetail.xitem ne null ? opdodetail.xitem + ' - ' + opdodetail.itemName : ''}"
+												th:attr="
+												data-searchcounturl='/SO18/search-item?searchText='
+												">
+										<input 	type="hidden" class="search-val" name="xitem" th:value="*{xitem}" required/>
+										<span 	class="input-group-text btn-search" 
+												th:attr="
+												data-reloadurl='/search/table/LMD12/4?hint=',  
+												data-reloadid='search-suggest-results-container', 
+												data-fieldid='xitem',
+												data-mainscreen=true,
+												data-mainreloadurl='/SO18/detail-table?xdornum='+ ${opdodetail.xdornum} +'&xrow='+ ${opdodetail.xrow} +'&xitem=',
+												data-mainreloadid='detail-table-container'" 
+												style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+									</div>
+								</div>
+							</div>
+						</td>
+						<td class="text-center"></td>
+						<td>
+							<div class="col-md-12">
+								<div class="form-group">
+									<input type="number" class="form-control numeric-only text-center" name="xqty" th:value="${opdodetail.xqty}" required="required" min="0" step="1">
+								</div>
+							</div>
+						</td>
+						<td class="text-end"></td>
+						<td class="text-end"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-detail-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-detail-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(null, $('form#detailform'));
+			});
+
+			$('.btn-detail-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+	
+			$('a.detail-dataindex').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+		})
+	</script>
+</div>
+
+
+
+<div th:fragment="pos-cart" xmlns:th="http://www.thymeleaf.org">
+
+	<div class="card">
+
+		<div class="card-body">
+			
+			cart section
+			
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			
+		})
+	</script>
+</div>
