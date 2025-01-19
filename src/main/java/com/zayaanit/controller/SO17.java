@@ -322,6 +322,7 @@ public class SO17 extends KitController {
 		existObj.setXref(opcrnheader.getXref());
 		existObj.setXnote(opcrnheader.getXnote());
 		existObj.setXstaff(opcrnheader.getXstaff());
+		existObj.setXdiscamt(opcrnheader.getXdiscamt());
 
 		// Calculate total amount
 		BigDecimal lineAmt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXcrnnum());

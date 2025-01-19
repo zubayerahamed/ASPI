@@ -124,7 +124,7 @@ public class FA11 extends KitController {
 		}
 
 		Acdef existObj = op.get();
-		BeanUtils.copyProperties(acdef, existObj, "zid", "zuserid", "ztime");
+		BeanUtils.copyProperties(acdef, existObj, "zid", "zuserid", "ztime", "xcldate");
 
 		existObj = acdefRepo.save(existObj);
 

@@ -82,6 +82,8 @@ public class Caitem extends AbstractModel<String> {
 		obj.setXctype("Weighted Average");
 		obj.setXcost(BigDecimal.ZERO);
 		obj.setXrate(BigDecimal.ZERO);
+		obj.setXispo(Boolean.TRUE);
+		obj.setXisop(Boolean.TRUE);
 		return obj;
 	}
 }

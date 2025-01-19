@@ -238,6 +238,7 @@ public class IM11 extends KitController {
 		}
 
 		imtorheader.setXstaff(sessionManager.getLoggedInUserDetails().getXstaff());
+		imtorheader.setXtbuid(imtorheader.getXfbuid());
 
 		// Create new
 		if(SubmitFor.INSERT.equals(imtorheader.getSubmitFor())) {
@@ -281,7 +282,6 @@ public class IM11 extends KitController {
 		String[] ignoreProperties = new String[] {
 			"zid", "zuserid", "ztime",
 			"xtornum", 
-			"xtbuid",
 			"xtotamt",
 			"xstatus", 
 			"xstatusim",

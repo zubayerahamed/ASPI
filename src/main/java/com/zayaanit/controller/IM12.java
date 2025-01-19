@@ -237,11 +237,6 @@ public class IM12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(imtorheader.getXfwh().equals(imtorheader.getXtwh())) {
-			responseHelper.setErrorStatusAndMessage("Inventory cannot be transferred to same store");
-			return responseHelper.getResponse();
-		}
-
 		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
 			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
 			return responseHelper.getResponse();
@@ -457,13 +452,33 @@ public class IM12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		if(imtorheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
+		}
+
+		if(imtorheader.getXfbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("From business unit required");
+			return responseHelper.getResponse();
+		}
+
+		if(imtorheader.getXtbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("To business unit required");
+			return responseHelper.getResponse();
+		}
+
 		if(imtorheader.getXfbuid().equals(imtorheader.getXtbuid())) {
 			responseHelper.setErrorStatusAndMessage("Inventory cannot be transferred to same business");
 			return responseHelper.getResponse();
 		}
 
-		if(imtorheader.getXfwh().equals(imtorheader.getXtwh())) {
-			responseHelper.setErrorStatusAndMessage("Inventory cannot be transferred to same store");
+		if(imtorheader.getXfwh() == null) {
+			responseHelper.setErrorStatusAndMessage("From store required");
+			return responseHelper.getResponse();
+		}
+
+		if(imtorheader.getXtwh() == null) {
+			responseHelper.setErrorStatusAndMessage("To store required");
 			return responseHelper.getResponse();
 		}
 

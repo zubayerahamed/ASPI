@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,7 +135,56 @@ public class SO15 extends KitController {
 			return "pages/SO15/SO15-fragments::main-form";
 		}
 
-		if(frommenu == null) return "redirect:/";
+		if(frommenu == null) return "blank";
+
+		if(isAjaxRequest(request) && StringUtils.isNotBlank(xdornum) && !"RESET".equalsIgnoreCase(xdornum)) {
+			Optional<Opdoheader> op = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.parseInt(xdornum)));
+			Opdoheader opdoheader = null;
+			if(op.isPresent()) {
+				opdoheader = op.get();
+
+				if(opdoheader.getXbuid() != null) {
+					Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), opdoheader.getXbuid()));
+					if(cabunitOp.isPresent()) opdoheader.setBusinessUnitName(cabunitOp.get().getXname());
+				}
+
+				if(opdoheader.getXcus() != null) {
+					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), opdoheader.getXcus()));
+					if(acsubOp.isPresent()) opdoheader.setCustomerName(acsubOp.get().getXname());
+				}
+
+				if(opdoheader.getXwh() != null) {
+					Optional<Xwhs> xwhsOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), opdoheader.getXwh()));
+					if(xwhsOp.isPresent()) opdoheader.setWarehouseName(xwhsOp.get().getXname());
+				}
+
+				if(opdoheader.getXstaff() != null) {
+					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), opdoheader.getXstaff()));
+					if(acsubOp.isPresent()) opdoheader.setStaffName(acsubOp.get().getXname());
+				}
+
+				if(opdoheader.getXstaffsubmit() != null) {
+					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), opdoheader.getXstaffsubmit()));
+					if(acsubOp.isPresent()) opdoheader.setSubmitStaffName(acsubOp.get().getXname());
+				}
+
+			}
+			model.addAttribute("opdoheader", opdoheader != null ? opdoheader : Opdoheader.getDefaultInstance());
+
+			List<Opdodetail> detailList = opdodetailRepo.findAllByZidAndXdornum(sessionManager.getBusinessId(), Integer.parseInt(xdornum));
+			for(Opdodetail detail : detailList) {
+				Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), detail.getXitem()));
+				if(caitemOp.isPresent()) {
+					detail.setItemName(caitemOp.get().getXdesc());
+					detail.setXunit(caitemOp.get().getXunit());
+				}
+			}
+			model.addAttribute("detailList", detailList);
+
+			model.addAttribute("opdodetail", Opdodetail.getDefaultInstance(Integer.parseInt(xdornum)));
+
+			return "pages/SO15/SO15";
+		}
 
 		model.addAttribute("opdoheader", Opdoheader.getDefaultInstance());
 		return "pages/SO15/SO15";

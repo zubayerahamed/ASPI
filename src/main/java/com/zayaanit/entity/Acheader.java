@@ -70,7 +70,7 @@ public class Acheader extends AbstractModel<String> {
 	@Column(name = "xref", length = 100)
 	private String xref;
 
-	@Column(name = "xnote", length = 200)
+	@Column(name = "xnote")
 	private String xnote;
 
 	@Column(name = "xyear")

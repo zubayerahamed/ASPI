@@ -49,6 +49,10 @@ public class HomeController extends KitController {
 	@GetMapping("/home")
 	public String loadHomePage(HttpServletRequest request, @RequestParam(required = false) String frommenu, @RequestParam(required = false) String menucode, Model model) {
 
+		if(!isAjaxRequest(request)) {
+			return "redirect:/";
+		}
+
 		if(menucode != null && !"M".equalsIgnoreCase(menucode)) {
 			model.addAttribute("menuscreens", getMenuTree(menucode));
 			return "pages/home/home-fragments::screen-form";

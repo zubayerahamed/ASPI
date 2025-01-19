@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.zayaanit.model.DropdownOption;
 import com.zayaanit.model.FormFieldBuilder;
 
 /**
@@ -29,13 +28,7 @@ public class R217_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
-		List<DropdownOption> types = new ArrayList<>();
-		types.add(new DropdownOption("", "-- Select --"));
-		types.add(new DropdownOption("Customer", "Customer"));
-		types.add(new DropdownOption("Supplier", "Supplier"));
-		types.add(new DropdownOption("Employee", "Employee"));
-		types.add(new DropdownOption("Sub Account", "Sub Account"));
-		fieldsList.add(FormFieldBuilder.generateDropdownField(5, "Type", types, "", true));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true));
 
 		return fieldsList;
 	}

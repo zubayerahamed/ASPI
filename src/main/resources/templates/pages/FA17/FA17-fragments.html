@@ -60,7 +60,7 @@
 					<div class="col-md-3" th:if="${acheader.xvoucher ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Narration</label>
-							<textarea cols="" rows="1" class="form-control" th:value="*{xnote}" disabled></textarea>
+							<textarea cols="" rows="1" class="form-control" th:text="*{xnote}" disabled></textarea>
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${acheader.xvoucher ne null}">
