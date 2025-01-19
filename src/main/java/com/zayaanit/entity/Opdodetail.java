@@ -103,7 +103,7 @@ public class Opdodetail extends AbstractModel<String> {
 		obj.setXrow(0);
 		obj.setXdocrow(0);
 		obj.setXdornum(xdornum);
-		obj.setXqty(BigDecimal.ZERO);
+		obj.setXqty(BigDecimal.ONE);
 		obj.setXrate(BigDecimal.ZERO);
 		obj.setXlineamt(BigDecimal.ZERO);
 		obj.setXqtyord(BigDecimal.ZERO);

@@ -1,5 +1,6 @@
 package com.zayaanit.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -77,6 +78,10 @@ public class SO18 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xdornum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		if(sessionManager.getFromMap("SO18-DETAILS") != null) {
+			sessionManager.removeFromMap("SO18-DETAILS");
+		}
+
 		Optional<Acsub> staffOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getXstaff()));
 
 		if(isAjaxRequest(request) && frommenu == null) {
@@ -124,6 +129,7 @@ public class SO18 extends KitController {
 		return "pages/SO18/SO18";
 	}
 
+	@SuppressWarnings("unchecked")
 	@GetMapping("/detail-table")
 	public String detailFormFragment(@RequestParam String xdornum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		Optional<Acsub> staffOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getXstaff()));
@@ -131,7 +137,32 @@ public class SO18 extends KitController {
 		if("RESET".equalsIgnoreCase(xdornum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(staffOp.get()));
 			model.addAttribute("opdodetail", Opdodetail.getPOSInstance(null));
-			model.addAttribute("detailList", Collections.emptyList());
+
+			if(xitem != null) {
+				Opdodetail detail = Opdodetail.getPOSInstance(null);
+
+				Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), xitem));
+				if(caitemOp.isPresent()) {
+					detail.setXitem(xitem);
+					detail.setItemName(caitemOp.get().getXdesc());
+					detail.setXunit(caitemOp.get().getXunit());
+					detail.setXrate(caitemOp.get().getXrate());
+					detail.setXlineamt(detail.getXrate().multiply(detail.getXqty()));
+
+					if(sessionManager.getFromMap("SO18-DETAILS") == null) {
+						List<Opdodetail> details = new ArrayList<>();
+						details.add(detail);
+						sessionManager.addToMap("SO18-DETAILS", details);
+					} else {
+						List<Opdodetail> details = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
+						details.add(detail);
+					}
+				}
+
+			}
+
+			model.addAttribute("detailList", (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS"));
+
 			return "pages/SO18/SO18-fragments::detail-table";
 		}
 

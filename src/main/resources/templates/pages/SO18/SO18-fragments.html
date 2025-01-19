@@ -181,9 +181,15 @@
 				<tbody>
 					<tr th:each="x, c : ${detailList}">
 						<td th:text="${c.count}" class="text-center"></td>
-						<td th:attr="data-xrow=${x.xrow}" th:text="${x.xitem + ' - ' x.itemName}"></td>
+						<td th:attr="data-xrow=${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></td>
 						<td th:text="${x.xunit}" class="text-center"></td>
-						<td th:text="${x.xqty}" class="text-center"></td>
+						<td class="text-center">
+							<div class="col-md-12">
+								<div class="form-group">
+									<input type="number" class="form-control numeric-only text-center" name="xqty" th:value="${x.xqty}" required="required" min="0" step="1">
+								</div>
+							</div>
+						</td>
 						<td th:text="${x.xrate}" class="text-end"></td>
 						<td th:text="${x.xlineamt}" class="text-end"></td>
 					</tr>
@@ -208,7 +214,7 @@
 												data-reloadid='search-suggest-results-container', 
 												data-fieldid='xitem',
 												data-mainscreen=true,
-												data-mainreloadurl='/SO18/detail-table?xdornum='+ ${opdodetail.xdornum} +'&xrow='+ ${opdodetail.xrow} +'&xitem=',
+												data-mainreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET&xitem=',
 												data-mainreloadid='detail-table-container'" 
 												style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 									</div>
@@ -216,13 +222,7 @@
 							</div>
 						</td>
 						<td class="text-center"></td>
-						<td>
-							<div class="col-md-12">
-								<div class="form-group">
-									<input type="number" class="form-control numeric-only text-center" name="xqty" th:value="${opdodetail.xqty}" required="required" min="0" step="1">
-								</div>
-							</div>
-						</td>
+						<td></td>
 						<td class="text-end"></td>
 						<td class="text-end"></td>
 					</tr>
