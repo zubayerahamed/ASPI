@@ -28,7 +28,8 @@ public enum ReportMenu {
 	opdoinv("SO14", "Print Invoice", "opdoinv.rpt", ReportParamMap.opdoinv, "Y", false),
 	opdocln("SO14", "Print Challan", "opdocln.rpt", ReportParamMap.opdocln, "Y", false),
 
-	imtor("IM11", "Print Challan", "imtor.rpt", ReportParamMap.imtor, "Y", false),
+	imtor("IM11", "Print Transfer", "imtor.rpt", ReportParamMap.imtor, "Y", false),
+	imtorc("IM11", "Print Challan", "imtorc.rpt", ReportParamMap.imtorc, "Y", false),
 	imiss("IM13", "Print Challan", "imiss.rpt", ReportParamMap.imiss, "Y", false),
 	mobatch("IM14", "Print Batch", "mobatch.rpt", ReportParamMap.mobatch, "Y", false),
 	imadj("IM15", "Print Adjustment", "imadj.rpt", ReportParamMap.imadj, "Y", false),

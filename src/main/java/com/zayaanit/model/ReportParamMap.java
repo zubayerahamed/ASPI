@@ -23,6 +23,7 @@ public class ReportParamMap {
 	public static final Map<String, String> opdoinv = new HashMap<>();
 	public static final Map<String, String> opdocln = new HashMap<>();
 	public static final Map<String, String> imtor = new HashMap<>();
+	public static final Map<String, String> imtorc = new HashMap<>();
 	public static final Map<String, String> imiss = new HashMap<>();
 	public static final Map<String, String> mobatch = new HashMap<>();
 	public static final Map<String, String> imadj = new HashMap<>();
@@ -87,6 +88,9 @@ public class ReportParamMap {
 
 		imtor.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		imtor.put("param2", "xtornum|" + ReportParamDataType.INTEGER.name());
+
+		imtorc.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		imtorc.put("param2", "xtornum|" + ReportParamDataType.INTEGER.name());
 
 		imiss.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		imiss.put("param2", "xissuenum|" + ReportParamDataType.INTEGER.name());

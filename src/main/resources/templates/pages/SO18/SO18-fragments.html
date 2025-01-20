@@ -1,9 +1,14 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button type="reset" th:attr="data-reloadurl='/SO18?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset my-2 ms-3">Clear</button>
-			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
-			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO18/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
+		<div class="card-header d-flex justify-content-between align-items-center  p-0">
+			<div class="d-sm-flex align-items-sm-center">
+				<button type="reset" th:attr="data-reloadurl='/SO18?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset my-2 ms-3">Clear</button>
+				<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+				<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO18/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
+			</div>
+			<div>
+				<p></p>
+			</div>
 		</div>
 
 		<div class="card-body">
