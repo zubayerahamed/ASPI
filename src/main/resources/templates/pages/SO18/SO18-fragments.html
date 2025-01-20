@@ -7,7 +7,7 @@
 				<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO18/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 			</div>
 			<div>
-				<p></p>
+				<h2 th:text="${opdoheader.xstaff != null ? opdoheader.xstaff + ' - ' + opdoheader.staffName : ''}" class="text-muted p-0 m-0 me-3"></h2>
 			</div>
 		</div>
 
@@ -18,12 +18,12 @@
 				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
 
 				<div class="row">
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
+					<div class="col-md-4">
+						<div class="mb-2 form-group">
 							<label class="form-label">Invoice</label>
 							<div class="input-group">
 								<input 	type="text" 
-										class="form-control searchsuggest2"
+										class="form-control form-control-sm searchsuggest2"
 										name="xdornum"
 										th:value="${opdoheader.xdornum ne null ? opdoheader.xdornum : ''}"
 										disabled="disabled">
@@ -41,14 +41,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
+					<div class="col-md-4">
+						<div class="mb-2 form-group">
 							<label class="form-label required">Date</label>
 							<div class="input-group">
 								<input 	type="text" 
 										name="xdate" 
 										id="xdate" 
-										class="form-control datepicker-date-format" 
+										class="form-control form-control-sm datepicker-date-format" 
 										placeholder="yyyy-mm-dd format" 
 										required
 										th:value="${opdoheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opdoheader.xdate, df)}">
@@ -58,12 +58,12 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
+					<div class="col-md-4">
+						<div class="mb-2 form-group">
 							<label class="form-label required">Business</label>
 							<div class="input-group">
 								<input 	type="text" 
-										class="form-control searchsuggest2"
+										class="form-control form-control-sm searchsuggest2"
 										id="xbuid"
 										th:value="${opdoheader.xbuid != null ? opdoheader.xbuid + ' - ' + opdoheader.businessUnitName : ''}">
 								<input 	type="hidden" class="search-val" name="xbuid" th:value="*{xbuid}" required/>
@@ -79,12 +79,12 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
+					<div class="col-md-4">
+						<div class="mb-2 form-group">
 							<label class="form-label required">Outlet</label>
 							<div class="input-group">
 								<input 	type="text" 
-										class="form-control searchsuggest2"
+										class="form-control form-control-sm searchsuggest2"
 										id="xwh"
 										th:value="${opdoheader.xwh != null ? opdoheader.xwh + ' - ' + opdoheader.warehouseName : ''}">
 								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}" required/>
@@ -101,7 +101,7 @@
 						</div>
 					</div>
 
-					<div class="col-md-3">
+					<!-- <div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Staff</label>
 							<input type="text" class="form-control" th:value="${opdoheader.xstaff != null ? opdoheader.xstaff + ' - ' + opdoheader.staffName : ''}" disabled>
@@ -113,7 +113,7 @@
 							<label class="form-label">Total Amount</label>
 							<input type="number" class="form-control numeric-only" th:value="*{xtotamt}" disabled>
 						</div>
-					</div>
+					</div> -->
 					
 					
 				</div>
@@ -171,65 +171,65 @@
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+			<div class="col-md-12 mt-2 mb-2">
+				<div class="form-group">
+					<div class="input-group" th:if="${opdodetail.xrow eq 0}">
+						<input 	type="text" 
+								class="form-control searchsuggest3 form-control-sm"
+								id="xitem"
+								placeholder="Search Items"
+								th:value="${opdodetail.xitem ne null ? opdodetail.xitem + ' - ' + opdodetail.itemName : ''}"
+								th:attr="data-searchcounturl='/SO18/search-item?searchText='">
+						<input 	type="hidden" class="search-val" name="xitem" th:value="*{xitem}" required/>
+						<span 	class="input-group-text btn-search" 
+								th:attr="
+								data-reloadurl='/search/table/LMD12/4?hint=',  
+								data-reloadid='search-suggest-results-container', 
+								data-fieldid='xitem',
+								data-mainscreen=true,
+								data-mainreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET&xitem=',
+								data-mainreloadid='detail-table-container'" 
+								style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="table-responsive">
 			<table class="table">
 				<thead>
 					<tr>
 						<th width="5%" class="text-center">SL</th>
-						<th width="25%">Item</th>
+						<th width="30%">Item</th>
 						<th width="15%" class="text-center">Unit</th>
-						<th width="15%" class="text-center">Qty</th>
-						<th width="20%" class="text-end">Rate</th>
-						<th width="20%" class="text-end">S. Total</th>
+						<th width="20%" class="text-center">Qty</th>
+						<th width="15%" class="text-end">Rate</th>
+						<th width="15%" class="text-end">S. Total</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="x, c : ${detailList}">
+					<tr th:if="${#lists.isEmpty(detailList)}">
+						<td colspan="6" class="text-center">No items selected</td>
+					</tr>
+					<tr th:if="${not #lists.isEmpty(detailList)}" 
+						th:each="x, c : ${detailList}" 
+						th:attr="
+							data-xrow=${x.xrow},
+							data-delete-url=@{/SO18/detail-table}
+						">
 						<td th:text="${c.count}" class="text-center"></td>
 						<td th:attr="data-xrow=${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></td>
 						<td th:text="${x.xunit}" class="text-center"></td>
 						<td class="text-center">
 							<div class="col-md-12">
 								<div class="form-group">
-									<input type="number" class="form-control numeric-only text-center" name="xqty" th:value="${x.xqty}" required="required" min="0" step="1">
+									<input type="number" class="form-control numeric-only text-center form-control-sm delete-on-keypress" name="xqty" th:value="${x.xqty}" required="required" min="0" step="1">
 								</div>
 							</div>
 						</td>
 						<td th:text="${x.xrate}" class="text-end"></td>
 						<td th:text="${x.xlineamt}" class="text-end"></td>
-					</tr>
-					<tr>
-						<td class="text-center" th:text="${detailList == null ? 1 : (#lists.size(detailList) + 1)}"></td>
-						<td>
-							<div class="col-md-12">
-								<div class="form-group">
-									<div class="input-group" th:if="${opdodetail.xrow eq 0}">
-										<input 	type="text" 
-												class="form-control searchsuggest3"
-												id="xitem"
-												placeholder="Search Items"
-												th:value="${opdodetail.xitem ne null ? opdodetail.xitem + ' - ' + opdodetail.itemName : ''}"
-												th:attr="
-												data-searchcounturl='/SO18/search-item?searchText='
-												">
-										<input 	type="hidden" class="search-val" name="xitem" th:value="*{xitem}" required/>
-										<span 	class="input-group-text btn-search" 
-												th:attr="
-												data-reloadurl='/search/table/LMD12/4?hint=',  
-												data-reloadid='search-suggest-results-container', 
-												data-fieldid='xitem',
-												data-mainscreen=true,
-												data-mainreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET&xitem=',
-												data-mainreloadid='detail-table-container'" 
-												style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-									</div>
-								</div>
-							</div>
-						</td>
-						<td class="text-center"></td>
-						<td></td>
-						<td class="text-end"></td>
-						<td class="text-end"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -239,6 +239,27 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			kit.ui.init();
+
+			$('#xitem').focus();
+
+			$('.delete-on-keypress').on("keydown", function (e) {
+				// Check if the pressed key is 'Delete' (keyCode 46)
+				if (e.key === "Delete" || e.keyCode === 46) {
+					// Confirm deletion (optional)
+					if (confirm("Are you sure you want to delete this row?")) {
+						// Remove the closest table row
+						var xrow = $(this).closest("tr").data('xrow');
+						var deleteUrl = $(this).closest("tr").data('delete-url');
+
+						var data = {
+							'xrow' : xrow,
+						}
+						deleteRequest(deleteUrl, data);
+
+					}
+				}
+			});
+
 
 			$('.btn-detail-reset').off('click').on('click', function(e){
 				e.preventDefault();

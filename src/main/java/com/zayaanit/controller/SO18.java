@@ -1,9 +1,12 @@
 package com.zayaanit.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +34,7 @@ import com.zayaanit.entity.pk.OpdodetailPK;
 import com.zayaanit.entity.pk.OpdoheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
+import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -139,24 +144,48 @@ public class SO18 extends KitController {
 			model.addAttribute("opdodetail", Opdodetail.getPOSInstance(null));
 
 			if(xitem != null) {
-				Opdodetail detail = Opdodetail.getPOSInstance(null);
-
 				Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), xitem));
 				if(caitemOp.isPresent()) {
-					detail.setXitem(xitem);
-					detail.setItemName(caitemOp.get().getXdesc());
-					detail.setXunit(caitemOp.get().getXunit());
-					detail.setXrate(caitemOp.get().getXrate());
-					detail.setXlineamt(detail.getXrate().multiply(detail.getXqty()));
 
 					if(sessionManager.getFromMap("SO18-DETAILS") == null) {
+						Opdodetail detail = Opdodetail.getPOSInstance(null);
+						detail.setXitem(xitem);
+						detail.setItemName(caitemOp.get().getXdesc());
+						detail.setXunit(caitemOp.get().getXunit());
+						detail.setXrate(caitemOp.get().getXrate());
+						detail.setXqty(BigDecimal.ONE);
+						detail.setXlineamt(detail.getXrate().multiply(detail.getXqty()));
+						detail.setXrow(0);
+
 						List<Opdodetail> details = new ArrayList<>();
 						details.add(detail);
+
 						sessionManager.addToMap("SO18-DETAILS", details);
 					} else {
 						List<Opdodetail> details = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
-						details.add(detail);
+
+						Opdodetail existingItem = details.stream().filter(f -> f.getXitem().equals(xitem)).findFirst().orElse(null);
+
+						if(existingItem != null) {
+							existingItem.setXqty(existingItem.getXqty().add(BigDecimal.ONE));
+							existingItem.setXlineamt(existingItem.getXrate().multiply(existingItem.getXqty()));
+						} else {
+							Opdodetail detail = Opdodetail.getPOSInstance(null);
+							detail.setXitem(xitem);
+							detail.setItemName(caitemOp.get().getXdesc());
+							detail.setXunit(caitemOp.get().getXunit());
+							detail.setXrate(caitemOp.get().getXrate());
+							detail.setXqty(BigDecimal.ONE);
+							detail.setXlineamt(detail.getXrate().multiply(detail.getXqty()));
+
+							Optional<Integer> maxXrow = details.stream().map(Opdodetail::getXrow).max(Integer::compareTo);
+							detail.setXrow(maxXrow.isPresent() ? maxXrow.get() + 1 : 0);
+
+							details.add(detail);
+						}
+
 					}
+
 				}
 
 			}
@@ -229,5 +258,26 @@ public class SO18 extends KitController {
 		return caitemRepo.searchItemCount(sessionManager.getBusinessId(), searchText.trim());
 	}
 
-	
+	@SuppressWarnings("unchecked")
+	@DeleteMapping("/detail-table")
+	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xrow) throws Exception{
+
+		if(sessionManager.getFromMap("SO18-DETAILS") == null) {
+			responseHelper.setErrorStatusAndMessage("Cart is empty");
+			return responseHelper.getResponse();
+		} 
+
+		List<Opdodetail> details = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
+		details = details.stream().filter(f -> !f.getXrow().equals(xrow)).collect(Collectors.toList());
+
+		sessionManager.removeFromMap("SO18-DETAILS");
+		sessionManager.addToMap("SO18-DETAILS", details);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		//reloadSections.add(new ReloadSection("main-form-container", "/SO18?xdornum=RESET"));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SO18/detail-table?xdornum=RESET&xrow=RESET"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Item removed from cart");
+		return responseHelper.getResponse();
+	}
 }

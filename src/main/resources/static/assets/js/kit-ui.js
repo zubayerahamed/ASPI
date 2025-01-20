@@ -418,7 +418,14 @@ kit.ui.config.advancedSearchBtInit = function(){
 		$('#searchSuggestTableModal').modal('show');
 		$('.search-suggest-results-container').html("");
 
-		var searchValue = $(this).siblings('input.searchsuggest2').val();
+		var searchValue = '';
+		if($(this).siblings('input.searchsuggest2').length > 0){
+			searchValue = $(this).siblings('input.searchsuggest2').val();
+		} 
+//		else if($(this).siblings('input.searchsuggest3').length > 0){
+//			searchValue = $(this).siblings('input.searchsuggest3').val();
+//		}
+//		var searchValue = $(this).siblings('input.searchsuggest2').val();
 		sectionReloadAjaxPostReq({
 			id : $(this).data('reloadid'),
 			url : $(this).data('reloadurl') + searchValue
