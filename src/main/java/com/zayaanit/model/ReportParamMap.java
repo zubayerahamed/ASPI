@@ -22,6 +22,11 @@ public class ReportParamMap {
 	public static final Map<String, String> opordinv = new HashMap<>();
 	public static final Map<String, String> opdoinv = new HashMap<>();
 	public static final Map<String, String> opdocln = new HashMap<>();
+	public static final Map<String, String> imtor = new HashMap<>();
+	public static final Map<String, String> imiss = new HashMap<>();
+	public static final Map<String, String> mobatch = new HashMap<>();
+	public static final Map<String, String> imadj = new HashMap<>();
+	public static final Map<String, String> imopen = new HashMap<>();
 	
 
 	public static final Map<String, String> R101 = new HashMap<>();
@@ -79,6 +84,21 @@ public class ReportParamMap {
 
 		opdocln.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		opdocln.put("param2", "xdornum|" + ReportParamDataType.INTEGER.name());
+
+		imtor.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		imtor.put("param2", "xtornum|" + ReportParamDataType.INTEGER.name());
+
+		imiss.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		imiss.put("param2", "xissuenum|" + ReportParamDataType.INTEGER.name());
+
+		mobatch.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		mobatch.put("param2", "xbatch|" + ReportParamDataType.INTEGER.name());
+
+		imadj.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		imadj.put("param2", "xadjnum|" + ReportParamDataType.INTEGER.name());
+
+		imopen.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		imopen.put("param2", "xopennum|" + ReportParamDataType.INTEGER.name());
 
 		R101.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R101.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());

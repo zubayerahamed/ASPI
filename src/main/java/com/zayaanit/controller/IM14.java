@@ -41,7 +41,6 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.model.StockDetail;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -113,6 +112,11 @@ public class IM14 extends KitController {
 				if(moheader.getXitem() != null) {
 					Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), moheader.getXitem()));
 					if(caitemOp.isPresent()) moheader.setItemName(caitemOp.get().getXdesc());
+				}
+
+				if(moheader.getXstaff() != null) {
+					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), moheader.getXstaff()));
+					if(acsubOp.isPresent()) moheader.setStaffName(acsubOp.get().getXname());
 				}
 
 				if(moheader.getXstaffsubmit() != null) {
@@ -299,6 +303,13 @@ public class IM14 extends KitController {
 			responseHelper.setErrorStatusAndMessage("Invalid Add. Exp (Percent/Amount)");
 			return responseHelper.getResponse();
 		}
+
+		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
+			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
+			return responseHelper.getResponse();
+		}
+
+		moheader.setXstaff(sessionManager.getLoggedInUserDetails().getXstaff());
 
 		// Create new
 		if(SubmitFor.INSERT.equals(moheader.getSubmitFor())) {
@@ -663,6 +674,11 @@ public class IM14 extends KitController {
 		String currentDate = sdf.format(new Date());
 		if(!(sdf.format(moheader.getXdate()).equalsIgnoreCase(currentDate))) {
 			responseHelper.setErrorStatusAndMessage("Invalid date");
+			return responseHelper.getResponse();
+		}
+
+		if(sessionManager.getLoggedInUserDetails().getXstaff() == null) {
+			responseHelper.setErrorStatusAndMessage("Employee information not set with this user");
 			return responseHelper.getResponse();
 		}
 

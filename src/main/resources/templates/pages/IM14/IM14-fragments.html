@@ -155,7 +155,13 @@
 					<div class="col-md-3" th:if="${moheader.xbatch ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Total Cost</label>
-							<input type="number" class="form-control numeric-only" th:value="*{xtotamt }" disabled>
+							<input type="number" class="form-control numeric-only" th:value="*{xtotamt}" disabled>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reference</label>
+							<input type="text" class="form-control" th:field="*{xref}">
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${moheader.xbatch ne null}">

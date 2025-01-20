@@ -110,12 +110,20 @@ public class Moheader extends AbstractModel<String> {
 	@Column(name = "xtotamt", precision = 15, scale = 2)
 	private BigDecimal xtotamt;
 
+	@Column(name = "xstaff")
+	private Integer xstaff;
+
+	@Column(name = "xref")
+	private String xref;
+
 	@Transient
 	private String xunit;
 	@Transient
 	private String businessUnitName;
 	@Transient
 	private String warehouseName;
+	@Transient
+	private String staffName;
 	@Transient
 	private String submitStaffName;
 	@Transient
