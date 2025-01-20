@@ -378,6 +378,9 @@ kit.ui.config.advancedSearchBtInit = function(){
 			var mainreloadid = $(this).siblings('.btn-search').data('mainreloadid');
 			var mainreloadurl = $(this).siblings('.btn-search').data('mainreloadurl');
 
+			var headerreloadid = $(this).siblings('.btn-search').data('headerreloadid');
+			var headerreloadurl = $(this).siblings('.btn-search').data('headerreloadurl');
+
 			loadingMask2.show();
 			$.ajax({
 				url: getBasepath() + searchCountUrl + searchValue,
@@ -393,6 +396,11 @@ kit.ui.config.advancedSearchBtInit = function(){
 						sectionReloadAjaxReq({
 							id : mainreloadid,
 							url : mainreloadurl + searchValue
+						});
+
+						sectionReloadAjaxReq({
+							id : headerreloadid,
+							url : headerreloadurl
 						});
 
 					} else if (Number(data) > 1){

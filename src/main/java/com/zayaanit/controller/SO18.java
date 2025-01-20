@@ -83,15 +83,28 @@ public class SO18 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xdornum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
-		if(sessionManager.getFromMap("SO18-DETAILS") != null) {
-			sessionManager.removeFromMap("SO18-DETAILS");
-		}
+		
 
 		Optional<Acsub> staffOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getXstaff()));
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xdornum)) {
+				if(sessionManager.getFromMap("SO18-DETAILS") != null) {
+					sessionManager.removeFromMap("SO18-DETAILS");
+				}
+
 				model.addAttribute("opdoheader", Opdoheader.getPOSInstance(staffOp.get()));
+				return "pages/SO18/SO18-fragments::main-form";
+			}
+
+			if("RELOAD".equalsIgnoreCase(xdornum)) {
+				Opdoheader header = Opdoheader.getPOSInstance(staffOp.get());
+
+				List<Opdodetail> details = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
+				BigDecimal totalXlineamt = details.stream().map(Opdodetail::getXlineamt).filter(xlineamt -> xlineamt != null).reduce(BigDecimal.ZERO, BigDecimal::add);
+				header.setXtotamt(totalXlineamt);
+
+				model.addAttribute("opdoheader", header);
 				return "pages/SO18/SO18-fragments::main-form";
 			}
 
@@ -274,7 +287,7 @@ public class SO18 extends KitController {
 		sessionManager.addToMap("SO18-DETAILS", details);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		//reloadSections.add(new ReloadSection("main-form-container", "/SO18?xdornum=RESET"));
+		reloadSections.add(new ReloadSection("main-form-container", "/SO18?xdornum=RELOAD"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/SO18/detail-table?xdornum=RESET&xrow=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Item removed from cart");

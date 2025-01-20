@@ -1,14 +1,8 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-flex justify-content-between align-items-center  p-0">
-			<div class="d-sm-flex align-items-sm-center">
-				<button type="reset" th:attr="data-reloadurl='/SO18?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset my-2 ms-3">Clear</button>
-				<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
-				<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO18/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
-			</div>
-			<div>
-				<h2 th:text="${opdoheader.xstaff != null ? opdoheader.xstaff + ' - ' + opdoheader.staffName : ''}" class="text-muted p-0 m-0 me-3"></h2>
-			</div>
+			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO18/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 
 		<div class="card-body">
@@ -18,12 +12,12 @@
 				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
 
 				<div class="row">
-					<div class="col-md-4">
-						<div class="mb-2 form-group">
+					<div class="col-md-6">
+						<div class="mb-3 form-group">
 							<label class="form-label">Invoice</label>
 							<div class="input-group">
 								<input 	type="text" 
-										class="form-control form-control-sm searchsuggest2"
+										class="form-control  searchsuggest2"
 										name="xdornum"
 										th:value="${opdoheader.xdornum ne null ? opdoheader.xdornum : ''}"
 										disabled="disabled">
@@ -41,14 +35,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4">
-						<div class="mb-2 form-group">
+					<div class="col-md-6">
+						<div class="mb-3 form-group">
 							<label class="form-label required">Date</label>
 							<div class="input-group">
 								<input 	type="text" 
 										name="xdate" 
 										id="xdate" 
-										class="form-control form-control-sm datepicker-date-format" 
+										class="form-control  datepicker-date-format" 
 										placeholder="yyyy-mm-dd format" 
 										required
 										th:value="${opdoheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opdoheader.xdate, df)}">
@@ -58,12 +52,12 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4">
-						<div class="mb-2 form-group">
+					<div class="col-md-6">
+						<div class="mb-3 form-group">
 							<label class="form-label required">Business</label>
 							<div class="input-group">
 								<input 	type="text" 
-										class="form-control form-control-sm searchsuggest2"
+										class="form-control  searchsuggest2"
 										id="xbuid"
 										th:value="${opdoheader.xbuid != null ? opdoheader.xbuid + ' - ' + opdoheader.businessUnitName : ''}">
 								<input 	type="hidden" class="search-val" name="xbuid" th:value="*{xbuid}" required/>
@@ -79,12 +73,12 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4">
-						<div class="mb-2 form-group">
+					<div class="col-md-6">
+						<div class="mb-3 form-group">
 							<label class="form-label required">Outlet</label>
 							<div class="input-group">
 								<input 	type="text" 
-										class="form-control form-control-sm searchsuggest2"
+										class="form-control  searchsuggest2"
 										id="xwh"
 										th:value="${opdoheader.xwh != null ? opdoheader.xwh + ' - ' + opdoheader.warehouseName : ''}">
 								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}" required/>
@@ -101,23 +95,31 @@
 						</div>
 					</div>
 
-					<!-- <div class="col-md-3">
+					<div class="col-md-6">
 						<div class="mb-3 form-group">
 							<label class="form-label">Staff</label>
 							<input type="text" class="form-control" th:value="${opdoheader.xstaff != null ? opdoheader.xstaff + ' - ' + opdoheader.staffName : ''}" disabled>
 						</div>
 					</div>
-					
-					<div class="col-md-3">
+
+					<div class="col-md-6">
 						<div class="mb-3 form-group">
 							<label class="form-label">Total Amount</label>
 							<input type="number" class="form-control numeric-only" th:value="*{xtotamt}" disabled>
 						</div>
-					</div> -->
-					
-					
+					</div>
 				</div>
 
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SO18?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO18?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+					</div>
+				</div>
 			</form>
 		</div>
 
@@ -189,7 +191,10 @@
 								data-fieldid='xitem',
 								data-mainscreen=true,
 								data-mainreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET&xitem=',
-								data-mainreloadid='detail-table-container'" 
+								data-mainreloadid='detail-table-container',
+								data-headerreloadurl='/SO18?xdornum=RELOAD',
+								data-headerreloadid='main-form-container',
+								" 
 								style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 					</div>
 				</div>
@@ -292,29 +297,6 @@
 				});
 			});
 
-		})
-	</script>
-</div>
-
-
-
-<div th:fragment="pos-cart" xmlns:th="http://www.thymeleaf.org">
-
-	<div class="card">
-
-		<div class="card-body">
-			
-			cart section
-			
-		</div>
-
-	</div>
-
-	<script type="text/javascript">
-		$(document).ready(function(){
-			kit.ui.init();
-
-			
 		})
 	</script>
 </div>
