@@ -386,10 +386,12 @@ kit.ui.config.advancedSearchBtInit = function(){
 				type: "GET",
 				success: function (data) {
 					loadingMask2.hide();
+					
+					console.log(data);
 
 					if(Number(data) == 0){
 						showMessage("error", "Item not found");
-						$(searchField).val("");
+						//$(searchField).val("");
 					} else if (Number(data) == 1) {
 
 						// Reload sections with item data
@@ -399,7 +401,8 @@ kit.ui.config.advancedSearchBtInit = function(){
 						});
 
 					} else if (Number(data) > 1){
-						$(this).siblings('.btn-search').trigger('click');
+						console.log("here i m");
+						$(searchField).siblings('.btn-search').trigger('click');
 					}
 				},
 				error: function (jqXHR, status, errorThrown) {
@@ -425,10 +428,10 @@ kit.ui.config.advancedSearchBtInit = function(){
 		if($(this).siblings('input.searchsuggest2').length > 0){
 			searchValue = $(this).siblings('input.searchsuggest2').val();
 		} 
-//		else if($(this).siblings('input.searchsuggest3').length > 0){
-//			searchValue = $(this).siblings('input.searchsuggest3').val();
-//		}
-//		var searchValue = $(this).siblings('input.searchsuggest2').val();
+		else if($(this).siblings('input.searchsuggest3').length > 0){
+			searchValue = $(this).siblings('input.searchsuggest3').val();
+		}
+		//var searchValue = $(this).siblings('input.searchsuggest2').val();
 		sectionReloadAjaxPostReq({
 			id : $(this).data('reloadid'),
 			url : $(this).data('reloadurl') + searchValue

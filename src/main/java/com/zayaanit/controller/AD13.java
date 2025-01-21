@@ -22,21 +22,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserprofiles;
 import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
+import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XuserprofilesPK;
 import com.zayaanit.entity.pk.XusersPK;
+import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.AcsubRepo;
+import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
+import com.zayaanit.repository.XwhsRepo;
 
 /**
  * @author Zubayer Ahamed
@@ -50,6 +56,8 @@ public class AD13 extends KitController {
 	@Autowired private XuserprofilesRepo xuserprofilesRepo;
 	@Autowired private XprofilesRepo xprofilesRepo;
 	@Autowired private AcsubRepo acsubRepo;
+	@Autowired private CabunitRepo cabunitRepo;
+	@Autowired private XwhsRepo xwhsRepo;
 
 	private String pageTitle = null;
 
@@ -85,6 +93,16 @@ public class AD13 extends KitController {
 			if(user.getXstaff() != null) {
 				Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), user.getXstaff()));
 				if(acsubOp.isPresent()) user.setEmployeeName(acsubOp.get().getXname());
+
+				if(user.getXbuid() != null) {
+					Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), user.getXbuid()));
+					if(cabunitOp.isPresent()) user.setBusinessUnitName(cabunitOp.get().getXname());
+				}
+
+				if(user.getXwh() != null) {
+					Optional<Xwhs> xwhsOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), user.getXwh()));
+					if(xwhsOp.isPresent()) user.setWarehouseName(xwhsOp.get().getXname());
+				}
 			}
 			model.addAttribute("xusers", user);
 			return "pages/AD13/AD13-fragments::main-form";
@@ -162,6 +180,18 @@ public class AD13 extends KitController {
 
 			if(xusers.getXsessiontime() <= 0) {
 				responseHelper.setErrorStatusAndMessage("Invalid session time");
+				return responseHelper.getResponse();
+			}
+		}
+
+		if(xusers.getXislock().equals(Boolean.TRUE)) {
+			if(xusers.getXbuid() == null) {
+				responseHelper.setErrorStatusAndMessage("Unit selection required");
+				return responseHelper.getResponse();
+			}
+
+			if(xusers.getXwh() == null) {
+				responseHelper.setErrorStatusAndMessage("Outlet selection required");
 				return responseHelper.getResponse();
 			}
 		}

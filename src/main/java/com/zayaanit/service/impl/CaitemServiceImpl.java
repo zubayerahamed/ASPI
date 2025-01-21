@@ -87,6 +87,7 @@ public class CaitemServiceImpl extends AbstractService implements CaitemService 
 
 		return sql.append(" AND (im.xitem LIKE '%" + searchText + "%' "
 				+ "OR im.xdesc LIKE '%" + searchText + "%' "
+				+ "OR im.xbarcode LIKE '%" + searchText + "%' "
 				+ "OR im.xgitem LIKE '%" + searchText + "%' "
 				+ "OR im.xcatitem LIKE '%" + searchText + "%' "
 				+ "OR im.xnote LIKE '%" + searchText + "%') ");

@@ -12,7 +12,7 @@
 				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
 
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<div class="mb-3 form-group">
 							<label class="form-label">Invoice</label>
 							<div class="input-group">
@@ -35,26 +35,11 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6">
+					
+					
+					<div class="col-md-12">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Date</label>
-							<div class="input-group">
-								<input 	type="text" 
-										name="xdate" 
-										id="xdate" 
-										class="form-control  datepicker-date-format" 
-										placeholder="yyyy-mm-dd format" 
-										required
-										th:value="${opdoheader.xdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(opdoheader.xdate, df)}">
-								<span class="input-group-text">
-									<i class="ph-calendar"></i>
-								</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-6">
-						<div class="mb-3 form-group">
-							<label class="form-label required">Business</label>
+							<label class="form-label required">Unit</label>
 							<div class="input-group">
 								<input 	type="text" 
 										class="form-control  searchsuggest2"
@@ -73,7 +58,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Outlet</label>
 							<div class="input-group">
@@ -95,17 +80,25 @@
 						</div>
 					</div>
 
-					<div class="col-md-6">
-						<div class="mb-3 form-group">
-							<label class="form-label">Staff</label>
-							<input type="text" class="form-control" th:value="${opdoheader.xstaff != null ? opdoheader.xstaff + ' - ' + opdoheader.staffName : ''}" disabled>
-						</div>
-					</div>
-
-					<div class="col-md-6">
+					
+					<div class="col-md-12">
 						<div class="mb-3 form-group">
 							<label class="form-label">Total Amount</label>
-							<input type="number" class="form-control numeric-only" id="xtotamt" th:value="*{xtotamt}" disabled>
+							<input type="number" class="form-control numeric-only fw-bold" id="xtotamt" th:value="*{xtotamt}" disabled>
+						</div>
+					</div>
+					
+					<div class="col-md-12">
+						<div class="mb-3 form-group">
+							<label class="form-label">Paid Amount</label>
+							<input type="number" class="form-control numeric-only fw-bold" id="xpaidamt" value="0.00">
+						</div>
+					</div>
+					
+					<div class="col-md-12">
+						<div class="mb-3 form-group">
+							<label class="form-label">Change Amount</label>
+							<input type="number" class="form-control numeric-only fw-bold" id="xchangeamt" value="0.00" disabled>
 						</div>
 					</div>
 				</div>
@@ -116,8 +109,13 @@
 					</div>
 					<div>
 						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO18?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Confirm & Print</button>
+						<!--<a 	href="#"
+							target="_blank" 
+							th:attr="data-screen='SO18'" 
+							class="screen-item form-control"> 
+							New
+						</a>-->
+						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Submit</button>
 					</div>
 				</div>
 			</form>
@@ -174,7 +172,7 @@
 	<div class="card">
 
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0" th:if="${opdoheader.xdornum eq null}">
-			<div class="col-md-12 mt-2 mb-2">
+			<div class="col-md-4 mt-2 mb-2">
 				<div class="form-group">
 					<div class="input-group">
 						<input 	type="text" 
@@ -186,7 +184,7 @@
 						<input 	type="hidden" class="search-val" name="xitem" value="" required/>
 						<span 	class="input-group-text btn-search" 
 								th:attr="
-								data-reloadurl='/search/table/LMD12/4?hint=',  
+								data-reloadurl='/search/table/LMD12/5?hint=',  
 								data-reloadid='search-suggest-results-container', 
 								data-fieldid='xitem',
 								data-mainscreen=true,
@@ -228,7 +226,7 @@
 						<td class="text-center" th:if="${x.xdornum eq null}">
 							<div class="col-md-12">
 								<div class="form-group">
-									<input type="number" class="form-control numeric-only text-center form-control-sm delete-on-keypress" name="xqty" th:value="${x.xqty}" required="required" min="0" step="1">
+									<input type="number" class="form-control numeric-only text-center form-control-sm delete-on-keypress fw-bold" name="xqty" th:value="${x.xqty}" required="required" min="0" step="1">
 								</div>
 							</div>
 						</td>
@@ -253,7 +251,7 @@
 				totalAmt += Number(lineamt);
 			})
 
-			$('#xtotamt').val(totalAmt);
+			$('#xtotamt').val(totalAmt.toFixed(2));
 
 		}
 
@@ -272,6 +270,7 @@
 				var currentRowXlientamt = $(currentTd).siblings('.td-xlineamt');
 
 				var currentQty = $(this).val();
+				
 				if(currentQty == null || currentQty == '') {
 					currentQty = 0;
 					$(this).val(currentQty);
@@ -279,6 +278,7 @@
 				var xrate = $(currentRow).data('xrate');
 
 				var newLineAmt = Number(currentQty) * Number(xrate);
+				newLineAmt = newLineAmt.toFixed(2);
 
 				// update qty on backend also
 				//loadingMask2.show();

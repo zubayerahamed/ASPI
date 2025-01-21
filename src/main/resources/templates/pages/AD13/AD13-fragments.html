@@ -78,6 +78,55 @@
 							<input type="number" class="form-control numeric-only" th:field="*{xsessiontime}" min="0">
 						</div>
 					</div>
+					
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Unit (POS)</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control  searchsuggest2"
+										id="xbuid"
+										th:value="${xusers.xbuid != null ? xusers.xbuid + ' - ' + xusers.businessUnitName : ''}">
+								<input 	type="hidden" class="search-val" name="xbuid" th:value="*{xbuid}"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LAD17/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xbuid',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Outlet (POS)</label>
+							<div class="input-group">
+								<input 	type="text" 
+										class="form-control  searchsuggest2"
+										id="xwh"
+										th:value="${xusers.xwh != null ? xusers.xwh + ' - ' + xusers.warehouseName : ''}">
+								<input 	type="hidden" class="search-val" name="xwh" th:value="*{xwh}"/>
+								<span 	class="input-group-text btn-search" 
+										th:attr="
+										data-reloadurl='/search/table/LMD11/0?hint=', 
+										data-reloadid='search-suggest-results-container', 
+										data-fieldid='xwh',
+										data-mainscreen=false" 
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear" 
+										style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xislock">Is Lock? (POS Unit & Outlet)</label>
+							<input type="checkbox" id="xislock" th:field="*{xislock}">
+						</div>
+					</div>
 					<div class="col-md-3" th:if="${loggedInUser.admin}">
 						<div class="mb-3 form-group">
 							<label class="form-label d-block" for="zadmin">Is Admin?</label>

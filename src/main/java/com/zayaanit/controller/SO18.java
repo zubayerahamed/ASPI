@@ -3,6 +3,7 @@ package com.zayaanit.controller;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -264,11 +265,6 @@ public class SO18 extends KitController {
 		modelValidator.validateOpdoheader(opdoheader, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
-		if(opdoheader.getXdate() == null) {
-			responseHelper.setErrorStatusAndMessage("Date required");
-			return responseHelper.getResponse();
-		}
-
 		if(opdoheader.getXbuid() == null) {
 			responseHelper.setErrorStatusAndMessage("Business unit required");
 			return responseHelper.getResponse();
@@ -302,6 +298,7 @@ public class SO18 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(opdoheader.getSubmitFor())) {
+			opdoheader.setXdate(new Date());
 			opdoheader.setZid(sessionManager.getBusinessId());
 			opdoheader.setXdornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "SO14"));
 			opdoheader.setXstatus("Confirmed");

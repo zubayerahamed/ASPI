@@ -64,6 +64,15 @@ public class Xusers extends AbstractModel<String> {
 	@Column(name = "xtheme", length = 10)
 	private String xtheme;
 
+	@Column(name = "xislock", length = 1)
+	private Boolean xislock = Boolean.FALSE;
+
+	@Column(name = "xbuid")
+	private Integer xbuid;
+
+	@Column(name = "xwh")
+	private Integer xwh;
+
 	@Transient
 	private String roles;
 
@@ -83,9 +92,12 @@ public class Xusers extends AbstractModel<String> {
 
 	@Transient
 	private String businessName;
-
 	@Transient
 	private String employeeName;
+	@Transient
+	private String businessUnitName;
+	@Transient
+	private String warehouseName;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
