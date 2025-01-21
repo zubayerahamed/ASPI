@@ -23,7 +23,7 @@
 										disabled="disabled">
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LSO18/4?hint=', 
+										data-reloadurl='/search/table/LSO14/4?hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xdornum',
 										data-mainscreen=true,
@@ -105,7 +105,7 @@
 					<div class="col-md-6">
 						<div class="mb-3 form-group">
 							<label class="form-label">Total Amount</label>
-							<input type="number" class="form-control numeric-only" th:value="*{xtotamt}" disabled>
+							<input type="number" class="form-control numeric-only" id="xtotamt" th:value="*{xtotamt}" disabled>
 						</div>
 					</div>
 				</div>
@@ -117,7 +117,7 @@
 					<div>
 						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO18?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
 						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Confirm & Print</button>
 					</div>
 				</div>
 			</form>
@@ -173,17 +173,17 @@
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 
-		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0" th:if="${opdoheader.xdornum eq null}">
 			<div class="col-md-12 mt-2 mb-2">
 				<div class="form-group">
-					<div class="input-group" th:if="${opdodetail.xrow eq 0}">
+					<div class="input-group">
 						<input 	type="text" 
 								class="form-control searchsuggest3 form-control-sm"
 								id="xitem"
 								placeholder="Search Items"
-								th:value="${opdodetail.xitem ne null ? opdodetail.xitem + ' - ' + opdodetail.itemName : ''}"
+								value=""
 								th:attr="data-searchcounturl='/SO18/search-item?searchText='">
-						<input 	type="hidden" class="search-val" name="xitem" th:value="*{xitem}" required/>
+						<input 	type="hidden" class="search-val" name="xitem" value="" required/>
 						<span 	class="input-group-text btn-search" 
 								th:attr="
 								data-reloadurl='/search/table/LMD12/4?hint=',  
@@ -191,10 +191,7 @@
 								data-fieldid='xitem',
 								data-mainscreen=true,
 								data-mainreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET&xitem=',
-								data-mainreloadid='detail-table-container',
-								data-headerreloadurl='/SO18?xdornum=RELOAD',
-								data-headerreloadid='main-form-container',
-								" 
+								data-mainreloadid='detail-table-container'" 
 								style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 					</div>
 				</div>
@@ -217,24 +214,27 @@
 					<tr th:if="${#lists.isEmpty(detailList)}">
 						<td colspan="6" class="text-center">No items selected</td>
 					</tr>
-					<tr th:if="${not #lists.isEmpty(detailList)}" 
+					<tr class="item-row"
+						th:if="${not #lists.isEmpty(detailList)}" 
 						th:each="x, c : ${detailList}" 
 						th:attr="
+							data-xrate=${x.xrate},
+							data-xlineamt=${x.xlineamt},
 							data-xrow=${x.xrow},
-							data-delete-url=@{/SO18/detail-table}
-						">
+							data-delete-url=@{/SO18/detail-table}">
 						<td th:text="${c.count}" class="text-center"></td>
 						<td th:attr="data-xrow=${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></td>
 						<td th:text="${x.xunit}" class="text-center"></td>
-						<td class="text-center">
+						<td class="text-center" th:if="${x.xdornum eq null}">
 							<div class="col-md-12">
 								<div class="form-group">
 									<input type="number" class="form-control numeric-only text-center form-control-sm delete-on-keypress" name="xqty" th:value="${x.xqty}" required="required" min="0" step="1">
 								</div>
 							</div>
 						</td>
+						<td class="text-center" th:if="${x.xdornum ne null}" th:text="${x.xqty}"></td>
 						<td th:text="${x.xrate}" class="text-end"></td>
-						<td th:text="${x.xlineamt}" class="text-end"></td>
+						<td th:text="${x.xlineamt}" class="text-end td-xlineamt"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -242,10 +242,74 @@
 
 	</div>
 	<script type="text/javascript">
+		function loopEachItemRow(){
+
+			var totalAmt = 0;
+
+			$('.item-row').each(function(i, item){
+				var lineamt = $(this).data('xlineamt');
+				lineamt = Number(lineamt);
+				lineamt = lineamt < 0 ? 0 : lineamt;
+				totalAmt += Number(lineamt);
+			})
+
+			$('#xtotamt').val(totalAmt);
+
+		}
+
 		$(document).ready(function(){
 			kit.ui.init();
 
 			$('#xitem').focus();
+
+			loopEachItemRow();
+
+			$('.delete-on-keypress').on("change", function (e) {
+				if (e.key === "Delete" || e.keyCode === 46) return;
+
+				var currentTd = $(this).parents('td');
+				var currentRow = $(this).parents('tr');
+				var currentRowXlientamt = $(currentTd).siblings('.td-xlineamt');
+
+				var currentQty = $(this).val();
+				if(currentQty == null || currentQty == '') {
+					currentQty = 0;
+					$(this).val(currentQty);
+				}
+				var xrate = $(currentRow).data('xrate');
+
+				var newLineAmt = Number(currentQty) * Number(xrate);
+
+				// update qty on backend also
+				//loadingMask2.show();
+				$.ajax({
+					url: getBasepath() + '/SO18/update-qty?xrow=' + $(currentRow).data('xrow') + '&qty=' + currentQty,
+					type: "GET",
+					success: function (data) {
+						//loadingMask2.hide();
+						if(data === false){
+							//showMessage("error", 'Quantity update failed');
+						} else {
+
+							$(currentRowXlientamt).html(newLineAmt);
+							$(currentRow).data('xlineamt', newLineAmt);
+
+							loopEachItemRow();
+
+						}
+					},
+					error: function (jqXHR, status, errorThrown) {
+						loadingMask2.hide();
+						if (jqXHR.status === 401) {
+							// Session is invalid, reload the url to go back to login page
+							location.reload();
+						} else {
+							showMessage("error", jqXHR.responseJSON.message);
+						}
+					},
+				});
+
+			})
 
 			$('.delete-on-keypress').on("keydown", function (e) {
 				// Check if the pressed key is 'Delete' (keyCode 46)
@@ -266,35 +330,12 @@
 			});
 
 
-			$('.btn-detail-reset').off('click').on('click', function(e){
-				e.preventDefault();
-
-				sectionReloadAjaxReq({
-					id : $(this).data('reloadid'),
-					url : $(this).data('reloadurl')
-				});
-			});
-
-			$('.btn-detail-submit').off('click').on('click', function(e){
-				e.preventDefault();
-				submitMainForm(null, $('form#detailform'));
-			});
-
 			$('.btn-detail-delete').off('click').on('click', function(e){
 				e.preventDefault();
 				if(!confirm("Are you sure, to delete this?")){
 					return;
 				}
 				deleteRequest($(this).data('url'));
-			});
-	
-			$('a.detail-dataindex').off('click').on('click', function(e){
-				e.preventDefault();
-
-				sectionReloadAjaxReq({
-					id : $(this).data('reloadid'),
-					url : $(this).data('reloadurl')
-				});
 			});
 
 		})

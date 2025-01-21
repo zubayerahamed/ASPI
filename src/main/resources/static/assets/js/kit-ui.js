@@ -372,14 +372,13 @@ kit.ui.config.advancedSearchBtInit = function(){
 		if(keycode == '13'){   // Enter pressed
 			e.preventDefault();
 
+			var searchField = $(this);
+
 			var searchCountUrl = $(this).data('searchcounturl');
 			var searchValue = $(this).val();
 
 			var mainreloadid = $(this).siblings('.btn-search').data('mainreloadid');
 			var mainreloadurl = $(this).siblings('.btn-search').data('mainreloadurl');
-
-			var headerreloadid = $(this).siblings('.btn-search').data('headerreloadid');
-			var headerreloadurl = $(this).siblings('.btn-search').data('headerreloadurl');
 
 			loadingMask2.show();
 			$.ajax({
@@ -390,17 +389,13 @@ kit.ui.config.advancedSearchBtInit = function(){
 
 					if(Number(data) == 0){
 						showMessage("error", "Item not found");
+						$(searchField).val("");
 					} else if (Number(data) == 1) {
 
 						// Reload sections with item data
 						sectionReloadAjaxReq({
 							id : mainreloadid,
 							url : mainreloadurl + searchValue
-						});
-
-						sectionReloadAjaxReq({
-							id : headerreloadid,
-							url : headerreloadurl
 						});
 
 					} else if (Number(data) > 1){
