@@ -118,9 +118,7 @@
 					</div>
 					<div>
 						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus ne 'Open'}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opposd'" type="button" class="btn btn-primary btn-sm btn-print my-2 ms-3" title="Print Duplicate"><i class="ph-printer"></i></button>
-
-						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit" title="Confirm & Print"><i class="ph ph-paper-plane"></i></button>
-						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit" title="Confirm & Print"><i class="ph ph-paper-plane"></i></button>
+						<button th:if="${opdoheader.xdornum eq null or (opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open')}" type="submit" class="btn btn-primary btn-sm btn-submit" title="Confirm & Print"><i class="ph ph-paper-plane"></i></button>
 					</div>
 				</div>
 			</form>
@@ -158,21 +156,6 @@
 				submitMainForm();
 			});
 
-			$('.btn-delete').off('click').on('click', function(e){
-				e.preventDefault();
-				if(!confirm("Are you sure, to delete this?")){
-					return;
-				}
-				deleteRequest($(this).data('url'));
-			});
-
-			$('.btn-confirm').off('click').on('click', function(e){
-				e.preventDefault();
-				if(!confirm("Are you sure?")){
-					return;
-				}
-				actionPostRequest($(this).data('url'));
-			});
 		})
 	</script>
 </div>

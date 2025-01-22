@@ -39,8 +39,10 @@ import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.OpdoheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
+import com.zayaanit.enums.ReportType;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.RequestParameters;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -413,6 +415,15 @@ public class SO18 extends KitController {
 				opdodetailRepo.save(d);
 			}
 
+			if("Confirmed".equals(opdoheader.getXstatus())) {
+				RequestParameters printParams = new RequestParameters();
+				printParams.setReportCode("oppos");
+				printParams.setReportType(ReportType.PDF);
+				printParams.setParam1(sessionManager.getBusinessId());
+				printParams.setParam2(opdoheader.getXdornum());
+				responseHelper.setPrintParam(printParams, "/report/print");
+			}
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("detail-table-container", "/SO18/detail-table?xdornum=RESET&xrow=RESET"));
 			responseHelper.setReloadSections(reloadSections);
@@ -486,6 +497,15 @@ public class SO18 extends KitController {
 			}
 
 			opdodetailRepo.save(d);
+		}
+
+		if("Confirmed".equals(existObj.getXstatus())) {
+			RequestParameters printParams = new RequestParameters();
+			printParams.setReportCode("oppos");
+			printParams.setReportType(ReportType.PDF);
+			printParams.setParam1(sessionManager.getBusinessId());
+			printParams.setParam2(opdoheader.getXdornum());
+			responseHelper.setPrintParam(printParams, "/report/print");
 		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();

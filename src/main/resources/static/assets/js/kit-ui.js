@@ -386,8 +386,6 @@ kit.ui.config.advancedSearchBtInit = function(){
 				type: "GET",
 				success: function (data) {
 					loadingMask2.hide();
-					
-					console.log(data);
 
 					if(Number(data) == 0){
 						showMessage("error", "Item not found");
@@ -401,7 +399,6 @@ kit.ui.config.advancedSearchBtInit = function(){
 						});
 
 					} else if (Number(data) > 1){
-						console.log("here i m");
 						$(searchField).siblings('.btn-search').trigger('click');
 					}
 				},

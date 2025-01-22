@@ -28,13 +28,21 @@ public class ResponseHelper {
 	private static final String DISPLAY_MESSAGE = "displayMessage";
 	private static final String DISPLAY_ERROR_DETAIL_MODAL = "displayErrorDetailModal";
 	private static final String FILE_DOENLOAD = "fileDownload";
+	private static final String PRINT_REPORT = "printReport";
 
+	private boolean printReport = false;
 	private boolean fileDownload = false;
 	private boolean displayMessage = true;
 	private boolean showErrorDetailModal = false;
 	private String statusMessage;
 	private ResponseStatus status;
 	private Map<String, Object> response = new HashMap<>();
+
+	public void setPrintParam(RequestParameters printParams, String printUrl) {
+		this.printReport = true;
+		this.response.put("printParams", printParams);
+		this.response.put("printUrl", printUrl);
+	}
 
 	public void setDisplayMessage(boolean displayMessage) {
 		this.displayMessage = displayMessage;
@@ -146,6 +154,7 @@ public class ResponseHelper {
 		response.put(DISPLAY_MESSAGE, this.displayMessage);
 		response.put(DISPLAY_ERROR_DETAIL_MODAL, this.showErrorDetailModal);
 		response.put(FILE_DOENLOAD, this.fileDownload);
+		response.put(PRINT_REPORT, this.printReport);
 		return this.response;
 	}
 }

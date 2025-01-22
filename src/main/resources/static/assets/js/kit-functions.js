@@ -116,10 +116,10 @@ function sectionReloadAjaxDeleteReq(section, data, callbackFunction) {
 	});
 }
 
-function submitMainForm(customurl, customform){
-	if(customform == undefined && $('form#mainform').length < 1) return;
+function submitMainForm(customurl, customform, callbackFunction){
+	if((customform == undefined || customform == null) && $('form#mainform').length < 1) return;
 
-	var targettedForm = customform == undefined ? $('form#mainform') : customform;
+	var targettedForm = customform == undefined || customform == null ? $('form#mainform') : customform;
 	if(!targettedForm.smkValidate()) return;
 
 	var submitUrl = (customurl == undefined || customurl == null) ? targettedForm.attr('action') : customurl;
@@ -192,7 +192,14 @@ function submitMainForm(customurl, customform){
 				}
 
 				if(data.status) showMessage(data.status.toLowerCase(), data.message);
+			}
 
+			if(callbackFunction != undefined){
+				callbackFunction();
+			}
+
+			if(data.printReport){
+				generateOnScreenReport(getBasepath() + data.printUrl, data.printParams);
 			}
 		}, 
 		error : function(jqXHR, status, errorThrown){
@@ -233,6 +240,7 @@ function submitMultipartForm(submitUrl, submitType, targettedForm, frommodal){
 		contentType: false,
 		success : function(data) {
 			loadingMask2.hide();
+
 			if(data.status == 'SUCCESS'){
 				if(data.displayMessage == true) showMessage(data.status.toLowerCase(), data.message);
 
@@ -270,6 +278,10 @@ function submitMultipartForm(submitUrl, submitType, targettedForm, frommodal){
 				}
 
 				showMessage(data.status.toLowerCase(), data.message);
+			}
+
+			if(data.printReport){
+				generateOnScreenReport(getBasepath() + data.printUrl, data.printParams);
 			}
 		}, 
 		error : function(jqXHR, status, errorThrown){
