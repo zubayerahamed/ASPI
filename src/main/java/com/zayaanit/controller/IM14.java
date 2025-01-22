@@ -726,4 +726,19 @@ public class IM14 extends KitController {
 		responseHelper.setSuccessStatusAndMessage("Confirmed successfully");
 		return responseHelper.getResponse();
 	}
+
+	@GetMapping("/fg-item")
+	public String loadFgItemFragment(@RequestParam Integer xitem, Model model) {
+		Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), xitem));
+
+		Moheader moheader = Moheader.getDefaultInstance();
+		if(caitemOp.isPresent()) {
+			moheader.setXitem(xitem);
+			moheader.setItemName(caitemOp.get().getXdesc());
+			moheader.setXunit(caitemOp.get().getXunit());
+		}
+
+		model.addAttribute("moheader", moheader);
+		return "pages/IM14/IM14-fragments::fg-item";
+	}
 }

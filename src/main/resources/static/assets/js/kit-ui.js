@@ -449,6 +449,13 @@ kit.ui.config.advancedSearchBtInit = function(){
 		e.preventDefault();
 		$(this).siblings('input.searchsuggest2').val("");
 		$(this).siblings('input.search-val').val("");
+
+		var ids = $(this).data('dependentfieldsid');
+		const idarr = ids.split(',');
+
+		$.each(idarr, function(index, value) {
+			$('#' + value).val("");
+		});
 	});
 }
 
