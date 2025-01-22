@@ -35,6 +35,9 @@ public enum ReportMenu {
 	imadj("IM15", "Print Adjustment", "imadj.rpt", ReportParamMap.imadj, "Y", false),
 	imopen("IM16", "Print", "imopen.rpt", ReportParamMap.imopen, "Y", false),
 
+	oppos("SO18", "Print Invoice", "oppos.rpt", ReportParamMap.oppos, "Y", false),
+	opposd("SO18", "Print Invoice Duplicate", "opposd.rpt", ReportParamMap.opposd, "Y", false),
+
 	// REPORT MODULES REPORT
 	R101("R101", "User Listing Report", "R101.rpt", ReportParamMap.R101, "Y", false),
 	R102("R102", "Profile Wise Access Report", "R102.rpt", ReportParamMap.R102, "Y", false),

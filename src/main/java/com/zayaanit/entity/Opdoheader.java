@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -20,8 +21,15 @@ import javax.persistence.Transient;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.zayaanit.entity.pk.AcsubPK;
+import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.OpdoheaderPK;
+import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
+import com.zayaanit.repository.AcsubRepo;
+import com.zayaanit.repository.CabunitRepo;
+import com.zayaanit.repository.XwhsRepo;
+import com.zayaanit.service.KitSessionManager;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -131,6 +139,8 @@ public class Opdoheader extends AbstractModel<String> {
 	private String staffName;
 	@Transient
 	private String submitStaffName;
+	@Transient
+	private boolean xislock;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
@@ -150,20 +160,45 @@ public class Opdoheader extends AbstractModel<String> {
 		return obj;
 	}
 
-	public static Opdoheader getPOSInstance(Acsub staff) {
+	public static Opdoheader getPOSInstance(KitSessionManager sessionManager) {
 		Opdoheader obj = new Opdoheader();
 		obj.setSubmitFor(SubmitFor.INSERT);
-		obj.setXdate(new Date());
-		obj.setXstaff(staff.getXsub());
-		obj.setStaffName(staff.getXname());
+
 		obj.setXlineamt(BigDecimal.ZERO);
 		obj.setXdiscamt(BigDecimal.ZERO);
 		obj.setXtotamt(obj.getXlineamt().subtract(obj.getXdiscamt()));
-		obj.setXstatus("Open");
+		obj.setXstatus("Confirmed");
 		obj.setXstatusim("Open");
 		obj.setXstatusjv("Open");
 		obj.setXtotcost(BigDecimal.ZERO);
-		obj.setXtype("Direct Invoice");
+		obj.setXtype("POS Invoice");
+
+		obj.setXdate(new Date());
+		obj.setXstaff(sessionManager.getLoggedInUserDetails().getXstaff());
+		obj.setXbuid(sessionManager.getLoggedInUserDetails().getPosunit());
+		obj.setXwh(sessionManager.getLoggedInUserDetails().getPosoutlet());
+		obj.setXislock(sessionManager.getLoggedInUserDetails().isXislock());
 		return obj;
+	}
+
+	public Opdoheader build(KitSessionManager sessionManager, AcsubRepo acsubRepo, CabunitRepo cabunitRepo,  XwhsRepo xwhsRepo) {
+		if(this.getXbuid() != null) {
+			Optional<Cabunit> cabunitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), this.getXbuid()));
+			if(cabunitOp.isPresent()) this.setBusinessUnitName(cabunitOp.get().getXname());
+		}
+
+		if(this.getXwh() != null) {
+			Optional<Xwhs> xwhsOp = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), this.getXwh()));
+			if(xwhsOp.isPresent()) this.setWarehouseName(xwhsOp.get().getXname());
+		}
+
+		if(this.getXstaff() != null) {
+			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), this.getXstaff()));
+			if(acsubOp.isPresent()) this.setStaffName(acsubOp.get().getXname());
+		}
+
+		this.xislock = sessionManager.getLoggedInUserDetails().isXislock();
+
+		return this;
 	}
 }

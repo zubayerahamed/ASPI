@@ -34,6 +34,9 @@ public class MyUserDetails implements UserDetails {
 	private String xtheme;
 	private Integer xsessiontime;
 	private String xsessiontype;
+	private Integer posunit;
+	private Integer posoutlet;
+	private boolean xislock;
 
 	private boolean switchBusiness;
 	private Zbusiness zbusiness;
@@ -61,10 +64,11 @@ public class MyUserDetails implements UserDetails {
 		this.credentialExpired = false;
 		this.accountLocked = !Boolean.TRUE.equals(user.getZactive());
 		this.enabled = Boolean.TRUE.equals(user.getZactive());
-		this.roles = StringUtils.isBlank(user.getRoles()) ? com.zayaanit.enums.UserRole.SUBSCRIBER.getCode()
-				: user.getRoles();
-		this.authorities = Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new)
-				.collect(Collectors.toList());
+		this.roles = StringUtils.isBlank(user.getRoles()) ? com.zayaanit.enums.UserRole.SUBSCRIBER.getCode() : user.getRoles();
+		this.authorities = Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+		this.posunit = user.getXbuid();
+		this.posoutlet = user.getXwh();
+		this.xislock = Boolean.TRUE.equals(user.getXislock());
 	}
 
 	public void setUserDetails(Xusers user) {
@@ -80,10 +84,11 @@ public class MyUserDetails implements UserDetails {
 		this.credentialExpired = false;
 		this.accountLocked = !Boolean.TRUE.equals(user.getZactive());
 		this.enabled = Boolean.TRUE.equals(user.getZactive());
-		this.roles = StringUtils.isBlank(user.getRoles()) ? com.zayaanit.enums.UserRole.SUBSCRIBER.getCode()
-				: user.getRoles();
-		this.authorities = Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new)
-				.collect(Collectors.toList());
+		this.roles = StringUtils.isBlank(user.getRoles()) ? com.zayaanit.enums.UserRole.SUBSCRIBER.getCode() : user.getRoles();
+		this.authorities = Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+		this.posunit = user.getXbuid();
+		this.posoutlet = user.getXwh();
+		this.xislock = Boolean.TRUE.equals(user.getXislock());
 	}
 
 	public Date getLoginTime() {
@@ -198,5 +203,17 @@ public class MyUserDetails implements UserDetails {
 
 	public void setXsessiontype(String xsessiontype) {
 		this.xsessiontype = xsessiontype;
+	}
+
+	public Integer getPosunit() {
+		return posunit;
+	}
+
+	public Integer getPosoutlet() {
+		return posoutlet;
+	}
+
+	public boolean isXislock() {
+		return xislock;
 	}
 }

@@ -1,6 +1,8 @@
 package com.zayaanit.controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -87,9 +89,10 @@ public class SO18 extends KitController {
 
 	@SuppressWarnings("unchecked")
 	@GetMapping
-	public String index(@RequestParam (required = false) String xdornum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
-
-		Optional<Acsub> staffOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getXstaff()));
+	public String index(@RequestParam (required = false) String xdornum, @RequestParam(required = false) String frommenu, @RequestParam (required = false) Integer xbuid, @RequestParam (required = false) Integer xwh, HttpServletRequest request, Model model) {
+		LocalDateTime serverTime = LocalDateTime.now(); // Get server time
+		String formattedTime = serverTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm:ss a"));
+		model.addAttribute("serverTime", formattedTime);
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xdornum)) {  // clicked on clear button
@@ -97,15 +100,23 @@ public class SO18 extends KitController {
 					sessionManager.removeFromMap("SO18-DETAILS");
 				}
 
-				model.addAttribute("opdoheader", Opdoheader.getPOSInstance(staffOp.get()));
+				Opdoheader header = Opdoheader.getPOSInstance(sessionManager);
+				if(xbuid != null) header.setXbuid(xbuid);
+				if(xwh != null) header.setXwh(xwh);
+				header = header.build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
+
+				model.addAttribute("opdoheader", header);
 				return "pages/SO18/SO18-fragments::main-form";
 			}
 
 			if("RELOAD".equalsIgnoreCase(xdornum)) {   // trigger by adding or deleting product
-				Opdoheader header = Opdoheader.getPOSInstance(staffOp.get());
+				Opdoheader header = Opdoheader.getPOSInstance(sessionManager);
+				if(xbuid != null) header.setXbuid(xbuid);
+				if(xwh != null) header.setXwh(xwh);
+				header = header.build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
 
 				List<Opdodetail> details = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
-				BigDecimal totalXlineamt = details.stream().map(Opdodetail::getXlineamt).filter(xlineamt -> xlineamt != null).reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal totalXlineamt = details == null || details.isEmpty() ? BigDecimal.ZERO : details.stream().map(Opdodetail::getXlineamt).filter(xlineamt -> xlineamt != null).reduce(BigDecimal.ZERO, BigDecimal::add);
 				header.setXtotamt(totalXlineamt);
 
 				model.addAttribute("opdoheader", header);
@@ -113,7 +124,7 @@ public class SO18 extends KitController {
 			}
 
 			Optional<Opdoheader> opdoheaderOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.valueOf(xdornum)));
-			Opdoheader header = opdoheaderOp.isPresent() ? opdoheaderOp.get() : Opdoheader.getPOSInstance(staffOp.get());
+			Opdoheader header = opdoheaderOp.isPresent() ? opdoheaderOp.get().build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo) : Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
 			model.addAttribute("opdoheader", header);
 
 			if(header.getXdornum() != null) {
@@ -152,7 +163,7 @@ public class SO18 extends KitController {
 			sessionManager.removeFromMap("SO18-DETAILS");
 		}
 
-		model.addAttribute("opdoheader", Opdoheader.getPOSInstance(staffOp.get()));
+		model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
 		model.addAttribute("opdodetail", Opdodetail.getPOSInstance(null));
 		model.addAttribute("detailList", Collections.emptyList());
 		return "pages/SO18/SO18";
@@ -161,10 +172,9 @@ public class SO18 extends KitController {
 	@SuppressWarnings("unchecked")
 	@GetMapping("/detail-table")
 	public String detailFormFragment(@RequestParam String xdornum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
-		Optional<Acsub> staffOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getXstaff()));
 
 		if("RESET".equalsIgnoreCase(xdornum) && "RESET".equalsIgnoreCase(xrow)) {
-			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(staffOp.get()));
+			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
 			model.addAttribute("opdodetail", Opdodetail.getPOSInstance(null));
 
 			if(xitem != null) {
@@ -225,7 +235,7 @@ public class SO18 extends KitController {
 		}
 
 		if("RELOAD".equalsIgnoreCase(xdornum) && "RELOAD".equalsIgnoreCase(xrow)) {
-			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(staffOp.get()));
+			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
 
 			List<Opdodetail> itemList = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
 			model.addAttribute("detailList", itemList == null ? Collections.emptyList() : itemList);
@@ -233,23 +243,84 @@ public class SO18 extends KitController {
 		}
 
 		if(StringUtils.isNotBlank(xdornum)) {
-			Opdoheader header = Opdoheader.getPOSInstance(staffOp.get());
-			header.setXdornum(Integer.valueOf(xdornum));
+			Optional<Opdoheader> headerOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.valueOf(xdornum)));
+			if(!headerOp.isPresent()) {
+				model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
+				model.addAttribute("detailList", Collections.emptyList());
+			}
+
+			Opdoheader header = headerOp.get().build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
 			model.addAttribute("opdoheader", header);
 
-			List<Opdodetail> details = opdodetailRepo.findAllByZidAndXdornum(sessionManager.getBusinessId(), Integer.valueOf(xdornum));
-			if(details != null && !details.isEmpty()) {
-				for(Opdodetail d : details) {
-					Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), d.getXitem()));
-					if(caitemOp.isPresent()) {
-						d.setItemName(caitemOp.get().getXdesc());
-						d.setXunit(caitemOp.get().getXunit());
+			if(xitem == null) {
+				List<Opdodetail> details = opdodetailRepo.findAllByZidAndXdornum(sessionManager.getBusinessId(), Integer.valueOf(xdornum));
+				if(details != null && !details.isEmpty()) {
+					for(Opdodetail d : details) {
+						Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), d.getXitem()));
+						if(caitemOp.isPresent()) {
+							d.setItemName(caitemOp.get().getXdesc());
+							d.setXunit(caitemOp.get().getXunit());
+						}
 					}
 				}
+
+				if("Open".equals(header.getXstatus())) {
+					if(sessionManager.getFromMap("SO18-DETAILS") != null) {
+						sessionManager.removeFromMap("SO18-DETAILS");
+					}
+					sessionManager.addToMap("SO18-DETAILS", details == null ? Collections.emptyList() : details);
+				}
+
+				model.addAttribute("detailList", details == null ? Collections.emptyList() : details);
+			} else {
+				Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), xitem));
+				if(caitemOp.isPresent()) {
+
+					if(sessionManager.getFromMap("SO18-DETAILS") == null) {
+						Opdodetail detail = Opdodetail.getPOSInstance(null);
+						detail.setXitem(xitem);
+						detail.setItemName(caitemOp.get().getXdesc());
+						detail.setXunit(caitemOp.get().getXunit());
+						detail.setXrate(caitemOp.get().getXrate());
+						detail.setXqty(BigDecimal.ONE);
+						detail.setXlineamt(detail.getXrate().multiply(detail.getXqty()));
+						detail.setXrow(0);
+
+						List<Opdodetail> details = new ArrayList<>();
+						details.add(detail);
+
+						sessionManager.addToMap("SO18-DETAILS", details);
+					} else {
+						List<Opdodetail> details = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
+
+						Opdodetail existingItem = details.stream().filter(f -> f.getXitem().equals(xitem)).findFirst().orElse(null);
+
+						if(existingItem != null) {
+							existingItem.setXqty(existingItem.getXqty().add(BigDecimal.ONE));
+							existingItem.setXlineamt(existingItem.getXrate().multiply(existingItem.getXqty()));
+						} else {
+							Opdodetail detail = Opdodetail.getPOSInstance(null);
+							detail.setXitem(xitem);
+							detail.setItemName(caitemOp.get().getXdesc());
+							detail.setXunit(caitemOp.get().getXunit());
+							detail.setXrate(caitemOp.get().getXrate());
+							detail.setXqty(BigDecimal.ONE);
+							detail.setXlineamt(detail.getXrate().multiply(detail.getXqty()));
+
+							Optional<Integer> maxXrow = details.stream().map(Opdodetail::getXrow).max(Integer::compareTo);
+							detail.setXrow(maxXrow.isPresent() ? maxXrow.get() + 1 : 0);
+
+							details.add(detail);
+						}
+
+					}
+				}
+
+				List<Opdodetail> itemList = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
+				model.addAttribute("detailList", itemList == null ? Collections.emptyList() : itemList);
 			}
-			model.addAttribute("detailList", details == null ? Collections.emptyList() : details);
 		} else {
-			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(staffOp.get()));
+			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
 			model.addAttribute("detailList", Collections.emptyList());
 		}
 
@@ -259,11 +330,21 @@ public class SO18 extends KitController {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@PostMapping("/store")
-	public @ResponseBody Map<String, Object> store(Opdoheader opdoheader, BindingResult bindingResult){
+	public @ResponseBody Map<String, Object> store(Opdoheader opdoheader, BindingResult bindingResult) {
 
 		// VALIDATE XSCREENS
 		modelValidator.validateOpdoheader(opdoheader, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
+
+		if(sessionManager.getLoggedInUserDetails().isXislock()) {
+			opdoheader.setXbuid(sessionManager.getLoggedInUserDetails().getPosunit());
+			opdoheader.setXwh(sessionManager.getLoggedInUserDetails().getPosoutlet());
+		}
+
+		if(sessionManager.getLoggedInUserDetails().getZbusiness().getXposcus() == null) {
+			responseHelper.setErrorStatusAndMessage("Default POS customer not set");
+			return responseHelper.getResponse();
+		}
 
 		if(opdoheader.getXbuid() == null) {
 			responseHelper.setErrorStatusAndMessage("Business unit required");
@@ -293,21 +374,22 @@ public class SO18 extends KitController {
 			responseHelper.setErrorStatusAndMessage("Please add items.");
 			return responseHelper.getResponse();
 		}
-		opdoheader.setXtotamt(totalXlineamt);
+		opdoheader.setXlineamt(totalXlineamt);
+		opdoheader.setXdiscamt(BigDecimal.ZERO);
+		opdoheader.setXtotamt(opdoheader.getXlineamt().subtract(opdoheader.getXdiscamt()));
 
 
 		// Create new
 		if(SubmitFor.INSERT.equals(opdoheader.getSubmitFor())) {
-			opdoheader.setXdate(new Date());
 			opdoheader.setZid(sessionManager.getBusinessId());
 			opdoheader.setXdornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "SO14"));
-			opdoheader.setXstatus("Confirmed");
+			opdoheader.setXdate(new Date());
 			opdoheader.setXcus(sessionManager.getLoggedInUserDetails().getZbusiness().getXposcus());
-			opdoheader.setXtype("POS Invoice");
+			if(StringUtils.isBlank(opdoheader.getXstatus())) opdoheader.setXstatus("Confirmed");
 			opdoheader.setXstatusim("Open");
 			opdoheader.setXstatusjv("Open");
 			opdoheader.setXtotcost(BigDecimal.ZERO);
-			opdoheader.setXdiscamt(BigDecimal.ZERO);
+			opdoheader.setXtype("POS Invoice");
 
 			opdoheader = opdoheaderRepo.save(opdoheader);
 
@@ -319,17 +401,98 @@ public class SO18 extends KitController {
 				d.setXqtyord(BigDecimal.ZERO);
 				d.setXqtycrn(BigDecimal.ZERO);
 				d.setXrategrn(BigDecimal.ZERO);
+
+				if(d.getXrate().compareTo(BigDecimal.ZERO) == -1) {
+					throw new IllegalStateException("Invalid rate for item : " + d.getXitem() + " - " + d.getItemName());
+				}
+
+				if(d.getXqty().compareTo(BigDecimal.ZERO) != 1) {
+					throw new IllegalStateException("Invalid quantity for item : " + d.getXitem() + " - " + d.getItemName());
+				}
+
 				opdodetailRepo.save(d);
 			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("detail-table-container", "/SO18/detail-table?xdornum=RESET&xrow=RESET"));
 			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Invoice created successfully");
+			responseHelper.setSuccessStatusAndMessage(opdoheader.getXstatus().equals("Confirmed") ? "Invoice created" : "Invoice on hold");
 			return responseHelper.getResponse();
 		}
 
-		responseHelper.setErrorStatusAndMessage("Unrecognized operation");
+		if(opdoheader.getXdornum() == null) {
+			responseHelper.setErrorStatusAndMessage("Invoice number required to do update");
+			return responseHelper.getResponse();
+		}
+
+		Optional<Opdoheader> existOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), opdoheader.getXdornum()));
+		if(!existOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Invoice not found to do update");
+			return responseHelper.getResponse();
+		}
+
+		Opdoheader existObj = existOp.get();
+
+		if(!"Open".equals(existObj.getXstatus())) {
+			responseHelper.setErrorStatusAndMessage("Invoice already confirmed");
+			return responseHelper.getResponse();
+		}
+
+		if(!existObj.getXstaff().equals(sessionManager.getLoggedInUserDetails().getXstaff())) {
+			responseHelper.setErrorStatusAndMessage("You are not eligible to confirm this invoice.");
+			return responseHelper.getResponse();
+		}
+
+		if(sessionManager.getLoggedInUserDetails().isXislock()) {
+			if(!existObj.getXbuid().equals(sessionManager.getLoggedInUserDetails().getPosunit())) {
+				responseHelper.setErrorStatusAndMessage("You unit is locked and not matched with the invoice unit.");
+				return responseHelper.getResponse();
+			}
+
+			if(!existObj.getXwh().equals(sessionManager.getLoggedInUserDetails().getPosoutlet())) {
+				responseHelper.setErrorStatusAndMessage("You outlet is locked and not matched with the invoice unit.");
+				return responseHelper.getResponse();
+			}
+		}
+
+		existObj.setXdate(new Date());
+		existObj.setXbuid(opdoheader.getXbuid());
+		existObj.setXwh(opdoheader.getXwh());
+		existObj.setXcus(sessionManager.getZbusiness().getXposcus());
+		existObj.setXstatus(opdoheader.getXstatus());
+		existObj.setXlineamt(opdoheader.getXlineamt());
+		existObj.setXdiscamt(opdoheader.getXdiscamt());
+		existObj.setXtotamt(opdoheader.getXtotamt());
+		existObj = opdoheaderRepo.save(existObj);
+
+		// Remove all db details first
+		opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), existObj.getXdornum());
+
+		// Salve all details
+		for(Opdodetail d : details) {
+			d.setZid(sessionManager.getBusinessId());
+			d.setXdornum(existObj.getXdornum());
+			d.setXdocrow(0);
+			d.setXqtyord(BigDecimal.ZERO);
+			d.setXqtycrn(BigDecimal.ZERO);
+			d.setXrategrn(BigDecimal.ZERO);
+
+			if(d.getXrate().compareTo(BigDecimal.ZERO) == -1) {
+				throw new IllegalStateException("Invalid rate for item : " + d.getXitem() + " - " + d.getItemName());
+			}
+
+			if(d.getXqty().compareTo(BigDecimal.ZERO) != 1) {
+				throw new IllegalStateException("Invalid quantity for item : " + d.getXitem() + " - " + d.getItemName());
+			}
+
+			opdodetailRepo.save(d);
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/SO18?xdornum=RESET&xbuid=" + existObj.getXbuid() + "&xwh=" + existObj.getXwh()));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SO18/detail-table?xdornum=RESET&xrow=RESET"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage(opdoheader.getXstatus().equals("Confirmed") ? "Invoice created" : "Invoice on hold");
 		return responseHelper.getResponse();
 	}
 

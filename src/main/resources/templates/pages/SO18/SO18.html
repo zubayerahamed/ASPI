@@ -13,29 +13,31 @@
 				<a th:if="${isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/remove-from-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-remove" title="Remove from favorite"><i class="ph-heart-break text-danger fs-1"></i></a>
 			</div>
 		</div>
-		<script type="text/javascript">
+		<script type="text/javascript" th:inline="javascript">
 			$(document).ready(function(){
 				kit.ui.init();
 
-				function updateClock() {
-					const now = new Date();
-					let hours = now.getHours();
-					const minutes = String(now.getMinutes()).padStart(2, '0');
-					const seconds = String(now.getSeconds()).padStart(2, '0');
-					const amPm = hours >= 12 ? 'PM' : 'AM';
-					
-					// Convert 24-hour time to 12-hour format
-					hours = hours % 12 || 12;
-					
-					const currentTime = `${hours}:${minutes}:${seconds} ${amPm}`;
-					$('#clock').text(currentTime);
-				}
+				// Initialize server time from Thymeleaf variable
+				let serverTimeStr = [[${serverTime}]];
+				let serverTime = new Date(serverTimeStr);
 
 				// Update the clock every second
-				setInterval(updateClock, 1000);
+				setInterval(function () {
+					serverTime.setSeconds(serverTime.getSeconds() + 1); // Increment server time by 1 second
 
-				// Initialize clock on page load
-				updateClock();
+					// Format the time
+					let year = serverTime.getFullYear();
+					let month = (serverTime.getMonth() + 1).toString().padStart(2, '0');
+					let day = serverTime.getDate().toString().padStart(2, '0');
+					let hours = serverTime.getHours();
+					let minutes = serverTime.getMinutes().toString().padStart(2, '0');
+					let seconds = serverTime.getSeconds().toString().padStart(2, '0');
+					let ampm = hours >= 12 ? 'PM' : 'AM';
+					hours = hours % 12 || 12; // Convert 24-hour to 12-hour format
+
+					// Display formatted time
+					$('#clock').text(`${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${ampm}`);
+				}, 1000);
 			})
 		</script>
 	</div>

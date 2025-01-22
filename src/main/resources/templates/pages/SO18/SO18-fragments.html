@@ -1,15 +1,10 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div class="card-header d-flex justify-content-between align-items-center  p-0">
-			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
-			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO18/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
-		</div>
-
 		<div class="card-body">
 			<form id="mainform" class="form-validate-jquery" th:action="@{/SO18/store}" th:object="${opdoheader}" method="POST" th:with="df=${'yyyy-MM-dd'}">
 				<input type="hidden" th:field="*{submitFor}"/>
 				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
-				<input type="hidden" th:if="${opdoheader.xdornum ne null}" th:field="*{xdornum}">
+				<input type="hidden" th:field="*{xstatus}">
 
 				<div class="row">
 					<div class="col-md-12">
@@ -35,9 +30,14 @@
 							</div>
 						</div>
 					</div>
-					
-					
-					<div class="col-md-12">
+
+					<div class="col-md-12" th:if="${opdoheader.xislock}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Unit</label>
+							<input type="text" class="form-control" th:value="${opdoheader.xbuid != null ? opdoheader.xbuid + ' - ' + opdoheader.businessUnitName : ''}" disabled>
+						</div>
+					</div>
+					<div class="col-md-12" th:if="${not opdoheader.xislock}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Unit</label>
 							<div class="input-group">
@@ -58,7 +58,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-12">
+
+					<div class="col-md-12" th:if="${opdoheader.xislock}">
+						<div class="mb-3 form-group">
+							<label class="form-label">Outlet</label>
+							<input type="text" class="form-control" th:value="${opdoheader.xwh != null ? opdoheader.xwh + ' - ' + opdoheader.warehouseName : ''}" disabled>
+						</div>
+					</div>
+					<div class="col-md-12" th:if="${not opdoheader.xislock}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Outlet</label>
 							<div class="input-group">
@@ -91,7 +98,7 @@
 					<div class="col-md-12">
 						<div class="mb-3 form-group">
 							<label class="form-label">Paid Amount</label>
-							<input type="number" class="form-control numeric-only fw-bold" id="xpaidamt" value="0.00">
+							<input type="number" class="form-control numeric-only fw-bold" id="xpaidamt" value="0.00" min="0">
 						</div>
 					</div>
 					
@@ -105,17 +112,15 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/SO18?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/SO18?xdornum=RESET' , data-reloadid='main-form-container', data-detailreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET', data-detailreloadid='detail-table-container'" class="btn btn-light btn-sm btn-reset" title="Clear"><i class="ph ph-arrow-clockwise"></i></button>
+						<button th:if="${opdoheader.xdornum eq null or (opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open')}" type="submit" class="btn btn-warning btn-sm btn-hold" title="Hold & Save"><i class="ph ph-hand-palm"></i></button>
+						<!-- <button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-info btn-sm btn-submit" title="Open new tab"><i class="ph ph-arrow-square-out"></i></button> -->
 					</div>
 					<div>
-						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" th:attr="data-url=@{/SO18?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<!--<a 	href="#"
-							target="_blank" 
-							th:attr="data-screen='SO18'" 
-							class="screen-item form-control"> 
-							New
-						</a>-->
-						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Submit</button>
+						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus ne 'Open'}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opposd'" type="button" class="btn btn-primary btn-sm btn-print my-2 ms-3" title="Print Duplicate"><i class="ph-printer"></i></button>
+
+						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open'}" type="submit" class="btn btn-primary btn-sm btn-submit" title="Confirm & Print"><i class="ph ph-paper-plane"></i></button>
+						<button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-primary btn-sm btn-submit" title="Confirm & Print"><i class="ph ph-paper-plane"></i></button>
 					</div>
 				</div>
 			</form>
@@ -143,6 +148,13 @@
 
 			$('.btn-submit').off('click').on('click', function(e){
 				e.preventDefault();
+				$('#xstatus').val('Confirmed');
+				submitMainForm();
+			});
+
+			$('.btn-hold').off('click').on('click', function(e){
+				e.preventDefault();
+				$('#xstatus').val('Open');
 				submitMainForm();
 			});
 
@@ -171,7 +183,7 @@
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 
-		<div class="card-header d-sm-flex align-items-sm-center py-sm-0" th:if="${opdoheader.xdornum eq null}">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0" th:if="${opdoheader.xdornum eq null or (opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open')}">
 			<div class="col-md-4 mt-2 mb-2">
 				<div class="form-group">
 					<div class="input-group">
@@ -188,7 +200,7 @@
 								data-reloadid='search-suggest-results-container', 
 								data-fieldid='xitem',
 								data-mainscreen=true,
-								data-mainreloadurl='/SO18/detail-table?xdornum=RESET&xrow=RESET&xitem=',
+								data-mainreloadurl='/SO18/detail-table?xdornum='+${opdoheader.xdornum eq null ? 'RESET' : opdoheader.xdornum}+'&xrow=RESET&xitem=',
 								data-mainreloadid='detail-table-container'" 
 								style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 					</div>
@@ -223,14 +235,14 @@
 						<td th:text="${c.count}" class="text-center"></td>
 						<td th:attr="data-xrow=${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></td>
 						<td th:text="${x.xunit}" class="text-center"></td>
-						<td class="text-center" th:if="${x.xdornum eq null}">
+						<td class="text-center" th:if="${x.xdornum eq null or (opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open')}">
 							<div class="col-md-12">
 								<div class="form-group">
 									<input type="number" class="form-control numeric-only text-center form-control-sm delete-on-keypress fw-bold" name="xqty" th:value="${x.xqty}" required="required" min="0" step="1">
 								</div>
 							</div>
 						</td>
-						<td class="text-center" th:if="${x.xdornum ne null}" th:text="${x.xqty}"></td>
+						<td class="text-center" th:if="${x.xdornum ne null and opdoheader.xstatus ne 'Open'}" th:text="${x.xqty}"></td>
 						<td th:text="${x.xrate}" class="text-end"></td>
 						<td th:text="${x.xlineamt}" class="text-end td-xlineamt"></td>
 					</tr>
@@ -252,7 +264,19 @@
 			})
 
 			$('#xtotamt').val(totalAmt.toFixed(2));
+			$('#xpaidamt').val(totalAmt.toFixed(2));
 
+			var changeAmt = Number($('#xtotamt').val()) - Number($('#xpaidamt').val());
+			var color = 'green';
+			if(changeAmt > 0) {
+				color = 'red';
+				$('.btn-submit').addClass('d-none');
+			} else {
+				color = 'green';
+				$('.btn-submit').removeClass('d-none');
+			}
+			$('#xchangeamt').val(changeAmt.toFixed(2));
+			$('#xchangeamt').css('color', color);
 		}
 
 		$(document).ready(function(){
@@ -261,6 +285,21 @@
 			$('#xitem').focus();
 
 			loopEachItemRow();
+
+			$('#xpaidamt').on('change', function(){
+				console.log("here");
+				var changeAmt = Number($('#xtotamt').val()) - Number($('#xpaidamt').val());
+				var color = 'green';
+				if(changeAmt > 0) {
+					color = 'red';
+					$('.btn-submit').addClass('d-none');
+				} else {
+					color = 'green';
+					$('.btn-submit').removeClass('d-none');
+				}
+				$('#xchangeamt').val(changeAmt.toFixed(2));
+				$('#xchangeamt').css('color', color);
+			})
 
 			$('.delete-on-keypress').on("change", function (e) {
 				if (e.key === "Delete" || e.keyCode === 46) return;
