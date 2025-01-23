@@ -117,7 +117,7 @@
 						<!-- <button th:if="${opdoheader.xdornum eq null}" type="submit" class="btn btn-info btn-sm btn-submit" title="Open new tab"><i class="ph ph-arrow-square-out"></i></button> -->
 					</div>
 					<div>
-						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus ne 'Open'}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opposd'" type="button" class="btn btn-primary btn-sm btn-print my-2 ms-3" title="Print Duplicate"><i class="ph-printer"></i></button>
+						<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus ne 'Open'}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opposd'" type="button" class="btn btn-primary btn-sm btn-print btn-print-duplicate my-2 ms-3" title="Print Duplicate"><i class="ph-printer"></i></button>
 						<button th:if="${opdoheader.xdornum eq null or (opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open')}" type="submit" class="btn btn-primary btn-sm btn-submit" title="Confirm & Print"><i class="ph ph-paper-plane"></i></button>
 					</div>
 				</div>
@@ -154,6 +154,13 @@
 				e.preventDefault();
 				$('#xstatus').val('Open');
 				submitMainForm();
+			});
+
+			$('.btn-submit').keydown(function (e) {
+				if (e.key === 'Tab') {
+					e.preventDefault(); // Prevent the default Tab behavior
+					$('#xitem').focus(); // Move focus to the target input field
+				}
 			});
 
 		})
