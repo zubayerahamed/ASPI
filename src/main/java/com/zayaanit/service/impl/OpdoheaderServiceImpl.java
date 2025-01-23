@@ -8,9 +8,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.enums.DatatableSortOrderType;
+import com.zayaanit.model.SO19SearchParam;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.OpdoheaderService;
 
@@ -46,6 +48,33 @@ public class OpdoheaderServiceImpl extends AbstractService implements Opdoheader
 		sql.append("SELECT COUNT(*) ")
 		.append(fromClause("opdoheader im"))
 		.append(whereClause(searchText, suffix, dependentParam));
+		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+	}
+
+	@Override
+	public List<Opdoheader> LSO19(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, SO19SearchParam param) {
+		searchText = searchText.replaceAll("'", "''");
+		StringBuilder sql = new StringBuilder();
+		sql.append(selectClause())
+		.append(fromClause("opdoheader im"))
+		.append(whereClauseLSO19(searchText, param))
+		.append(orderbyClause(orderBy, orderType.name()))
+		.append(limitAndOffsetClause(limit, offset));
+
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString());
+		List<Opdoheader> list = new ArrayList<>();
+		result.stream().forEach(row -> list.add(constractListOfXwhs(row)));
+
+		return list;
+	}
+
+	@Override
+	public int LSO19(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, SO19SearchParam param) {
+		searchText = searchText.replaceAll("'", "''");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) ")
+		.append(fromClause("opdoheader im"))
+		.append(whereClauseLSO19(searchText, param));
 		return jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 	}
 
@@ -98,6 +127,26 @@ public class OpdoheaderServiceImpl extends AbstractService implements Opdoheader
 				+ "OR ac.xname LIKE '%" + searchText + "%' "
 				+ "OR xw.xname LIKE '%" + searchText + "%' "
 				+ "OR im.xwh LIKE '%" + searchText + "%') ");
+	}
+
+	private StringBuilder whereClauseLSO19(String searchText, SO19SearchParam param) {
+		StringBuilder sql = new StringBuilder(" WHERE im.zid="+sessionManager.getBusinessId()+" ");
+
+		sql.append(" AND (im.xdate between '"+ sdf.format(param.getXfdate()) +"' AND '"+ sdf.format(param.getXtdate()) +"') ");
+		if(param.getXbuid() != null) sql.append(" AND im.xbuid = '"+ param.getXbuid() +"' ");
+		if(param.getXwh() != null) sql.append(" AND im.xwh = '"+ param.getXwh() +"' ");
+		if(StringUtils.hasText(param.getXstatusim())) sql.append(" AND im.xstatusim = '"+ param.getXstatusim() +"' ");
+
+		sql.append(" AND im.xtype='POS Invoice' and im.xstatus='Confirmed' ");
+
+		if (searchText == null || searchText.isEmpty()) return sql;
+
+		return sql.append(" AND (im.xdate LIKE '%" + searchText + "%' "
+				+ "OR im.xbuid LIKE '%" + searchText + "%' "
+				+ "OR im.xwh LIKE '%" + searchText + "%' "
+				+ "OR c.xname LIKE '%" + searchText + "%' "
+				+ "OR xw.xname LIKE '%" + searchText + "%' "
+				+ "OR im.xstatusim LIKE '%" + searchText + "%') ");
 	}
 
 	private StringBuilder orderbyClause(String orderByField, String orderType) {

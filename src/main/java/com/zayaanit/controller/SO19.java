@@ -1,8 +1,10 @@
 package com.zayaanit.controller;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,18 +25,22 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ibm.icu.text.SimpleDateFormat;
-import com.zayaanit.entity.Acheader;
+import com.zayaanit.entity.Caitem;
+import com.zayaanit.entity.Opdodetail;
+import com.zayaanit.entity.Opdoheader;
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.pk.AcheaderPK;
+import com.zayaanit.entity.pk.CaitemPK;
+import com.zayaanit.entity.pk.OpdoheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
-import com.zayaanit.model.SO19SearchParam;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
-import com.zayaanit.repository.AcdetailRepo;
-import com.zayaanit.repository.AcheaderRepo;
-import com.zayaanit.service.AcheaderService;
+import com.zayaanit.model.SO19SearchParam;
+import com.zayaanit.repository.CaitemRepo;
+import com.zayaanit.repository.OpdodetailRepo;
+import com.zayaanit.repository.OpdoheaderRepo;
+import com.zayaanit.service.OpdoheaderService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,9 +56,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/SO19")
 public class SO19 extends KitController {
 
-	@Autowired private AcheaderRepo acheaderRepo;
-	@Autowired private AcdetailRepo acdetailRepo;
-	@Autowired private AcheaderService acheaderService;
+	@Autowired private OpdoheaderRepo opdoheaderRepo;
+	@Autowired private OpdodetailRepo opdodetailRepo;
+	@Autowired private OpdoheaderService opdoheaderService;
+	@Autowired private CaitemRepo caitemRepo;
 
 	private String pageTitle = null;
 
@@ -95,7 +102,7 @@ public class SO19 extends KitController {
 	}
 
 	@GetMapping("/all")
-	public @ResponseBody DatatableResponseHelper<Acheader> getAll(
+	public @ResponseBody DatatableResponseHelper<Opdoheader> getAll(
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
 		@RequestParam(required = false) Integer xbuid,
@@ -118,20 +125,21 @@ public class SO19 extends KitController {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-		//List<Acheader> list = acheaderService.LFA18(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
-		//int	totalRows = acheaderService.LFA18(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
+		List<Opdoheader> list = opdoheaderService.LSO19(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
+		int	totalRows = opdoheaderService.LSO19(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 
-		DatatableResponseHelper<Acheader> response = new DatatableResponseHelper<>();
+		DatatableResponseHelper<Opdoheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
-		//response.setRecordsTotal(totalRows);
-		//response.setRecordsFiltered(totalRows);
-		//response.setData(list);
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
 		return response;
 	}
 
-	@PostMapping("/voucher-post")
-	public @ResponseBody Map<String, Object> voucherPost(
-		@RequestParam Integer xvoucher,
+	@Transactional
+	@PostMapping("/invoice-confirm")
+	public @ResponseBody Map<String, Object> invoiceConfirm(
+		@RequestParam Integer xdornum,
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
 		@RequestParam(required = false) Integer xbuid,
@@ -151,224 +159,238 @@ public class SO19 extends KitController {
 		param.setXwh(xwh);
 		param.setXstatusim(xstatusim);
 
-		Optional<Acheader> voucherOp = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), xvoucher));
-		if(!voucherOp.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
+		Optional<Opdoheader> opdoheaderOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), xdornum));
+		if(!opdoheaderOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Invoice not found");
 			return responseHelper.getResponse();
 		}
 
-		Acheader acheader = voucherOp.get();
-		if("Posted".equals(acheader.getXstatusjv())) {
-			responseHelper.setErrorStatusAndMessage("Voucher already posted");
+		Opdoheader opdoheader = opdoheaderOp.get();
+		if(!"Confirmed".equals(opdoheader.getXstatus())) {
+			responseHelper.setErrorStatusAndMessage("Invoice status not confirmed");
 			return responseHelper.getResponse();
 		}
 
-		acheaderRepo.FA_VoucherPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
-
-		List<ReloadSectionParams> postData = new ArrayList<>();
-		postData.add(new ReloadSectionParams("xfdate", xfdate));
-		postData.add(new ReloadSectionParams("xtdate", xtdate));
-		postData.add(new ReloadSectionParams("xbuid", xbuid != null ? xbuid.toString() : ""));
-		postData.add(new ReloadSectionParams("xwh", xwh != null ? xwh.toString() : ""));
-		postData.add(new ReloadSectionParams("xstatusim", xstatusim));
-
-		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("header-table-container", "/SO19/header-table", postData));
-		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Voucher posted successfully");
-		return responseHelper.getResponse();
-	}
-
-	@PostMapping("/post-all")
-	public @ResponseBody Map<String, Object> postAll(
-		@RequestParam String selectedVouchers,
-		@RequestParam String xfdate,	
-		@RequestParam String xtdate,
-		@RequestParam(required = false) Integer xbuid,
-		@RequestParam(required = false) Integer xwh,
-		@RequestParam(required = false) String xstatusim
-		) {
-
-		if(StringUtils.isBlank(selectedVouchers)) {
-			responseHelper.setErrorStatusAndMessage("No voucher seleted");
+		if(!"Open".equals(opdoheader.getXstatusim())) {
+			responseHelper.setErrorStatusAndMessage("Invoice inventory status not open");
 			return responseHelper.getResponse();
 		}
 
-		List<String> vouchers = Arrays.asList(selectedVouchers.split(","));
-		if(vouchers.isEmpty()) {
-			responseHelper.setErrorStatusAndMessage("No voucher seleted");
+		List<Opdodetail> details = opdodetailRepo.findAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
+		if(details == null || details.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("Invoice don't have any item");
 			return responseHelper.getResponse();
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		SO19SearchParam param = new SO19SearchParam();
-		try {
-			param.setXfdate(sdf.parse(xfdate));
-			param.setXtdate(sdf.parse(xtdate));
-		} catch (ParseException e) {
-			log.error(ERROR, e.getMessage(), e);
+		if(opdoheader.getXdate() == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
+			return responseHelper.getResponse();
 		}
-		param.setXbuid(xbuid);
-		param.setXwh(xwh);
-		param.setXstatusim(xstatusim);
 
-		List<Acheader> allBalancedAcheader = new ArrayList<>();
+		if(opdoheader.getXbuid() == null) {
+			responseHelper.setErrorStatusAndMessage("Business unit required");
+			return responseHelper.getResponse();
+		}
 
-		for(String voucher : vouchers) {
-			Optional<Acheader> voucherOp = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), Integer.parseInt(voucher)));
-			if(voucherOp.isPresent()) {
-				Acheader acheader = voucherOp.get();
-				if("Balanced".equals(acheader.getXstatusjv())) {
-					allBalancedAcheader.add(acheader);
-				}
+		if(opdoheader.getXcus() == null) {
+			responseHelper.setErrorStatusAndMessage("Customer required");
+			return responseHelper.getResponse();
+		}
+
+		if(opdoheader.getXwh() == null) {
+			responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
+			return responseHelper.getResponse();
+		}
+
+		// Check qty is exist in all details 
+		BigDecimal totalQty = BigDecimal.ZERO;
+		for(Opdodetail detail : details) {
+			if(detail.getXqty() == null) continue;
+			totalQty = totalQty.add(detail.getXqty());
+		}
+		if(totalQty.compareTo(BigDecimal.ZERO) == 0) {
+			responseHelper.setErrorStatusAndMessage("No items found!");
+			return responseHelper.getResponse();
+		}
+
+		// check inventory
+		Map<Integer, BigDecimal> qtyMap = new HashMap<>();
+		for(Opdodetail item : details) {
+			Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), item.getXitem()));
+			if(!caitemOp.isPresent()) continue;
+			if("Services".equals(caitemOp.get().getXgitem())) continue;
+
+			if(qtyMap.get(item.getXitem()) != null) {
+				BigDecimal prevQty = qtyMap.get(item.getXitem());
+				BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+				qtyMap.put(item.getXitem(), newQty);
+			} else {
+				qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
 			}
 		}
 
-		if(allBalancedAcheader.isEmpty()) {
-			responseHelper.setErrorStatusAndMessage("You are not select any Balanced Voucher");
+		prepareUnavailableStockList(qtyMap, opdoheader.getXbuid(), opdoheader.getXwh());
+
+		if(!unavailableStockList.isEmpty()) {
+			responseHelper.setShowErrorDetailModal(true);
+			responseHelper.setErrorDetailsList(unavailableStockList);
+			responseHelper.setErrorStatusAndMessage("Stock not available");
+			responseHelper.setReloadSectionIdWithUrl("error-details-container", "/SO19/error-details");
 			return responseHelper.getResponse();
 		}
 
-		for(Acheader acheader : allBalancedAcheader) {
-			acheaderRepo.FA_VoucherPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
-		}
+		opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), opdoheader.getXdornum());
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
 		postData.add(new ReloadSectionParams("xtdate", xtdate));
-		postData.add(new ReloadSectionParams("xwh", xwh != null ? xwh.toString() : ""));
 		postData.add(new ReloadSectionParams("xbuid", xbuid != null ? xbuid.toString() : ""));
+		postData.add(new ReloadSectionParams("xwh", xwh != null ? xwh.toString() : ""));
 		postData.add(new ReloadSectionParams("xstatusim", xstatusim));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("header-table-container", "/SO19/header-table", postData));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("All Balanced voucer posted successfully");
-		return responseHelper.getResponse();
-	}
-
-	@PostMapping("/voucher-unpost")
-	public @ResponseBody Map<String, Object> voucherUnpost(
-		@RequestParam Integer xvoucher,
-		@RequestParam String xfdate,	
-		@RequestParam String xtdate,
-		@RequestParam(required = false) Integer xbuid,
-		@RequestParam(required = false) Integer xwh,
-		@RequestParam(required = false) String xstatusim
-		) {
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		SO19SearchParam param = new SO19SearchParam();
-		try {
-			param.setXfdate(sdf.parse(xfdate));
-			param.setXtdate(sdf.parse(xtdate));
-		} catch (ParseException e) {
-			log.error(ERROR, e.getMessage(), e);
-		}
-		param.setXbuid(xbuid);
-		param.setXwh(xwh);
-		param.setXstatusim(xstatusim);
-
-		Optional<Acheader> voucherOp = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), xvoucher));
-		if(!voucherOp.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
-			return responseHelper.getResponse();
-		}
-
-		Acheader acheader = voucherOp.get();
-		if(!"Posted".equals(acheader.getXstatusjv())) {
-			responseHelper.setErrorStatusAndMessage("Voucher not posted");
-			return responseHelper.getResponse();
-		}
-
-		acheaderRepo.FA_VoucherUnPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
-
-		List<ReloadSectionParams> postData = new ArrayList<>();
-		postData.add(new ReloadSectionParams("xfdate", xfdate));
-		postData.add(new ReloadSectionParams("xtdate", xtdate));
-		postData.add(new ReloadSectionParams("xwh", xwh != null ? xwh.toString() : ""));
-		postData.add(new ReloadSectionParams("xbuid", xbuid != null ? xbuid.toString() : ""));
-		postData.add(new ReloadSectionParams("xstatusim", xstatusim));
-
-		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("header-table-container", "/SO19/header-table", postData));
-		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Voucher unposted successfully");
-		return responseHelper.getResponse();
-	}
-
-	@PostMapping("/unpost-all")
-	public @ResponseBody Map<String, Object> unpostAll(
-		@RequestParam String selectedVouchers,
-		@RequestParam String xfdate,	
-		@RequestParam String xtdate,
-		@RequestParam(required = false) Integer xbuid,
-		@RequestParam(required = false) Integer xwh,
-		@RequestParam(required = false) String xstatusim
-		) {
-
-		if(StringUtils.isBlank(selectedVouchers)) {
-			responseHelper.setErrorStatusAndMessage("No voucher seleted");
-			return responseHelper.getResponse();
-		}
-
-		List<String> vouchers = Arrays.asList(selectedVouchers.split(","));
-		if(vouchers.isEmpty()) {
-			responseHelper.setErrorStatusAndMessage("No voucher seleted");
-			return responseHelper.getResponse();
-		}
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		SO19SearchParam param = new SO19SearchParam();
-		try {
-			param.setXfdate(sdf.parse(xfdate));
-			param.setXtdate(sdf.parse(xtdate));
-		} catch (ParseException e) {
-			log.error(ERROR, e.getMessage(), e);
-		}
-		param.setXbuid(xbuid);
-		param.setXwh(xwh);
-		param.setXstatusim(xstatusim);
-
-		List<Acheader> allPostedAcheader = new ArrayList<>();
-
-		for(String voucher : vouchers) {
-			Optional<Acheader> voucherOp = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), Integer.parseInt(voucher)));
-			if(voucherOp.isPresent()) {
-				Acheader acheader = voucherOp.get();
-				if("Posted".equals(acheader.getXstatusjv())) {
-					allPostedAcheader.add(acheader);
-				}
-			}
-		}
-
-		if(allPostedAcheader.isEmpty()) {
-			responseHelper.setErrorStatusAndMessage("You are not select any Posted voucher");
-			return responseHelper.getResponse();
-		}
-
-		for(Acheader acheader : allPostedAcheader) {
-			acheaderRepo.FA_VoucherUnPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
-		}
-
-		List<ReloadSectionParams> postData = new ArrayList<>();
-		postData.add(new ReloadSectionParams("xfdate", xfdate));
-		postData.add(new ReloadSectionParams("xtdate", xtdate));
-		postData.add(new ReloadSectionParams("xwh", xwh != null ? xwh.toString() : ""));
-		postData.add(new ReloadSectionParams("xbuid", xbuid != null ? xbuid.toString() : ""));
-		postData.add(new ReloadSectionParams("xstatusim", xstatusim));
-
-		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("header-table-container", "/SO19/header-table", postData));
-		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("All posted voucer unposted successfully");
+		responseHelper.setSuccessStatusAndMessage("Invoice confirmed successfully");
 		return responseHelper.getResponse();
 	}
 
 	@Transactional
-	@PostMapping("/voucher-delete")
-	public @ResponseBody Map<String, Object> voucherDelete(
-		@RequestParam Integer xvoucher,
+	@PostMapping("/confirm-all")
+	public @ResponseBody Map<String, Object> confirmAllInvoices(
+		@RequestParam String selectedInvoices,
+		@RequestParam String xfdate,	
+		@RequestParam String xtdate,
+		@RequestParam(required = false) Integer xbuid,
+		@RequestParam(required = false) Integer xwh,
+		@RequestParam(required = false) String xstatusim
+		) {
+
+		if(StringUtils.isBlank(selectedInvoices)) {
+			responseHelper.setErrorStatusAndMessage("No invoice seleted");
+			return responseHelper.getResponse();
+		}
+
+		List<String> invoices = Arrays.asList(selectedInvoices.split(","));
+		if(invoices.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("No invoice seleted");
+			return responseHelper.getResponse();
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SO19SearchParam param = new SO19SearchParam();
+		try {
+			param.setXfdate(sdf.parse(xfdate));
+			param.setXtdate(sdf.parse(xtdate));
+		} catch (ParseException e) {
+			log.error(ERROR, e.getMessage(), e);
+		}
+		param.setXbuid(xbuid);
+		param.setXwh(xwh);
+		param.setXstatusim(xstatusim);
+
+		List<Opdoheader> allValidInvoices = new ArrayList<>();
+
+		for(String invoice : invoices) {
+			Optional<Opdoheader> invoiceOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.parseInt(invoice)));
+			if(invoiceOp.isPresent()) {
+				Opdoheader opdoheader = invoiceOp.get();
+				if("Confirmed".equals(opdoheader.getXstatus()) && "Open".equals(opdoheader.getXstatusim())) {
+					allValidInvoices.add(opdoheader);
+				}
+			}
+		}
+
+		if(allValidInvoices.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("You are not select any valid invoice to do confirm");
+			return responseHelper.getResponse();
+		}
+
+		for(Opdoheader opdoheader : allValidInvoices) {
+			List<Opdodetail> details = opdodetailRepo.findAllByZidAndXdornum(sessionManager.getBusinessId(), opdoheader.getXdornum());
+			if(details == null || details.isEmpty()) {
+				responseHelper.setErrorStatusAndMessage("Invoice don't have any item");
+				return responseHelper.getResponse();
+			}
+
+			if(opdoheader.getXdate() == null) {
+				responseHelper.setErrorStatusAndMessage("Date required");
+				return responseHelper.getResponse();
+			}
+
+			if(opdoheader.getXbuid() == null) {
+				responseHelper.setErrorStatusAndMessage("Business unit required");
+				return responseHelper.getResponse();
+			}
+
+			if(opdoheader.getXcus() == null) {
+				responseHelper.setErrorStatusAndMessage("Customer required");
+				return responseHelper.getResponse();
+			}
+
+			if(opdoheader.getXwh() == null) {
+				responseHelper.setErrorStatusAndMessage("Store/Warehouse required");
+				return responseHelper.getResponse();
+			}
+
+			// Check qty is exist in all details 
+			BigDecimal totalQty = BigDecimal.ZERO;
+			for(Opdodetail detail : details) {
+				if(detail.getXqty() == null) continue;
+				totalQty = totalQty.add(detail.getXqty());
+			}
+			if(totalQty.compareTo(BigDecimal.ZERO) == 0) {
+				responseHelper.setErrorStatusAndMessage("No items found!");
+				return responseHelper.getResponse();
+			}
+
+			// check inventory
+			Map<Integer, BigDecimal> qtyMap = new HashMap<>();
+			for(Opdodetail item : details) {
+				Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), item.getXitem()));
+				if(!caitemOp.isPresent()) continue;
+				if("Services".equals(caitemOp.get().getXgitem())) continue;
+
+				if(qtyMap.get(item.getXitem()) != null) {
+					BigDecimal prevQty = qtyMap.get(item.getXitem());
+					BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+					qtyMap.put(item.getXitem(), newQty);
+				} else {
+					qtyMap.put(item.getXitem(), item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());
+				}
+			}
+
+			prepareUnavailableStockList(qtyMap, opdoheader.getXbuid(), opdoheader.getXwh());
+
+			if(!unavailableStockList.isEmpty()) {
+				responseHelper.setShowErrorDetailModal(true);
+				responseHelper.setErrorDetailsList(unavailableStockList);
+				responseHelper.setErrorStatusAndMessage("Stock not available");
+				responseHelper.setReloadSectionIdWithUrl("error-details-container", "/SO19/error-details");
+				return responseHelper.getResponse();
+			}
+
+			opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), opdoheader.getXdornum());
+		}
+
+		List<ReloadSectionParams> postData = new ArrayList<>();
+		postData.add(new ReloadSectionParams("xfdate", xfdate));
+		postData.add(new ReloadSectionParams("xtdate", xtdate));
+		postData.add(new ReloadSectionParams("xwh", xwh != null ? xwh.toString() : ""));
+		postData.add(new ReloadSectionParams("xbuid", xbuid != null ? xbuid.toString() : ""));
+		postData.add(new ReloadSectionParams("xstatusim", xstatusim));
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("header-table-container", "/SO19/header-table", postData));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Invoices confirmed successfully");
+		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@PostMapping("/invoice-delete")
+	public @ResponseBody Map<String, Object> invoiceDelete(
+		@RequestParam Integer xdornum,
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
 		@RequestParam(required = false) Integer xbuid,
@@ -388,20 +410,25 @@ public class SO19 extends KitController {
 		param.setXwh(xwh);
 		param.setXstatusim(xstatusim);
 
-		Optional<Acheader> voucherOp = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), xvoucher));
-		if(!voucherOp.isPresent()) {
-			responseHelper.setErrorStatusAndMessage("Voucher not found");
+		Optional<Opdoheader> opdoheaderOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), xdornum));
+		if(!opdoheaderOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Invoice not found");
 			return responseHelper.getResponse();
 		}
 
-		Acheader acheader = voucherOp.get();
-		if("Posted".equals(acheader.getXstatusjv())) {
-			responseHelper.setErrorStatusAndMessage("Voucher already posted");
+		Opdoheader opdoheader = opdoheaderOp.get();
+		if(!"Confirmed".equals(opdoheader.getXstatus())) {
+			responseHelper.setErrorStatusAndMessage("Invoice status not confirmed");
 			return responseHelper.getResponse();
 		}
 
-		acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), xvoucher);
-		acheaderRepo.delete(acheader);
+		if(!"Open".equals(opdoheader.getXstatusim())) {
+			responseHelper.setErrorStatusAndMessage("Invoice inventory status not open");
+			return responseHelper.getResponse();
+		}
+
+		opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
+		opdoheaderRepo.delete(opdoheader);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -413,14 +440,14 @@ public class SO19 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("header-table-container", "/SO19/header-table", postData));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Voucher deleted successfully");
+		responseHelper.setSuccessStatusAndMessage("Invoice deleted successfully");
 		return responseHelper.getResponse();
 	}
 
 	@Transactional
 	@PostMapping("/delete-all")
-	public @ResponseBody Map<String, Object> deleteAll(
-		@RequestParam String selectedVouchers,
+	public @ResponseBody Map<String, Object> deleteAllInvoice(
+		@RequestParam String selectedInvoices,
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
 		@RequestParam(required = false) Integer xbuid,
@@ -428,14 +455,14 @@ public class SO19 extends KitController {
 		@RequestParam(required = false) String xstatusim
 		) {
 
-		if(StringUtils.isBlank(selectedVouchers)) {
-			responseHelper.setErrorStatusAndMessage("No voucher seleted");
+		if(StringUtils.isBlank(selectedInvoices)) {
+			responseHelper.setErrorStatusAndMessage("No invoice seleted");
 			return responseHelper.getResponse();
 		}
 
-		List<String> vouchers = Arrays.asList(selectedVouchers.split(","));
-		if(vouchers.isEmpty()) {
-			responseHelper.setErrorStatusAndMessage("No voucher seleted");
+		List<String> invoices = Arrays.asList(selectedInvoices.split(","));
+		if(invoices.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("No invoice seleted");
 			return responseHelper.getResponse();
 		}
 
@@ -451,26 +478,26 @@ public class SO19 extends KitController {
 		param.setXwh(xwh);
 		param.setXstatusim(xstatusim);
 
-		List<Acheader> allUnpostedVouchers = new ArrayList<>();
+		List<Opdoheader> allValidInvoices = new ArrayList<>();
 
-		for(String voucher : vouchers) {
-			Optional<Acheader> voucherOp = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), Integer.parseInt(voucher)));
-			if(voucherOp.isPresent()) {
-				Acheader acheader = voucherOp.get();
-				if(!"Posted".equals(acheader.getXstatusjv())) {
-					allUnpostedVouchers.add(acheader);
+		for(String invoice : invoices) {
+			Optional<Opdoheader> opdoheaderOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.parseInt(invoice)));
+			if(opdoheaderOp.isPresent()) {
+				Opdoheader opdoheader = opdoheaderOp.get();
+				if("Confirmed".equals(opdoheader.getXstatus()) && "Open".equals(opdoheader.getXstatusim())) {
+					allValidInvoices.add(opdoheader);
 				}
 			}
 		}
 
-		if(allUnpostedVouchers.isEmpty()) {
-			responseHelper.setErrorStatusAndMessage("You are not select any Balanced or Suspended voucher");
+		if(allValidInvoices.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("You are not select any valid invoice");
 			return responseHelper.getResponse();
 		}
 
-		for(Acheader v : allUnpostedVouchers) {
-			acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), v.getXvoucher());
-			acheaderRepo.delete(v);
+		for(Opdoheader opdoheader : allValidInvoices) {
+			opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), opdoheader.getXdornum());
+			opdoheaderRepo.delete(opdoheader);
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
@@ -483,7 +510,7 @@ public class SO19 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("header-table-container", "/SO19/header-table", postData));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("All Balanced & Suspended voucer deleted successfully");
+		responseHelper.setSuccessStatusAndMessage("Invoices deleted successfully");
 		return responseHelper.getResponse();
 	}
 }

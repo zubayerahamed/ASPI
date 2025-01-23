@@ -148,8 +148,7 @@
 	<div class="card">
 		<div class="card-header d-sm-flex justify-content-center align-items-sm-center p-2">
 			<button class="btn btn-light btn-sm selection-counter mb-1 d-none"></button>
-			<button class="btn btn-success btn-sm btn-post-all ms-1 mb-1"><i class="ph-check-square-offset me-2"></i> Confirm All Selected</button>
-			<button class="btn btn-warning btn-sm btn-unpost-all ms-1 mb-1"><i class="ph-x-square me-2"></i> Unlock All Selected</button>
+			<button class="btn btn-success btn-sm btn-confirm-all ms-1 mb-1"><i class="ph-check-square-offset me-2"></i> Confirm All Selected</button>
 			<button class="btn btn-danger btn-sm btn-delete-all ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
 		</div>
 
@@ -258,11 +257,7 @@
 								actions += '<a class="btn btn-sm btn-primary mx-1 btn-invoice-confirm" data-xdornum="'+ row['xdornum'] +'" href="#">Confirm</a>';
 							}
 
-							if(row['xstatus'] == 'Confirmed' && row['xstatusim'] == 'Confirmed'){
-								actions += '<a class="btn btn-sm btn-primary mx-1 btn-invoice-unlock" data-xdornum="'+ row['xdornum'] +'" href="#">Unlock</a>';
-							}
-
-							if(row['xstatus'] == 'Confirm' && row['xstatusim'] == 'Open'){
+							if(row['xstatus'] == 'Confirmed' && row['xstatusim'] == 'Open'){
 								actions += '<a class="btn btn-sm btn-danger mx-1 btn-dismiss-req" data-xdornum="'+ row['xdornum'] +'" href="#">Delete</a>';
 							}
 
@@ -295,17 +290,17 @@
 				if($(this).is(":checked")){
 					$('.invoice-selection').each(function(i, item){
 						$(item).prop('checked', true);
-						var voucher = $(item).data('xdornum');
-						if (!selectedInvoices.includes(voucher)) {
-							selectedInvoices.push(voucher); // Add only if not already in array
+						var xdornum = $(item).data('xdornum');
+						if (!selectedInvoices.includes(xdornum)) {
+							selectedInvoices.push(xdornum); // Add only if not already in array
 						}
 					})
 				} else {
 					$('.invoice-selection').each(function(i, item){
 						$(item).prop('checked', false);
-						var voucher = $(item).data('xdornum');
+						var xdornum = $(item).data('xdornum');
 						selectedInvoices = selectedInvoices.filter(function(item) {
-							return item !== voucher; // Remove the unchecked voucher
+							return item !== xdornum; // Remove the unchecked voucher
 						});
 					})
 				}
@@ -319,14 +314,14 @@
 			});
 
 			$('.datatable').on('change', '.invoice-selection', function(e){
-				var voucher = $(this).data('xdornum');
+				var xdornum = $(this).data('xdornum');
 				if ($(this).is(':checked')) {
-					if (!selectedInvoices.includes(voucher)) {
-						selectedInvoices.push(voucher); // Add only if not already in array
+					if (!selectedInvoices.includes(xdornum)) {
+						selectedInvoices.push(xdornum); // Add only if not already in array
 					}
 				} else {
 					selectedInvoices = selectedInvoices.filter(function(item) {
-						return item !== voucher; // Remove the unchecked voucher
+						return item !== xdornum; // Remove the unchecked voucher
 					});
 				}
 
@@ -344,72 +339,36 @@
 					return;
 				}
 
-				actionPostRequest(getBasepath() + '/SO19/voucher-delete', {
+				actionPostRequest(getBasepath() + '/SO19/invoice-delete', {
 					"xdornum" : $(this).data('xdornum'),
 					"xfdate" : xfdate,
 					"xtdate" : xtdate,
-					"xyear" : xyear,
-					"xper" : xper,
 					"xbuid" : xbuid,
 					"xwh" : xwh,
 					"xstatusim" : xstatusim
 				});
 			});
 
-			$('.datatable').on('click', 'a.btn-voucher-post', function(e){
+			$('.datatable').on('click', 'a.btn-invoice-confirm', function(e){
 				e.preventDefault();
 
-				actionPostRequest(getBasepath() + '/SO19/voucher-post', {
+				actionPostRequest(getBasepath() + '/SO19/invoice-confirm', {
 					"xdornum" : $(this).data('xdornum'),
 					"xfdate" : xfdate,
 					"xtdate" : xtdate,
-					"xyear" : xyear,
-					"xper" : xper,
 					"xbuid" : xbuid,
 					"xwh" : xwh,
 					"xstatusim" : xstatusim
 				});
 			});
 
-			$('.datatable').on('click', 'a.btn-voucher-unpost', function(e){
+			$('.btn-confirm-all').off('click').on('click', function(e){
 				e.preventDefault();
 
-				actionPostRequest(getBasepath() + '/SO19/voucher-unpost', {
-					"xdornum" : $(this).data('xdornum'),
-					"xfdate" : xfdate,
-					"xtdate" : xtdate,
-					"xyear" : xyear,
-					"xper" : xper,
-					"xbuid" : xbuid,
-					"xwh" : xwh,
-					"xstatusim" : xstatusim
-				});
-			});
-
-			$('.btn-post-all').off('click').on('click', function(e){
-				e.preventDefault();
-
-				actionPostRequest(getBasepath() + '/SO19/post-all', {
+				actionPostRequest(getBasepath() + '/SO19/confirm-all', {
 					"selectedInvoices" : selectedInvoices.length > 0 ? selectedInvoices.join(',') : "",
 					"xfdate" : xfdate,
 					"xtdate" : xtdate,
-					"xyear" : xyear,
-					"xper" : xper,
-					"xbuid" : xbuid,
-					"xwh" : xwh,
-					"xstatusim" : xstatusim
-				});
-			});
-
-			$('.btn-unpost-all').off('click').on('click', function(e){
-				e.preventDefault();
-
-				actionPostRequest(getBasepath() + '/SO19/unpost-all', {
-					"selectedInvoices" : selectedInvoices.length > 0 ? selectedInvoices.join(',') : "",
-					"xfdate" : xfdate,
-					"xtdate" : xtdate,
-					"xyear" : xyear,
-					"xper" : xper,
 					"xbuid" : xbuid,
 					"xwh" : xwh,
 					"xstatusim" : xstatusim
@@ -427,8 +386,6 @@
 					"selectedInvoices" : selectedInvoices.length > 0 ? selectedInvoices.join(',') : "",
 					"xfdate" : xfdate,
 					"xtdate" : xtdate,
-					"xyear" : xyear,
-					"xper" : xper,
 					"xbuid" : xbuid,
 					"xwh" : xwh,
 					"xstatusim" : xstatusim
