@@ -533,6 +533,10 @@ public class PO16 extends KitController {
 		// check inventory
 		Map<Integer, BigDecimal> qtyMap = new HashMap<>();
 		for(Pocrndetail item : details) {
+			Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), item.getXitem()));
+			if(!caitemOp.isPresent()) continue;
+			if("Services".equals(caitemOp.get().getXgitem())) continue;
+
 			if(qtyMap.get(item.getXitem()) != null) {
 				BigDecimal prevQty = qtyMap.get(item.getXitem());
 				BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());

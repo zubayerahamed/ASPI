@@ -130,7 +130,7 @@ public class ReportParamMap {
 
 		pogrnbill.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		pogrnbill.put("param2", "xcus|" + ReportParamDataType.INTEGER.name());
-		pogrnbill.put("param3", "xinvnum|" + ReportParamDataType.INTEGER.name());
+		pogrnbill.put("param3", "xinvnum|" + ReportParamDataType.STRING.name());
 
 		pocrn.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		pocrn.put("param2", "xcrnnum|" + ReportParamDataType.INTEGER.name());
