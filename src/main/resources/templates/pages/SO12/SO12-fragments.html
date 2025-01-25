@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
 			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opord'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Order</button>
-			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opordinv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Invoice</button>
+			<button th:if="${opordheader.xordernum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opordheader.xordernum}, data-rptcode='opordinv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Invoice(s)</button>
 			<button th:if="${opordheader.xordernum ne null and opordheader.xstatus eq 'Open' and opordheader.xstatusord eq 'Open'}" th:attr="data-url=@{/SO12/confirm?xordernum=} + ${opordheader.xordernum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 

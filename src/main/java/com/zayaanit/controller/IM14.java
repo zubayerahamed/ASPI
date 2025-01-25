@@ -111,7 +111,10 @@ public class IM14 extends KitController {
 
 				if(moheader.getXitem() != null) {
 					Optional<Caitem> caitemOp = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), moheader.getXitem()));
-					if(caitemOp.isPresent()) moheader.setItemName(caitemOp.get().getXdesc());
+					if(caitemOp.isPresent()) {
+						moheader.setItemName(caitemOp.get().getXdesc());
+						moheader.setXunit(caitemOp.get().getXunit());
+					}
 				}
 
 				if(moheader.getXstaff() != null) {
