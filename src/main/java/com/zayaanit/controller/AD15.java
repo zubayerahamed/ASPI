@@ -129,15 +129,23 @@ public class AD15 extends KitController {
 
 		user.setXpassword(newPass);
 		user.setXoldpassword(oldPass);
-		user = xusersRepo.save(user);
+		try {
+			user = xusersRepo.save(user);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// get all the users with this zeamil and change password for them
 		List<Xusers> usersList = xusersRepo.findAllByZemail(loggedInUser().getUsername());
-		usersList.stream().forEach(u -> {
-			u.setXpassword(newPass);
-			u.setXoldpassword(oldPass);
-			xusersRepo.save(u);
-		});
+		try {
+			usersList.stream().forEach(u -> {
+				u.setXpassword(newPass);
+				u.setXoldpassword(oldPass);
+				xusersRepo.save(u);
+			});
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("cp-form-container", "/AD15"));
@@ -146,6 +154,7 @@ public class AD15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/add-to-favourite")
 	public @ResponseBody Map<String, Object> addToFavorite(@RequestParam String screen, @RequestParam String pagetitle){
 
@@ -187,12 +196,10 @@ public class AD15 extends KitController {
 		fav.setXtype(xscreenOp.get().getXtype());
 		fav.setXsequence(xfavouritesRepo.getNextAvailableSequence(loggedInZbusiness().getZid()));
 		fav.setXisdefault(false);
-
-		fav = xfavouritesRepo.save(fav);
-
-		if(fav == null) {
-			responseHelper.setErrorStatusAndMessage("Add to favorite failed!");
-			return responseHelper.getResponse();
+		try {
+			fav = xfavouritesRepo.save(fav);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
@@ -203,6 +210,7 @@ public class AD15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/remove-from-favourite")
 	public @ResponseBody Map<String, Object> removeFromFavorite(@RequestParam String screen, @RequestParam String pagetitle){
 
@@ -217,7 +225,11 @@ public class AD15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		xfavouritesRepo.delete(favOp.get());
+		try {
+			xfavouritesRepo.delete(favOp.get());
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("page-header-container", "/AD15/page-header?screen=" + screen + "&pagetitle=" + pagetitle + "&favorite=NO"));
@@ -241,6 +253,7 @@ public class AD15 extends KitController {
 		return "commons::favorite-links";
 	}
 
+	@Transactional
 	@PostMapping("/make-default")
 	public @ResponseBody Map<String, Object> makeDefaultFavorite(@RequestParam String screen){
 
@@ -257,20 +270,29 @@ public class AD15 extends KitController {
 
 		// find the previous default and remove it
 		List<Xfavourites> favList = xfavouritesRepo.findAllByZidAndZemailAndXprofileAndXisdefault(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile(), true);
-		favList.stream().forEach(f -> {
-			f.setXisdefault(false);
-			xfavouritesRepo.save(f);
-		});
+		try {
+			favList.stream().forEach(f -> {
+				f.setXisdefault(false);
+				xfavouritesRepo.save(f);
+			});
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Xfavourites fav = favOp.get();
 		fav.setXisdefault(true);
-		xfavouritesRepo.save(fav);
+		try {
+			xfavouritesRepo.save(fav);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		responseHelper.setDisplayMessage(false);
 		responseHelper.setSuccessStatusAndMessage("Success");
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/switch-color-mode")
 	public @ResponseBody Map<String, Object> switchColorMode(@RequestParam String colormode){
 
@@ -282,13 +304,18 @@ public class AD15 extends KitController {
 
 		Xusers user = userOp.get();
 		user.setXtheme(colormode);
-		xusersRepo.save(user);
+		try {
+			xusersRepo.save(user);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		responseHelper.setDisplayMessage(false);
 		responseHelper.setSuccessStatusAndMessage("Color mode changed successfully");
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/favorite-reorder")
 	public String reorderFavoriteLinks(String screenDatas, Model model){
 
@@ -312,10 +339,14 @@ public class AD15 extends KitController {
 			}
 
 			List<Xfavourites> favList = xfavouritesRepo.findAllByZidAndZemailAndXprofile(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile());
-			favList.stream().forEach(f -> {
-				f.setXsequence(resultMap.get(f.getXscreen()));
-				xfavouritesRepo.save(f);
-			});
+			try {
+				favList.stream().forEach(f -> {
+					f.setXsequence(resultMap.get(f.getXscreen()));
+					xfavouritesRepo.save(f);
+				});
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 		} catch (Exception e) {
 			log.error(ERROR, e.getMessage());

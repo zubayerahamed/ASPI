@@ -154,6 +154,8 @@ public class SO19 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -239,7 +241,11 @@ public class SO19 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), opdoheader.getXdornum());
+		try {
+			opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), opdoheader.getXdornum());
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -284,6 +290,8 @@ public class SO19 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -370,7 +378,11 @@ public class SO19 extends KitController {
 				return responseHelper.getResponse();
 			}
 
-			opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), opdoheader.getXdornum());
+			try {
+				opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), opdoheader.getXdornum());
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
@@ -405,6 +417,8 @@ public class SO19 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -427,8 +441,12 @@ public class SO19 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
-		opdoheaderRepo.delete(opdoheader);
+		try {
+			opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
+			opdoheaderRepo.delete(opdoheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -473,6 +491,8 @@ public class SO19 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -496,8 +516,12 @@ public class SO19 extends KitController {
 		}
 
 		for(Opdoheader opdoheader : allValidInvoices) {
-			opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), opdoheader.getXdornum());
-			opdoheaderRepo.delete(opdoheader);
+			try {
+				opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), opdoheader.getXdornum());
+				opdoheaderRepo.delete(opdoheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();

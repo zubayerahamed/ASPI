@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,7 @@ public class FA11 extends KitController {
 		return "pages/FA11/FA11";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acdef acdef, BindingResult bindingResult){
 
@@ -107,7 +109,11 @@ public class FA11 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(acdef.getSubmitFor())) {
 			acdef.setZid(sessionManager.getBusinessId());
-			acdef = acdefRepo.save(acdef);
+			try {
+				acdef = acdefRepo.save(acdef);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA11"));
@@ -126,7 +132,11 @@ public class FA11 extends KitController {
 		Acdef existObj = op.get();
 		BeanUtils.copyProperties(acdef, existObj, "zid", "zuserid", "ztime", "xcldate");
 
-		existObj = acdefRepo.save(existObj);
+		try {
+			existObj = acdefRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA11"));

@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,7 +47,7 @@ import com.zayaanit.repository.XwhsRepo;
 
 /**
  * @author Zubayer Ahamed
- * @since Jul 3, 2023
+ * @since Jan 25, 2025
  */
 @Controller
 @RequestMapping("/PO12")
@@ -194,6 +194,7 @@ public class PO12 extends KitController {
 		return "pages/PO12/PO12-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Poordheader poordheader, BindingResult bindingResult){
 
@@ -235,7 +236,11 @@ public class PO12 extends KitController {
 			poordheader.setXstatusord("Open");
 			poordheader.setXpornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "PO12"));
 			poordheader.setZid(sessionManager.getBusinessId());
-			poordheader = poordheaderRepo.save(poordheader);
+			try {
+				poordheader = poordheaderRepo.save(poordheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poordheader.getXpornum()));
@@ -265,7 +270,11 @@ public class PO12 extends KitController {
 		BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXpornum());
 		existObj.setXtotamt(xtotamt);
 
-		existObj = poordheaderRepo.save(existObj);
+		try {
+			existObj = poordheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + existObj.getXpornum()));
@@ -276,6 +285,7 @@ public class PO12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Poorddetail poorddetail, BindingResult bindingResult){
 		if(poorddetail.getXpornum() == null) {
@@ -323,11 +333,19 @@ public class PO12 extends KitController {
 		if(SubmitFor.INSERT.equals(poorddetail.getSubmitFor())) {
 			poorddetail.setXrow(poorddetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), poorddetail.getXpornum()));
 			poorddetail.setZid(sessionManager.getBusinessId());
-			poorddetail = poorddetailRepo.save(poorddetail);
+			try {
+				poorddetail = poorddetailRepo.save(poorddetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), poorddetail.getXpornum());
 			poordheader.setXtotamt(xtotamt);
-			poordheaderRepo.save(poordheader);
+			try {
+				poordheaderRepo.save(poordheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poorddetail.getXpornum()));
@@ -346,11 +364,19 @@ public class PO12 extends KitController {
 
 		Poorddetail exist = existOp.get();
 		BeanUtils.copyProperties(poorddetail, exist, "zid", "zuserid", "ztime", "xpornum", "xrow", "xitem");
-		exist = poorddetailRepo.save(exist);
+		try {
+			exist = poorddetailRepo.save(exist);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), exist.getXpornum());
 		poordheader.setXtotamt(xtotamt);
-		poordheaderRepo.save(poordheader);
+		try {
+			poordheaderRepo.save(poordheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poorddetail.getXpornum()));
@@ -375,10 +401,18 @@ public class PO12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		poorddetailRepo.deleteAllByZidAndXpornum(sessionManager.getBusinessId(), xpornum);
+		try {
+			poorddetailRepo.deleteAllByZidAndXpornum(sessionManager.getBusinessId(), xpornum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Poordheader obj = op.get();
-		poordheaderRepo.delete(obj);
+		try {
+			poordheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=RESET"));
@@ -389,6 +423,7 @@ public class PO12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xpornum, @RequestParam Integer xrow){
 		Optional<Poordheader> oph = poordheaderRepo.findById(new PoordheaderPK(sessionManager.getBusinessId(), xpornum));
@@ -411,12 +446,21 @@ public class PO12 extends KitController {
 		}
 
 		Poorddetail obj = op.get();
-		poorddetailRepo.delete(obj);
+		try {
+			poorddetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
 
 		// Update line amount and total amount of header
 		BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), poordheader.getXpornum());
 		poordheader.setXtotamt(xtotamt);
-		poordheaderRepo.save(poordheader);
+		try {
+			poordheaderRepo.save(poordheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + xpornum));
@@ -427,6 +471,7 @@ public class PO12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/confirm")
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xpornum) {
 		Optional<Poordheader> oph = poordheaderRepo.findById(new PoordheaderPK(sessionManager.getBusinessId(), xpornum));
@@ -483,7 +528,11 @@ public class PO12 extends KitController {
 		poordheader.setXstaffsubmit(sessionManager.getLoggedInUserDetails().getXstaff());
 		poordheader.setXsubmittime(new Date());
 		poordheader.setXstatus("Confirmed");
-		poordheaderRepo.save(poordheader);
+		try {
+			poordheaderRepo.save(poordheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + xpornum));

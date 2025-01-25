@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -224,7 +224,11 @@ public class IM16 extends KitController {
 			imopenheader.setXstatusjv("Open");
 			imopenheader.setXopennum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM16"));
 			imopenheader.setZid(sessionManager.getBusinessId());
-			imopenheader = imopenheaderRepo.save(imopenheader);
+			try {
+				imopenheader = imopenheaderRepo.save(imopenheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + imopenheader.getXopennum()));
@@ -266,7 +270,11 @@ public class IM16 extends KitController {
 		BigDecimal totalAmount = imopendetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXopennum());
 		existObj.setXtotamt(totalAmount);
 		imopenheaderRepo.save(imopenheader);
-		existObj = imopenheaderRepo.save(existObj);
+		try {
+			existObj = imopenheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + existObj.getXopennum()));
@@ -277,6 +285,7 @@ public class IM16 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Imopendetail imopendetail, BindingResult bindingResult){
 		if(imopendetail.getXopennum() == null) {
@@ -323,12 +332,20 @@ public class IM16 extends KitController {
 		if(SubmitFor.INSERT.equals(imopendetail.getSubmitFor())) {
 			imopendetail.setXrow(imopendetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), imopendetail.getXopennum()));
 			imopendetail.setZid(sessionManager.getBusinessId());
-			imopendetail = imopendetailRepo.save(imopendetail);
+			try {
+				imopendetail = imopendetailRepo.save(imopendetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			// update header xtotal
 			BigDecimal totalAmount = imopendetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), imopendetail.getXopennum());
 			imopenheader.setXtotamt(totalAmount);
-			imopenheaderRepo.save(imopenheader);
+			try {
+				imopenheaderRepo.save(imopenheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + imopendetail.getXopennum()));
@@ -353,12 +370,20 @@ public class IM16 extends KitController {
 				"xitem",
 			};
 		BeanUtils.copyProperties(imopendetail, exist, ignoreProperties);
-		exist = imopendetailRepo.save(exist);
+		try {
+			exist = imopendetailRepo.save(exist);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// update header xtotal
 		BigDecimal totalAmount = imopendetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), imopendetail.getXopennum());
 		imopenheader.setXtotamt(totalAmount);
-		imopenheaderRepo.save(imopenheader);
+		try {
+			imopenheaderRepo.save(imopenheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + imopendetail.getXopennum()));
@@ -383,10 +408,18 @@ public class IM16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imopendetailRepo.deleteAllByZidAndXopennum(sessionManager.getBusinessId(), xopennum);
+		try {
+			imopendetailRepo.deleteAllByZidAndXopennum(sessionManager.getBusinessId(), xopennum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Imopenheader obj = op.get();
-		imopenheaderRepo.delete(obj);
+		try {
+			imopenheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=RESET"));
@@ -397,7 +430,7 @@ public class IM16 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xopennum, @RequestParam Integer xrow) throws Exception{
 		Optional<Imopenheader> oph = imopenheaderRepo.findById(new ImopenheaderPK(sessionManager.getBusinessId(), xopennum));
@@ -420,12 +453,20 @@ public class IM16 extends KitController {
 		}
 
 		Imopendetail obj = op.get();
-		imopendetailRepo.delete(obj);
+		try {
+			imopendetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// update header xtotal
 		BigDecimal totalAmount = imopendetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), obj.getXopennum());
 		imopenheader.setXtotamt(totalAmount);
-		imopenheaderRepo.save(imopenheader);
+		try {
+			imopenheaderRepo.save(imopenheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + xopennum));
@@ -436,6 +477,7 @@ public class IM16 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/confirm")
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xopennum) {
 		Optional<Imopenheader> oph = imopenheaderRepo.findById(new ImopenheaderPK(sessionManager.getBusinessId(), xopennum));
@@ -478,7 +520,11 @@ public class IM16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imopenheaderRepo.IM_ConfirmOpening(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xopennum);
+		try {
+			imopenheaderRepo.IM_ConfirmOpening(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xopennum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + xopennum));

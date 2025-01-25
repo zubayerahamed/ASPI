@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +107,7 @@ public class SA16 extends KitController {
 		return "pages/SA16/SA16";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(DBBackup db) {
 
@@ -141,8 +143,7 @@ public class SA16 extends KitController {
 				return responseHelper.getResponse();
 			}
 		} catch (Exception e) {
-			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
-			return responseHelper.getResponse();
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		// Set up the response for download

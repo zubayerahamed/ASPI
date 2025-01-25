@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -83,6 +84,7 @@ public class AD17 extends KitController {
 		return "pages/AD17/AD17-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Cabunit cabunit, BindingResult bindingResult){
 
@@ -103,7 +105,11 @@ public class AD17 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(cabunit.getSubmitFor())) {
 			cabunit.setZid(sessionManager.getBusinessId());
-			cabunit = cabunitRepo.save(cabunit);
+			try {
+				cabunit = cabunitRepo.save(cabunit);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=RESET"));
@@ -123,7 +129,11 @@ public class AD17 extends KitController {
 		Cabunit existObj = op.get();
 		BeanUtils.copyProperties(cabunit, existObj, "zid", "zuserid", "ztime", "xbuid");
 
-		existObj = cabunitRepo.save(existObj);
+		try {
+			existObj = cabunitRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=" + existObj.getXbuid()));
@@ -133,6 +143,7 @@ public class AD17 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam Integer xbuid){
 		Optional<Cabunit> op = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), xbuid));
@@ -142,7 +153,11 @@ public class AD17 extends KitController {
 		}
 
 		Cabunit obj = op.get();
-		cabunitRepo.delete(obj);
+		try {
+			cabunitRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=RESET"));

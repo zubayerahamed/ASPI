@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -32,7 +33,7 @@ import com.zayaanit.repository.ZbusinessRepo;
 
 /**
  * @author Zubayer Ahamed
- * @since Jul 5, 2023
+ * @since Jan 25, 2025
  */
 @Controller
 @RequestMapping("/FA05")
@@ -86,6 +87,7 @@ public class FA05 extends KitController{
 		return "pages/FA05/FA05";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Zbusiness zbusiness, @RequestParam(value= "files[]", required = false) MultipartFile[] files, BindingResult bindingResult){
 
@@ -128,7 +130,11 @@ public class FA05 extends KitController{
 		} else {
 			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
 		}
-		existObj = businessRepo.save(existObj);
+		try {
+			existObj = businessRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Load newly updated zbusiness into session manager object
 		MyUserDetails my = sessionManager.getLoggedInUserDetails();

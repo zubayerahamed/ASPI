@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -100,6 +101,7 @@ public class FA14 extends KitController {
 		return "pages/FA14/FA14-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acsub acsub, BindingResult bindingResult){
 
@@ -146,7 +148,11 @@ public class FA14 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(acsub.getSubmitFor())) {
 			acsub.setZid(sessionManager.getBusinessId());
-			acsub = acsubRepo.save(acsub);
+			try {
+				acsub = acsubRepo.save(acsub);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=RESET"));
@@ -166,7 +172,11 @@ public class FA14 extends KitController {
 		Acsub existObj = op.get();
 		BeanUtils.copyProperties(acsub, existObj, "zid", "zuserid", "ztime", "xsub", "xacc", "xtype");
 
-		existObj = acsubRepo.save(existObj);
+		try {
+			existObj = acsubRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=" + existObj.getXsub()));
@@ -176,6 +186,7 @@ public class FA14 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam Integer xsub){
 		Optional<Acsub> op = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), xsub));
@@ -185,7 +196,11 @@ public class FA14 extends KitController {
 		}
 
 		Acsub obj = op.get();
-		acsubRepo.delete(obj);
+		try {
+			acsubRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=RESET"));

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -147,6 +148,7 @@ public class FA31 extends KitController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Potogli potogli, BindingResult bindingResult){
 
@@ -187,7 +189,11 @@ public class FA31 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(potogli.getSubmitFor())) {
 			potogli.setZid(sessionManager.getBusinessId());
-			potogli = potogliRepo.save(potogli);
+			try {
+				potogli = potogliRepo.save(potogli);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA31"));
@@ -203,11 +209,14 @@ public class FA31 extends KitController {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
 			return responseHelper.getResponse();
 		}
-		
 
 		Potogli existObj = existOp.get();
 		BeanUtils.copyProperties(potogli, existObj, "zid", "zuserid", "ztime", "xtype", "xgsup", "xgitem");
-		existObj = potogliRepo.save(existObj);
+		try {
+			existObj = potogliRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA31?xtype=" + existObj.getXtype() + "&xgsup=" + existObj.getXgsup() + "&xgitem=" + existObj.getXgitem()));
@@ -217,6 +226,7 @@ public class FA31 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(String xtype, String xgsup, String xgitem){
 		Optional<Potogli> existOp = potogliRepo.findById(new PotogliPK(sessionManager.getBusinessId(), xtype, xgsup, xgitem));
@@ -226,7 +236,11 @@ public class FA31 extends KitController {
 		}
 
 		Potogli existObj = existOp.get();
-		potogliRepo.delete(existObj);
+		try {
+			potogliRepo.delete(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA31?xtype=REST&xgsup=RESET&xgitem=RESET"));

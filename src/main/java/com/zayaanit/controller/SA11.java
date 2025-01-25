@@ -87,6 +87,7 @@ public class SA11 extends KitController {
 		return "pages/SA11/SA11-fragments::header-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xmenus xmenus, BindingResult bindingResult){
 
@@ -117,7 +118,11 @@ public class SA11 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(xmenus.getSubmitFor())) {
 			xmenus.setZid(sessionManager.getBusinessId());
-			xmenus = xmenusRepo.save(xmenus);
+			try {
+				xmenus = xmenusRepo.save(xmenus);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SA11?xmenu=RESET"));
@@ -136,7 +141,11 @@ public class SA11 extends KitController {
 
 		Xmenus existObj = op.get();
 		BeanUtils.copyProperties(xmenus, existObj, "zid", "zuserid", "ztime", "xmenu");
-		existObj = xmenusRepo.save(existObj);
+		try {
+			existObj = xmenusRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SA11?xmenu=" + xmenus.getXmenu()));
@@ -156,14 +165,21 @@ public class SA11 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		// delete all profile details
-		xprofilesdtRepo.deleteAllByZidAndXmenu(sessionManager.getBusinessId(), xmenu);
-
-		// delete all menu screens
-		xmenuscreensRepo.deleteAllByZidAndXmenu(sessionManager.getBusinessId(), xmenu);
+		try {
+			// delete all profile details
+			xprofilesdtRepo.deleteAllByZidAndXmenu(sessionManager.getBusinessId(), xmenu);
+			// delete all menu screens
+			xmenuscreensRepo.deleteAllByZidAndXmenu(sessionManager.getBusinessId(), xmenu);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Xmenus obj = op.get();
-		xmenusRepo.delete(obj);
+		try {
+			xmenusRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SA11?xmenu=RESET"));

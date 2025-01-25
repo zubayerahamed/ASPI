@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -245,7 +245,11 @@ public class PO16 extends KitController {
 			pocrnheader.setXtype("Direct Return");
 			pocrnheader.setXcrnnum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "PO16"));
 			pocrnheader.setZid(sessionManager.getBusinessId());
-			pocrnheader = pocrnheaderRepo.save(pocrnheader);
+			try {
+				pocrnheader = pocrnheaderRepo.save(pocrnheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + pocrnheader.getXcrnnum()));
@@ -289,7 +293,11 @@ public class PO16 extends KitController {
 		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXcrnnum());
 		existObj.setXtotamt(xtotamt);
 
-		existObj = pocrnheaderRepo.save(existObj);
+		try {
+			existObj = pocrnheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + existObj.getXcrnnum()));
@@ -350,11 +358,19 @@ public class PO16 extends KitController {
 			pocrndetail.setXqtygrn(BigDecimal.ZERO);
 			pocrndetail.setXrategrn(BigDecimal.ZERO);
 			pocrndetail.setZid(sessionManager.getBusinessId());
-			pocrndetail = pocrndetailRepo.save(pocrndetail);
+			try {
+				pocrndetail = pocrndetailRepo.save(pocrndetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrndetail.getXcrnnum());
 			pocrnheader.setXtotamt(xtotamt);
-			pocrnheaderRepo.save(pocrnheader);
+			try {
+				pocrnheaderRepo.save(pocrnheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + pocrndetail.getXcrnnum()));
@@ -376,11 +392,19 @@ public class PO16 extends KitController {
 		existObj.setXrate(pocrndetail.getXrate());
 		existObj.setXlineamt(pocrndetail.getXqty().multiply(pocrndetail.getXrate()));
 		existObj.setXnote(pocrndetail.getXnote());
-		existObj = pocrndetailRepo.save(existObj);
+		try {
+			existObj = pocrndetailRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrndetail.getXcrnnum());
 		pocrnheader.setXtotamt(xtotamt);
-		pocrnheaderRepo.save(pocrnheader);
+		try {
+			pocrnheaderRepo.save(pocrnheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + pocrndetail.getXcrnnum()));
@@ -405,10 +429,18 @@ public class PO16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		pocrndetailRepo.deleteAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		try {
+			pocrndetailRepo.deleteAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Pocrnheader obj = op.get();
-		pocrnheaderRepo.delete(obj);
+		try {
+			pocrnheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=RESET"));
@@ -442,12 +474,20 @@ public class PO16 extends KitController {
 		}
 
 		Pocrndetail obj = op.get();
-		pocrndetailRepo.delete(obj);
+		try {
+			pocrndetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Update line amount and total amount of header
 		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrnheader.getXcrnnum());
 		pocrnheader.setXtotamt(xtotamt);
-		pocrnheaderRepo.save(pocrnheader);
+		try {
+			pocrnheaderRepo.save(pocrnheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + xcrnnum));
@@ -557,7 +597,11 @@ public class PO16 extends KitController {
 		}
 
 		// Call the procedure
-		pocrnheaderRepo.PO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);
+		try {
+			pocrnheaderRepo.PO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + xcrnnum));

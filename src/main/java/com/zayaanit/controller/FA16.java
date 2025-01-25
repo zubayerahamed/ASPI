@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -188,6 +188,7 @@ public class FA16 extends KitController {
 		return "pages/FA16/FA16-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acheader acheader, BindingResult bindingResult){
 
@@ -230,7 +231,11 @@ public class FA16 extends KitController {
 			acheader.setXstatusjv("Balanced");
 			acheader.setXvoucher(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "FA16"));
 			acheader.setZid(sessionManager.getBusinessId());
-			acheader = acheaderRepo.save(acheader);
+			try {
+				acheader = acheaderRepo.save(acheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acheader.getXvoucher()));
@@ -256,7 +261,11 @@ public class FA16 extends KitController {
 		Acheader existObj = op.get();
 		BeanUtils.copyProperties(acheader, existObj, "zid", "zuserid", "ztime", "xvoucher", "xtype", "xstatusjv");
 
-		existObj = acheaderRepo.save(existObj);
+		try {
+			existObj = acheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + existObj.getXvoucher()));
@@ -267,6 +276,7 @@ public class FA16 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Acdetail acdetail, BindingResult bindingResult){
 		if(acdetail.getXvoucher() == null) {
@@ -323,11 +333,19 @@ public class FA16 extends KitController {
 		if(SubmitFor.INSERT.equals(acdetail.getSubmitFor())) {
 			acdetail.setXrow(acdetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), acdetail.getXvoucher()));
 			acdetail.setZid(sessionManager.getBusinessId());
-			acdetail = acdetailRepo.save(acdetail);
+			try {
+				acdetail = acdetailRepo.save(acdetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			BigDecimal total = acdetailRepo.getTotalPrimeAmount(sessionManager.getBusinessId(), acdetail.getXvoucher());
 			acheader.setXstatusjv(total.compareTo(BigDecimal.ZERO) == 0 ? "Balanced" : "Suspended");
-			acheaderRepo.save(acheader);
+			try {
+				acheaderRepo.save(acheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acdetail.getXvoucher()));
@@ -379,10 +397,18 @@ public class FA16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), xvoucher);
+		try {
+			acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), xvoucher);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Acheader obj = op.get();
-		acheaderRepo.delete(obj);
+		try {
+			acheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=RESET"));
@@ -393,6 +419,7 @@ public class FA16 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xvoucher, @RequestParam Integer xrow){
 		Optional<Acheader> oph = acheaderRepo.findById(new AcheaderPK(sessionManager.getBusinessId(), xvoucher));
@@ -415,12 +442,20 @@ public class FA16 extends KitController {
 		}
 
 		Acdetail obj = op.get();
-		acdetailRepo.delete(obj);
+		try {
+			acdetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Update line amount and total amount of header
 		BigDecimal total = acdetailRepo.getTotalPrimeAmount(sessionManager.getBusinessId(), xvoucher);
 		acheader.setXstatusjv(total.compareTo(BigDecimal.ZERO) == 0 ? "Balanced" : "Suspended");
-		acheaderRepo.save(acheader);
+		try {
+			acheaderRepo.save(acheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + xvoucher));

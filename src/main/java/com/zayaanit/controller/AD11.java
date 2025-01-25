@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -94,6 +95,7 @@ public class AD11 extends KitController{
 		return "pages/AD11/AD11";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Zbusiness zbusiness, @RequestParam(value= "files[]", required = false) MultipartFile[] files, BindingResult bindingResult){
 
@@ -155,7 +157,11 @@ public class AD11 extends KitController{
 		} else {
 			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
 		}
-		existObj = businessRepo.save(existObj);
+		try {
+			existObj = businessRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Load newly updated zbusiness into session manager object
 		MyUserDetails my = sessionManager.getLoggedInUserDetails();

@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,7 +47,7 @@ import com.zayaanit.repository.XwhsRepo;
 
 /**
  * @author Zubayer Ahamed
- * @since Jul 3, 2023
+ * @since Jan 25, 2025
  */
 @Controller
 @RequestMapping("/SO12")
@@ -204,6 +204,7 @@ public class SO12 extends KitController {
 		return "pages/SO12/SO12-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Opordheader opordheader, BindingResult bindingResult){
 
@@ -247,7 +248,11 @@ public class SO12 extends KitController {
 			opordheader.setXstatusord("Open");
 			opordheader.setXordernum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "SO12"));
 			opordheader.setZid(sessionManager.getBusinessId());
-			opordheader = opordheaderRepo.save(opordheader);
+			try {
+				opordheader = opordheaderRepo.save(opordheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO12?xordernum=" + opordheader.getXordernum()));
@@ -303,7 +308,11 @@ public class SO12 extends KitController {
 		BigDecimal lineAmt = oporddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXordernum());
 		existObj.setXlineamt(lineAmt);
 		existObj.setXtotamt(existObj.getXlineamt().subtract(existObj.getXdiscamt()));
-		existObj = opordheaderRepo.save(existObj);
+		try {
+			existObj = opordheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO12?xordernum=" + existObj.getXordernum()));
@@ -314,6 +323,7 @@ public class SO12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Oporddetail oporddetail, BindingResult bindingResult){
 		if(oporddetail.getXordernum() == null) {
@@ -361,12 +371,20 @@ public class SO12 extends KitController {
 			oporddetail.setXrow(oporddetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), oporddetail.getXordernum()));
 			oporddetail.setZid(sessionManager.getBusinessId());
 			oporddetail.setXqtydel(BigDecimal.ZERO);
-			oporddetail = oporddetailRepo.save(oporddetail);
+			try {
+				oporddetail = oporddetailRepo.save(oporddetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			BigDecimal lineAmt = oporddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), oporddetail.getXordernum());
 			opordheader.setXlineamt(lineAmt);
 			opordheader.setXtotamt(opordheader.getXlineamt().subtract(opordheader.getXdiscamt()));
-			opordheaderRepo.save(opordheader);
+			try {
+				opordheaderRepo.save(opordheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO12?xordernum=" + oporddetail.getXordernum()));
@@ -395,10 +413,18 @@ public class SO12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		oporddetailRepo.deleteAllByZidAndXordernum(sessionManager.getBusinessId(), xordernum);
+		try {
+			oporddetailRepo.deleteAllByZidAndXordernum(sessionManager.getBusinessId(), xordernum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Opordheader obj = op.get();
-		opordheaderRepo.delete(obj);
+		try {
+			opordheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO12?xordernum=RESET"));
@@ -409,7 +435,7 @@ public class SO12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xordernum, @RequestParam Integer xrow) throws Exception{
 		Optional<Opordheader> oph = opordheaderRepo.findById(new OpordheaderPK(sessionManager.getBusinessId(), xordernum));
@@ -432,7 +458,11 @@ public class SO12 extends KitController {
 		}
 
 		Oporddetail obj = op.get();
-		oporddetailRepo.delete(obj);
+		try {
+			oporddetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Update line amount and total amount of header
 		BigDecimal lineAmt = oporddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opordheader.getXordernum());
@@ -441,7 +471,11 @@ public class SO12 extends KitController {
 		}
 		opordheader.setXlineamt(lineAmt);
 		opordheader.setXtotamt(opordheader.getXlineamt().subtract(opordheader.getXdiscamt()));
-		opordheaderRepo.save(opordheader);
+		try {
+			opordheaderRepo.save(opordheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO12?xordernum=" + xordernum));
@@ -452,6 +486,7 @@ public class SO12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/confirm")
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xordernum) {
 		Optional<Opordheader> oph = opordheaderRepo.findById(new OpordheaderPK(sessionManager.getBusinessId(), xordernum));
@@ -508,7 +543,11 @@ public class SO12 extends KitController {
 		opordheader.setXstaffsubmit(sessionManager.getLoggedInUserDetails().getXstaff());
 		opordheader.setXsubmittime(new Date());
 		opordheader.setXstatus("Confirmed");
-		opordheaderRepo.save(opordheader);
+		try {
+			opordheaderRepo.save(opordheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO12?xordernum=" + xordernum));

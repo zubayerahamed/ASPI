@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -200,6 +200,7 @@ public class IM11 extends KitController {
 		return "pages/IM11/IM11-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Imtorheader imtorheader, BindingResult bindingResult){
 
@@ -248,7 +249,11 @@ public class IM11 extends KitController {
 			imtorheader.setXtornum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM11"));
 			imtorheader.setZid(sessionManager.getBusinessId());
 			imtorheader.setXtype("Direct Transfer");
-			imtorheader = imtorheaderRepo.save(imtorheader);
+			try {
+				imtorheader = imtorheaderRepo.save(imtorheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + imtorheader.getXtornum()));
@@ -293,7 +298,11 @@ public class IM11 extends KitController {
 			"xtype",
 		};
 		BeanUtils.copyProperties(imtorheader, existObj, ignoreProperties);
-		existObj = imtorheaderRepo.save(existObj);
+		try {
+			existObj = imtorheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + existObj.getXtornum()));
@@ -304,6 +313,7 @@ public class IM11 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Imtordetail imtrodetail, BindingResult bindingResult){
 		if(imtrodetail.getXtornum() == null) {
@@ -345,7 +355,11 @@ public class IM11 extends KitController {
 			imtrodetail.setZid(sessionManager.getBusinessId());
 			imtrodetail.setXrate(BigDecimal.ZERO);
 			imtrodetail.setXlineamt(BigDecimal.ZERO);
-			imtrodetail = imtordetailRepo.save(imtrodetail);
+			try {
+				imtrodetail = imtordetailRepo.save(imtrodetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + imtrodetail.getXtornum()));
@@ -379,10 +393,18 @@ public class IM11 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imtordetailRepo.deleteAllByZidAndXtornum(sessionManager.getBusinessId(), xtornum);
+		try {
+			imtordetailRepo.deleteAllByZidAndXtornum(sessionManager.getBusinessId(), xtornum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Imtorheader obj = op.get();
-		imtorheaderRepo.delete(obj);
+		try {
+			imtorheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=RESET"));
@@ -393,7 +415,7 @@ public class IM11 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xtornum, @RequestParam Integer xrow) throws Exception{
 		Optional<Imtorheader> oph = imtorheaderRepo.findById(new ImtorheaderPK(sessionManager.getBusinessId(), xtornum));
@@ -416,7 +438,11 @@ public class IM11 extends KitController {
 		}
 
 		Imtordetail obj = op.get();
-		imtordetailRepo.delete(obj);
+		try {
+			imtordetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + xtornum));
@@ -427,6 +453,7 @@ public class IM11 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/confirm")
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xtornum) {
 		Optional<Imtorheader> oph = imtorheaderRepo.findById(new ImtorheaderPK(sessionManager.getBusinessId(), xtornum));
@@ -503,7 +530,11 @@ public class IM11 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imtorheaderRepo.IM_ConfirmDirectTO(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xtornum);
+		try {
+			imtorheaderRepo.IM_ConfirmDirectTO(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xtornum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM11?xtornum=" + xtornum));

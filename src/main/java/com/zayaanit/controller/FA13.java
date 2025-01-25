@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -120,6 +121,7 @@ public class FA13 extends KitController {
 		return "pages/FA13/FA13-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acmst acmst, BindingResult bindingResult){
 
@@ -158,8 +160,12 @@ public class FA13 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(acmst.getSubmitFor())) {
 			acmst.setZid(sessionManager.getBusinessId());
-			
-			acmst = acmstRepo.save(acmst);
+
+			try {
+				acmst = acmstRepo.save(acmst);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=RESET"));
@@ -179,7 +185,11 @@ public class FA13 extends KitController {
 		Acmst existObj = op.get();
 		BeanUtils.copyProperties(acmst, existObj, "zid", "zuserid", "ztime", "xacc", "xgroup", "xacctype");
 
-		existObj = acmstRepo.save(existObj);
+		try {
+			existObj = acmstRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=" + existObj.getXacc()));
@@ -189,6 +199,7 @@ public class FA13 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam Integer xacc){
 		Optional<Acmst> op = acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), xacc));
@@ -198,7 +209,11 @@ public class FA13 extends KitController {
 		}
 
 		Acmst obj = op.get();
-		acmstRepo.delete(obj);
+		try {
+			acmstRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=RESET"));

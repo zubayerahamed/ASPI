@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -259,6 +259,7 @@ public class SO15 extends KitController {
 		return "pages/SO15/SO15-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Opdoheader opdoheader, BindingResult bindingResult){
 
@@ -324,7 +325,11 @@ public class SO15 extends KitController {
 		BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXdornum());
 		existObj.setXlineamt(lineAmt);
 		existObj.setXtotamt(existObj.getXlineamt().subtract(existObj.getXdiscamt()));
-		existObj = opdoheaderRepo.save(existObj);
+		try {
+			existObj = opdoheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + existObj.getXdornum()));
@@ -335,6 +340,7 @@ public class SO15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Opdodetail opdodetail, BindingResult bindingResult){
 		if(opdodetail.getXdornum() == null) {
@@ -385,12 +391,20 @@ public class SO15 extends KitController {
 			opdodetail.setXqtyord(BigDecimal.ZERO);
 			opdodetail.setXqtycrn(BigDecimal.ZERO);
 			opdodetail.setXrategrn(BigDecimal.ZERO);
-			opdodetail = opdodetailRepo.save(opdodetail);
+			try {
+				opdodetail = opdodetailRepo.save(opdodetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opdodetail.getXdornum());
 			opdoheader.setXlineamt(lineAmt);
 			opdoheader.setXtotamt(opdoheader.getXlineamt().subtract(opdoheader.getXdiscamt()));
-			opdoheaderRepo.save(opdoheader);
+			try {
+				opdoheaderRepo.save(opdoheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + opdodetail.getXdornum()));
@@ -459,7 +473,11 @@ public class SO15 extends KitController {
 		existObj.setXrate(opdodetail.getXrate());
 		existObj.setXlineamt(existObj.getXqty().multiply(existObj.getXrate()));
 		existObj.setXnote(opdodetail.getXnote());
-		existObj = opdodetailRepo.save(existObj);
+		try {
+			existObj = opdodetailRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// update sales order status here
 		List<Oporddetail> oporddetails = oporddetailRepo.findAllByZidAndXordernum(sessionManager.getBusinessId(), opdoheader.getXordernum());
@@ -475,12 +493,20 @@ public class SO15 extends KitController {
 		} else {
 			order.setXstatusord("Invoice Created");
 		}
-		opordheaderRepo.save(order);
+		try {
+			opordheaderRepo.save(order);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opdodetail.getXdornum());
 		opdoheader.setXlineamt(lineAmt);
 		opdoheader.setXtotamt(opdoheader.getXlineamt().subtract(opdoheader.getXdiscamt()));
-		opdoheaderRepo.save(opdoheader);
+		try {
+			opdoheaderRepo.save(opdoheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + existObj.getXdornum()));
@@ -510,10 +536,18 @@ public class SO15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
+		try {
+			opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Opdoheader obj = op.get();
-		opdoheaderRepo.delete(obj);
+		try {
+			opdoheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=RESET"));
@@ -524,7 +558,7 @@ public class SO15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xdornum, @RequestParam Integer xrow) throws Exception{
 		Optional<Opdoheader> oph = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), xdornum));
@@ -553,7 +587,11 @@ public class SO15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opdodetailRepo.delete(obj);
+		try {
+			opdodetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Update line amount and total amount of header
 		BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opdoheader.getXdornum());
@@ -562,7 +600,11 @@ public class SO15 extends KitController {
 		}
 		opdoheader.setXlineamt(lineAmt);
 		opdoheader.setXtotamt(opdoheader.getXlineamt().subtract(opdoheader.getXdiscamt()));
-		opdoheaderRepo.save(opdoheader);
+		try {
+			opdoheaderRepo.save(opdoheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + xdornum));
@@ -573,6 +615,7 @@ public class SO15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/confirm")
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xdornum) {
 		Optional<Opdoheader> oph = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), xdornum));
@@ -659,7 +702,11 @@ public class SO15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xdornum);
+		try {
+			opdoheaderRepo.SO_ConfirmInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xdornum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO15?xdornum=" + xdornum));

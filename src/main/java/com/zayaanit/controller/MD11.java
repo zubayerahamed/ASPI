@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -83,6 +84,7 @@ public class MD11 extends KitController {
 		return "pages/MD11/MD11-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xwhs xwhs, BindingResult bindingResult){
 
@@ -108,7 +110,11 @@ public class MD11 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(xwhs.getSubmitFor())) {
 			xwhs.setZid(sessionManager.getBusinessId());
-			xwhs = xwhsRepo.save(xwhs);
+			try {
+				xwhs = xwhsRepo.save(xwhs);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/MD11?xwh=RESET"));
@@ -128,7 +134,11 @@ public class MD11 extends KitController {
 		Xwhs existObj = op.get();
 		BeanUtils.copyProperties(xwhs, existObj, "zid", "zuserid", "ztime", "xwh");
 
-		existObj = xwhsRepo.save(existObj);
+		try {
+			existObj = xwhsRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD11?xwh=" + existObj.getXwh()));
@@ -138,6 +148,7 @@ public class MD11 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam Integer xwh){
 		Optional<Xwhs> op = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), xwh));
@@ -147,7 +158,11 @@ public class MD11 extends KitController {
 		}
 
 		Xwhs obj = op.get();
-		xwhsRepo.delete(obj);
+		try {
+			xwhsRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD11?xwh=RESET"));

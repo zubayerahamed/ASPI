@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -147,6 +148,7 @@ public class FA33 extends KitController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Imtogli imtogli, BindingResult bindingResult){
 
@@ -177,7 +179,11 @@ public class FA33 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(imtogli.getSubmitFor())) {
 			imtogli.setZid(sessionManager.getBusinessId());
-			imtogli = imtogliRepo.save(imtogli);
+			try {
+				imtogli = imtogliRepo.save(imtogli);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA33"));
@@ -196,7 +202,11 @@ public class FA33 extends KitController {
 
 		Imtogli existObj = existOp.get();
 		BeanUtils.copyProperties(imtogli, existObj, "zid", "zuserid", "ztime", "xtype", "xgitem");
-		existObj = imtogliRepo.save(existObj);
+		try {
+			existObj = imtogliRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA33?xtype=" + existObj.getXtype() + "&xgitem=" + existObj.getXgitem()));
@@ -206,6 +216,7 @@ public class FA33 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(String xtype, String xgsup, String xgitem){
 		Optional<Imtogli> existOp = imtogliRepo.findById(new ImtogliPK(sessionManager.getBusinessId(), xtype, xgitem));
@@ -215,7 +226,11 @@ public class FA33 extends KitController {
 		}
 
 		Imtogli existObj = existOp.get();
-		imtogliRepo.delete(existObj);
+		try {
+			imtogliRepo.delete(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA33?xtype=REST&xgitem=RESET"));

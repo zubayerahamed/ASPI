@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -244,7 +244,11 @@ public class SO16 extends KitController {
 			opcrnheader.setXtype("Direct Return");
 			opcrnheader.setXcrnnum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "SO16"));
 			opcrnheader.setZid(sessionManager.getBusinessId());
-			opcrnheader = opcrnheaderRepo.save(opcrnheader);
+			try {
+				opcrnheader = opcrnheaderRepo.save(opcrnheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO16?xcrnnum=" + opcrnheader.getXcrnnum()));
@@ -302,7 +306,11 @@ public class SO16 extends KitController {
 		existObj.setXlineamt(lineAmt);
 		existObj.setXtotamt(existObj.getXlineamt().subtract(existObj.getXdiscamt()));
 
-		existObj = opcrnheaderRepo.save(existObj);
+		try {
+			existObj = opcrnheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO16?xcrnnum=" + existObj.getXcrnnum()));
@@ -363,13 +371,21 @@ public class SO16 extends KitController {
 			opcrndetail.setXqtyinv(BigDecimal.ZERO);
 			opcrndetail.setXrategrn(caitemOp.get().getXcost());
 			opcrndetail.setZid(sessionManager.getBusinessId());
-			opcrndetail = opcrndetailRepo.save(opcrndetail);
+			try {
+				opcrndetail = opcrndetailRepo.save(opcrndetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			// header total amount
 			BigDecimal lineAmt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opcrndetail.getXcrnnum());
 			opcrnheader.setXlineamt(lineAmt);
 			opcrnheader.setXtotamt(opcrnheader.getXlineamt().subtract(opcrnheader.getXdiscamt()));
-			opcrnheaderRepo.save(opcrnheader);
+			try {
+				opcrnheaderRepo.save(opcrnheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO16?xcrnnum=" + opcrndetail.getXcrnnum()));
@@ -391,13 +407,21 @@ public class SO16 extends KitController {
 		existObj.setXrate(opcrndetail.getXrate());
 		existObj.setXlineamt(opcrndetail.getXqty().multiply(opcrndetail.getXrate()));
 		existObj.setXnote(opcrndetail.getXnote());
-		existObj = opcrndetailRepo.save(existObj);
+		try {
+			existObj = opcrndetailRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// header total amount
 		BigDecimal lineAmt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opcrndetail.getXcrnnum());
 		opcrnheader.setXlineamt(lineAmt);
 		opcrnheader.setXtotamt(opcrnheader.getXlineamt().subtract(opcrnheader.getXdiscamt()));
-		opcrnheaderRepo.save(opcrnheader);
+		try {
+			opcrnheaderRepo.save(opcrnheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO16?xcrnnum=" + opcrndetail.getXcrnnum()));
@@ -422,10 +446,18 @@ public class SO16 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opcrndetailRepo.deleteAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		try {
+			opcrndetailRepo.deleteAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Opcrnheader obj = op.get();
-		opcrnheaderRepo.delete(obj);
+		try {
+			opcrnheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO16?xcrnnum=RESET"));
@@ -459,13 +491,21 @@ public class SO16 extends KitController {
 		}
 
 		Opcrndetail obj = op.get();
-		opcrndetailRepo.delete(obj);
+		try {
+			opcrndetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// header total amount
 		BigDecimal lineAmt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), xcrnnum);
 		opcrnheader.setXlineamt(lineAmt);
 		opcrnheader.setXtotamt(opcrnheader.getXlineamt().subtract(opcrnheader.getXdiscamt()));
-		opcrnheaderRepo.save(opcrnheader);
+		try {
+			opcrnheaderRepo.save(opcrnheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO16?xcrnnum=" + xcrnnum));
@@ -549,7 +589,11 @@ public class SO16 extends KitController {
 		}
 
 		// Call the procedure
-		opcrnheaderRepo.SO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);
+		try {
+			opcrnheaderRepo.SO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO16?xcrnnum=" + xcrnnum));

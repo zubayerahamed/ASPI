@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -96,6 +98,7 @@ public class AD18 extends KitController {
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
 	}
 
+	@Transactional
 	@DeleteMapping("/delete/{xdocid}")
 	public @ResponseBody Map<String, Object> delete(@PathVariable Integer xdocid, String mainreloadid, String mainreloadurl) {
 		Optional<Cadoc> cadocOp = cadocRepo.findById(new CadocPK(sessionManager.getBusinessId(), xdocid));
@@ -125,7 +128,11 @@ public class AD18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		cadocRepo.delete(cadoc);
+		try {
+			cadocRepo.delete(cadoc);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection(mainreloadid, mainreloadurl + cadoc.getXtrnnum()));
@@ -134,6 +141,7 @@ public class AD18 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/upload")
 	public @ResponseBody Map<String, Object> upload(
 			@RequestParam MultipartFile file,
@@ -230,10 +238,10 @@ public class AD18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		cadoc = cadocRepo.save(cadoc);
-		if(cadoc == null) {
-			responseHelper.setErrorStatusAndMessage("Document not saved in database");
-			return responseHelper.getResponse();
+		try {
+			cadoc = cadocRepo.save(cadoc);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
@@ -260,7 +268,7 @@ public class AD18 extends KitController {
 	private String getFileExtention(MultipartFile csvFile) {
 		if (csvFile == null || StringUtils.isBlank(csvFile.getOriginalFilename()))
 			return null;
-		int indx = csvFile.getOriginalFilename().lastIndexOf(".");
+		int indx =  csvFile.getOriginalFilename().lastIndexOf(".");
 		return csvFile.getOriginalFilename().substring(indx);
 	}
 

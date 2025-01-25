@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -154,6 +155,7 @@ public class AD13 extends KitController {
 		return "pages/AD13/AD13-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xusers xusers, BindingResult bindingResult){
 
@@ -205,7 +207,11 @@ public class AD13 extends KitController {
 			if(!sessionManager.getLoggedInUserDetails().isAdmin()) xusers.setZadmin(false);
 			xusers.setXtheme("Default");
 			xusers.setZid(sessionManager.getBusinessId());
-			xusers = xuserRepo.save(xusers);
+			try {
+				xusers = xuserRepo.save(xusers);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + xusers.getZemail()));
@@ -232,7 +238,11 @@ public class AD13 extends KitController {
 			existObj.setXoldpassword(existPass);
 		}
 		if(sessionManager.getLoggedInUserDetails().isAdmin() && !sessionManager.getLoggedInUserDetails().getUsername().equals(xusers.getZemail())) existObj.setZadmin(xusers.getZadmin());
-		existObj = xuserRepo.save(existObj);
+		try {
+			existObj = xuserRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + existObj.getZemail()));
@@ -243,6 +253,7 @@ public class AD13 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Xuserprofiles xuserprofiles, BindingResult bindingResult){
 		// VALIDATE
@@ -260,10 +271,10 @@ public class AD13 extends KitController {
 			}
 
 			xuserprofiles.setZid(sessionManager.getBusinessId());
-			xuserprofiles = xuserprofilesRepo.save(xuserprofiles);
-			if(xuserprofiles == null) {
-				responseHelper.setErrorStatusAndMessage("Can't save");
-				return responseHelper.getResponse();
+			try {
+				xuserprofiles = xuserprofilesRepo.save(xuserprofiles);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
@@ -290,11 +301,19 @@ public class AD13 extends KitController {
 		// Delete all access first
 		List<Xuserprofiles> details = xuserprofilesRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
 		if(!details.isEmpty()) {
-			xuserprofilesRepo.deleteAll(details);
+			try {
+				xuserprofilesRepo.deleteAll(details);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 		}
 
 		Xusers obj = op.get();
-		xuserRepo.delete(obj);
+		try {
+			xuserRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=RESET"));
@@ -305,6 +324,7 @@ public class AD13 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam String zemail, @RequestParam String xprofile){
 		Optional<Xuserprofiles> existOp = xuserprofilesRepo.findById(new XuserprofilesPK(sessionManager.getBusinessId(), zemail, xprofile));
@@ -314,7 +334,11 @@ public class AD13 extends KitController {
 		}
 
 		Xuserprofiles obj = existOp.get();
-		xuserprofilesRepo.delete(obj);
+		try {
+			xuserprofilesRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + zemail));

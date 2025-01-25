@@ -109,6 +109,7 @@ public class FA18 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 		param.setXyear(xyear);
 		param.setXper(xper);
@@ -130,6 +131,7 @@ public class FA18 extends KitController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping("/voucher-post")
 	public @ResponseBody Map<String, Object> voucherPost(
 		@RequestParam Integer xvoucher,
@@ -149,6 +151,8 @@ public class FA18 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXyear(xyear);
 		param.setXper(xper);
@@ -168,7 +172,11 @@ public class FA18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		acheaderRepo.FA_VoucherPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+		try {
+			acheaderRepo.FA_VoucherPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -186,6 +194,7 @@ public class FA18 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/post-all")
 	public @ResponseBody Map<String, Object> postAll(
 		@RequestParam String selectedVouchers,
@@ -216,6 +225,8 @@ public class FA18 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXyear(xyear);
 		param.setXper(xper);
@@ -240,8 +251,12 @@ public class FA18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		for(Acheader acheader : allBalancedAcheader) {
-			acheaderRepo.FA_VoucherPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+		try {
+			for(Acheader acheader : allBalancedAcheader) {
+				acheaderRepo.FA_VoucherPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
@@ -260,6 +275,7 @@ public class FA18 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/voucher-unpost")
 	public @ResponseBody Map<String, Object> voucherUnpost(
 		@RequestParam Integer xvoucher,
@@ -279,6 +295,8 @@ public class FA18 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXyear(xyear);
 		param.setXper(xper);
@@ -298,7 +316,11 @@ public class FA18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		acheaderRepo.FA_VoucherUnPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+		try {
+			acheaderRepo.FA_VoucherUnPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -316,6 +338,7 @@ public class FA18 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/unpost-all")
 	public @ResponseBody Map<String, Object> unpostAll(
 		@RequestParam String selectedVouchers,
@@ -346,6 +369,8 @@ public class FA18 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXyear(xyear);
 		param.setXper(xper);
@@ -370,8 +395,12 @@ public class FA18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		for(Acheader acheader : allPostedAcheader) {
-			acheaderRepo.FA_VoucherUnPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+		try {
+			for(Acheader acheader : allPostedAcheader) {
+				acheaderRepo.FA_VoucherUnPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
@@ -410,6 +439,8 @@ public class FA18 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXyear(xyear);
 		param.setXper(xper);
@@ -429,8 +460,12 @@ public class FA18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), xvoucher);
-		acheaderRepo.delete(acheader);
+		try {
+			acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), xvoucher);
+			acheaderRepo.delete(acheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -479,6 +514,8 @@ public class FA18 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXyear(xyear);
 		param.setXper(xper);
@@ -503,9 +540,13 @@ public class FA18 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		for(Acheader v : allUnpostedVouchers) {
-			acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), v.getXvoucher());
-			acheaderRepo.delete(v);
+		try {
+			for(Acheader v : allUnpostedVouchers) {
+				acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), v.getXvoucher());
+				acheaderRepo.delete(v);
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();

@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -193,6 +193,7 @@ public class IM13 extends KitController {
 		return "pages/IM13/IM13-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Imissueheader imissueheader, BindingResult bindingResult){
 
@@ -235,7 +236,11 @@ public class IM13 extends KitController {
 			imissueheader.setXstatusjv("Open");
 			imissueheader.setXissuenum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM13"));
 			imissueheader.setZid(sessionManager.getBusinessId());
-			imissueheader = imissueheaderRepo.save(imissueheader);
+			try {
+				imissueheader = imissueheaderRepo.save(imissueheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + imissueheader.getXissuenum()));
@@ -272,7 +277,11 @@ public class IM13 extends KitController {
 			"xsubmittime", 
 		};
 		BeanUtils.copyProperties(imissueheader, existObj, ignoreProperties);
-		existObj = imissueheaderRepo.save(existObj);
+		try {
+			existObj = imissueheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + existObj.getXissuenum()));
@@ -283,6 +292,7 @@ public class IM13 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Imissuedetail imtrodetail, BindingResult bindingResult){
 		if(imtrodetail.getXissuenum() == null) {
@@ -324,7 +334,11 @@ public class IM13 extends KitController {
 			imtrodetail.setZid(sessionManager.getBusinessId());
 			imtrodetail.setXrate(BigDecimal.ZERO);
 			imtrodetail.setXlineamt(BigDecimal.ZERO);
-			imtrodetail = imissuedetailRepo.save(imtrodetail);
+			try {
+				imtrodetail = imissuedetailRepo.save(imtrodetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + imtrodetail.getXissuenum()));
@@ -353,10 +367,18 @@ public class IM13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imissuedetailRepo.deleteAllByZidAndXissuenum(sessionManager.getBusinessId(), xissuenum);
+		try {
+			imissuedetailRepo.deleteAllByZidAndXissuenum(sessionManager.getBusinessId(), xissuenum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Imissueheader obj = op.get();
-		imissueheaderRepo.delete(obj);
+		try {
+			imissueheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=RESET"));
@@ -367,7 +389,7 @@ public class IM13 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xissuenum, @RequestParam Integer xrow) throws Exception{
 		Optional<Imissueheader> oph = imissueheaderRepo.findById(new ImissueheaderPK(sessionManager.getBusinessId(), xissuenum));
@@ -390,7 +412,11 @@ public class IM13 extends KitController {
 		}
 
 		Imissuedetail obj = op.get();
-		imissuedetailRepo.delete(obj);
+		try {
+			imissuedetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + xissuenum));
@@ -472,7 +498,11 @@ public class IM13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imissueheaderRepo.IM_ConfirmIssue(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xissuenum);
+		try {
+			imissueheaderRepo.IM_ConfirmIssue(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xissuenum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + xissuenum));

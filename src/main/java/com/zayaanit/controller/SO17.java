@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -256,7 +256,11 @@ public class SO17 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(opcrnheader.getSubmitFor())) {
 			Integer xcrnnum = xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "SO16");
-			opcrnheaderRepo.SO_CreateReturnfromInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum, opdoheader.getXdornum());
+			try {
+				opcrnheaderRepo.SO_CreateReturnfromInvoice(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum, opdoheader.getXdornum());
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			Optional<Opcrnheader> opcrnheaderOp = opcrnheaderRepo.findById(new OpcrnheaderPK(sessionManager.getBusinessId(), xcrnnum));
 			if(!opcrnheaderOp.isPresent()) {
@@ -328,8 +332,11 @@ public class SO17 extends KitController {
 		BigDecimal lineAmt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXcrnnum());
 		existObj.setXlineamt(lineAmt);
 		existObj.setXtotamt(existObj.getXlineamt().subtract(existObj.getXdiscamt()));
-
-		existObj = opcrnheaderRepo.save(existObj);
+		try {
+			existObj = opcrnheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + existObj.getXcrnnum()));
@@ -429,11 +436,19 @@ public class SO17 extends KitController {
 		existObj.setXqty(opcrndetail.getXqty());
 		existObj.setXlineamt(opcrndetail.getXlineamt());
 		existObj.setXnote(opcrndetail.getXnote());
-		existObj = opcrndetailRepo.save(existObj);
+		try {
+			existObj = opcrndetailRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		BigDecimal xtotamt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opcrndetail.getXcrnnum());
 		opcrnheader.setXtotamt(xtotamt);
-		opcrnheaderRepo.save(opcrnheader);
+		try {
+			opcrnheaderRepo.save(opcrnheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + opcrndetail.getXcrnnum()));
@@ -463,10 +478,18 @@ public class SO17 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opcrndetailRepo.deleteAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		try {
+			opcrndetailRepo.deleteAllByZidAndXcrnnum(sessionManager.getBusinessId(), xcrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Opcrnheader obj = op.get();
-		opcrnheaderRepo.delete(obj);
+		try {
+			opcrnheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=RESET"));
@@ -574,7 +597,11 @@ public class SO17 extends KitController {
 		}
 
 		// Call the procedure
-		opcrnheaderRepo.SO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);
+		try {
+			opcrnheaderRepo.SO_ConfirmReturn(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xcrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + xcrnnum));

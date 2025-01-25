@@ -84,6 +84,7 @@ public class SA12 extends KitController {
 		return "pages/SA12/SA12-fragments::header-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xscreens xscreens, BindingResult bindingResult){
 
@@ -114,7 +115,11 @@ public class SA12 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(xscreens.getSubmitFor())) {
 			xscreens.setZid(sessionManager.getBusinessId());
-			xscreens = xscreenRepo.save(xscreens);
+			try {
+				xscreens = xscreenRepo.save(xscreens);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SA12?xscreen=RESET"));
@@ -133,7 +138,11 @@ public class SA12 extends KitController {
 
 		Xscreens existObj = op.get();
 		BeanUtils.copyProperties(xscreens, existObj, "zid", "zuserid", "ztime", "xscreen");
-		existObj = xscreenRepo.save(existObj);
+		try {
+			existObj = xscreenRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SA12?xscreen=" + existObj.getXscreen()));
@@ -152,14 +161,21 @@ public class SA12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		// delete all from profile details
-		xprofilesdtRepo.deleteAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
-
-		// delete all from xmenu screens
-		xmenuscreensRepo.deleteAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+		try {
+			// delete all from profile details
+			xprofilesdtRepo.deleteAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+			// delete all from xmenu screens
+			xmenuscreensRepo.deleteAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Xscreens obj = op.get();
-		xscreenRepo.delete(obj);
+		try {
+			xscreenRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SA12?xscreen=RESET"));

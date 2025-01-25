@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -129,6 +130,7 @@ public class SA13 extends KitController {
 		return "pages/SA13/SA13-fragments::header-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xmenuscreens xmenuscreens, BindingResult bindingResult){
 
@@ -155,7 +157,11 @@ public class SA13 extends KitController {
 		if(SubmitFor.INSERT.equals(xmenuscreens.getSubmitFor())) {
 			xmenuscreens.setXrow(xmenuscreensRepo.getNextAvailableRow(sessionManager.getBusinessId()));
 			xmenuscreens.setZid(sessionManager.getBusinessId());
-			xmenuscreens = xmenuscreensRepo.save(xmenuscreens);
+			try {
+				xmenuscreens = xmenuscreensRepo.save(xmenuscreens);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SA13?xrow=RESET"));
@@ -174,7 +180,11 @@ public class SA13 extends KitController {
 
 		Xmenuscreens existObj = op.get();
 		BeanUtils.copyProperties(xmenuscreens, existObj, "zid", "zuserid", "ztime", "xrow");
-		existObj = xmenuscreensRepo.save(existObj);
+		try {
+			existObj = xmenuscreensRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SA13?xrow=" + existObj.getXrow()));
@@ -184,6 +194,7 @@ public class SA13 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam Integer xrow){
 		Optional<Xmenuscreens> op = xmenuscreensRepo.findById(new XmenuscreensPK(sessionManager.getBusinessId(), xrow));
@@ -193,7 +204,11 @@ public class SA13 extends KitController {
 		}
 
 		Xmenuscreens obj = op.get();
-		xmenuscreensRepo.delete(obj);
+		try {
+			xmenuscreensRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SA13?xrow=RESET"));

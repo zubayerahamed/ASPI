@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -71,6 +72,7 @@ public class FA19 extends KitController{
 		return "pages/FA19/FA19";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(YearEndProcess yep){
 
@@ -84,7 +86,11 @@ public class FA19 extends KitController{
 			return responseHelper.getResponse();
 		}
 
-		acbalRepo.FA_YearEnd(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), yep.getXyear(), yep.getXdate());
+		try {
+			acbalRepo.FA_YearEnd(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), yep.getXyear(), yep.getXdate());
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA19"));

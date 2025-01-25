@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -92,6 +93,7 @@ public class MD12 extends KitController {
 		return "pages/MD12/MD12-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Caitem caitem, BindingResult bindingResult) {
 
@@ -153,7 +155,11 @@ public class MD12 extends KitController {
 		Caitem existObj = op.get();
 		BeanUtils.copyProperties(caitem, existObj, "zid", "zuserid", "ztime", "xitem");
 
-		existObj = caitemRepo.save(existObj);
+		try {
+			existObj = caitemRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD12?xitem=" + existObj.getXitem()));
@@ -163,6 +169,7 @@ public class MD12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam Integer xitem) {
 		Optional<Caitem> op = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), xitem));
@@ -172,7 +179,11 @@ public class MD12 extends KitController {
 		}
 
 		Caitem obj = op.get();
-		caitemRepo.delete(obj);
+		try {
+			caitemRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD12?xitem=RESET"));

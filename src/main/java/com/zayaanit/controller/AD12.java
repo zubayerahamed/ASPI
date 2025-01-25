@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -174,6 +175,7 @@ public class AD12 extends KitController {
 		return "pages/AD12/AD12-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xprofiles xprofiles, BindingResult bindingResult){
 
@@ -189,7 +191,11 @@ public class AD12 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(xprofiles.getSubmitFor())) {
 			xprofiles.setZid(sessionManager.getBusinessId());
-			xprofiles = profileRepo.save(xprofiles);
+			try {
+				xprofiles = profileRepo.save(xprofiles);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + xprofiles.getXprofile()));
@@ -209,7 +215,11 @@ public class AD12 extends KitController {
 
 		Xprofiles existObj = op.get();
 		BeanUtils.copyProperties(xprofiles, existObj, "zid", "zuserid", "ztime", "xprofile");
-		existObj = profileRepo.save(existObj);
+		try {
+			existObj = profileRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + existObj.getXprofile()));
@@ -220,6 +230,7 @@ public class AD12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping(value = "/detail/save", headers="Accept=application/json")
 	public @ResponseBody Map<String, Object> saveDetail(@RequestBody String json){
 		DetailData dd = new DetailData();
@@ -251,11 +262,10 @@ public class AD12 extends KitController {
 			list.add(dt);
 		}
 
-		List<Xprofilesdt> savedlist = profileDtRepo.saveAll(list);
-
-		if(savedlist == null) {
-			responseHelper.setErrorStatusAndMessage("Can't save");
-			return responseHelper.getResponse();
+		try {
+			profileDtRepo.saveAll(list);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
@@ -265,6 +275,7 @@ public class AD12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(String xprofile){
 		Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
@@ -275,11 +286,19 @@ public class AD12 extends KitController {
 
 		List<Xprofilesdt> details = profiledtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId());
 		if(details != null && !details.isEmpty()) {
-			profiledtRepo.deleteAll(details);
+			try {
+				profiledtRepo.deleteAll(details);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 		}
 
 		Xprofiles obj = op.get();
-		profileRepo.delete(obj);
+		try {
+			profileRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=RESET"));

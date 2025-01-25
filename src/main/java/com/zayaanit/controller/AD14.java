@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -115,6 +116,7 @@ public class AD14 extends KitController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Xcodes xcodes, BindingResult bindingResult){
 
@@ -135,7 +137,11 @@ public class AD14 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(xcodes.getSubmitFor())) {
 			xcodes.setZid(sessionManager.getBusinessId());
-			xcodes = xcodesRepo.save(xcodes);
+			try {
+				xcodes = xcodesRepo.save(xcodes);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSectionParams> postData = new ArrayList<>();
 			postData.add(new ReloadSectionParams("xtype", xcodes.getXtype()));
@@ -158,7 +164,11 @@ public class AD14 extends KitController {
 
 		Xcodes existObj = op.get();
 		BeanUtils.copyProperties(xcodes, existObj, "zid", "zuserid", "ztime", "xtype", "xcode");
-		existObj = xcodesRepo.save(existObj);
+		try {
+			existObj = xcodesRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
@@ -173,6 +183,7 @@ public class AD14 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(String xtype, String xcode){
 		Optional<Xcodes> op = xcodesRepo.findById(new XcodesPK(sessionManager.getBusinessId(), xtype, xcode));
@@ -182,7 +193,11 @@ public class AD14 extends KitController {
 		}
 
 		Xcodes obj = op.get();
-		xcodesRepo.delete(obj);
+		try {
+			xcodesRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD14?xtype=REST&xcode=RESET"));

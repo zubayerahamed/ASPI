@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -121,6 +122,7 @@ public class FA12 extends KitController {
 		return "pages/FA12/FA12-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acgroup acgroup, BindingResult bindingResult){
 		if(acgroup.getXagcode() == null) {
@@ -154,7 +156,11 @@ public class FA12 extends KitController {
 				acgroup.setXaglevel(parentOp.get().getXaglevel() + 1);
 				acgroup.setXagtype(parentOp.get().getXagtype());
 			}
-			acgroup = acgroupRepo.save(acgroup);
+			try {
+				acgroup = acgroupRepo.save(acgroup);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (acgroup.getXagparent() == null ? "RESET" : acgroup.getXagparent())));
@@ -174,7 +180,11 @@ public class FA12 extends KitController {
 		Acgroup existObj = op.get();
 		BeanUtils.copyProperties(acgroup, existObj, "zid", "zuserid", "ztime", "xagcode", "xaglevel", "xagparent", "xagtype");
 
-		existObj = acgroupRepo.save(existObj);
+		try {
+			existObj = acgroupRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=" + existObj.getXagcode() + "&xagparent=" + (existObj.getXagparent() == null ? "RESET" : existObj.getXagparent())));
@@ -184,6 +194,7 @@ public class FA12 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam Integer xagcode){
 		Optional<Acgroup> op = acgroupRepo.findById(new AcgroupPK(sessionManager.getBusinessId(), xagcode));
@@ -199,7 +210,11 @@ public class FA12 extends KitController {
 		}
 
 		Acgroup obj = op.get();
-		acgroupRepo.delete(obj);
+		try {
+			acgroupRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (obj.getXagparent() == null ? "RESET" : obj.getXagparent())));

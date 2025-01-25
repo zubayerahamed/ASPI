@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -162,6 +163,7 @@ public class FA32 extends KitController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Optogli optogli, BindingResult bindingResult){
 
@@ -207,7 +209,11 @@ public class FA32 extends KitController {
 		// Create new
 		if(SubmitFor.INSERT.equals(optogli.getSubmitFor())) {
 			optogli.setZid(sessionManager.getBusinessId());
-			optogli = optogliRepo.save(optogli);
+			try {
+				optogli = optogliRepo.save(optogli);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA32"));
@@ -223,11 +229,14 @@ public class FA32 extends KitController {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
 			return responseHelper.getResponse();
 		}
-		
 
 		Optogli existObj = existOp.get();
 		BeanUtils.copyProperties(optogli, existObj, "zid", "zuserid", "ztime", "xtype", "xgcus");
-		existObj = optogliRepo.save(existObj);
+		try {
+			existObj = optogliRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA32?xtype=" + existObj.getXtype() + "&xgcus=" + existObj.getXgcus()));
@@ -237,6 +246,7 @@ public class FA32 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(String xtype, String xgcus){
 		Optional<Optogli> existOp = optogliRepo.findById(new OptogliPK(sessionManager.getBusinessId(), xtype, xgcus));
@@ -246,7 +256,11 @@ public class FA32 extends KitController {
 		}
 
 		Optogli existObj = existOp.get();
-		optogliRepo.delete(existObj);
+		try {
+			optogliRepo.delete(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA32?xtype=REST&xgcus=RESET"));

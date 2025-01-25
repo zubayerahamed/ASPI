@@ -393,7 +393,11 @@ public class SO18 extends KitController {
 			opdoheader.setXtotcost(BigDecimal.ZERO);
 			opdoheader.setXtype("POS Invoice");
 
-			opdoheader = opdoheaderRepo.save(opdoheader);
+			try {
+				opdoheader = opdoheaderRepo.save(opdoheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			// Salve all details
 			for(Opdodetail d : details) {
@@ -412,7 +416,11 @@ public class SO18 extends KitController {
 					throw new IllegalStateException("Invalid quantity for item : " + d.getXitem() + " - " + d.getItemName());
 				}
 
-				opdodetailRepo.save(d);
+				try {
+					opdodetailRepo.save(d);
+				} catch (Exception e) {
+					throw new IllegalStateException(e.getCause().getMessage());
+				}
 			}
 
 			if("Confirmed".equals(opdoheader.getXstatus())) {
@@ -474,10 +482,18 @@ public class SO18 extends KitController {
 		existObj.setXlineamt(opdoheader.getXlineamt());
 		existObj.setXdiscamt(opdoheader.getXdiscamt());
 		existObj.setXtotamt(opdoheader.getXtotamt());
-		existObj = opdoheaderRepo.save(existObj);
+		try {
+			existObj = opdoheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Remove all db details first
-		opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), existObj.getXdornum());
+		try {
+			opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), existObj.getXdornum());
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Salve all details
 		for(Opdodetail d : details) {
@@ -496,7 +512,11 @@ public class SO18 extends KitController {
 				throw new IllegalStateException("Invalid quantity for item : " + d.getXitem() + " - " + d.getItemName());
 			}
 
-			opdodetailRepo.save(d);
+			try {
+				opdodetailRepo.save(d);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 		}
 
 		if("Confirmed".equals(existObj.getXstatus())) {

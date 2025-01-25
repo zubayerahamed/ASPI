@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -262,6 +262,7 @@ public class IM14 extends KitController {
 		return "pages/IM14/IM14-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Moheader moheader, BindingResult bindingResult){
 
@@ -320,7 +321,11 @@ public class IM14 extends KitController {
 			moheader.setXstatusim("Open");
 			moheader.setXbatch(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM14"));
 			moheader.setZid(sessionManager.getBusinessId());
-			moheader = moheaderRepo.save(moheader);
+			try {
+				moheader = moheaderRepo.save(moheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + moheader.getXbatch()));
@@ -359,7 +364,11 @@ public class IM14 extends KitController {
 			"xsubmittime", 
 		};
 		BeanUtils.copyProperties(moheader, existObj, ignoreProperties);
-		existObj = moheaderRepo.save(existObj);
+		try {
+			existObj = moheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + existObj.getXbatch()));
@@ -371,6 +380,7 @@ public class IM14 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Modetail modetail, BindingResult bindingResult){
 		if(modetail.getXbatch() == null) {
@@ -418,7 +428,11 @@ public class IM14 extends KitController {
 			modetail.setXrate(BigDecimal.ZERO);
 			modetail.setXlineamt(BigDecimal.ZERO);
 			modetail.setXsign(-1);
-			modetail = modetailRepo.save(modetail);
+			try {
+				modetail = modetailRepo.save(modetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + modetail.getXbatch()));
@@ -446,7 +460,11 @@ public class IM14 extends KitController {
 				"xsign",
 			};
 		BeanUtils.copyProperties(modetail, exist, ignoreProperties);
-		exist = modetailRepo.save(exist);
+		try {
+			exist = modetailRepo.save(exist);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + exist.getXbatch()));
@@ -457,6 +475,7 @@ public class IM14 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/additional/store")
 	public @ResponseBody Map<String, Object> storeAdditionalDetail(Modetail modetail, BindingResult bindingResult){
 		if(modetail.getXbatch() == null) {
@@ -509,7 +528,11 @@ public class IM14 extends KitController {
 			modetail.setXrow(modetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), modetail.getXbatch()));
 			modetail.setZid(sessionManager.getBusinessId());
 			modetail.setXsign(1);
-			modetail = modetailRepo.save(modetail);
+			try {
+				modetail = modetailRepo.save(modetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + modetail.getXbatch()));
@@ -535,7 +558,11 @@ public class IM14 extends KitController {
 				"xsign",
 			};
 		BeanUtils.copyProperties(modetail, exist, ignoreProperties);
-		exist = modetailRepo.save(exist);
+		try {
+			exist = modetailRepo.save(exist);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + exist.getXbatch()));
@@ -560,11 +587,19 @@ public class IM14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		modetailRepo.deleteAllByZidAndXbatchAndXsign(sessionManager.getBusinessId(), xbatch, -1);
-		modetailRepo.deleteAllByZidAndXbatchAndXsign(sessionManager.getBusinessId(), xbatch, 1);
+		try {
+			modetailRepo.deleteAllByZidAndXbatchAndXsign(sessionManager.getBusinessId(), xbatch, -1);
+			modetailRepo.deleteAllByZidAndXbatchAndXsign(sessionManager.getBusinessId(), xbatch, 1);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Moheader obj = op.get();
-		moheaderRepo.delete(obj);
+		try {
+			moheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=RESET"));
@@ -576,7 +611,7 @@ public class IM14 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xbatch, @RequestParam Integer xrow) throws Exception{
 		Optional<Moheader> oph = moheaderRepo.findById(new MoheaderPK(sessionManager.getBusinessId(), xbatch));
@@ -599,7 +634,11 @@ public class IM14 extends KitController {
 		}
 
 		Modetail obj = op.get();
-		modetailRepo.delete(obj);
+		try {
+			modetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + xbatch));
@@ -610,7 +649,7 @@ public class IM14 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/additional-table")
 	public @ResponseBody Map<String, Object> deleteAdditionalDetail(@RequestParam Integer xbatch, @RequestParam Integer xrow) throws Exception{
 		Optional<Moheader> oph = moheaderRepo.findById(new MoheaderPK(sessionManager.getBusinessId(), xbatch));
@@ -633,7 +672,11 @@ public class IM14 extends KitController {
 		}
 
 		Modetail obj = op.get();
-		modetailRepo.delete(obj);
+		try {
+			modetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + xbatch));
@@ -644,6 +687,7 @@ public class IM14 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/confirm")
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xbatch) {
 		Optional<Moheader> oph = moheaderRepo.findById(new MoheaderPK(sessionManager.getBusinessId(), xbatch));
@@ -715,7 +759,11 @@ public class IM14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		moheaderRepo.IM_ConfirmBatch(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xbatch);
+		try {
+			moheaderRepo.IM_ConfirmBatch(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xbatch);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + xbatch));

@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -190,6 +190,7 @@ public class IM15 extends KitController {
 		return "pages/IM15/IM15-fragments::list-table";
 	}
 
+	@Transactional
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Imadjheader imadjheader, BindingResult bindingResult){
 
@@ -227,7 +228,11 @@ public class IM15 extends KitController {
 			imadjheader.setXstatusjv("Open");
 			imadjheader.setXadjnum(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "IM15"));
 			imadjheader.setZid(sessionManager.getBusinessId());
-			imadjheader = imadjheaderRepo.save(imadjheader);
+			try {
+				imadjheader = imadjheaderRepo.save(imadjheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + imadjheader.getXadjnum()));
@@ -264,7 +269,11 @@ public class IM15 extends KitController {
 			"xsubmittime", 
 		};
 		BeanUtils.copyProperties(imadjheader, existObj, ignoreProperties);
-		existObj = imadjheaderRepo.save(existObj);
+		try {
+			existObj = imadjheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + existObj.getXadjnum()));
@@ -275,6 +284,7 @@ public class IM15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/detail/store")
 	public @ResponseBody Map<String, Object> storeDetail(Imadjdetail imadjdetail, BindingResult bindingResult){
 		if(imadjdetail.getXadjnum() == null) {
@@ -326,7 +336,11 @@ public class IM15 extends KitController {
 			imadjdetail.setZid(sessionManager.getBusinessId());
 			imadjdetail.setXrate(BigDecimal.ZERO);
 			imadjdetail.setXlineamt(BigDecimal.ZERO);
-			imadjdetail = imadjdetailRepo.save(imadjdetail);
+			try {
+				imadjdetail = imadjdetailRepo.save(imadjdetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + imadjdetail.getXadjnum()));
@@ -355,10 +369,18 @@ public class IM15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imadjdetailRepo.deleteAllByZidAndXadjnum(sessionManager.getBusinessId(), xadjnum);
+		try {
+			imadjdetailRepo.deleteAllByZidAndXadjnum(sessionManager.getBusinessId(), xadjnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Imadjheader obj = op.get();
-		imadjheaderRepo.delete(obj);
+		try {
+			imadjheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=RESET"));
@@ -369,7 +391,7 @@ public class IM15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@javax.transaction.Transactional
+	@Transactional
 	@DeleteMapping("/detail-table")
 	public @ResponseBody Map<String, Object> deleteDetail(@RequestParam Integer xadjnum, @RequestParam Integer xrow) throws Exception{
 		Optional<Imadjheader> oph = imadjheaderRepo.findById(new ImadjheaderPK(sessionManager.getBusinessId(), xadjnum));
@@ -392,7 +414,11 @@ public class IM15 extends KitController {
 		}
 
 		Imadjdetail obj = op.get();
-		imadjdetailRepo.delete(obj);
+		try {
+			imadjdetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + xadjnum));
@@ -403,6 +429,7 @@ public class IM15 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
 	@PostMapping("/confirm")
 	public @ResponseBody Map<String, Object> confirm(@RequestParam Integer xadjnum) {
 		Optional<Imadjheader> oph = imadjheaderRepo.findById(new ImadjheaderPK(sessionManager.getBusinessId(), xadjnum));
@@ -474,7 +501,11 @@ public class IM15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		imadjheaderRepo.IM_ConfirmAdjustment(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xadjnum);
+		try {
+			imadjheaderRepo.IM_ConfirmAdjustment(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xadjnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + xadjnum));

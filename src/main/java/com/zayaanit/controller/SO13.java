@@ -129,6 +129,7 @@ public class SO13 extends KitController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping("/create-invoice")
 	public @ResponseBody Map<String, Object> createGrn(
 		@RequestParam Integer xordernum,
@@ -147,6 +148,8 @@ public class SO13 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -175,7 +178,11 @@ public class SO13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		opordheaderRepo.SO_CreateDOfromOrder(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xordernum);
+		try {
+			opordheaderRepo.SO_CreateDOfromOrder(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xordernum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -216,6 +223,8 @@ public class SO13 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -261,7 +270,11 @@ public class SO13 extends KitController {
 			opordheader.setXapprovertime(new Date());
 		}
 
-		opordheaderRepo.save(opordheader);
+		try {
+			opordheaderRepo.save(opordheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));

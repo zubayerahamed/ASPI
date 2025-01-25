@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -302,7 +302,11 @@ public class PO15 extends KitController {
 		existObj.setXref(pogrnheader.getXref());
 		existObj.setXinvnum(pogrnheader.getXinvnum());
 		existObj.setXnote(pogrnheader.getXnote());
-		existObj = pogrnheaderRepo.save(existObj);
+		try {
+			existObj = pogrnheaderRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + existObj.getXgrnnum()));
@@ -363,11 +367,19 @@ public class PO15 extends KitController {
 			pogrndetail.setXqtyord(BigDecimal.ZERO);
 			pogrndetail.setXqtycrn(BigDecimal.ZERO);
 			pogrndetail.setZid(sessionManager.getBusinessId());
-			pogrndetail = pogrndetailRepo.save(pogrndetail);
+			try {
+				pogrndetail = pogrndetailRepo.save(pogrndetail);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pogrndetail.getXgrnnum());
 			pogrnheader.setXtotamt(xtotamt);
-			pogrnheaderRepo.save(pogrnheader);
+			try {
+				pogrnheaderRepo.save(pogrnheader);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + pogrndetail.getXgrnnum()));
@@ -435,7 +447,11 @@ public class PO15 extends KitController {
 		existObj.setXrate(pogrndetail.getXrate());
 		existObj.setXlineamt(existObj.getXqty().multiply(existObj.getXrate()));
 		existObj.setXnote(pogrndetail.getXnote());
-		existObj = pogrndetailRepo.save(existObj);
+		try {
+			existObj = pogrndetailRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Update purchase order status here
 		List<Poorddetail> poorddetails = poorddetailRepo.findAllByZidAndXpornum(sessionManager.getBusinessId(), pogrnheader.getXpornum());
@@ -451,11 +467,19 @@ public class PO15 extends KitController {
 		} else {
 			order.setXstatusord("GRN Created");
 		}
-		poordheaderRepo.save(order);
+		try {
+			poordheaderRepo.save(order);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXgrnnum());
 		pogrnheader.setXtotamt(xtotamt);
-		pogrnheaderRepo.save(pogrnheader);
+		try {
+			pogrnheaderRepo.save(pogrnheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + existObj.getXgrnnum()));
@@ -485,10 +509,18 @@ public class PO15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		pogrndetailRepo.deleteAllByZidAndXgrnnum(sessionManager.getBusinessId(), xgrnnum);
+		try {
+			pogrndetailRepo.deleteAllByZidAndXgrnnum(sessionManager.getBusinessId(), xgrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		Pogrnheader obj = op.get();
-		pogrnheaderRepo.delete(obj);
+		try {
+			pogrnheaderRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=RESET"));
@@ -528,12 +560,20 @@ public class PO15 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		pogrndetailRepo.delete(obj);
+		try {
+			pogrndetailRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		// Update line amount and total amount of header
 		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pogrnheader.getXgrnnum());
 		pogrnheader.setXtotamt(xtotamt);
-		pogrnheaderRepo.save(pogrnheader);
+		try {
+			pogrnheaderRepo.save(pogrnheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + xgrnnum));
@@ -611,7 +651,11 @@ public class PO15 extends KitController {
 		}
 
 		// Call the procedure
-		pogrnheaderRepo.PO_ConfirmGRN(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xgrnnum);
+		try {
+			pogrnheaderRepo.PO_ConfirmGRN(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xgrnnum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + xgrnnum));

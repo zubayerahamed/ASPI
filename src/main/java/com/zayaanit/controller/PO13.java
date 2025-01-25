@@ -125,6 +125,7 @@ public class PO13 extends KitController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping("/create-grn")
 	public @ResponseBody Map<String, Object> createGrn(
 		@RequestParam Integer xpornum,
@@ -143,6 +144,8 @@ public class PO13 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -171,7 +174,11 @@ public class PO13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		poordheaderRepo.PO_CreateGRNfromOrder(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xpornum);
+		try {
+			poordheaderRepo.PO_CreateGRNfromOrder(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), xpornum);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -212,6 +219,8 @@ public class PO13 extends KitController {
 			param.setXtdate(sdf.parse(xtdate));
 		} catch (ParseException e) {
 			log.error(ERROR, e.getMessage(), e);
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
 		}
 		param.setXbuid(xbuid);
 		param.setXwh(xwh);
@@ -257,7 +266,11 @@ public class PO13 extends KitController {
 			poordheader.setXapprovertime(new Date());
 		}
 
-		poordheaderRepo.save(poordheader);
+		try {
+			poordheaderRepo.save(poordheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
