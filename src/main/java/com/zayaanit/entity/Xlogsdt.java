@@ -73,8 +73,7 @@ public class Xlogsdt implements Serializable {
 	@Column(name = "xresult", length = 25)
 	private String xresult;
 
-	public Xlogsdt(String xscreen, String xfunc, String xsource, String xfuncdt, String xdata, String xstatement,
-			String xmessage, String xresult) {
+	public Xlogsdt(String xscreen, String xfunc, String xsource, String xfuncdt, String xdata, String xstatement, String xmessage, String xresult) {
 		this.xscreen = xscreen;
 		this.xfunc = xfunc;
 		this.xsource = xsource;
@@ -85,4 +84,34 @@ public class Xlogsdt implements Serializable {
 		this.xresult = xresult;
 	}
 
+	/**
+	 * @param screenCode
+	 * @param operation
+	 * @param title
+	 * @param reference
+	 * @param data
+	 * @param detail
+	 * @param index
+	 */
+	public Xlogsdt(String screenCode, String operation, String title, String reference, String data, boolean detail, int index) {
+		this.xscreen = screenCode;
+		this.xfunc = operation;
+		this.xsource = screenCode;
+		this.xfuncdt = operation + " " + title;
+		if(detail) this.xfuncdt += " detail " + index;
+		this.xdata = reference;
+		this.xstatement = data;
+		this.xmessage = null;
+		this.xresult = "Success";
+	}
+
+	public Xlogsdt setSource(String source) {
+		this.xsource = source;
+		return this;
+	}
+
+	public Xlogsdt setMessage(String message) {
+		this.xmessage = message;
+		return this;
+	}
 }

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thymeleaf.spring5.processor.SpringUErrorsTagProcessor;
 
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
@@ -90,7 +89,7 @@ public class PO12 extends KitController {
 			if("RESET".equalsIgnoreCase(xpornum)) {
 				model.addAttribute("poordheader", Poordheader.getDefaultInstance());
 
-				xlogsdtService.save(new Xlogsdt("PO12", "Clear", "PO12", "Clear Screen", null, null, null, "Success"));
+				xlogsdtService.save(new Xlogsdt("PO12", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO12/PO12-fragments::main-form";
 			}
 
@@ -121,7 +120,7 @@ public class PO12 extends KitController {
 			}
 			model.addAttribute("poordheader", poordheader != null ? poordheader : Poordheader.getDefaultInstance());
 
-			xlogsdtService.save(new Xlogsdt("PO12", "View", "PO12", "View " + this.pageTitle, xpornum, poordheader != null ? poordheader.toString() : "Select header data", null, "Success"));
+			xlogsdtService.save(new Xlogsdt("PO12", "View", this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), false, 0));
 			return "pages/PO12/PO12-fragments::main-form";
 		}
 
@@ -135,6 +134,8 @@ public class PO12 extends KitController {
 	public String detailFormFragment(@RequestParam String xpornum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xpornum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("poordheader", Poordheader.getDefaultInstance());
+
+			xlogsdtService.save(new Xlogsdt("PO12", "Clear", this.pageTitle, null, null, true, 0));
 			return "pages/PO12/PO12-fragments::detail-table";
 		}
 
@@ -172,6 +173,8 @@ public class PO12 extends KitController {
 			}
 
 			model.addAttribute("poorddetail", poorddetail);
+
+			xlogsdtService.save(new Xlogsdt("PO12", "Clear", this.pageTitle, null, null, true, 0));
 			return "pages/PO12/PO12-fragments::detail-table";
 		}
 
@@ -192,12 +195,8 @@ public class PO12 extends KitController {
 		}
 
 		model.addAttribute("poorddetail", poorddetail);
+		xlogsdtService.save(new Xlogsdt("PO12", "View", this.pageTitle, poorddetail.getXrow().toString(), poorddetail.toString(), true, 0));
 		return "pages/PO12/PO12-fragments::detail-table";
-	}
-
-	@GetMapping("/list-table")
-	public String loadListTableFragment(Model model) {
-		return "pages/PO12/PO12-fragments::list-table";
 	}
 
 	@Transactional
@@ -248,12 +247,11 @@ public class PO12 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			xlogsdtService.save(new Xlogsdt("PO12", "Add", "PO12", "Add " + this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), null, "Success"));
+			xlogsdtService.save(new Xlogsdt("PO12", "Add", this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), false, 0));
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poordheader.getXpornum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum="+ poordheader.getXpornum() +"&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Purchase order created successfully");
 			return responseHelper.getResponse();
@@ -284,12 +282,11 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO12", "Update", "PO12", "Update " + this.pageTitle, existObj.getXpornum().toString(), existObj.toString(), null, "Success"));
+		xlogsdtService.save(new Xlogsdt("PO12", "Update", this.pageTitle, existObj.getXpornum().toString(), existObj.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + existObj.getXpornum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum="+ poordheader.getXpornum() +"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Purchase order updated successfully");
 		return responseHelper.getResponse();
@@ -357,10 +354,11 @@ public class PO12 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			xlogsdtService.save(new Xlogsdt("PO12", "Add", this.pageTitle, poorddetail.getXrow().toString(), poorddetail.toString(), true, 0));
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poorddetail.getXpornum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum=" + poorddetail.getXpornum() + "&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Purchase order detail added successfully");
 			return responseHelper.getResponse();
@@ -388,10 +386,11 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO12", "Update", this.pageTitle, exist.getXrow().toString(), exist.toString(), true, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poorddetail.getXpornum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum=" + poorddetail.getXpornum() + "&xrow=" + exist.getXrow()));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Detail updated successfully");
 		return responseHelper.getResponse();
@@ -425,12 +424,11 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO12", "Delete", "PO12", "Delete " + this.pageTitle, copy.getXpornum().toString(), copy.toString(), null, "Success"));
+		xlogsdtService.save(new Xlogsdt("PO12", "Delete", this.pageTitle, copy.getXpornum().toString(), copy.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum=RESET&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -459,6 +457,7 @@ public class PO12 extends KitController {
 		}
 
 		Poorddetail obj = op.get();
+		Poorddetail copy = SerializationUtils.clone(obj);
 		try {
 			poorddetailRepo.delete(obj);
 		} catch (Exception e) {
@@ -475,10 +474,11 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO12", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + xpornum));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum="+xpornum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -547,10 +547,11 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO12", "Confirm", this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + xpornum));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum="+xpornum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Confirmed successfully");
 		return responseHelper.getResponse();

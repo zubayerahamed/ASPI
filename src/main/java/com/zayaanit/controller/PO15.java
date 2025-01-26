@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ import com.zayaanit.entity.Pogrndetail;
 import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Poorddetail;
 import com.zayaanit.entity.Poordheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -97,6 +99,7 @@ public class PO15 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xgrnnum)) {
 				model.addAttribute("pogrnheader", Pogrnheader.getDefaultInstance());
+				xlogsdtService.save(new Xlogsdt("PO15", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO15/PO15-fragments::main-form";
 			}
 
@@ -126,7 +129,7 @@ public class PO15 extends KitController {
 				}
 			}
 			model.addAttribute("pogrnheader", pogrnheader != null ? pogrnheader : Pogrnheader.getDefaultInstance());
-
+			xlogsdtService.save(new Xlogsdt("PO15", "View", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0));
 			return "pages/PO15/PO15-fragments::main-form";
 		}
 
@@ -173,6 +176,7 @@ public class PO15 extends KitController {
 
 			model.addAttribute("pogrndetail", Pogrndetail.getDefaultInstance(Integer.valueOf(xgrnnum)));
 
+			xlogsdtService.save(new Xlogsdt("PO15", "View", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0).setSource("PO13").setMessage("Redirected from PO13 to PO15"));
 			return "pages/PO15/PO15";
 		}
 
@@ -184,6 +188,7 @@ public class PO15 extends KitController {
 	public String detailFormFragment(@RequestParam String xgrnnum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xgrnnum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("pogrnheader", Pogrnheader.getDefaultInstance());
+			xlogsdtService.save(new Xlogsdt("PO15", "Clear", this.pageTitle, null, null, true, 0));
 			return "pages/PO15/PO15-fragments::detail-table";
 		}
 
@@ -221,6 +226,7 @@ public class PO15 extends KitController {
 			}
 
 			model.addAttribute("pogrndetail", pogrndetail);
+			xlogsdtService.save(new Xlogsdt("PO15", "Clear", this.pageTitle, pogrndetail.getXrow().toString(), pogrndetail.toString(), true, 0));
 			return "pages/PO15/PO15-fragments::detail-table";
 		}
 
@@ -241,12 +247,8 @@ public class PO15 extends KitController {
 		}
 
 		model.addAttribute("pogrndetail", pogrndetail);
+		xlogsdtService.save(new Xlogsdt("PO15", "View", this.pageTitle, pogrndetail.getXrow().toString(), pogrndetail.toString(), true, 0));
 		return "pages/PO15/PO15-fragments::detail-table";
-	}
-
-	@GetMapping("/list-table")
-	public String loadListTableFragment(Model model) {
-		return "pages/PO15/PO15-fragments::list-table";
 	}
 
 	@Transactional
@@ -308,10 +310,11 @@ public class PO15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO15", "Update", this.pageTitle, existObj.getXgrnnum().toString(), existObj.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + existObj.getXgrnnum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO15/detail-table?xgrnnum="+ pogrnheader.getXgrnnum() +"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -381,10 +384,11 @@ public class PO15 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			xlogsdtService.save(new Xlogsdt("PO15", "Add", this.pageTitle, pogrndetail.getXrow().toString(), pogrndetail.toString(), true, 0));
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + pogrndetail.getXgrnnum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO15/detail-table?xgrnnum=" + pogrndetail.getXgrnnum() + "&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/PO15/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Detail added successfully");
 			return responseHelper.getResponse();
@@ -481,10 +485,13 @@ public class PO15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO15", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
+		xlogsdtService.save(new Xlogsdt("PO15", "Update", this.pageTitle, order.getXpornum().toString(), order.toString(), true, 0).setMessage("Update purchase order"));
+		xlogsdtService.save(new Xlogsdt("PO15", "Update", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), true, 0).setMessage("Update header"));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + existObj.getXgrnnum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO15/detail-table?xgrnnum=" + existObj.getXgrnnum() + "&xrow=" + existObj.getXrow()));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Detail updated successfully");
 		return responseHelper.getResponse();
@@ -516,16 +523,18 @@ public class PO15 extends KitController {
 		}
 
 		Pogrnheader obj = op.get();
+		Pogrnheader copy = SerializationUtils.clone(obj);
 		try {
 			pogrnheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO15", "Delete", this.pageTitle, copy.getXgrnnum().toString(), copy.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO15/detail-table?xgrnnum=RESET&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -554,6 +563,7 @@ public class PO15 extends KitController {
 		}
 
 		Pogrndetail obj = op.get();
+		Pogrndetail copy = SerializationUtils.clone(obj);
 
 		if(obj.getXdocrow() != 0) {
 			responseHelper.setErrorStatusAndMessage("Order reference detail item can't be deleted");
@@ -575,10 +585,11 @@ public class PO15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO15", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + xgrnnum));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO15/detail-table?xgrnnum="+xgrnnum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -657,10 +668,11 @@ public class PO15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO15", "Confirm", this.pageTitle, xgrnnum.toString(), "PO_ConfirmGRN("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xgrnnum +")" , false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO15?xgrnnum=" + xgrnnum));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO15/detail-table?xgrnnum="+xgrnnum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO15/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Confirmed successfully");
 		return responseHelper.getResponse();
