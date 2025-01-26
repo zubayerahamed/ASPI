@@ -32,6 +32,7 @@
 				if(favscreen == undefined || favscreen == null || favscreen == ''){
 					favscreen = 'home';
 				}
+				$('#' + favscreen).attr('data-def', 'Y');
 				$('#' + favscreen).click();
 			})
 		</script>

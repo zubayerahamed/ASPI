@@ -30,7 +30,7 @@ public class R114_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Store/Warehouse", "/search/table/LMD11/0?hint=", "", false));
 
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Item", "/search/table/LMD12/1?hint=", "", false));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Item", "/search/table/LMD12/1?hint=", "", true));
 
 		return fieldsList;
 	}

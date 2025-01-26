@@ -160,6 +160,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 				if(request.getQueryString() != null && request.getQueryString().contains("frommenu=")) {  // Menu clicked
 					String xsource = "Menu";
 					if(request.getQueryString().contains("fromfav=")) xsource = "Favourite";
+					if(request.getQueryString().contains("fromdef=")) xsource = "Default";
 					xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, xsource, "View Screen", null, null, null, "Success"));
 				}
 			} else {
@@ -199,6 +200,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 
 		boolean matchFound = false;
 		for(Xprofilesdt dt : profileDetails) {
+			if(matchFound) continue;
 			if(modulePath.startsWith("/" + dt.getXscreen())) {
 				matchFound = true;
 			}

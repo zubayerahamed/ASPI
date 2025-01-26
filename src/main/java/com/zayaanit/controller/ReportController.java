@@ -68,8 +68,8 @@ public class ReportController extends AbstractReportController{
 				return "redirect:/";
 			}
 
-			model.addAttribute("error", "Unauthorized Access.");
-			model.addAttribute("status", "401");
+			model.addAttribute("error", "Page Not found");
+			model.addAttribute("status", "404");
 			return "pages/404";
 		}
 

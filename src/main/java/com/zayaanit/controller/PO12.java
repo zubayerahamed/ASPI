@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,12 +22,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.spring5.processor.SpringUErrorsTagProcessor;
 
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Poorddetail;
 import com.zayaanit.entity.Poordheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -86,6 +89,8 @@ public class PO12 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xpornum)) {
 				model.addAttribute("poordheader", Poordheader.getDefaultInstance());
+
+				xlogsdtService.save(new Xlogsdt("PO12", "Clear", "PO12", "Clear Screen", null, null, null, "Success"));
 				return "pages/PO12/PO12-fragments::main-form";
 			}
 
@@ -116,6 +121,7 @@ public class PO12 extends KitController {
 			}
 			model.addAttribute("poordheader", poordheader != null ? poordheader : Poordheader.getDefaultInstance());
 
+			xlogsdtService.save(new Xlogsdt("PO12", "View", "PO12", "View " + this.pageTitle, xpornum, poordheader != null ? poordheader.toString() : "Select header data", null, "Success"));
 			return "pages/PO12/PO12-fragments::main-form";
 		}
 
@@ -242,6 +248,8 @@ public class PO12 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			xlogsdtService.save(new Xlogsdt("PO12", "Add", "PO12", "Add " + this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), null, "Success"));
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poordheader.getXpornum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO12/detail-table?xpornum="+ poordheader.getXpornum() +"&xrow=RESET"));
@@ -275,6 +283,8 @@ public class PO12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		xlogsdtService.save(new Xlogsdt("PO12", "Update", "PO12", "Update " + this.pageTitle, existObj.getXpornum().toString(), existObj.toString(), null, "Success"));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + existObj.getXpornum()));
@@ -408,11 +418,14 @@ public class PO12 extends KitController {
 		}
 
 		Poordheader obj = op.get();
+		Poordheader copy = SerializationUtils.clone(obj);
 		try {
 			poordheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		xlogsdtService.save(new Xlogsdt("PO12", "Delete", "PO12", "Delete " + this.pageTitle, copy.getXpornum().toString(), copy.toString(), null, "Success"));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=RESET"));

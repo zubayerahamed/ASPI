@@ -10,6 +10,7 @@ import com.zayaanit.config.AppConfig;
 import com.zayaanit.model.ResponseHelper;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.XlogsService;
+import com.zayaanit.service.XlogsdtService;
 
 /**
  * @author Zubayer Ahamed
@@ -30,4 +31,5 @@ public class BaseController {
 	@Autowired protected KitSessionManager sessionManager;
 	@Autowired protected ResponseHelper responseHelper;
 	@Autowired protected XlogsService xlogsService;
+	@Autowired protected XlogsdtService xlogsdtService;
 }

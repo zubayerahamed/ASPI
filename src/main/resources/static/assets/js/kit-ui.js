@@ -537,15 +537,19 @@ $(document).ready(function(){
 
 		var screenCode = $(this).data('screen');
 		var fromfav = $(this).data('fav') != undefined && $(this).data('fav') != null && 'Y' == $(this).data('fav');
+		var fromdef = $(this).data('def') != undefined && $(this).data('def') != null && 'Y' == $(this).data('def');
+		if(fromdef) $(this).removeAttr('data-def');
 
 		var url = '/' + screenCode;
 		const questionCount = url.split("?").length - 1;
 		if (questionCount === 1) {
 			url = url + '&frommenu=';
 			if(fromfav) url = url + '&fromfav=&frommenu=';
+			if(fromdef) url = url + '&fromdef=&frommenu=';
 		} else {
 			url = url + '?frommenu=';
 			if(fromfav) url = url + '?fromfav=&frommenu=';
+			if(fromdef) url = url + '?fromdef=&frommenu=';
 		}
 
 		$('.customize-aspi-offcanvas').click();
