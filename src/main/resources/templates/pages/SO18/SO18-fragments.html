@@ -127,8 +127,29 @@
 	</div>
 
 	<script type="text/javascript">
+		//var posItems = [];
+
 		$(document).ready(function(){
 			kit.ui.init();
+
+			//loadingMask2.show();
+			/* $.ajax({
+				url: getBasepath() + '/SO18/all-pos-items',
+				type: "GET",
+				success: function (data) {
+					loadingMask2.hide();
+					posItems = data;
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			}); */
 
 			$('.btn-reset').off('click').on('click', function(e){
 				e.preventDefault();

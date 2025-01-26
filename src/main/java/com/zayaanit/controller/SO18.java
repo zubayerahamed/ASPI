@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Cascade;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -536,6 +538,7 @@ public class SO18 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Cacheable
 	@GetMapping("/search-item")
 	public @ResponseBody long searchItem(@RequestParam(required = false) String searchText) {
 		if(StringUtils.isBlank(searchText)) return 0;
@@ -579,5 +582,11 @@ public class SO18 extends KitController {
 		detail.setXlineamt(detail.getXqty().multiply(detail.getXrate()));
 
 		return true;
+	}
+
+	@Cacheable
+	@GetMapping("/all-pos-items")
+	public @ResponseBody List<Caitem> getAllItems(Model model){
+		return caitemRepo.findByZidAndXisopAndNotXgitem(sessionManager.getBusinessId());
 	}
 }

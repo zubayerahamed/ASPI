@@ -1,6 +1,9 @@
 package com.zayaanit.service.impl;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
 
@@ -8,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.crystaldecisions.sdk.occa.report.application.DataDefController;
-import com.crystaldecisions.sdk.occa.report.application.OpenReportOptions;
 import com.crystaldecisions.sdk.occa.report.application.ReportClientDocument;
 import com.crystaldecisions.sdk.occa.report.data.FieldDisplayNameType;
 import com.crystaldecisions.sdk.occa.report.data.IConnectionInfo;
@@ -49,16 +51,18 @@ public class PrintingServiceImpl extends AbstractGenericService implements Print
 	private static final String DATABASE_DLL = "crdb_jdbc.dll";
 
 	@Override
-	public BufferedInputStream getDataBytes(String reportName, String reportTitle, boolean attachment, Map<String, Object> reportParams, ReportType reportType) {
-		ReportClientDocument clientDoc = new ReportClientDocument();
+	public InputStream getDataBytes(String reportName, String reportTitle, boolean attachment, Map<String, Object> reportParams, ReportType reportType) {
+		ReportClientDocument rcp = new ReportClientDocument();
 		try {
-			clientDoc.setReportAppServer(ReportClientDocument.inprocConnectionString);
-			clientDoc.open(reportName, OpenReportOptions._openAsReadOnly);
+//			rcp.setReportAppServer(ReportClientDocument.inprocConnectionString);
+			rcp.open(reportName, 0);
 			SummaryInfo si = new SummaryInfo();
 			si.setTitle(reportTitle);
 			si.setAuthor("Zubayer Ahamed");
-			si.setComments("This System is developed by Zubayer Ahamed. Contact: 01515634889");
-			clientDoc.setSummaryInfo(si);
+			si.setSubject(reportTitle);
+			si.setKeywords("This System is developed by Zubayer Ahamed. Contact: +8801515634889, +8801748562164");
+			si.setComments("This System is developed by Zubayer Ahamed. Contact: +8801515634889, +8801748562164");
+			rcp.setSummaryInfo(si);
 
 			// Database Config
 			DBConfig dbConfig = new DBConfig();
@@ -67,12 +71,12 @@ public class PrintingServiceImpl extends AbstractGenericService implements Print
 			dbConfig.setJndiName(env.getProperty("JNDIName"));
 			dbConfig.setUsername(env.getProperty("spring.datasource.username"));
 			dbConfig.setPassword(env.getProperty("spring.datasource.password"));
-			changeDataSource(clientDoc, null, null, dbConfig);
-			logonDataSource(clientDoc, dbConfig);
+			changeDataSource(rcp, null, null, dbConfig);
+			logonDataSource(rcp, dbConfig);
 
 			// Add report parameters
 			for(Map.Entry<String, Object> param : reportParams.entrySet()) {
-				addDiscreteParameterValue(clientDoc, "", param.getKey(), param.getValue());
+				addDiscreteParameterValue(rcp, "", param.getKey(), param.getValue());
 			}
 
 			final ExportOptions exportOptions = new ExportOptions();
@@ -89,14 +93,47 @@ public class PrintingServiceImpl extends AbstractGenericService implements Print
 				exportOptions.setExportFormatType(ReportExportFormat.PDF);
 				exportOptions.setFormatOptions((IExportFormatOptions) pdfOptions);
 			}
-			return new BufferedInputStream(clientDoc.getPrintOutputController().export((IExportOptions) exportOptions));
+//			return new BufferedInputStream(clientDoc.getPrintOutputController().export((IExportOptions) exportOptions));
+			//ByteArrayInputStream byteArrayInputStream = convertToByteArrayInputStream(rcp.getPrintOutputController().export((IExportOptions) exportOptions));
+			InputStream in = rcp.getPrintOutputController().export((IExportOptions) exportOptions);
+
+//			File file = new File("D:/test.pdf");
+//
+//			FileOutputStream fileOutputStream = new FileOutputStream(file);
+//
+//			byte[] byteArray = new byte[byteArrayInputStream.available()];
+//			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(byteArrayInputStream.available());
+//			int x = byteArrayInputStream.read(byteArray, 0, byteArrayInputStream.available());
+//
+//			byteArrayOutputStream.write(byteArray, 0, x);
+//			byteArrayOutputStream.writeTo(fileOutputStream);
+//
+//			//Close streams.
+//			byteArrayInputStream.close();
+//			byteArrayOutputStream.close();
+//			fileOutputStream.close();
+
+			rcp.close();
+			return in;
 		} catch (ReportSDKException e) {
 			log.error(ERROR, e.getMessage(), e);
 			return null;
 		}
 	}
 
-	
+//	private static ByteArrayInputStream convertToByteArrayInputStream(InputStream inputStream) throws IOException {
+//		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+//		byte[] temp = new byte[1024];
+//		int bytesRead;
+//
+//		// Read the InputStream into a ByteArrayOutputStream
+//		while ((bytesRead = inputStream.read(temp)) != -1) {
+//			buffer.write(temp, 0, bytesRead);
+//		}
+//
+//		// Convert the ByteArrayOutputStream to a ByteArrayInputStream
+//		return new ByteArrayInputStream(buffer.toByteArray());
+//	}
 
 	@Override
 	public void changeDataSource(ReportClientDocument clientDoc, String reportName, String tableName, DBConfig dbConfig) throws ReportSDKException {
@@ -131,8 +168,7 @@ public class PrintingServiceImpl extends AbstractGenericService implements Print
 		if (reportName == null || !reportName.equals("")) {
 			final IStrings subNames = clientDoc.getSubreportController().getSubreportNames();
 			for (int subNum = 0; subNum < subNames.size(); ++subNum) {
-				final Tables tables2 = clientDoc.getSubreportController().getSubreport(subNames.getString(subNum))
-						.getDatabaseController().getDatabase().getTables();
+				final Tables tables2 = clientDoc.getSubreportController().getSubreport(subNames.getString(subNum)).getDatabaseController().getDatabase().getTables();
 				for (int j = 0; j < tables2.size(); ++j) {
 					origTable = tables2.getTable(j);
 					if (tableName == null || origTable.getName().equals(tableName)) {

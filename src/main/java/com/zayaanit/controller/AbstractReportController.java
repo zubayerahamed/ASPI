@@ -1,9 +1,9 @@
 package com.zayaanit.controller;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -124,14 +124,14 @@ public abstract class AbstractReportController extends KitController {
 		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) {
 			try {
 				reportName = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath())
-								.append(File.separator).append("cr").append(File.separator)
+								.append(File.separator).append("cr").append(File.separator).append("v2").append(File.separator)
 								.append(rm.getFileName()).toString();
 			} catch (URISyntaxException e) {
 				log.error(ERROR, e.getMessage(), e);
 			}
 		}
 
-		String reportTitle = "Report";
+		String reportTitle = StringUtils.isBlank(params.getXtitle()) ? rm.getDescription() : params.getXtitle();
 		boolean attachment = true;
 
 		ReportType reportType = ReportType.PDF;
@@ -179,7 +179,7 @@ public abstract class AbstractReportController extends KitController {
 
 		// CRISTAL
 		byte[] byt = null;
-		BufferedInputStream in = printingService.getDataBytes(reportName, reportTitle, attachment, reportParams, reportType);
+		InputStream in = printingService.getDataBytes(reportName, reportTitle, attachment, reportParams, reportType);
 		if (in == null) {
 			message = "Can't generate PDF to print";
 			byt = message.getBytes();

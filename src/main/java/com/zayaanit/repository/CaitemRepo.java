@@ -1,7 +1,11 @@
 package com.zayaanit.repository;
 
+import java.util.List;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.zayaanit.entity.Caitem;
@@ -19,4 +23,7 @@ public interface CaitemRepo extends JpaRepository<Caitem, CaitemPK> {
 
 	@Query(value = "select count(*) from caitem where zid=?1 and xisop=1 and xgitem != 'Services' and (xitem=?2 or xbarcode=?2)", nativeQuery = true)
 	public long searchItemCount(Integer zid, String searchtext);
+
+	@Query("SELECT c FROM Caitem c WHERE c.zid = :zid AND c.xisop = 1 AND c.xgitem != 'Services'")
+	List<Caitem> findByZidAndXisopAndNotXgitem(@Param("zid") Integer zid);
 }
