@@ -29,6 +29,7 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Pocrndetail;
 import com.zayaanit.entity.Pocrnheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -91,6 +92,7 @@ public class PO16 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xcrnnum)) {
 				model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance());
+				xlogsdtService.save(new Xlogsdt("PO16", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO16/PO16-fragments::main-form";
 			}
 

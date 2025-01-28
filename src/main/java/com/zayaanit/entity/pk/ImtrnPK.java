@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImtrnPK implements Serializable {
-    
-    private Integer zid;
-    private Integer ximtrnnum;
+
+	private static final long serialVersionUID = 8306741596720442740L;
+
+	private Integer zid;
+	private Integer ximtrnnum;
 }
