@@ -42,6 +42,26 @@ public class R304_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(7, "Supplier", "/search/table/LFA14/2?hint=", "", false));
 
+		List<DropdownOption> itemGroups = new ArrayList<>();
+		itemGroups.add(new DropdownOption("", "-- Select --"));
+		itemGroups.add(new DropdownOption("Services", "Services"));
+		List<Xcodes> groups = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Group", Boolean.TRUE, sessionManager.getBusinessId());
+		groups.forEach(f -> {
+			itemGroups.add(new DropdownOption(f.getXcode(), f.getXcode()));
+		});
+		fieldsList.add(FormFieldBuilder.generateDropdownField(8, "Item Group", itemGroups, "", false));
+
+		List<DropdownOption> itemCategory = new ArrayList<>();
+		itemCategory.add(new DropdownOption("", "-- Select --"));
+		List<Xcodes> categories = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Category", Boolean.TRUE, sessionManager.getBusinessId());
+		categories.forEach(f -> {
+			itemCategory.add(new DropdownOption(f.getXcode(), f.getXcode()));
+		});
+		fieldsList.add(FormFieldBuilder.generateDropdownField(9, "Item Category", itemCategory, "", false));
+
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(10, "Item", "/search/table/LMD12/0?hint=", "", false));
+
+
 		return fieldsList;
 	}
 
