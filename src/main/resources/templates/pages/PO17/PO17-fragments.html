@@ -123,10 +123,10 @@
 						</div>
 					</div>
 					
-					<div class="col-md-3">
+					<div class="col-md-3" th:if="${pocrnheader.xcrnnum ne null}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Reference</label>
-							<input type="text" class="form-control" th:field="*{xref}">
+							<input type="text" class="form-control" th:value="*{xref}" disabled="disabled">
 						</div>
 					</div>
 

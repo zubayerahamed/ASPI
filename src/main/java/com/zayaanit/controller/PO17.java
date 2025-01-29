@@ -287,7 +287,6 @@ public class PO17 extends KitController {
 			Pocrnheader exist = pocrnheaderOp.get();
 			exist.setXdate(pocrnheader.getXdate());
 			exist.setXwh(pocrnheader.getXwh());
-			exist.setXref(pocrnheader.getXref());
 			exist.setXnote(pocrnheader.getXnote());
 			exist.setXtype("GRN Return");
 			exist.setXstaff(pocrnheader.getXstaff());
@@ -321,7 +320,6 @@ public class PO17 extends KitController {
 		Pocrnheader existObj = op.get();
 		existObj.setXdate(pocrnheader.getXdate());
 		existObj.setXwh(pocrnheader.getXwh());
-		existObj.setXref(pocrnheader.getXref());
 		existObj.setXnote(pocrnheader.getXnote());
 		existObj.setXstaff(pocrnheader.getXstaff());
 
