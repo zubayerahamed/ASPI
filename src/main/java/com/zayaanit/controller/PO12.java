@@ -355,6 +355,7 @@ public class PO12 extends KitController {
 			}
 
 			xlogsdtService.save(new Xlogsdt("PO12", "Add", this.pageTitle, poorddetail.getXrow().toString(), poorddetail.toString(), true, 0));
+			xlogsdtService.save(new Xlogsdt("PO12", "Update", this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), false, 0));
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poorddetail.getXpornum()));
@@ -387,6 +388,7 @@ public class PO12 extends KitController {
 		}
 
 		xlogsdtService.save(new Xlogsdt("PO12", "Update", this.pageTitle, exist.getXrow().toString(), exist.toString(), true, 0));
+		xlogsdtService.save(new Xlogsdt("PO12", "Update", this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + poorddetail.getXpornum()));
@@ -415,6 +417,8 @@ public class PO12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		xlogsdtService.save(new Xlogsdt("PO12", "Delete", this.pageTitle, xpornum.toString(), null, true, 0).setMessage("Delete all details"));
 
 		Poordheader obj = op.get();
 		Poordheader copy = SerializationUtils.clone(obj);
@@ -464,6 +468,8 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO12", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
+
 
 		// Update line amount and total amount of header
 		BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), poordheader.getXpornum());
@@ -474,7 +480,7 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO12", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
+		xlogsdtService.save(new Xlogsdt("PO12", "Update", this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO12?xpornum=" + xpornum));

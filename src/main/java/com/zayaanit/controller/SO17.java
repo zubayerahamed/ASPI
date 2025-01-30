@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +30,7 @@ import com.zayaanit.entity.Opcrndetail;
 import com.zayaanit.entity.Opcrnheader;
 import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Opdoheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -97,6 +99,7 @@ public class SO17 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xcrnnum)) {
 				model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance());
+				xlogsdtService.save(new Xlogsdt("SO17", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/SO17/SO17-fragments::main-form";
 			}
 
@@ -126,7 +129,7 @@ public class SO17 extends KitController {
 				}
 			}
 			model.addAttribute("opcrnheader", opcrnheader != null ? opcrnheader : Opcrnheader.getDefaultInstance());
-
+			xlogsdtService.save(new Xlogsdt("SO17", "View", this.pageTitle, opcrnheader.getXcrnnum().toString(), opcrnheader.toString(), false, 0));
 			return "pages/SO17/SO17-fragments::main-form";
 		}
 
@@ -140,6 +143,7 @@ public class SO17 extends KitController {
 	public String detailFormFragment(@RequestParam String xcrnnum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xcrnnum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance());
+			xlogsdtService.save(new Xlogsdt("SO17", "Clear", this.pageTitle, null, null, true, 0));
 			return "pages/SO17/SO17-fragments::detail-table";
 		}
 
@@ -178,6 +182,7 @@ public class SO17 extends KitController {
 			}
 
 			model.addAttribute("opcrndetail", opcrndetail);
+			xlogsdtService.save(new Xlogsdt("SO17", "Clear", this.pageTitle, opcrndetail.getXrow().toString(), opcrndetail.toString(), true, 0));
 			return "pages/SO17/SO17-fragments::detail-table";
 		}
 
@@ -199,12 +204,8 @@ public class SO17 extends KitController {
 		}
 
 		model.addAttribute("opcrndetail", opcrndetail);
+		xlogsdtService.save(new Xlogsdt("SO17", "View", this.pageTitle, opcrndetail.getXrow().toString(), opcrndetail.toString(), true, 0));
 		return "pages/SO17/SO17-fragments::detail-table";
-	}
-
-	@GetMapping("/list-table")
-	public String loadListTableFragment(Model model) {
-		return "pages/SO17/SO17-fragments::list-table";
 	}
 
 	@Transactional
@@ -262,6 +263,8 @@ public class SO17 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			xlogsdtService.save(new Xlogsdt("SO17", "Add", this.pageTitle, xcrnnum.toString(), "SO_CreateReturnfromInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + xcrnnum + "," + opdoheader.getXdornum() + ")", false, 0));
+
 			Optional<Opcrnheader> opcrnheaderOp = opcrnheaderRepo.findById(new OpcrnheaderPK(sessionManager.getBusinessId(), xcrnnum));
 			if(!opcrnheaderOp.isPresent()) {
 				responseHelper.setErrorStatusAndMessage("Header data not found with Return No. " + xcrnnum);
@@ -273,7 +276,6 @@ public class SO17 extends KitController {
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + exist.getXcrnnum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/SO17/detail-table?xcrnnum="+ exist.getXcrnnum() +"&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/SO17/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Return created successfully");
 			return responseHelper.getResponse();
@@ -338,10 +340,11 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, existObj.getXcrnnum().toString(), existObj.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + existObj.getXcrnnum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/SO17/detail-table?xcrnnum="+ existObj.getXcrnnum() +"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Return updated successfully");
 		return responseHelper.getResponse();
@@ -442,6 +445,8 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
+
 		BigDecimal xtotamt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opcrndetail.getXcrnnum());
 		opcrnheader.setXtotamt(xtotamt);
 		try {
@@ -450,10 +455,11 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, opcrnheader.getXcrnnum().toString(), opcrnheader.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + opcrndetail.getXcrnnum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/SO17/detail-table?xcrnnum=" + opcrndetail.getXcrnnum() + "&xrow=" + existObj.getXrow()));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Detail updated successfully");
 		return responseHelper.getResponse();
@@ -484,17 +490,21 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("SO17", "Delete", this.pageTitle, xcrnnum.toString(), null, true, 0).setMessage("Delete all details"));
+
 		Opcrnheader obj = op.get();
+		Opcrnheader copy = SerializationUtils.clone(obj);
 		try {
 			opcrnheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("SO17", "Delete", this.pageTitle, copy.getXcrnnum().toString(), copy.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/SO17/detail-table?xcrnnum=RESET&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -603,10 +613,11 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("SO17", "Confirm", this.pageTitle, xcrnnum.toString(), "SO_ConfirmReturn("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xcrnnum +")" , false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + xcrnnum));
 		reloadSections.add(new ReloadSection("detail-table-container", "/SO17/detail-table?xcrnnum="+xcrnnum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/SO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Confirmed successfully");
 		return responseHelper.getResponse();

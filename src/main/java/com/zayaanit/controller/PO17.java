@@ -12,6 +12,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ import com.zayaanit.entity.Pocrndetail;
 import com.zayaanit.entity.Pocrnheader;
 import com.zayaanit.entity.Pogrndetail;
 import com.zayaanit.entity.Pogrnheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -98,6 +100,7 @@ public class PO17 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xcrnnum)) {
 				model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance());
+				xlogsdtService.save(new Xlogsdt("PO17", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO17/PO17-fragments::main-form";
 			}
 
@@ -127,7 +130,7 @@ public class PO17 extends KitController {
 				}
 			}
 			model.addAttribute("pocrnheader", pocrnheader != null ? pocrnheader : Pocrnheader.getDefaultInstance());
-
+			xlogsdtService.save(new Xlogsdt("PO17", "View", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
 			return "pages/PO17/PO17-fragments::main-form";
 		}
 
@@ -141,6 +144,7 @@ public class PO17 extends KitController {
 	public String detailFormFragment(@RequestParam String xcrnnum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xcrnnum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance());
+			xlogsdtService.save(new Xlogsdt("PO17", "Clear", this.pageTitle, null, null, true, 0));
 			return "pages/PO17/PO17-fragments::detail-table";
 		}
 
@@ -179,6 +183,7 @@ public class PO17 extends KitController {
 			}
 
 			model.addAttribute("pocrndetail", pocrndetail);
+			xlogsdtService.save(new Xlogsdt("PO17", "Clear", this.pageTitle, pocrndetail.getXrow().toString(), pocrndetail.toString(), true, 0));
 			return "pages/PO17/PO17-fragments::detail-table";
 		}
 
@@ -200,12 +205,8 @@ public class PO17 extends KitController {
 		}
 
 		model.addAttribute("pocrndetail", pocrndetail);
+		xlogsdtService.save(new Xlogsdt("PO17", "View", this.pageTitle, pocrndetail.getXrow().toString(), pocrndetail.toString(), true, 0));
 		return "pages/PO17/PO17-fragments::detail-table";
-	}
-
-	@GetMapping("/list-table")
-	public String loadListTableFragment(Model model) {
-		return "pages/PO17/PO17-fragments::list-table";
 	}
 
 	@Transactional
@@ -278,6 +279,8 @@ public class PO17 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			xlogsdtService.save(new Xlogsdt("PO17", "Add", this.pageTitle, xcrnnum.toString(), "PO_CreateReturnfromGRN(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + xcrnnum + "," + pogrnheader.getXgrnnum() + ")", false, 0));
+
 			Optional<Pocrnheader> pocrnheaderOp = pocrnheaderRepo.findById(new PocrnheaderPK(sessionManager.getBusinessId(), xcrnnum));
 			if(!pocrnheaderOp.isPresent()) {
 				responseHelper.setErrorStatusAndMessage("Header data not found with Return No. " + xcrnnum);
@@ -296,10 +299,11 @@ public class PO17 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			xlogsdtService.save(new Xlogsdt("PO17", "Update", this.pageTitle, exist.getXcrnnum().toString(), exist.toString(), false, 0).setMessage("Update again after procedural add"));
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + exist.getXcrnnum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+ exist.getXcrnnum() +"&xrow=RESET"));
-			reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Return created successfully");
 			return responseHelper.getResponse();
@@ -333,10 +337,11 @@ public class PO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO17", "Update", this.pageTitle, existObj.getXcrnnum().toString(), existObj.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + existObj.getXcrnnum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+ existObj.getXcrnnum() +"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Return updated successfully");
 		return responseHelper.getResponse();
@@ -437,6 +442,8 @@ public class PO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO17", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
+
 		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrndetail.getXcrnnum());
 		pocrnheader.setXtotamt(xtotamt);
 		try {
@@ -445,10 +452,11 @@ public class PO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO17", "Update", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + pocrndetail.getXcrnnum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum=" + pocrndetail.getXcrnnum() + "&xrow=" + existObj.getXrow()));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Detail updated successfully");
 		return responseHelper.getResponse();
@@ -479,17 +487,21 @@ public class PO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO17", "Delete", this.pageTitle, xcrnnum.toString(), null, true, 0).setMessage("Delete all details"));
+
 		Pocrnheader obj = op.get();
+		Pocrnheader copy = SerializationUtils.clone(obj);
 		try {
 			pocrnheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO17", "Delete", this.pageTitle, copy.getXcrnnum().toString(), copy.toString(), false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum=RESET&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -614,10 +626,11 @@ public class PO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		xlogsdtService.save(new Xlogsdt("PO17", "Confirm", this.pageTitle, xcrnnum.toString(), "PO_ConfirmReturn("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xcrnnum +")" , false, 0));
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO17?xcrnnum=" + xcrnnum));
 		reloadSections.add(new ReloadSection("detail-table-container", "/PO17/detail-table?xcrnnum="+xcrnnum+"&xrow=RESET"));
-		reloadSections.add(new ReloadSection("list-table-container", "/PO17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Confirmed successfully");
 		return responseHelper.getResponse();
