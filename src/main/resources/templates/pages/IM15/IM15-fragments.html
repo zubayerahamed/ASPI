@@ -204,7 +204,7 @@
 <div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card" th:if="${imadjheader.xadjnum ne null}">
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
-			<h6 class="py-sm-3 mb-sm-auto">Transfer Details</h6>
+			<h6 class="py-sm-3 mb-sm-auto" th:text="${pageTitle + ' Details'}"></h6>
 		</div>
 
 		<div class="card-body" th:if="${imadjheader.xstatus eq 'Open'}">
