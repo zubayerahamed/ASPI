@@ -224,11 +224,11 @@
 				<thead>
 					<tr>
 						<th width="5%" class="text-center">SL</th>
-						<th width="30%">Item</th>
-						<th width="15%" class="text-center">Unit</th>
-						<th width="20%" class="text-center">Qty</th>
-						<th width="15%" class="text-end">Rate</th>
-						<th width="15%" class="text-end">S. Total</th>
+						<th width="25%">Item</th>
+						<th width="15%" class="text-center d-none d-lg-table-cell">Unit</th>
+						<th width="25%" class="text-center">Qty</th>
+						<th width="15%" class="text-end d-none d-lg-table-cell">Rate</th>
+						<th width="15%" class="text-end d-none d-lg-table-cell">S. Total</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -244,8 +244,13 @@
 							data-xrow=${x.xrow},
 							data-delete-url=@{/SO18/detail-table}">
 						<td th:text="${c.count}" class="text-center"></td>
-						<td th:attr="data-xrow=${x.xrow}" th:text="${x.xitem + ' - ' + x.itemName}"></td>
-						<td th:text="${x.xunit}" class="text-center"></td>
+						<td th:attr="data-xrow=${x.xrow}">
+							<p class="p-0 m-0" th:text="${x.xitem + ' - ' + x.itemName}"></p>
+							<p class="p-0 m-0 text-muted d-lg-none" style="font-size: 12px;" th:text="${'Unit: ' + x.xunit}"></p>
+							<p class="p-0 m-0 text-muted d-lg-none" style="font-size: 12px;" th:text="${'Rate: ' + x.xrate}"></p>
+							<p class="p-0 m-0 text-muted d-lg-none span-xlineamt" style="font-size: 12px;" th:text="${'S. Total: ' + x.xrate}"></p>
+						</td>
+						<td th:text="${x.xunit}" class="text-center d-none d-lg-table-cell"></td>
 						<td class="text-center" th:if="${x.xdornum eq null or (opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open')}">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -254,8 +259,8 @@
 							</div>
 						</td>
 						<td class="text-center" th:if="${x.xdornum ne null and opdoheader.xstatus ne 'Open'}" th:text="${x.xqty}"></td>
-						<td th:text="${x.xrate}" class="text-end"></td>
-						<td th:text="${x.xlineamt}" class="text-end td-xlineamt"></td>
+						<td th:text="${x.xrate}" class="text-end d-none d-lg-table-cell"></td>
+						<td th:text="${x.xlineamt}" class="text-end td-xlineamt d-none d-lg-table-cell"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -298,7 +303,6 @@
 			loopEachItemRow();
 
 			$('#xpaidamt').on('change', function(){
-				console.log("here");
 				var changeAmt = Number($('#xtotamt').val()) - Number($('#xpaidamt').val());
 				var color = 'green';
 				if(changeAmt > 0) {
@@ -318,9 +322,10 @@
 				var currentTd = $(this).parents('td');
 				var currentRow = $(this).parents('tr');
 				var currentRowXlientamt = $(currentTd).siblings('.td-xlineamt');
+				var currentRowSpanXlineamt = $(currentRow).find('.span-xlineamt');
 
 				var currentQty = $(this).val();
-				
+
 				if(currentQty == null || currentQty == '') {
 					currentQty = 0;
 					$(this).val(currentQty);
@@ -342,6 +347,7 @@
 						} else {
 
 							$(currentRowXlientamt).html(newLineAmt);
+							$(currentRowSpanXlineamt).html('S. Total: ' + newLineAmt);
 							$(currentRow).data('xlineamt', newLineAmt);
 
 							loopEachItemRow();

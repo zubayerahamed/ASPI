@@ -8,7 +8,7 @@
 				<div class="d-flex">
 					<h4 class="page-title mb-0" th:text="${pageTitle}"></h4>
 				</div>
-				<h4 class="page-title mb-0" id="clock"></h4>
+				<h6 class="page-title mb-0" id="clock"></h6>
 				<a th:if="${not isFavorite and not loggedInUser.isAdmin and screenCode ne 'Home'}" th:href="@{/AD15/add-to-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-add" title="Add to favorite"><i class="ph-heart fs-1"></i></a>
 				<a th:if="${isFavorite and not loggedInUser.isAdmin}" th:href="@{/AD15/remove-from-favourite?screen=} + ${screenCode}" th:attr="data-pagetitle=${pageTitle}" class="text-end btn-favorite-remove" title="Remove from favorite"><i class="ph-heart-break text-danger fs-1"></i></a>
 			</div>
@@ -18,7 +18,7 @@
 				kit.ui.init();
 
 				// Initialize server time from Thymeleaf variable
-				let serverTimeStr = [[${serverTime}]];
+				let serverTimeStr = /*[[${serverTime}]]*/;
 				let serverTime = new Date(serverTimeStr);
 
 				// Update the clock every second
@@ -47,7 +47,7 @@
 	<div class="content">
 
 		<div class="row">
-			<div class="col-md-9">
+			<div class="col-lg-8 col-xl-9">
 				<div class="row">
 					<div class="col-xl-12">
 						<div class="detail-table-container">
@@ -57,7 +57,7 @@
 				</div>
 			</div>
 
-			<div class="col-md-3">
+			<div class="col-lg-4 col-xl-3">
 
 				<div class="row">
 					<div class="col-xl-12">
