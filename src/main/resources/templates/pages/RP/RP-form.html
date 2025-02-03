@@ -1,7 +1,7 @@
 <div th:fragment="dynamicreport" id="dynamicreport" xmlns:th="https://www.thymeleaf.org">
 	<div class="card" th:if="${reportFound}">
 		<div class="card-body">
-			<form id="reportform" th:action="@{/} +  ${group} + '/print'" method="POST" th:if="${reportCode ne 'BLANK'}">
+			<form id="reportform" th:action="@{/} +  ${group} + '/print'" th:attr="data-validate-url=@{/} +  ${group} + '/validate'" method="POST" th:if="${reportCode ne 'BLANK'}">
 				<input type="hidden" id="reportName" th:value="${reportName}"/>
 				<input type="hidden" name="reportCode" th:value="${reportCode}"/>
 				<input type="hidden" name="xtitle" th:value="${xtitle}"/>

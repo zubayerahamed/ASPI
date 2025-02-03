@@ -57,7 +57,7 @@ public enum ReportMenu {
 	R116("R116", "Item Movement Frequency", "R116.rpt", ReportParamMap.R116, "Y", false),
 	R117("R117", "Inventory Ageing Detail", "R117.rpt", ReportParamMap.R117, "Y", false),
 	R118("R118", "Inventory Ageing Summary", "R118.rpt", ReportParamMap.R118, "Y", false),
-	
+
 	R201("R201", "Chart of Account Detail", "R201.rpt", ReportParamMap.R201, "Y", false),
 	R202("R202", "Chart of Account Summary", "R202.rpt", ReportParamMap.R202, "Y", false),
 	R203("R203", "Sub Account Report", "R203.rpt", ReportParamMap.R203, "Y", false),
@@ -75,6 +75,7 @@ public enum ReportMenu {
 	R215("R215", "Cross Year Profit & Loss", "R215.rpt", ReportParamMap.R215, "Y", false),
 	R216("R216", "Sub Account Ledger Detail", "R216.rpt", ReportParamMap.R216, "Y", false),
 	R217("R217", "Sub Account Ledger Summary", "R217.rpt", ReportParamMap.R217, "Y", false),
+	R218("R218", "Statement of Financial Position", "R218.rpt", ReportParamMap.R218, "Y", false),
 
 	R301("R301", "Purchase Order Detail", "R301.rpt", ReportParamMap.R301, "Y", false),
 	R302("R302", "Purchase Order Summary", "R302.rpt", ReportParamMap.R302, "Y", false),

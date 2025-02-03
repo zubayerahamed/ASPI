@@ -33,6 +33,7 @@ public class R204_Service extends AbstractReportService {
 		List<DropdownOption> type = new ArrayList<>();
 		type.add(new DropdownOption("", "-- Select --"));
 		type.add(new DropdownOption("General", "General"));
+		type.add(new DropdownOption("Integrated", "Integrated"));
 		type.add(new DropdownOption("Imported", "Imported"));
 		fieldsList.add(FormFieldBuilder.generateDropdownField(5, "Type", type, "", false));
 

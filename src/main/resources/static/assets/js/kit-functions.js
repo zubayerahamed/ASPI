@@ -463,21 +463,81 @@ function generateOnScreenReport(customurl, data, reportType){
 }
 
 
-
-/**
- * Submit Report form
- * @param customurl
- * @returns
- */
-function submitReportForm(customurl){
+function validateAndSubmitReportForm(customurl, customvalidateUrl){
 	if($('form#reportform').length < 1) return;
 
 	var targettedForm = $('form#reportform');
 	if(!targettedForm.smkValidate()) return;
 
-	var submitUrl = (customurl != undefined) ? customurl : targettedForm.attr('action');
+	var validateUrl = (customvalidateUrl != undefined) ? customvalidateUrl : $(targettedForm).data('validate-url');
 	var submitType = targettedForm.attr('method');
 	var formData = $(targettedForm).serializeArray();
+
+	// check validation first
+	loadingMask2.show();
+	$.ajax({
+		url : validateUrl,
+		type : submitType,
+		data : formData,
+		success : function(data) {
+			loadingMask2.hide();
+			if(data.status == 'SUCCESS'){
+				if(data.displayMessage == true) showMessage(data.status.toLowerCase(), data.message);
+				submitReportForm(null, data.rparam);
+			} else {
+				showMessage(data.status.toLowerCase(), data.message);
+			}
+		}, 
+		error : function(jqXHR, status, errorThrown){
+			loadingMask2.hide();
+			if (jqXHR.status === 401) {
+				// Session is invalid, reload the url to go back to login page
+				location.reload();
+			} else {
+				showMessage("error", jqXHR.responseJSON.message);
+			}
+		}
+	});
+
+}
+
+
+/**
+ * Submit Report form
+ * @param customurl
+ * @param rParam Replacable Param or Addition Param
+ * @returns
+ */
+function submitReportForm(customurl, rParam){
+	if($('form#reportform').length < 1) return;
+
+	var targettedForm = $('form#reportform');
+	if(!targettedForm.smkValidate()) return;
+
+	var submitUrl = (customurl != undefined && customurl != null) ? customurl : targettedForm.attr('action');
+	var submitType = targettedForm.attr('method');
+	var formData = $(targettedForm).serializeArray();
+
+	// New or updatable params should add here
+	if(rParam != undefined && rParam != null){
+		$.each(rParam, function(key, value) {
+			var fieldExists = false;
+
+			// Check if the field already exists in formData
+			formData.forEach(function(field) {
+				if (field.name === key) {
+					field.value = value; // Update the existing field
+					fieldExists = true;
+				}
+			});
+
+			// If the field doesn't exist, add it
+			if (!fieldExists) {
+				formData.push({ name: key, value: value });
+			}
+		});
+	}
+
 	var reportType = $('#reportType').val();
 	if(reportType == undefined || reportType == '') reportType = "PDF";
 	var reportName = $('#reportName').val() != '' ? $('#reportName').val() : 'report';

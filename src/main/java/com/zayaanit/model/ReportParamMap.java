@@ -68,6 +68,7 @@ public class ReportParamMap {
 	public static final Map<String, String> R215 = new HashMap<>();
 	public static final Map<String, String> R216 = new HashMap<>();
 	public static final Map<String, String> R217 = new HashMap<>();
+	public static final Map<String, String> R218 = new HashMap<>();
 
 	public static final Map<String, String> R301 = new HashMap<>();
 	public static final Map<String, String> R302 = new HashMap<>();
@@ -470,6 +471,14 @@ public class ReportParamMap {
 		R217.put("param5", "xacc|" + ReportParamDataType.INTEGER.name());
 		R217.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
 		R217.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
+
+		R218.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		R218.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
+		R218.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
+		R218.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
+		R218.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
+		R218.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
+		R218.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R301.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R301.put("param2", "xfdate|" + ReportParamDataType.DATE.name());

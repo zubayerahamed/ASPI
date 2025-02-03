@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.zayaanit.model.FormFieldBuilder;
+import com.zayaanit.model.ResponseHelper;
 
 /**
  * @author Zubayer Ahamed
@@ -30,4 +31,5 @@ public interface ReportFieldService<T> {
 	public Document getDomSourceForXML(String xml) throws ParserConfigurationException, SAXException, IOException;
 	public ByteArrayOutputStream transfromToPDFBytes(Document doc, String template) throws TransformerFactoryConfigurationError, TransformerException, FOPException;
 	public byte[] getPDFReportByte(String templatePath, Map<String, Object> reportParams) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException, ParseException;
+	public Map<String, Object> validateParams(ResponseHelper responseHelper, Map<String, Object> reportParams);
 }

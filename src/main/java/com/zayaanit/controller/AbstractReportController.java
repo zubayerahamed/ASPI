@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
 
 import com.zayaanit.entity.Zbusiness;
@@ -106,6 +107,28 @@ public abstract class AbstractReportController extends KitController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@PostMapping("/validate")
+	public @ResponseBody Map<String, Object> validate(RequestParameters params){
+		ReportMenu rm = ReportMenu.valueOf(params.getReportCode());
+
+		ReportType reportType = ReportType.PDF;
+		Map<String, Object> reportParams = new HashMap<>();
+		for(Map.Entry<String, String> m : rm.getParamMap().entrySet()) {
+			String reportParamFieldName = m.getKey();
+			String[] arr = m.getValue().split("\\|");
+			String cristalReportParamName = arr[0];
+			ReportParamDataType paramType = ReportParamDataType.valueOf(arr[1]);
+			Object method = RequestParameters.invokeGetter(params, reportParamFieldName);
+			if("reportViewType".equalsIgnoreCase(cristalReportParamName)) {
+				reportType = (ReportType) method;
+				continue;
+			}
+			convertObjectAndPutIntoMap(cristalReportParamName, paramType, method, reportParams);
+		}
+
+		return getReportFieldService(rm).validateParams(responseHelper, reportParams);
+	}
 
 
 	@SuppressWarnings("unchecked")

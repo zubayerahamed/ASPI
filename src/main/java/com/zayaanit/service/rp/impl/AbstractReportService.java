@@ -36,6 +36,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.zayaanit.model.ResponseHelper;
 import com.zayaanit.repository.XcodesRepo;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.rp.FOPReportService;
@@ -59,6 +60,8 @@ public abstract class AbstractReportService<T> implements ReportFieldService<T> 
 	protected static final SimpleDateFormat SDF = new SimpleDateFormat("E, dd-MMM-yyyy");
 	protected static final SimpleDateFormat SDF_TIME = new SimpleDateFormat("E, dd-MMM-yyyy HH:mm");
 	protected static final String ERROR = "Error is {}, {}";
+	protected static final String VALIDATION_STATUS = "status";
+	protected static final String VALIDATION_MESSAGE = "message";
 
 	@Override
 	public String parseXMLString(T ob) throws JAXBException {
@@ -105,5 +108,12 @@ public abstract class AbstractReportService<T> implements ReportFieldService<T> 
 	@Override
 	public byte[] getPDFReportByte(String templatePath, Map<String, Object> reportParams) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException, ParseException{
 		return null;
+	}
+
+	@Override
+	public Map<String, Object> validateParams(ResponseHelper responseHelper, Map<String, Object> reportParams) {
+		responseHelper.setSuccessStatusAndMessage("No validation.");
+		responseHelper.setDisplayMessage(false);
+		return responseHelper.getResponse();
 	}
 }

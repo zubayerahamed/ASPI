@@ -24,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @SuppressWarnings("rawtypes")
-@Service(value = "R205_Service")
-public class R205_Service extends AbstractReportService {
+@Service(value = "R218_Service")
+public class R218_Service extends AbstractReportService {
 
 	@Autowired private AcheaderService acheaderService;
 
@@ -40,10 +40,6 @@ public class R205_Service extends AbstractReportService {
 		fieldsList.add(FormFieldBuilder.generateDateField(3, true, "To Date", new Date(), true));
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
-
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true, null, "param6"));
-
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Sub Account", "/search/table/LFA14/1?hint=", "", false, "param5", null));
 
 		return fieldsList;
 	}
@@ -94,7 +90,7 @@ public class R205_Service extends AbstractReportService {
 
 		// Replacable Param
 		Map<String, Object> rParamMap = new HashMap<>();
-		rParamMap.put("param7", fyear);
+		rParamMap.put("param5", fyear);
 
 		// TODO Auto-generated method stub
 		responseHelper.setSuccessStatusAndMessage("Validation success");

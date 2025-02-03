@@ -44,7 +44,8 @@
 
 			$('.btn-submit').off('click').on('click', function(e){
 				e.preventDefault();
-				submitReportForm();
+				validateAndSubmitReportForm();
+				//submitReportForm();
 			});
 
 			$('.card').on('click', '.btn-search-rp', function(e){
