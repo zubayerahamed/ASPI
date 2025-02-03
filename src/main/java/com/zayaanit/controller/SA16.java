@@ -204,6 +204,7 @@ public class SA16 extends KitController {
 		if (backupLocation.endsWith("\\")) {
 			backupLocation = backupLocation.substring(0, backupLocation.length() - 1);
 		}
+		backupLocation = backupLocation.trim();
 		return backupLocation;
 	}
 }
