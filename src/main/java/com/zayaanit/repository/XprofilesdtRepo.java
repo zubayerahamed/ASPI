@@ -17,6 +17,8 @@ public interface XprofilesdtRepo extends JpaRepository<Xprofilesdt, XprofilesdtP
 
 	public List<Xprofilesdt> findAllByXprofileAndZid(String xprofile, Integer zid);
 
+	public List<Xprofilesdt> findAllByXprofileAndXscreenAndZid(String xprofile, String xscreen, Integer zid);
+
 	public List<Xprofilesdt> findAllByZidAndXprofileAndXmenuIn(Integer zid, String xprofile, List<String> xmenu);
 
 	public List<Xprofilesdt> findAllByXprofileAndXmenuAndZid(String xmenu, String xprofile, Integer zid);

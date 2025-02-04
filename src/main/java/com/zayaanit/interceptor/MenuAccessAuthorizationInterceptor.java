@@ -52,6 +52,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	@Autowired private XlogsdtService xlogsdtService;
 	@Autowired private AppConfig appConfig;
 
+	@SuppressWarnings("null")
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -195,18 +196,21 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		Optional<Xprofiles> profilesOp = xprofilesRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), profile.getXprofile()));
 		if(!profilesOp.isPresent()) return false;
 
-		List<Xprofilesdt> profileDetails = xprofiledtRepo.findAllByXprofileAndZid(profile.getXprofile(), sessionManager.getBusinessId());
+		final String SCREENCODE = modulePath.substring(1, 5);
+		List<Xprofilesdt> profileDetails = xprofiledtRepo.findAllByXprofileAndXscreenAndZid(profile.getXprofile(), SCREENCODE, sessionManager.getBusinessId());
 		if(profileDetails == null || profileDetails.isEmpty()) return false;
 
-		boolean matchFound = false;
-		for(Xprofilesdt dt : profileDetails) {
-			if(matchFound) continue;
-			if(modulePath.startsWith("/" + dt.getXscreen())) {
-				matchFound = true;
-			}
-		}
+		return true;
 
-		return matchFound;
+//		boolean matchFound = false;
+//		for(Xprofilesdt dt : profileDetails) {
+//			if(matchFound) continue;
+//			if(modulePath.startsWith("/" + dt.getXscreen())) {
+//				matchFound = true;
+//			}
+//		}
+//
+//		return matchFound;
 	}
 
 	private boolean isAjaxRequest(HttpServletRequest request) {

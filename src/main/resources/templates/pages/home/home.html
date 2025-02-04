@@ -24,22 +24,5 @@
 	<!-- Footer -->
 	<div th:remove="tag" th:include="commons :: footer-section"></div>
 	<!-- /footer -->
-
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$(document).on('click', '.module-menu-button', function(e){
-				e.preventDefault();
-
-				var menucode = $(this).data('menucode');
-
-				var url = '/home?menucode=' + menucode;
-
-				sectionReloadAjaxReq({
-					id : 'main-form-container',
-					url : url
-				});
-			})
-		})
-	</script>
 </div>
 <!-- /inner content -->

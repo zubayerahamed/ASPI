@@ -6,10 +6,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.Table;
-
-import com.zayaanit.entity.pk.OpordheaderPK;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

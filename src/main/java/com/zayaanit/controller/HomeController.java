@@ -1,20 +1,35 @@
 package com.zayaanit.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zayaanit.entity.Xfavourites;
+import com.zayaanit.entity.Xprofiles;
+import com.zayaanit.entity.Xprofilesdt;
+import com.zayaanit.entity.Xscreens;
+import com.zayaanit.entity.Xuserprofiles;
+import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.entity.pk.XprofilesPK;
+import com.zayaanit.entity.pk.XscreensPK;
+import com.zayaanit.entity.pk.XusersPK;
 
 /**
  * @author Zubayer Ahamed
- * @since Jul 2, 2023
+ * @since Feb 4, 2025
  */
 @Controller
 @RequestMapping("/")
@@ -35,6 +50,56 @@ public class HomeController extends KitController {
 		return "";
 	}
 
+	@ModelAttribute("otherBusinesses")
+	protected List<Xusers> otherZbusinesses() {
+		List<Xusers> users = xusersRepo.findAllByZemailAndZactive(sessionManager.getLoggedInUserDetails().getUsername(), Boolean.TRUE);
+		if (users == null || users.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<Xusers> allActiveBusinesses = new ArrayList<>();
+		for(Xusers user : users) {
+			if(!user.getZid().equals(sessionManager.getBusinessId())) {
+				Optional<Zbusiness> businessOp = zbusinessRepo.findByZidAndZactive(user.getZid(), Boolean.TRUE);
+				if(businessOp.isPresent()) {
+					user.setBusinessName(businessOp.get().getZorg());
+					allActiveBusinesses.add(user);
+				}
+			}
+		}
+
+		return allActiveBusinesses;
+	}
+
+	@ModelAttribute("otherProfiles")
+	protected List<Xprofiles> otherProfiles() {
+		Optional<Xusers> userOp = xusersRepo.findById(new XusersPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername()));
+		if (!userOp.isPresent()) {
+			return Collections.emptyList();
+		}
+
+		Xusers user = userOp.get();
+		if(Boolean.TRUE.equals(user.getZadmin())) return Collections.emptyList();
+
+		List<Xprofiles> allActiveProfiles = new ArrayList<>();
+
+		List<Xuserprofiles> usersProfiles = xuserprofilesRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), user.getZemail());
+		usersProfiles = usersProfiles.stream().filter(f -> !f.getXprofile().equals(sessionManager.getLoggedInUserDetails().getXprofile().getXprofile())).collect(Collectors.toList());
+		usersProfiles.sort(Comparator.comparing(Xuserprofiles::getXprofile));
+
+		for(Xuserprofiles up : usersProfiles) {
+			Optional<Xprofiles> profileOp = xprofilesRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), up.getXprofile()));
+			if(profileOp.isPresent()) allActiveProfiles.add(profileOp.get());
+		}
+
+		return allActiveProfiles;
+	}
+
+	@ModelAttribute("favouriteMenus")
+	protected List<Xfavourites> favouriteMenus(){
+		return super.favouriteMenus();
+	}
+
 	@GetMapping
 	public String loadDefaultPage(HttpServletRequest request, @RequestParam(required = false) String frommenu, @RequestParam(required = false) String menucode, Model model) {
 		Xfavourites fav = null;
@@ -43,6 +108,9 @@ public class HomeController extends KitController {
 			fav = favList.stream().findFirst().orElse(null);
 		}
 		model.addAttribute("favscreen", fav != null ? fav.getXscreen() : "");
+
+		model.addAttribute("masterMenus", menuTreeService.getMenuTree(null));
+
 		return "index";
 	}
 
@@ -54,11 +122,14 @@ public class HomeController extends KitController {
 		}
 
 		if(menucode != null && !"M".equalsIgnoreCase(menucode)) {
-			model.addAttribute("menuscreens", getMenuTree(menucode));
+			model.addAttribute("menuscreens", menuTreeService.getMenuTree(menucode));
 			return "pages/home/home-fragments::screen-form";
 		} else if ("M".equalsIgnoreCase(menucode)) {
+			model.addAttribute("masterMenus", menuTreeService.getMenuTree(null));
 			return "pages/home/home-fragments::main-form";
 		}
+
+		model.addAttribute("masterMenus", menuTreeService.getMenuTree(null));
 
 		return "pages/home/home";
 	}
