@@ -150,7 +150,7 @@
 							<input type="text" class="form-control" th:value="*{xstatusjv}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${pocrnheader.xcrnnum ne null}">
+					<div class="col-md-3" th:if="${pocrnheader.xcrnnum ne null and pocrnheader.xstatusjv eq 'Confirmed'}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
 							<input type="text" th:if="${pocrnheader.xvoucher eq null}" class="form-control" disabled>

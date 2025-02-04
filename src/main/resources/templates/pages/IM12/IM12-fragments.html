@@ -160,7 +160,7 @@
 							<input type="text" class="form-control" th:value="*{xstatusjv}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${imtorheader.xtornum ne null}">
+					<div class="col-md-3" th:if="${imtorheader.xtornum ne null and imtorheader.xstatusjv eq 'Confirmed'}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher (Issue)</label>
 							<a 	href="#" 
@@ -170,7 +170,7 @@
 							</a>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${imtorheader.xtornum ne null}">
+					<div class="col-md-3" th:if="${imtorheader.xtornum ne null and imtorheader.xstatusjv eq 'Confirmed'}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher (Receive)</label>
 							<a 	href="#" 

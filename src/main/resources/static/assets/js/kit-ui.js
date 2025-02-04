@@ -502,6 +502,13 @@ kit.ui.init = function(){
 $(document).ready(function(){
 	kit.ui.init();
 
+	// Logo preview
+	/*var imageBase64 = $('#logoBase64').val();
+	var imagePreview= document.getElementById('logoPreview');
+	if(imagePreview) {
+		imagePreview.src = "data:image/png;base64," + imageBase64;
+	}*/
+
 	$(document).on('click', 'a.btn-favorite-add', function (e) {
 		e.preventDefault();
 		actionPostRequest($(this).attr('href'), {

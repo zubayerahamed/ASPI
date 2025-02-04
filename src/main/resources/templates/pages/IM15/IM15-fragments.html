@@ -117,7 +117,7 @@
 							<input type="text" class="form-control" th:value="*{xstatusjv}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${imadjheader.xadjnum ne null}">
+					<div class="col-md-3" th:if="${imadjheader.xadjnum ne null and imadjheader.xstatusjv eq 'Confirmed'}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
 							<a 	href="#" 

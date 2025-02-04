@@ -13,7 +13,7 @@ spring:
     multipart: 
         max-file-size: 5MB
   profiles: 
-    active: dev
+    active: prod
   application:
     name: aspi
   thymeleaf:

@@ -159,7 +159,7 @@
 							<input type="text" class="form-control" th:value="*{xstatusjv}" disabled>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${moheader.xbatch ne null}">
+					<div class="col-md-3" th:if="${moheader.xbatch ne null and moheader.xstatusjv eq 'Confirmed'}">
 						<div class="mb-3 form-group">
 							<label class="form-label">GL Voucher</label>
 							<input type="text" th:if="${moheader.xvoucher eq null}" class="form-control" disabled>

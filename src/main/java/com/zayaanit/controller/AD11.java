@@ -3,7 +3,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -75,9 +75,9 @@ public class AD11 extends KitController{
 		if(StringUtils.isBlank(zb.getXdocpath())) zb.setXdocpath("C:\\Contents\\");
 		if(StringUtils.isBlank(zb.getXdoctypes())) zb.setXdoctypes(".jpg,.jpeg,.png,.pdf");
 		if(StringUtils.isBlank(zb.getXrptpath())) zb.setXrptpath("C:\\Reports");
-		if(zb.getXlogo() != null && zb.getXlogo().length > 0) {
-			zb.setImageBase64(Base64.getEncoder().encodeToString(zb.getXlogo()));
-		}
+//		if(zb.getXlogo() != null && zb.getXlogo().length > 0) {
+//			zb.setImageBase64(Base64.getEncoder().encodeToString(zb.getXlogo()));
+//		}
 		if(zb.getXposcus() != null) {
 			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), zb.getXposcus()));
 			if(acsubOp.isPresent()) zb.setCustomerName(acsubOp.get().getXname());
@@ -95,9 +95,22 @@ public class AD11 extends KitController{
 		return "pages/AD11/AD11";
 	}
 
+	@GetMapping("/logo")
+	public String logoForm(HttpServletRequest request, Model model) throws ResourceNotFoundException {
+		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
+		if(!op.isPresent()) throw new ResourceNotFoundException();
+
+		Zbusiness zb = op.get();
+		model.addAttribute("doctypesList", Arrays.asList(zb.getXdoctypes().split(",")));
+		model.addAttribute("business", zb);
+
+		return "pages/AD11/AD11-fragments::logo-form";
+	}
+
+
 	@Transactional
 	@PostMapping("/store")
-	public @ResponseBody Map<String, Object> store(Zbusiness zbusiness, @RequestParam(value= "files[]", required = false) MultipartFile[] files, BindingResult bindingResult){
+	public @ResponseBody Map<String, Object> store(Zbusiness zbusiness, BindingResult bindingResult){
 
 		if(StringUtils.isBlank(zbusiness.getZorg())) {
 			responseHelper.setErrorStatusAndMessage("Company name required");
@@ -125,18 +138,6 @@ public class AD11 extends KitController{
 			return responseHelper.getResponse();
 		}
 
-		// Process image first
-		boolean imageChanged = false;
-		if(files != null && files.length > 0) {
-			try {
-				zbusiness.setXlogo(files[0].getBytes());
-				imageChanged = true;
-			} catch (IOException e) {
-				responseHelper.setErrorStatusAndMessage("Something wrong in image, please try again with new one");
-				return responseHelper.getResponse();
-			}
-		}
-
 		// VALIDATE
 		modelValidator.validateZbusiness(zbusiness, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
@@ -152,11 +153,8 @@ public class AD11 extends KitController{
 		zbusiness.setXdoctypes(zbusiness.getXdoctypes().trim());
 
 		Zbusiness existObj = op.get();
-		if(imageChanged) {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "zuserid", "ztime", "xrptdefautl");
-		} else {
-			BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
-		}
+		BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
+
 		try {
 			existObj = businessRepo.save(existObj);
 		} catch (Exception e) {
@@ -169,8 +167,88 @@ public class AD11 extends KitController{
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD11"));
+		reloadSections.add(new ReloadSection("logo-form-container", "/AD11/logo"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
+		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@PostMapping("/logo")
+	public @ResponseBody Map<String, Object> logo(Zbusiness zbusiness, @RequestParam(value= "files[]", required = false) MultipartFile[] files, BindingResult bindingResult){
+
+		if(files == null) {
+			responseHelper.setErrorStatusAndMessage("Image selection required");
+			return responseHelper.getResponse();
+		}
+
+		// Process image first
+		if(files != null && files.length > 0) {
+			try {
+				zbusiness.setXlogo(files[0].getBytes());
+			} catch (IOException e) {
+				responseHelper.setErrorStatusAndMessage("Something wrong in image, please try again with new one");
+				return responseHelper.getResponse();
+			}
+		}
+
+
+		// Update existing
+		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
+		if(!op.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
+			return responseHelper.getResponse();
+		}
+
+		Zbusiness existObj = op.get();
+		existObj.setXlogo(zbusiness.getXlogo());
+
+		try {
+			existObj = businessRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		// Load newly updated zbusiness into session manager object
+		MyUserDetails my = sessionManager.getLoggedInUserDetails();
+		my.setZbusiness(existObj);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/AD11"));
+		reloadSections.add(new ReloadSection("logo-form-container", "/AD11/logo"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Logo updated successfully");
+		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@DeleteMapping("/logo")
+	public @ResponseBody Map<String, Object> delete(){
+		// Update existing
+		Optional<Zbusiness> op = businessRepo.findById(sessionManager.getBusinessId());
+		if(!op.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
+			return responseHelper.getResponse();
+		}
+
+		Zbusiness existObj = op.get();
+		existObj.setXlogo(null);
+
+		try {
+			existObj = businessRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		// Load newly updated zbusiness into session manager object
+		MyUserDetails my = sessionManager.getLoggedInUserDetails();
+		my.setZbusiness(existObj);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/AD11"));
+		reloadSections.add(new ReloadSection("logo-form-container", "/AD11/logo"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Logo deleted successfully");
 		return responseHelper.getResponse();
 	}
 }

@@ -74,7 +74,8 @@
 
 			<div class="navbar-brand flex-1 flex-lg-0">
 				<a th:href="@{/home}" class="d-inline-flex align-items-center side-nav-link screen-item" data-screen="home">
-					<!-- <img th:src="@{/login-assets/images/logo.png}" alt="" style="height: 38px;"> -->
+					<!-- <input type="hidden" id="logoBase64" th:value="${loggedInZbusiness.imageBase64}" readonly></input>
+					<img id="logoPreview" th:src="@{/assets/images/aspi_white.jpg}" alt="" style="height: 35px;" class="me-3"> -->
 					<h3 class="m-0 p-0 text-white" th:text="${loggedInZbusiness.zorg}">ASPI</h3>
 				</a>
 			</div>
@@ -575,13 +576,15 @@
 <div class="footer-section" th:fragment="footer-section" xmlns:th="http://www.thymeleaf.org">
 	<div class="navbar navbar-sm navbar-footer border-top">
 		<div class="container-fluid">
-			<span></span>
+			<a href="#">
+				<img th:src="@{/assets/images/aspi_black.jpg}" alt="" style="height: 30px;" class="me-3">
+			</a>
 
 			<ul class="nav">
 				<li class="nav-item ms-md-1">
 					<a href="#" class="navbar-nav-link navbar-nav-link-icon rounded">
 						<div class="d-flex align-items-center mx-md-1">
-							<i class="ph-git-merge"></i>
+							<!-- <i class="ph-git-merge"></i> -->
 							<span class="ms-2" th:text="${'Version - ' + appVersion}">Version 1.0.0</span>
 						</div>
 					</a>
