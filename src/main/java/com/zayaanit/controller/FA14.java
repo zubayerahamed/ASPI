@@ -140,7 +140,7 @@ public class FA14 extends KitController {
 
 		if("Supplier".equals(acsub.getXtype())) {
 			if(StringUtils.isBlank(acsub.getXgsup())) {
-				responseHelper.setErrorStatusAndMessage("Supplier group selection required for Customer Type");
+				responseHelper.setErrorStatusAndMessage("Supplier group selection required for Supplier Type");
 				return responseHelper.getResponse();
 			}
 		}

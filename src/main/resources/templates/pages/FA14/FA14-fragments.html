@@ -82,7 +82,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-md-3" th:if="${acsub.xsub ne null}">
+					<div class="col-md-3" th:if="${acsub.xsub ne null and acsub.xtype eq 'Sub Account'}">
 						<div class="mb-3 form-group">
 							<label class="form-label" th:classappend="${acsub.xtype eq 'Sub Account' ? 'required' : ''}">Account</label>
 							<input type="text" class="form-control" th:value="${acsub.xacc != null ? acsub.xacc + ' - ' + acsub.accountName : ''}" disabled>
@@ -163,8 +163,8 @@
 		</div>
 	</div>
 
-	<div class="col-md-3">
-		<div class="mb-3 form-group" th:if="${acsub.xtype ne null}">
+	<div class="col-md-3" th:if="${acsub.xtype ne null and acsub.xtype eq 'Sub Account'}">
+		<div class="mb-3 form-group">
 			<label class="form-label" th:classappend="${acsub.xtype eq 'Sub Account' ? 'required' : ''}">Account</label>
 			<div class="input-group">
 				<input 	type="text" 
