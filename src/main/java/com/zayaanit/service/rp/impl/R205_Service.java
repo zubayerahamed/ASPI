@@ -43,7 +43,7 @@ public class R205_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true, null, "param6"));
 
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Sub Account", "/search/table/LFA14/1?hint=", "", false, "param5", null));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Sub Account", "/search/table/LFA14/5?hint=", "", false, "param5", null));
 
 		return fieldsList;
 	}

@@ -3,12 +3,16 @@ package com.zayaanit.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.enums.DatatableSortOrderType;
+import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.KitSessionManager;
 
@@ -19,6 +23,7 @@ import com.zayaanit.service.KitSessionManager;
 @Service
 public class AcsubServiceImpl extends AbstractService implements AcsubService {
 	@Autowired private KitSessionManager sessionManager;
+	@Autowired private AcmstRepo acmstRepo;
 
 	@Override
 	public List<Acsub> LFA14(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {
@@ -87,6 +92,14 @@ public class AcsubServiceImpl extends AbstractService implements AcsubService {
 			sql = sql.append(" AND im.xtype='Customer' ");
 		} else if(suffix == 3) {
 			sql = sql.append(" AND im.xtype='Employee' ");
+		} else if (suffix == 5) {
+			String paramsValues[] = dependentParam.split(",");
+			if(paramsValues.length == 1) {
+				Optional<Acmst> acmstOp = acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), Integer.valueOf(paramsValues[0])));
+				if(acmstOp.isPresent()) {
+					sql = sql.append(" AND im.xtype='"+ acmstOp.get().getXaccusage() +"' ");
+				}
+			}
 		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;
