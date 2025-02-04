@@ -16,8 +16,8 @@ mvn clean install
 1. Install jdk-8
 2. Set java environment variable
 3. Install MsSQL Server 2019
-4. Install Tomcat 9
+4. Install Apache Tomcat 9
 5. Change Default port of Tomcat 9 during install or after install
-6. Deploy demo.war file into tomcat9
+6. Deploy aspi.war file into Tomcat 9
 7. Expose tomcat port for publicly access
 ```
