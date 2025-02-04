@@ -555,7 +555,7 @@ public class SO18 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@Cacheable
+	@Cacheable(value = "applicationCache", key = "#searchText")
 	@GetMapping("/search-item")
 	public @ResponseBody long searchItem(@RequestParam(required = false) String searchText) {
 		if(StringUtils.isBlank(searchText)) return 0;

@@ -473,10 +473,9 @@ public class ReportParamMap {
 		R217.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R218.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
-		R218.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
-		R218.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
-		R218.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
-		R218.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
+		R218.put("param2", "xdate|" + ReportParamDataType.DATE.name());
+		R218.put("param3", "xbuid|" + ReportParamDataType.INTEGER.name());
+		R218.put("param4", "xyear|" + ReportParamDataType.INTEGER.name());
 		R218.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
 		R218.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 

@@ -35,11 +35,9 @@ public class R218_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
 
-		fieldsList.add(FormFieldBuilder.generateDateField(2, true, "From Date", new Date(), true));
+		fieldsList.add(FormFieldBuilder.generateDateField(2, true, "As On", new Date(), true));
 
-		fieldsList.add(FormFieldBuilder.generateDateField(3, true, "To Date", new Date(), true));
-
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(3, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
 		return fieldsList;
 	}
@@ -49,48 +47,29 @@ public class R218_Service extends AbstractReportService {
 	public Map<String, Object> validateParams(ResponseHelper responseHelper, Map reportParams) {
 		SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
 
-		Date xfdate = null;
-		Date xtdate = null;
+		Date xdate = null;
 
 		Map<String, Object> map = (Map<String, Object>) reportParams;
 		for(Map.Entry<String, Object> m : map.entrySet()) {
-			if("xfdate".equalsIgnoreCase(m.getKey())) {
+			if("xdate".equalsIgnoreCase(m.getKey())) {
 				try {
-					xfdate = format.parse(m.getValue().toString());
-				} catch (ParseException e) {
-					log.error(e.getCause().getMessage());
-				}
-			}
-			if("xtdate".equalsIgnoreCase(m.getKey())) {
-				try {
-					xtdate = format.parse(m.getValue().toString());
+					xdate = format.parse(m.getValue().toString());
 				} catch (ParseException e) {
 					log.error(e.getCause().getMessage());
 				}
 			}
 		}
 
-		if(xfdate == null || xtdate == null) {
-			responseHelper.setErrorStatusAndMessage("Dates required");
+		if(xdate == null) {
+			responseHelper.setErrorStatusAndMessage("Date required");
 			return responseHelper.getResponse();
 		}
 
-		if(xtdate.before(xfdate)) {
-			responseHelper.setErrorStatusAndMessage("From date must be before or same as after date");
-			return responseHelper.getResponse();
-		}
-
-		BigDecimal fyear = BigDecimal.valueOf(acheaderService.getYearPeriod(xfdate).getYear());
-		BigDecimal tyear = BigDecimal.valueOf(acheaderService.getYearPeriod(xtdate).getYear());
-
-		if(fyear.compareTo(tyear) != 0) {
-			responseHelper.setErrorStatusAndMessage("Dates should be within the same fiscal year!");
-			return responseHelper.getResponse();
-		}
+		BigDecimal pyear = BigDecimal.valueOf(acheaderService.getYearPeriod(xdate).getYear());
 
 		// Replacable Param
 		Map<String, Object> rParamMap = new HashMap<>();
-		rParamMap.put("param5", fyear);
+		rParamMap.put("param4", pyear);
 
 		// TODO Auto-generated method stub
 		responseHelper.setSuccessStatusAndMessage("Validation success");

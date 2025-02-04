@@ -70,7 +70,7 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 		StringBuilder sql = new StringBuilder(" WHERE zid="+sessionManager.getBusinessId()+" ");
 
 		if(suffix == 1) {
-			sql = sql.append(" AND xtype in ('Screen', 'Default') ");
+			sql = sql.append(" AND xtype in ('Screen', 'Default', 'Report') ");
 		}
 
 		if (searchText == null || searchText.isEmpty()) return sql;

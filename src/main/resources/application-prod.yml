@@ -11,8 +11,8 @@ logging:
 app: 
   audit-enable: true
   tomcat-service: Tomcat9
-  logging-path: D:/aspi/logs
-  template-path: D:/cr_live_reports
+  logging-path: C:/aspi/logs
+  template-path: C:/aspi/cr_live_reports
   backup-location: C:/aspi/backup
   database-name: aspi
   version: "@project.version@"
@@ -32,7 +32,7 @@ server:
 spring: 
   datasource: 
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost;databaseName=1326
+    url: jdbc:sqlserver://localhost;databaseName=aspi
     username: sa
     password: Sql@s3rv3r
     tomcat:
