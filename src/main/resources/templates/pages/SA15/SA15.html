@@ -18,7 +18,7 @@
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<div th:remove="tag" th:include="commons :: main-sidebar"></div>
+		<div th:remove="tag" th:include="commons :: main-sidebar" th:if="${not #lists.isEmpty(masterMenus)}"></div>
 		<!-- /main sidebar -->
 
 

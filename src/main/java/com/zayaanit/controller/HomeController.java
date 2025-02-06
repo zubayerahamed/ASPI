@@ -18,13 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zayaanit.entity.Xfavourites;
 import com.zayaanit.entity.Xprofiles;
-import com.zayaanit.entity.Xprofilesdt;
-import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserprofiles;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.XprofilesPK;
-import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 
 /**

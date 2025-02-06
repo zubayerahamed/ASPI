@@ -156,6 +156,10 @@
 				</div>
 			</form>
 
+			<div class="table-responsive" th:if="${#lists.isEmpty(documents) and acheader.xstatusjv eq 'Posted'}">
+				<p class="text-center text-muted">No document added</p>
+			</div>
+
 			<div class="table-responsive" th:if="${not #lists.isEmpty(documents)}">
 				<table class="table">
 					<thead>
@@ -307,7 +311,7 @@
 								<input 	type="hidden" class="search-val" name="xsub" th:value="*{xsub}" th:required="${acdetail.accountUsage ne 'Default'}"/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
-										data-reloadurl='/search/table/LFA14/1?dependentparam='+${acdetail.accountUsage + ',' + acdetail.xacc}+',&hint=', 
+										data-reloadurl='/search/table/LFA14/5?dependentparam='+${acdetail.xacc}+'&hint=', 
 										data-reloadid='search-suggest-results-container', 
 										data-fieldid='xsub',
 										data-mainscreen=false" 
@@ -414,26 +418,6 @@
 				});
 			});
 
-		})
-	</script>
-</div>
-
-
-<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
-	<script>
-		$(document).ready(function(){
-			kit.ui.init();
-
-			sectionReloadAjaxPostReq({
-				id : 'list-table-container',
-				url : '/search/table/LFA15/1'
-			}, {
-				mainscreen: true, 
-				mainreloadurl: '/FA15?xvoucher=',
-				mainreloadid: 'main-form-container',
-				detailreloadurl: '/FA15/detail-table?xrow=RESET&xvoucher=',
-				detailreloadid: 'detail-table-container'
-			});
 		})
 	</script>
 </div>
