@@ -18,7 +18,9 @@ function showMessage(type, message, timeout) {
 	new Noty({
 		text: message,
 		type: type,
-		timeout: timeout
+		timeout: timeout,
+		layout: 'bottomRight',
+		closeWith: ['button']
 	}).show();
 }
 
