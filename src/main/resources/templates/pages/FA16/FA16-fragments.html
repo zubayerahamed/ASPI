@@ -421,3 +421,165 @@
 		})
 	</script>
 </div>
+
+
+
+
+
+
+
+<div th:fragment="import-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card">
+		<div class="card-header d-sm-flex justify-content-center align-items-sm-center p-2">
+			<button class="btn btn-light btn-sm selection-counter mb-1 d-none"></button>
+			<button class="btn btn-primary btn-sm btn-upload-file ms-1 mb-1"><i class="ph-upload me-2"></i> Upload File</button>
+			<button class="btn btn-primary btn-sm btn-confirm-upload ms-1 mb-1"><i class="ph-thumbs-up me-2"></i> Confirm Upload</button>
+			<button class="btn btn-warning btn-sm btn-download-template ms-1 mb-1"><i class="ph-download me-2"></i> Download Template</button>
+			<button class="btn btn-danger btn-sm btn-delete-all ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
+		</div>
+
+		<div class="card-body">
+			<input type="file" id="fileInput" class="d-none" accept=".csv, .xlsx" />
+			<div id="progress" class="mt-3">
+				<div class="progress">
+					<div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							<input type="checkbox" id="select-all-rows">
+						</th>
+						<th>Voucher Date</th>
+						<th>Business Unit</th>
+						<th>Debit Acc</th>
+						<th>Debit Sub Acc</th>
+						<th>Credit Acc</th>
+						<th>Credit Sub Acc</th>
+						<th>Amount</th>
+						<th>Narration</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-download-template').off('click').on('click', function(e){
+				e.preventDefault();
+				var linkUrl = getBasepath() + '/FA16/download/template';
+				window.open(linkUrl, '_blank');
+			});
+
+			$('.btn-upload-file').click(function () {
+				$('#fileInput').click();
+			});
+
+			$('#fileInput').change(function () {
+				var file = this.files[0];
+				if (file) {
+					//uploadFileInChunks(file);
+					uploadFile(file);
+				}
+			});
+
+			function uploadFile(file) {
+				var formData = new FormData();
+				formData.append('file', file);
+
+				$('#progress').show();
+				$('#progressBar').removeClass('bg-success');
+
+				$.ajax({
+					url: getBasepath() + '/FA16/upload',
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					xhr: function () {
+						var xhr = new window.XMLHttpRequest();
+						xhr.upload.addEventListener('progress', function (event) {
+							if (event.lengthComputable) {
+								var percent = (event.loaded / event.total) * 100;
+								$('#progressBar').css('width', percent + '%').text(percent.toFixed(2) + '%');
+							}
+						}, false);
+						return xhr;
+					},
+					success: function (response) {
+						//alert('File uploaded and processed successfully!');
+						$('#progressBar').css('width', '100%').text('100%');
+						$('#progressBar').addClass('bg-success');
+						setTimeout(()=>{
+							$('#progress').hide();
+						}, 2000);
+					},
+					error: function () {
+						alert('Error uploading file.');
+					}
+				});
+			}
+
+			function uploadFileInChunks(file) {
+				var chunkSize = 100 * 1024; // 100KB per chunk
+				var totalChunks = Math.ceil(file.size / chunkSize);
+				var currentChunk = 0;
+
+				$('#progress').show();
+				$('#progressBar').removeClass('bg-success');
+
+				function uploadNextChunk() {
+					var start = currentChunk * chunkSize;
+					var end = Math.min(start + chunkSize, file.size);
+					var chunk = file.slice(start, end);
+
+					var formData = new FormData();
+					formData.append('file', chunk);
+					formData.append('currentChunk', currentChunk);
+					formData.append('totalChunks', totalChunks);
+					formData.append('fileName', file.name);
+
+					$.ajax({
+						url: getBasepath() + '/FA16/upload/chunk',
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (response) {
+							currentChunk++;
+							var progress = (currentChunk / totalChunks) * 100;
+							$('#progressBar').css('width', progress + '%').text(progress.toFixed(2) + '%');
+
+							if (currentChunk < totalChunks) {
+								uploadNextChunk();
+							} else {
+								$('#progressBar').css('width', progress + '%').text(progress.toFixed(2) + '%');
+								$('#progressBar').addClass('bg-success');
+								//alert('File uploaded successfully!');
+								setTimeout(()=>{
+									$('#progress').hide();
+								}, 2000);
+							}
+						},
+						error: function () {
+							alert('Error uploading file.');
+						}
+					});
+				}
+
+				uploadNextChunk();
+			}
+		})
+	</script>
+</div>

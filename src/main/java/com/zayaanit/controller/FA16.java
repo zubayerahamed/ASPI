@@ -1,17 +1,40 @@
 package com.zayaanit.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +44,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ibm.icu.text.SimpleDateFormat;
 import com.zayaanit.entity.Acdetail;
 import com.zayaanit.entity.Acheader;
 import com.zayaanit.entity.Acmst;
@@ -35,6 +60,7 @@ import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XscreensPK;
+import com.zayaanit.enums.ExcelCellType;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.YearPeriodResult;
@@ -54,6 +80,8 @@ import com.zayaanit.service.AcheaderService;
 @RequestMapping("/FA16")
 public class FA16 extends KitController {
 
+	private static final String UPLOAD_DIR = "D:/uploads/";
+
 	@Autowired private AcheaderRepo acheaderRepo;
 	@Autowired private CabunitRepo cabunitRepo;
 	@Autowired private AcmstRepo acmstRepo;
@@ -63,6 +91,7 @@ public class FA16 extends KitController {
 	@Autowired private CadocRepo cadocRepo;
 
 	private String pageTitle = null;
+	private static final int BATCH_SIZE = 100;
 
 	@Override
 	protected String screenCode() {
@@ -85,6 +114,7 @@ public class FA16 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xvoucher, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		model.addAttribute("deftab", "tab1");
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
 		if(isAjaxRequest(request) && frommenu == null) {
@@ -464,5 +494,204 @@ public class FA16 extends KitController {
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
+	}
+
+	@GetMapping("/download/template")
+	public void exportExcel(HttpServletResponse response) throws IOException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+		ServletOutputStream out = response.getOutputStream();
+
+		response.setContentType("application/octet-stream");
+
+		String headerKey = "content-disposition";
+		String headerValue = "attachment; filename=" + sdf.format(new Date()) +".xlsx";
+		
+		response.setHeader(headerKey, headerValue);
+
+		Workbook workbook = new SXSSFWorkbook(BATCH_SIZE);
+		Sheet sheet = workbook.createSheet("01");
+		Row row = sheet.createRow(0);
+
+		CellStyle textStyle = workbook.createCellStyle();
+
+		CellStyle integerStyle = workbook.createCellStyle();
+		integerStyle.setDataFormat(workbook.createDataFormat().getFormat("0"));
+
+		CellStyle dateStyle = workbook.createCellStyle();
+		short dateFormat = workbook.createDataFormat().getFormat("MM/dd/yyyy");
+		dateStyle.setDataFormat(dateFormat);
+
+		CellStyle doubleStyle = workbook.createCellStyle();
+		doubleStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+		createCell(workbook, sheet, row, 0, "Voucher Date", ExcelCellType.DATE, dateStyle);
+		createCell(workbook, sheet, row, 1, "Business Unit", ExcelCellType.INTEGER, integerStyle);
+		createCell(workbook, sheet, row, 2, "Debit Account", ExcelCellType.INTEGER, integerStyle);
+		createCell(workbook, sheet, row, 3, "Debit Sub Account", ExcelCellType.INTEGER, integerStyle);
+		createCell(workbook, sheet, row, 4, "Credit Account", ExcelCellType.INTEGER, integerStyle);
+		createCell(workbook, sheet, row, 5, "Credit Sub Account", ExcelCellType.INTEGER, integerStyle);
+		createCell(workbook, sheet, row, 6, "Amount", ExcelCellType.DOUBLE, doubleStyle);
+		createCell(workbook, sheet, row, 7, "Narration", ExcelCellType.RICHTEXT, textStyle);
+
+		workbook.write(out);
+		out.flush();
+		workbook.close();
+
+		response.flushBuffer();
+		response.getOutputStream().close();
+	}
+
+	private void createCell(Workbook workbook, Sheet sheet, Row row, int columnCount, Object valueOfCell, ExcelCellType type, CellStyle style) {
+
+		Cell cell = row.createCell(columnCount);
+		if(valueOfCell == null) {
+			cell.setCellValue("");
+		} else {
+			if (ExcelCellType.INTEGER.equals(type)) {
+				if(valueOfCell instanceof Integer) {
+					cell.setCellValue((Integer) valueOfCell);
+				} else {
+					cell.setCellValue((String) valueOfCell);
+				}
+			} else if (ExcelCellType.DATE.equals(type)) {
+				if(valueOfCell instanceof Date) {
+					cell.setCellValue((Date) valueOfCell);
+				}else {
+					cell.setCellValue((String) valueOfCell);
+				}
+			} else if (ExcelCellType.TEXT.equals(type) || ExcelCellType.RICHTEXT.equals(type)) {
+				cell.setCellValue((String) valueOfCell);
+			} else if (ExcelCellType.BOOLEAN.equals(type)) {
+				cell.setCellValue((Boolean) valueOfCell);
+			} else if (ExcelCellType.DOUBLE.equals(type)) {
+				if(valueOfCell instanceof BigDecimal) {
+					cell.setCellValue(((BigDecimal) valueOfCell).doubleValue());
+				}else {
+					cell.setCellValue((String) valueOfCell);
+				}
+			}
+		}
+
+		cell.setCellStyle(style);
+	}
+
+	@PostMapping("/upload/chunk")
+	public ResponseEntity<String> uploadChunk(
+			@RequestParam("file") MultipartFile file,
+			@RequestParam("currentChunk") int currentChunk, 
+			@RequestParam("totalChunks") int totalChunks,
+			@RequestParam("fileName") String fileName) throws IOException {
+
+		// Ensure the upload directory exists
+		File uploadDir = new File(UPLOAD_DIR);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
+
+		// Create or append to the file
+		Path filePath = Paths.get(UPLOAD_DIR, fileName);
+		Files.write(filePath, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+		if (currentChunk == totalChunks - 1) {
+			// Process the complete file here (e.g., parse CSV/XLSX and save to database)
+			processFile(filePath.toFile());
+		}
+
+		return ResponseEntity.ok().body("Chunk uploaded successfully");
+	}
+
+	@PostMapping("/upload")
+	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) throws IOException {
+
+		String fileName = file.getOriginalFilename();
+
+		if (fileName != null && fileName.endsWith(".csv")) {
+			processCsvFile(file);
+		} else if (fileName != null && fileName.endsWith(".xlsx")) {
+			processXlsxFile(file);
+		} else {
+			return ResponseEntity.badRequest().body("Unsupported file format");
+		}
+
+		return ResponseEntity.ok().body("File processed successfully");
+	}
+
+	private void processFile(File file) {
+		
+		// Implement your file processing logic here
+		// For example, parse the CSV/XLSX file and save the data to the database
+	}
+
+	private void processCsvFile(MultipartFile file) throws IOException {
+		// CSV processing logic (same as before)
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				processRow(line);
+			}
+		}
+	}
+
+	private void processXlsxFile(MultipartFile file) throws IOException {
+		// XLSX processing logic
+		try (InputStream inputStream = file.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+			Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
+			Iterator<Row> rowIterator = sheet.iterator();
+
+			int rowCount = 0;
+			while (rowIterator.hasNext()) {
+				Row row = rowIterator.next();
+				if (rowCount == 0) {
+					// Skip header row
+					rowCount++;
+					continue;
+				}
+
+				// Process each row
+				processExcelRow(row);
+				rowCount++;
+			}
+		}
+	}
+
+	private void processExcelRow(Row row) {
+		// Process each cell in the row
+		for (Cell cell : row) {
+			switch (cell.getCellType()) {
+			case STRING:
+				System.out.print(cell.getStringCellValue() + "\t");
+				break;
+			case NUMERIC:
+				if (DateUtil.isCellDateFormatted(cell)) {
+					System.out.print(cell.getDateCellValue() + "\t");
+				} else {
+					System.out.print(cell.getNumericCellValue() + "\t");
+				}
+				break;
+			case BOOLEAN:
+				System.out.print(cell.getBooleanCellValue() + "\t");
+				break;
+			default:
+				System.out.print("UNKNOWN\t");
+			}
+		}
+		System.out.println();
+	}
+
+	private void processRow(String row) {
+		// CSV row processing logic (same as before)
+		String[] columns = row.split(",");
+		saveToDatabase(columns);
+	}
+
+	private void saveToDatabase(String[] columns) {
+		// Save to database logic (same as before)
+		StringBuilder sql = new StringBuilder();
+		for(String s : columns) {
+			sql.append(s + ",");
+		}
+		System.out.println(sql.toString());
 	}
 }
