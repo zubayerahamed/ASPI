@@ -3,6 +3,7 @@ package com.zayaanit.repository;
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,4 +24,7 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 	@Transactional
 	@Procedure(name = "FA_ImportVoucher")
 	public void FA_ImportVoucher(@Param("zid") Integer zid, @Param("user") String user);
+
+	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from tempvoucher where zid=?1", nativeQuery = true)
+	public Integer getNextAvailableRow(Integer zid);
 }

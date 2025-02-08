@@ -2,6 +2,7 @@ package com.zayaanit.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +43,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +57,7 @@ import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Cadoc;
+import com.zayaanit.entity.Tempvoucher;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcdetailPK;
 import com.zayaanit.entity.pk.AcheaderPK;
@@ -62,6 +67,7 @@ import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ExcelCellType;
 import com.zayaanit.enums.SubmitFor;
+import com.zayaanit.model.AsyncCSVResult;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.YearPeriodResult;
 import com.zayaanit.repository.AcdetailRepo;
@@ -70,7 +76,10 @@ import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CadocRepo;
+import com.zayaanit.repository.TempvoucherRepo;
 import com.zayaanit.service.AcheaderService;
+import com.zayaanit.service.ImportExportService;
+import com.zayaanit.service.impl.AsyncCSVProcessor;
 
 /**
  * @author Zubayer Ahamed
@@ -89,6 +98,8 @@ public class FA16 extends KitController {
 	@Autowired private AcheaderService acheaderService;
 	@Autowired private AcdetailRepo acdetailRepo;
 	@Autowired private CadocRepo cadocRepo;
+	@Autowired private TempvoucherRepo tempVoucherRepo;
+	@Autowired private AsyncCSVProcessor asyncCSVProcessor;
 
 	private String pageTitle = null;
 	private static final int BATCH_SIZE = 100;
@@ -576,41 +587,106 @@ public class FA16 extends KitController {
 	}
 
 	@PostMapping("/upload/chunk")
-	public ResponseEntity<String> uploadChunk(
+	public @ResponseBody Map<String, Object> uploadChunk(
 			@RequestParam("file") MultipartFile file,
 			@RequestParam("currentChunk") int currentChunk, 
 			@RequestParam("totalChunks") int totalChunks,
-			@RequestParam("fileName") String fileName) throws IOException {
+			@RequestParam("fileName") String fileName,
+			@RequestParam("initialStart") String initialStart) throws IOException {
 
 		// Ensure the upload directory exists
-		File uploadDir = new File(UPLOAD_DIR);
+		File uploadDir = new File(appConfig.getImportExportPath());
 		if (!uploadDir.exists()) {
 			uploadDir.mkdirs();
 		}
 
+		// Remove file if the upload is initially started
+		if("Y".equalsIgnoreCase(initialStart) && Files.exists(Paths.get(appConfig.getImportExportPath(), fileName))) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			Files.copy(Paths.get(appConfig.getImportExportPath(), fileName), Paths.get(appConfig.getImportExportPath(), "b_"+sdf.format(new Date()) +"_" + fileName));
+			Files.delete(Paths.get(appConfig.getImportExportPath(), fileName));
+		}
+
 		// Create or append to the file
-		Path filePath = Paths.get(UPLOAD_DIR, fileName);
+		Path filePath = Paths.get(appConfig.getImportExportPath(), fileName);
 		Files.write(filePath, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
 		if (currentChunk == totalChunks - 1) {
 			// Process the complete file here (e.g., parse CSV/XLSX and save to database)
-			processFile(filePath.toFile());
+			if (fileName != null && (fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))) {
+				// Convert it to csv file
+				String csvFilenameWithLoation = appConfig.getImportExportPath() + File.separator + fileName;
+				if(StringUtils.isBlank(csvFilenameWithLoation)) {
+					responseHelper.setErrorStatusAndMessage("Something is wrong on processing file.");
+					return responseHelper.getResponse();
+				}
+
+				String token = UUID.randomUUID().toString();
+				AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
+						.setUpdateExisting(false)
+						.setIgnoreHeading(true)
+						.setDelimeterType(',')
+						.setImportDate(new Date())
+						.setLatch(new CountDownLatch(1))
+						.setToken(token)
+						.setProgress(0)
+						.setIsWorkInProgress(true)
+						.setFileName(fileName)
+						.setUploadedFileLocation(csvFilenameWithLoation)
+						.setModuleName("FA16")
+						.setBusinessId(sessionManager.getBusinessId())
+						.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
+
+				ImportExportService importExportService = getImportExportService("FA16");
+
+				asyncCSVProcessor.convertExcelToCSV(asyncCSVResult, importExportService);
+				sessionManager.addToMap(token, asyncCSVResult);
+
+				responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
+				// After convert to CSV, delete the xlsx file
+			}
+
 		}
 
-		return ResponseEntity.ok().body("Chunk uploaded successfully");
+		responseHelper.setSuccessStatusAndMessage("File uploaded successfully");
+		return responseHelper.getResponse();
 	}
 
+	@GetMapping("/progress/status/{token}")
+	public @ResponseBody AsyncCSVResult checkProgressStatus(@PathVariable String token){
+		AsyncCSVResult asyncCSVResult = (AsyncCSVResult) sessionManager.getFromMap(token);
+		if(asyncCSVResult.getLatch().getCount() == 0) {
+			asyncCSVResult.setIsWorkInProgress(false);
+			asyncCSVResult.setProgress(100);
+			sessionManager.removeFromMap(token);
+		}
+		return asyncCSVResult;
+	}
+
+
+//	processFile(filePath.toFile());
+//	try {
+//		processXlsxFile(filePath.toFile());
+//	} catch (Exception e) {
+//		throw new IllegalStateException(e.getCause().getMessage());
+//	}
+
+	@Transactional
 	@PostMapping("/upload")
-	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) throws IOException {
+	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
 
 		String fileName = file.getOriginalFilename();
 
-		if (fileName != null && fileName.endsWith(".csv")) {
-			processCsvFile(file);
-		} else if (fileName != null && fileName.endsWith(".xlsx")) {
-			processXlsxFile(file);
-		} else {
-			return ResponseEntity.badRequest().body("Unsupported file format");
+		try {
+			if (fileName != null && fileName.endsWith(".csv")) {
+				processCsvFile(file);
+			} else if (fileName != null && fileName.endsWith(".xlsx")) {
+				//processXlsxFile(file);
+			} else {
+				return ResponseEntity.badRequest().body("Unsupported file format");
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		return ResponseEntity.ok().body("File processed successfully");
@@ -624,8 +700,7 @@ public class FA16 extends KitController {
 
 	private void processCsvFile(MultipartFile file) throws IOException {
 		// CSV processing logic (same as before)
-		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				processRow(line);
@@ -633,9 +708,9 @@ public class FA16 extends KitController {
 		}
 	}
 
-	private void processXlsxFile(MultipartFile file) throws IOException {
+	private void processXlsxFile(File file) throws Exception {
 		// XLSX processing logic
-		try (InputStream inputStream = file.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
+		try (InputStream inputStream = new FileInputStream(file); Workbook workbook = new XSSFWorkbook(inputStream)) {
 
 			Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
 			Iterator<Row> rowIterator = sheet.iterator();
@@ -658,26 +733,99 @@ public class FA16 extends KitController {
 
 	private void processExcelRow(Row row) {
 		// Process each cell in the row
+
+		Tempvoucher t;
+		try {
+			t = prepareTemVoucher(0, null, null);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		int cellCount = 1;
 		for (Cell cell : row) {
+
+			Object data = "";
+
 			switch (cell.getCellType()) {
 			case STRING:
-				System.out.print(cell.getStringCellValue() + "\t");
+				data = cell.getStringCellValue();
 				break;
 			case NUMERIC:
 				if (DateUtil.isCellDateFormatted(cell)) {
-					System.out.print(cell.getDateCellValue() + "\t");
+					data = cell.getDateCellValue();
 				} else {
-					System.out.print(cell.getNumericCellValue() + "\t");
+					data = cell.getNumericCellValue();
 				}
 				break;
 			case BOOLEAN:
-				System.out.print(cell.getBooleanCellValue() + "\t");
+				data = cell.getBooleanCellValue();
 				break;
 			default:
-				System.out.print("UNKNOWN\t");
+				
 			}
+
+			try {
+				t = prepareTemVoucher(cellCount, t, data);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
+
+			cellCount++;
 		}
-		System.out.println();
+
+		try {
+			tempVoucherRepo.save(t);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+	}
+
+	private Tempvoucher prepareTemVoucher(int cellCount, Tempvoucher tempVoucher, Object value) throws Exception {
+		if(cellCount == 0) {
+			Tempvoucher t = new Tempvoucher();
+			t.setZid(sessionManager.getBusinessId());
+			t.setXrow(tempVoucherRepo.getNextAvailableRow(sessionManager.getBusinessId()));
+			return t;
+		}
+
+		//if(value == null) return tempVoucher;
+		if(!valuePresent(value)) return tempVoucher;
+
+		Tempvoucher t = tempVoucher; 
+
+		if(cellCount == 1) {
+			Date voucherDate = (Date) value;
+			t.setVoucherDate(voucherDate);
+		} else if (cellCount == 2) {
+			t.setBusinessUnit(((Double) value).intValue());
+		} else if (cellCount == 3) {
+			t.setDebitAcc(((Double) value).intValue());
+		} else if (cellCount == 4) {
+			t.setDebitSubAcc(((Double) value).intValue());
+		} else if (cellCount == 5) {
+			t.setCreditAcc(((Double) value).intValue());
+		} else if (cellCount == 6) {
+			t.setCreditSubAcc(((Double) value).intValue());
+		} else if (cellCount == 7) {
+			Double doubleValue = (Double) value;
+			t.setAmount(BigDecimal.valueOf(doubleValue).setScale(2));
+		} else if (cellCount == 8) {
+			t.setNarration((String) value);
+		}
+
+		return t;
+	}
+
+	private boolean valuePresent(Object value) {
+		if (value == null) {
+			return false;
+		}
+		// Check if value is an empty string
+		else if (value instanceof String && ((String) value).isEmpty()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private void processRow(String row) {

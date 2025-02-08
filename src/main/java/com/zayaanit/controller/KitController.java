@@ -1,5 +1,6 @@
 package com.zayaanit.controller;
 
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.repository.XwhsRepo;
 import com.zayaanit.repository.ZbusinessRepo;
+import com.zayaanit.service.ImportExportService;
 import com.zayaanit.service.MenuTreeService;
 import com.zayaanit.service.PrintingService;
 
@@ -204,6 +206,15 @@ public abstract class KitController extends BaseController {
 	public String errorDetails(Model model) {
 		model.addAttribute("stockErrors", unavailableStockList);
 		return "commons::error-details";
+	}
+
+	protected ImportExportService getImportExportService(String module) {
+		if(StringUtils.isBlank(module)) return null;
+		try {
+			return (ImportExportService) appContext.getBean(module + "ImportExport");
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	protected void prepareUnavailableStockList(Map<Integer, BigDecimal> qtyMap, Integer business, Integer store) {

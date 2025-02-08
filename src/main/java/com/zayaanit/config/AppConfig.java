@@ -30,4 +30,7 @@ public class AppConfig {
 
 	@Value("${app.audit-enable:false}")
 	private boolean isAuditEnable;
+
+	@Value("${app.import-export}")
+	private String importExportPath;
 }

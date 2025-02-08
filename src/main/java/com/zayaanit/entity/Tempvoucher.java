@@ -1,5 +1,6 @@
 package com.zayaanit.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -24,7 +25,6 @@ import com.zayaanit.entity.pk.TempvoucherPK;
 import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author Zubayer Ahaned
@@ -38,14 +38,13 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "tempvoucher")
 @IdClass(TempvoucherPK.class)
-@EqualsAndHashCode(callSuper = true)
 @NamedStoredProcedureQueries({
 	@NamedStoredProcedureQuery(name = "FA_ImportVoucher", procedureName = "FA_ImportVoucher", parameters = {
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
 	}),
 })
-public class Tempvoucher extends AbstractModel<String> {
+public class Tempvoucher implements Serializable {
 
 	private static final long serialVersionUID = 1685761788841395819L;
 

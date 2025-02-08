@@ -14,6 +14,7 @@ app:
   logging-path: D:/aspi/logs
   template-path: D:/cr_live_reports
   backup-location: C:/aspi/backup
+  import-export: D:/aspi/import-export
   database-name: aspi
   version: "@project.version@"
 
