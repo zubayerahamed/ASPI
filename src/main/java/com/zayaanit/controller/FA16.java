@@ -125,6 +125,7 @@ public class FA16 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xvoucher, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		model.addAttribute("fa16ImportToken", sessionManager.getFromMap("FA16_IMPORT_TOKEN"));
 		model.addAttribute("deftab", "tab1");
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
@@ -612,9 +613,9 @@ public class FA16 extends KitController {
 		Files.write(filePath, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
 		if (currentChunk == totalChunks - 1) {
-			// Process the complete file here (e.g., parse CSV/XLSX and save to database)
-			if (fileName != null && (fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))) {
-				// Convert it to csv file
+
+			if (fileName != null) {
+
 				String csvFilenameWithLoation = appConfig.getImportExportPath() + File.separator + fileName;
 				if(StringUtils.isBlank(csvFilenameWithLoation)) {
 					responseHelper.setErrorStatusAndMessage("Something is wrong on processing file.");
@@ -629,8 +630,9 @@ public class FA16 extends KitController {
 						.setImportDate(new Date())
 						.setLatch(new CountDownLatch(1))
 						.setToken(token)
-						.setProgress(0)
+						.setProgress(0.0)
 						.setIsWorkInProgress(true)
+						.setAllOk(true)
 						.setFileName(fileName)
 						.setUploadedFileLocation(csvFilenameWithLoation)
 						.setModuleName("FA16")
@@ -639,11 +641,20 @@ public class FA16 extends KitController {
 
 				ImportExportService importExportService = getImportExportService("FA16");
 
-				asyncCSVProcessor.convertExcelToCSV(asyncCSVResult, importExportService);
+				if((fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))) {
+					asyncCSVProcessor.processDataFromExcel(asyncCSVResult, importExportService);
+				} else {
+					asyncCSVProcessor.processDataFromCSV(asyncCSVResult, importExportService);
+				}
+
 				sessionManager.addToMap(token, asyncCSVResult);
+				sessionManager.addToMap("FA16_IMPORT_TOKEN", token);
 
 				responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
-				// After convert to CSV, delete the xlsx file
+
+			} else {
+				responseHelper.setErrorStatusAndMessage("File name not found");
+				return responseHelper.getResponse();
 			}
 
 		}
@@ -655,11 +666,23 @@ public class FA16 extends KitController {
 	@GetMapping("/progress/status/{token}")
 	public @ResponseBody AsyncCSVResult checkProgressStatus(@PathVariable String token){
 		AsyncCSVResult asyncCSVResult = (AsyncCSVResult) sessionManager.getFromMap(token);
+
+		if(asyncCSVResult.getIsWorkInProgress()) {
+			if(!asyncCSVResult.isAllOk()) {
+				asyncCSVResult.setIsWorkInProgress(false);
+				sessionManager.removeFromMap(token);
+				sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
+				return asyncCSVResult;
+			}
+		}
+
 		if(asyncCSVResult.getLatch().getCount() == 0) {
 			asyncCSVResult.setIsWorkInProgress(false);
-			asyncCSVResult.setProgress(100);
+			asyncCSVResult.setProgress(100.00);
 			sessionManager.removeFromMap(token);
+			sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
 		}
+
 		return asyncCSVResult;
 	}
 

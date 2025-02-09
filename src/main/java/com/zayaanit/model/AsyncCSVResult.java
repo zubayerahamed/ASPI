@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 public class AsyncCSVResult {
 
 	private String token;
-	private Integer progress;
+	private Double progress;
 	private Boolean isWorkInProgress;
 	private HttpServletResponse httpServletResponse;
 

@@ -9,6 +9,67 @@ function getBasepath(){
 
 
 
+function disableBtn(btnClasses){
+	$.each(btnClasses, function(i, btn){
+		$('.' + btn).attr('disabled', 'true');
+	});
+}
+
+function hideBtn(btnClasses){
+	$.each(btnClasses, function(i, btn){
+		$('.' + btn).addClass('d-none');
+	});
+}
+
+function showBtn(btnClasses){
+	$.each(btnClasses, function(i, btn){
+		$('.' + btn).removeClass('d-none');
+	});
+}
+
+function enableBtn(btnClasses){
+	$.each(btnClasses, function(i, btn){
+		$('.' + btn).removeAttr('disabled');
+	});
+}
+
+function showProgress(colorClass, title){
+	$('#progress').show();
+
+	if(title != undefined && title != null){
+		$('.porogress-text').html(title);
+	}
+
+	if(colorClass != undefined && colorClass != null && colorClass != ''){
+		$('#progress #progressBar').addClass(colorClass);
+	}
+}
+
+function updateProgress(percentage, colorClass){
+	if(percentage > 100) percentage = 100;
+	$('#progress #progressBar').css('width', percentage + '%').text(percentage.toFixed(2) + '%');
+
+	if(colorClass != undefined && colorClass != null && colorClass != ''){
+		$('#progress #progressBar').addClass(colorClass);
+	}
+}
+
+function hideProgress(restalso){
+	$('#progress').hide();
+	if(restalso != undefined && restalso != null && restalso == true){
+		resetProgressBar();
+	}
+}
+
+function resetProgressBar(){
+	$('#progress #progressBar').css('width', '0%').text('0%');
+	$('#progress #progressBar').removeClass('bg-success');
+	$('#progress #progressBar').removeClass('bg-warning');
+	$('#progress #progressBar').removeClass('bg-danger');
+}
+
+
+
 // Toaster message
 function showMessage(type, message, timeout) {
 	if (type == undefined || type == "") return;

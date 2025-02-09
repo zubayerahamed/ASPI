@@ -23,7 +23,7 @@ public interface ImportExportService {
 
 	public void processCSV(AsyncCSVResult asyncCSVResult);
 
-	public void convertExcelToCSV(AsyncCSVResult asyncCSVResult);
+	public void processDataFromExcel(AsyncCSVResult asyncCSVResult);
 
 	public void importCSV(AsyncCSVResult asyncCSVResult);
 

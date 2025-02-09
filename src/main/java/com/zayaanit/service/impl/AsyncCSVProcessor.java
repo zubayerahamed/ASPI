@@ -36,8 +36,8 @@ public class AsyncCSVProcessor {
 	}
 
 	@Async
-	public void convertExcelToCSV(AsyncCSVResult asyncCSVResult, ImportExportService importExportService) {
-		importExportService.convertExcelToCSV(asyncCSVResult);
+	public void processDataFromExcel(AsyncCSVResult asyncCSVResult, ImportExportService importExportService) {
+		importExportService.processDataFromExcel(asyncCSVResult);
 		asyncCSVResult.getLatch().countDown();
 	}
 

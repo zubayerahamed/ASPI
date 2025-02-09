@@ -21,8 +21,6 @@ public class R101_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
 
-		//fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(2, "Employee", "/search/table/LFA14/1?dependentparam=Employee&hint=", "", false));
-
 		return fieldsList;
 	}
 
