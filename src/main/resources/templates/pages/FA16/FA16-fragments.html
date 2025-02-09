@@ -9,11 +9,13 @@
 		</div>
 
 		<div class="card-body">
-			<form id="mainform" class="form-validate-jquery"
-				th:action="@{/FA16/store}" th:object="${acheader}" method="POST"
-				th:with="df=${'yyyy-MM-dd'}">
-				<input type="hidden" th:field="*{submitFor}" /> <input type="hidden"
-					th:if="${acheader.xvoucher ne null}" th:field="*{xvoucher}">
+			<form 	id="mainform" 
+					class="form-validate-jquery"
+					th:action="@{/FA16/store}" th:object="${acheader}" method="POST"
+					th:with="df=${'yyyy-MM-dd'}">
+
+				<input type="hidden" th:field="*{submitFor}" /> 
+				<input type="hidden" th:if="${acheader.xvoucher ne null}" th:field="*{xvoucher}">
 
 				<div class="row">
 					<div class="col-md-3">
@@ -514,8 +516,74 @@
 						<th>Action</th>
 					</tr>
 				</thead>
-				<tbody>
-
+				<tbody th:with="df=${'yyyy-MM-dd'}">
+					<tr th:each="t : ${tempvouchers}">
+						<td></td>
+						<td>
+							<div class="col-md-12">
+								<div class="form-group">
+									<div class="input-group">
+										<input type="text" name="voucher_date" 
+											class="form-control datepicker-date-format"
+											placeholder="yyyy-mm-dd format" required="required"
+											th:value="${t.voucherDate == null ? '' : #dates.format(t.voucherDate, df)}">
+										<span class="input-group-text"> <i class="ph-calendar"></i></span>
+									</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="col-md-12">
+								<div class="form-group">
+									<div class="input-group">
+										<input type="text" class="form-control searchsuggest2"
+											id="businessUnit"
+											th:value="${t.businessUnit != null ? t.businessUnit + ' - ' + t.businessUnitName : ''}">
+										<input type="hidden" class="search-val" name="businessUnit"
+											th:value="${t.businessUnit}" required /> 
+											<span class="input-group-text btn-search"
+											th:attr="
+												data-reloadurl='/search/table/LAD17/0?hint=', 
+												data-reloadid='search-suggest-results-container', 
+												data-fieldid='businessUnit',
+												data-mainscreen=false"
+											style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+										<span class="input-group-text btn-search-clear"
+											style="cursor: pointer;"><i
+											class="ph-arrow-counter-clockwise"></i></span>
+									</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="col-md-12">
+								<div class="form-group">
+									<div class="input-group">
+										<input type="text" class="form-control searchsuggest2" id="debitAcc"
+											th:value="${t.debitAcc ne null ? t.debitAcc + ' - ' + t.debitAccountName : ''}">
+										<input type="hidden" class="search-val" name="debitAcc"
+											th:value="${t.debitAcc}" required /> 
+											<span class="input-group-text btn-search"
+											th:attr="
+												data-reloadurl='/search/table/LFA13/0?hint=',  
+												data-reloadid='search-suggest-results-container', 
+												data-fieldid='debitAcc',
+												data-mainscreen=false"
+											style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+										<span class="input-group-text btn-search-clear"
+											style="cursor: pointer;"><i
+											class="ph-arrow-counter-clockwise"></i></span>
+									</div>
+								</div>
+							</div>
+						</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>

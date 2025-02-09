@@ -37,6 +37,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -122,10 +125,46 @@ public class FA16 extends KitController {
 	}
 
 	@GetMapping
-	public String index(@RequestParam (required = false) String xvoucher, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+	public String index(
+			@RequestParam (required = false) String xvoucher, 
+			@RequestParam(required = false) String frommenu,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request, Model model) {
+
 		model.addAttribute("fa16ImportToken", sessionManager.getFromMap("FA16_IMPORT_TOKEN"));
 		model.addAttribute("deftab", "tab1");
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
+
+		Pageable pageable = PageRequest.of(page, size);
+		List<Tempvoucher> tempvouchers = tempVoucherRepo.findAllByZid(sessionManager.getBusinessId(), pageable).toList();
+		for(Tempvoucher t : tempvouchers) {
+			if(t.getBusinessUnit() != null) {
+				Optional<Cabunit> businessUnitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), t.getBusinessUnit()));
+				if(businessUnitOp.isPresent()) t.setBusinessUnitName(businessUnitOp.get().getXname());
+			}
+
+			if(t.getDebitAcc() != null) {
+				Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getDebitAcc()));
+				if(accountOp.isPresent()) t.setDebitAccountName(accountOp.get().getXdesc());
+			}
+
+			if(t.getDebitSubAcc() != null) {
+				Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getDebitSubAcc()));
+				if(acsubOp.isPresent()) t.setDebitSubAccountName(acsubOp.get().getXname());
+			}
+
+			if(t.getCreditAcc() != null) {
+				Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getCreditAcc()));
+				if(accountOp.isPresent()) t.setCreditAccountName(accountOp.get().getXdesc());
+			}
+
+			if(t.getCreditSubAcc() != null) {
+				Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getCreditSubAcc()));
+				if(acsubOp.isPresent()) t.setCreditSubAccountName(acsubOp.get().getXname());
+			}
+		}
+		model.addAttribute("tempvouchers", tempvouchers);
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xvoucher)) {

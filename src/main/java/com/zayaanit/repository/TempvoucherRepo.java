@@ -1,7 +1,11 @@
 package com.zayaanit.repository;
 
+
+
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -27,4 +31,8 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 
 	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from tempvoucher where zid=?1", nativeQuery = true)
 	public Integer getNextAvailableRow(Integer zid);
+
+//	public List<Tempvoucher> findAllByZid(Integer zid);
+
+	public Page<Tempvoucher> findAllByZid(Integer zid, Pageable pageable);
 }
