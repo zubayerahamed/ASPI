@@ -89,8 +89,6 @@ import com.zayaanit.service.impl.AsyncCSVProcessor;
 @RequestMapping("/FA16")
 public class FA16 extends KitController {
 
-	private static final String UPLOAD_DIR = "D:/uploads/";
-
 	@Autowired private AcheaderRepo acheaderRepo;
 	@Autowired private CabunitRepo cabunitRepo;
 	@Autowired private AcmstRepo acmstRepo;
