@@ -1,20 +1,14 @@
 package com.zayaanit.controller;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,18 +23,14 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -723,183 +713,4 @@ public class FA16 extends KitController {
 		return asyncCSVResult;
 	}
 
-
-//	processFile(filePath.toFile());
-//	try {
-//		processXlsxFile(filePath.toFile());
-//	} catch (Exception e) {
-//		throw new IllegalStateException(e.getCause().getMessage());
-//	}
-
-	@Transactional
-	@PostMapping("/upload")
-	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
-
-		String fileName = file.getOriginalFilename();
-
-		try {
-			if (fileName != null && fileName.endsWith(".csv")) {
-				processCsvFile(file);
-			} else if (fileName != null && fileName.endsWith(".xlsx")) {
-				//processXlsxFile(file);
-			} else {
-				return ResponseEntity.badRequest().body("Unsupported file format");
-			}
-		} catch (Exception e) {
-			throw new IllegalStateException(e.getCause().getMessage());
-		}
-
-		return ResponseEntity.ok().body("File processed successfully");
-	}
-
-	private void processFile(File file) {
-		
-		// Implement your file processing logic here
-		// For example, parse the CSV/XLSX file and save the data to the database
-	}
-
-	private void processCsvFile(MultipartFile file) throws IOException {
-		// CSV processing logic (same as before)
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				processRow(line);
-			}
-		}
-	}
-
-	private void processXlsxFile(File file) throws Exception {
-		// XLSX processing logic
-		try (InputStream inputStream = new FileInputStream(file); Workbook workbook = new XSSFWorkbook(inputStream)) {
-
-			Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
-			Iterator<Row> rowIterator = sheet.iterator();
-
-			int rowCount = 0;
-			while (rowIterator.hasNext()) {
-				Row row = rowIterator.next();
-				if (rowCount == 0) {
-					// Skip header row
-					rowCount++;
-					continue;
-				}
-
-				// Process each row
-				processExcelRow(row);
-				rowCount++;
-			}
-		}
-	}
-
-	private void processExcelRow(Row row) {
-		// Process each cell in the row
-
-		Tempvoucher t;
-		try {
-			t = prepareTemVoucher(0, null, null);
-		} catch (Exception e) {
-			throw new IllegalStateException(e.getCause().getMessage());
-		}
-
-		int cellCount = 1;
-		for (Cell cell : row) {
-
-			Object data = "";
-
-			switch (cell.getCellType()) {
-			case STRING:
-				data = cell.getStringCellValue();
-				break;
-			case NUMERIC:
-				if (DateUtil.isCellDateFormatted(cell)) {
-					data = cell.getDateCellValue();
-				} else {
-					data = cell.getNumericCellValue();
-				}
-				break;
-			case BOOLEAN:
-				data = cell.getBooleanCellValue();
-				break;
-			default:
-				
-			}
-
-			try {
-				t = prepareTemVoucher(cellCount, t, data);
-			} catch (Exception e) {
-				throw new IllegalStateException(e.getCause().getMessage());
-			}
-
-			cellCount++;
-		}
-
-		try {
-			tempVoucherRepo.save(t);
-		} catch (Exception e) {
-			throw new IllegalStateException(e.getCause().getMessage());
-		}
-	}
-
-	private Tempvoucher prepareTemVoucher(int cellCount, Tempvoucher tempVoucher, Object value) throws Exception {
-		if(cellCount == 0) {
-			Tempvoucher t = new Tempvoucher();
-			t.setZid(sessionManager.getBusinessId());
-			t.setXrow(tempVoucherRepo.getNextAvailableRow(sessionManager.getBusinessId()));
-			return t;
-		}
-
-		//if(value == null) return tempVoucher;
-		if(!valuePresent(value)) return tempVoucher;
-
-		Tempvoucher t = tempVoucher; 
-
-		if(cellCount == 1) {
-			Date voucherDate = (Date) value;
-			t.setVoucherDate(voucherDate);
-		} else if (cellCount == 2) {
-			t.setBusinessUnit(((Double) value).intValue());
-		} else if (cellCount == 3) {
-			t.setDebitAcc(((Double) value).intValue());
-		} else if (cellCount == 4) {
-			t.setDebitSubAcc(((Double) value).intValue());
-		} else if (cellCount == 5) {
-			t.setCreditAcc(((Double) value).intValue());
-		} else if (cellCount == 6) {
-			t.setCreditSubAcc(((Double) value).intValue());
-		} else if (cellCount == 7) {
-			Double doubleValue = (Double) value;
-			t.setAmount(BigDecimal.valueOf(doubleValue).setScale(2));
-		} else if (cellCount == 8) {
-			t.setNarration((String) value);
-		}
-
-		return t;
-	}
-
-	private boolean valuePresent(Object value) {
-		if (value == null) {
-			return false;
-		}
-		// Check if value is an empty string
-		else if (value instanceof String && ((String) value).isEmpty()) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private void processRow(String row) {
-		// CSV row processing logic (same as before)
-		String[] columns = row.split(",");
-		saveToDatabase(columns);
-	}
-
-	private void saveToDatabase(String[] columns) {
-		// Save to database logic (same as before)
-		StringBuilder sql = new StringBuilder();
-		for(String s : columns) {
-			sql.append(s + ",");
-		}
-		System.out.println(sql.toString());
-	}
 }
