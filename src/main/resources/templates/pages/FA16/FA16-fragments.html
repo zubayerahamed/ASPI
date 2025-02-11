@@ -57,21 +57,20 @@
 						<div class="mb-3 form-group">
 							<label class="form-label required">Business Unit</label>
 							<div class="input-group">
-								<input type="text" class="form-control searchsuggest2"
-									id="xbuid"
-									th:value="${acheader.xbuid != null ? acheader.xbuid + ' - ' + acheader.businessUnitName : ''}">
-								<input type="hidden" class="search-val" name="xbuid"
-									th:value="*{xbuid}" required /> <span
-									class="input-group-text btn-search"
-									th:attr="
-										data-reloadurl='/search/table/LAD17/0?hint=', 
-										data-reloadid='search-suggest-results-container', 
-										data-fieldid='xbuid',
-										data-mainscreen=false"
-									style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-								<span class="input-group-text btn-search-clear"
-									style="cursor: pointer;"><i
-									class="ph-arrow-counter-clockwise"></i></span>
+								<input 	type="text" class="form-control searchsuggest2"
+										id="xbuid"
+										th:value="${acheader.xbuid != null ? acheader.xbuid + ' - ' + acheader.businessUnitName : ''}">
+								<input 	type="hidden" class="search-val" name="xbuid" th:value="*{xbuid}" required /> 
+								<span 	class="input-group-text btn-search"
+										th:attr="
+											data-reloadurl='/search/table/LAD17/0?hint=', 
+											data-reloadid='search-suggest-results-container', 
+											data-fieldid='xbuid',
+											data-mainscreen=false"
+										style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+								<span 	class="input-group-text btn-search-clear"
+										style="cursor: pointer;"><i
+										class="ph-arrow-counter-clockwise"></i></span>
 							</div>
 						</div>
 					</div>
@@ -96,8 +95,7 @@
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Narration</label>
-							<textarea cols="" rows="1" class="form-control"
-								th:field="*{xnote}"></textarea>
+							<textarea cols="" rows="1" class="form-control" th:field="*{xnote}"></textarea>
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${acheader.xvoucher ne null}">
@@ -473,8 +471,230 @@
 </div>
 
 
+<tr th:remove="tag" th:fragment="row-actual" xmlns:th="http://www.thymeleaf.org" th:with="df=${'yyyy-MM-dd'}">
+	<td th:classappend="${'row-' + t.xrow}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.voucherDate == null ? '' : #dates.format(t.voucherDate, df)}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.businessUnit != null ? t.businessUnit + ' - ' + t.businessUnitName : ''}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.debitAcc ne null ? t.debitAcc + ' - ' + t.debitAccountName : ''}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.debitSubAcc ne null ? t.debitSubAcc + ' - ' + t.debitSubAccountName : ''}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.creditAcc ne null ? t.creditAcc + ' - ' + t.creditAccountName : ''}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.creditSubAcc ne null ? t.creditSubAcc + ' - ' + t.creditSubAccountName : ''}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.amount}"></td>
+	<td th:classappend="${'row-' + t.xrow}" th:text="${t.narration}"></td>
+	<td th:classappend="${'row-' + t.xrow}" class="text-end">
+		<button th:attr="data-reloadurl='/FA16/import/edit?xrow=' + ${t.xrow}, data-xrow=${t.xrow}" type="button" class="btn btn-primary btn-sm btn-row-edit">
+			<i class="ph-note-pencil"></i>
+		</button>
+		<button th:attr="data-url=@{/FA16/import/delete?xrow=} + ${t.xrow}, data-xrow=${t.xrow}" type="button" class="btn btn-danger btn-sm btn-row-delete">
+			<i class="ph-trash"></i>
+		</button>
+	</td>
+	<td class="d-none" th:classappend="${'row-edit-' + t.xrow}" colspan="10">
+		<div th:classappend="${'row-form-container-' + t.xrow}">
+			
+		</div>
+	</td>
+</tr>
 
+<div class="row" th:fragment="debitsubacc-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Debit Sub Account</label>
+		<div class="input-group">
+			<input 	type="text" 
+					class="form-control searchsuggest2"
+					id="debitSubAcc"
+					th:value="${t.debitSubAcc ne null ? t.debitSubAcc + ' - ' + t.debitSubAccountName : ''}">
+			<input 	type="hidden" class="search-val" name="debitSubAcc" th:value="*{debitSubAcc}"/>
+			<span 	class="input-group-text btn-search" 
+					th:attr="
+					data-reloadurl='/search/table/LFA14/5?dependentparam='+${t.debitAcc}+'&hint=', 
+					data-reloadid='search-suggest-results-container', 
+					data-fieldid='debitSubAcc',
+					data-mainscreen=false" 
+					style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+			<span 	class="input-group-text btn-search-clear" 
+					style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+		</div>
+	</div>
+</div>
 
+<div class="row" th:fragment="creditsubacc-field" xmlns:th="http://www.thymeleaf.org">
+	<div class="mb-3 form-group">
+		<label class="form-label">Credit Sub Account</label>
+		<div class="input-group">
+			<input 	type="text" 
+					class="form-control searchsuggest2"
+					id="creditSubAcc"
+					th:value="${t.creditSubAcc ne null ? t.creditSubAcc + ' - ' + t.creditSubAccountName : ''}">
+			<input 	type="hidden" class="search-val" name="creditSubAcc" th:value="*{creditSubAcc}"/>
+			<span 	class="input-group-text btn-search" 
+					th:attr="
+					data-reloadurl='/search/table/LFA14/5?dependentparam='+${t.creditAcc}+'&hint=', 
+					data-reloadid='search-suggest-results-container', 
+					data-fieldid='creditSubAcc',
+					data-mainscreen=false" 
+					style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+			<span 	class="input-group-text btn-search-clear" 
+					style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+		</div>
+	</div>
+</div>
+
+<div th:fragment="row-edit-form" xmlns:th="http://www.thymeleaf.org" class="bg-primary bg-opacity-25 p-3 border rounded">
+	<form 	th:attr="id='row-form-' + ${t.xrow}" 
+			class="form-validate-jquery"
+			th:action="@{/FA16/import/update}" th:object="${t}" method="POST"
+			th:with="df=${'yyyy-MM-dd'}">
+
+		<input type="hidden" th:field="*{xrow}"/>
+
+		<div class="row">
+			<div class="col-md-3">
+				<div class="mb-3 form-group">
+					<label class="form-label required">Voucher Date</label>
+					<div class="input-group">
+						<input type="text" name="voucherDate" class="form-control datepicker-date-format" placeholder="yyyy-mm-dd format" required="required" th:value="${t.voucherDate == null ? '' : #dates.format(t.voucherDate, df)}">
+						<span class="input-group-text"> <i class="ph-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="mb-3 form-group">
+					<label class="form-label required">Business Unit</label>
+					<div class="input-group">
+						<input 	type="text" 
+								class="form-control searchsuggest2"
+								id="businessUnit"
+								th:value="${t.businessUnit != null ? t.businessUnit + ' - ' + t.businessUnitName : ''}">
+						<input 	type="hidden" class="search-val" name="businessUnit" th:value="*{businessUnit}" required /> 
+						<span 	class="input-group-text btn-search"
+								th:attr="
+								data-reloadurl='/search/table/LAD17/0?hint=', 
+								data-reloadid='search-suggest-results-container', 
+								data-fieldid='businessUnit',
+								data-mainscreen=false"
+								style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+						<span 	class="input-group-text btn-search-clear"
+								style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="mb-3 form-group">
+					<label class="form-label required">Debit Account</label>
+					<div class="input-group">
+						<input 	type="text" 
+								class="form-control searchsuggest2"
+								id="debitAcc"
+								th:value="${t.debitAcc ne null ? t.debitAcc + ' - ' + t.debitAccountName : ''}">
+						<input 	type="hidden" class="search-val" name="debitAcc" th:value="*{debitAcc}" required/>
+						<span 	class="input-group-text btn-search" 
+								th:attr="
+								data-reloadurl='/search/table/LFA13/0?hint=',  
+								data-reloadid='search-suggest-results-container', 
+								data-fieldid='debitAcc',
+								data-mainscreen=true,
+								data-mainreloadurl='/FA16/subaccount/debit?xrow='+ ${t.xrow} +'&xacc=',
+								data-mainreloadid='debitsubacc-field-container'" 
+								style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+						<span 	class="input-group-text btn-search-clear"
+								style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="debitsubacc-field-container">
+					<div th:remove="tag" th:include="pages/FA16/FA16-fragments :: debitsubacc-field"></div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="mb-3 form-group">
+					<label class="form-label required">Credit Account</label>
+					<div class="input-group">
+						<input 	type="text" 
+								class="form-control searchsuggest2"
+								id="creditAcc"
+								th:value="${t.creditAcc ne null ? t.creditAcc + ' - ' + t.creditAccountName : ''}">
+						<input 	type="hidden" class="search-val" name="creditAcc" th:value="*{creditAcc}" required/>
+						<span 	class="input-group-text btn-search" 
+								th:attr="
+								data-reloadurl='/search/table/LFA13/0?hint=',  
+								data-reloadid='search-suggest-results-container', 
+								data-fieldid='creditAcc',
+								data-mainscreen=true,
+								data-mainreloadurl='/FA16/subaccount/credit?xrow='+ ${t.xrow} +'&xacc=',
+								data-mainreloadid='creditsubacc-field-container'" 
+								style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+						<span 	class="input-group-text btn-search-clear"
+								style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="creditsubacc-field-container">
+					<div th:remove="tag" th:include="pages/FA16/FA16-fragments :: creditsubacc-field"></div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="mb-3 form-group">
+					<label class="form-label required">Amount</label>
+					<input type="number" class="form-control numeric-only" min="0" th:field="*{amount}" required>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="mb-3 form-group">
+					<label class="form-label">Narration</label>
+					<textarea cols="" rows="1" class="form-control" th:field="*{narration}"></textarea>
+				</div>
+			</div>
+		</div>
+
+		<div class="d-flex justify-content-between align-items-center">
+			<div>
+				<button type="reset" class="btn btn-light btn-sm btn-edit-form-cancel" th:attr="data-xrow=${t.xrow}">Cancel</button>
+			</div>
+			<div>
+				<button type="submit" class="btn btn-primary btn-sm btn-edit-form-submit" th:attr="data-xrow=${t.xrow}"><i class="ph-floppy-disk me-2"></i> Update</button>
+			</div>
+		</div>
+	</form>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-edit-form-cancel').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var rowId = $(this).data('xrow');
+
+				$('.row-form-container-' + rowId).html("");
+				$('.row-' + rowId).removeClass('d-none');
+				$('.row-edit-' + rowId).addClass('d-none');
+				enableBtn(['btn-row-edit', 'btn-row-delete']);
+			})
+
+			$('.btn-edit-form-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				var rowId = $(this).data('xrow');
+				submitMainForm(null, $('#row-form-' + rowId), null, () => {
+					$('.row-form-container-' + rowId).html("");
+					$('.row-' + rowId).removeClass('d-none');
+					$('.row-edit-' + rowId).addClass('d-none');
+					enableBtn(['btn-row-edit', 'btn-row-delete']);
+				}, null);
+			});
+
+		})
+	</script>
+</div>
 
 
 
@@ -513,76 +733,12 @@
 						<th>Credit Sub Acc</th>
 						<th>Amount</th>
 						<th>Narration</th>
-						<th>Action</th>
+						<th class="text-end">Action</th>
 					</tr>
 				</thead>
 				<tbody th:with="df=${'yyyy-MM-dd'}">
-					<tr th:each="t : ${tempvouchers}">
-						<td></td>
-						<td>
-							<div class="col-md-12">
-								<div class="form-group">
-									<div class="input-group">
-										<input type="text" name="voucher_date" 
-											class="form-control datepicker-date-format"
-											placeholder="yyyy-mm-dd format" required="required"
-											th:value="${t.voucherDate == null ? '' : #dates.format(t.voucherDate, df)}">
-										<span class="input-group-text"> <i class="ph-calendar"></i></span>
-									</div>
-								</div>
-							</div>
-						</td>
-						<td>
-							<div class="col-md-12">
-								<div class="form-group">
-									<div class="input-group">
-										<input type="text" class="form-control searchsuggest2"
-											id="businessUnit"
-											th:value="${t.businessUnit != null ? t.businessUnit + ' - ' + t.businessUnitName : ''}">
-										<input type="hidden" class="search-val" name="businessUnit"
-											th:value="${t.businessUnit}" required /> 
-											<span class="input-group-text btn-search"
-											th:attr="
-												data-reloadurl='/search/table/LAD17/0?hint=', 
-												data-reloadid='search-suggest-results-container', 
-												data-fieldid='businessUnit',
-												data-mainscreen=false"
-											style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-										<span class="input-group-text btn-search-clear"
-											style="cursor: pointer;"><i
-											class="ph-arrow-counter-clockwise"></i></span>
-									</div>
-								</div>
-							</div>
-						</td>
-						<td>
-							<div class="col-md-12">
-								<div class="form-group">
-									<div class="input-group">
-										<input type="text" class="form-control searchsuggest2" id="debitAcc"
-											th:value="${t.debitAcc ne null ? t.debitAcc + ' - ' + t.debitAccountName : ''}">
-										<input type="hidden" class="search-val" name="debitAcc"
-											th:value="${t.debitAcc}" required /> 
-											<span class="input-group-text btn-search"
-											th:attr="
-												data-reloadurl='/search/table/LFA13/0?hint=',  
-												data-reloadid='search-suggest-results-container', 
-												data-fieldid='debitAcc',
-												data-mainscreen=false"
-											style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
-										<span class="input-group-text btn-search-clear"
-											style="cursor: pointer;"><i
-											class="ph-arrow-counter-clockwise"></i></span>
-									</div>
-								</div>
-							</div>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
+					<tr th:each="t : ${tempvouchers}" th:attr="data-xrow=${t.xrow}" th:classappend="'row-actual-container-' + ${t.xrow}">
+						<div th:remove="tag" th:include="pages/FA16/FA16-fragments :: row-actual"></div>
 					</tr>
 				</tbody>
 			</table>
@@ -590,6 +746,23 @@
 
 	</div>
 	<script type="text/javascript">
+		function tableBtnEvent(){
+			$(document).on('click', '.btn-row-edit', function(e){
+				e.preventDefault();
+
+				var rowId = $(this).data('xrow');
+
+				$('.row-' + rowId).addClass('d-none');
+				$('.row-edit-' + rowId).removeClass('d-none');
+				disableBtn(['btn-row-edit', 'btn-row-delete']);
+
+				sectionReloadAjaxReq({
+					id : 'row-form-container-' + rowId,
+					url : $(this).data('reloadurl')
+				});
+			})
+		}
+
 		function checkUploadStatus(token){
 			if(token == undefined || token == '') return;
 
@@ -636,6 +809,8 @@
 
 		$(document).ready(function(){
 			kit.ui.init();
+			
+			tableBtnEvent();
 
 			const fa16ImportToken = $('.fa16ImportToken').val();
 			if(fa16ImportToken != undefined && fa16ImportToken != null && fa16ImportToken != ''){

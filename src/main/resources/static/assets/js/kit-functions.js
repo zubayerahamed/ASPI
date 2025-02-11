@@ -179,7 +179,7 @@ function sectionReloadAjaxDeleteReq(section, data, callbackFunction) {
 	});
 }
 
-function submitMainForm(customurl, customform, callbackFunction){
+function submitMainForm(customurl, customform, callbackFunction, callbackFunctionIfSuccess, callbackFunctionIfError){
 	if((customform == undefined || customform == null) && $('form#mainform').length < 1) return;
 
 	var targettedForm = customform == undefined || customform == null ? $('form#mainform') : customform;
@@ -244,6 +244,10 @@ function submitMainForm(customurl, customform, callbackFunction){
 						}, 1000);
 					}
 				}
+				
+				if(callbackFunctionIfSuccess != undefined && callbackFunctionIfSuccess != null){
+					callbackFunctionIfSuccess();
+				}
 			} else {
 				if(data.displayErrorDetailModal){
 					$('#errorDetailModal').modal('show');
@@ -255,9 +259,13 @@ function submitMainForm(customurl, customform, callbackFunction){
 				}
 
 				if(data.status) showMessage(data.status.toLowerCase(), data.message);
+
+				if(callbackFunctionIfError != undefined && callbackFunctionIfError != null){
+					callbackFunctionIfError();
+				}
 			}
 
-			if(callbackFunction != undefined){
+			if(callbackFunction != undefined && callbackFunction != null){
 				callbackFunction();
 			}
 

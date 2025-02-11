@@ -1,6 +1,7 @@
 package com.zayaanit.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,6 @@ public interface AcsubRepo extends JpaRepository<Acsub, AcsubPK> {
 	public Integer getNextAvailableId(Integer zid);
 
 	List<Acsub> findAllByZidAndXacc(Integer zid, Integer xacc);
+
+	Optional<Acsub> findByZidAndXsubAndXtype(Integer zid, Integer xsub, String xtype);
 }

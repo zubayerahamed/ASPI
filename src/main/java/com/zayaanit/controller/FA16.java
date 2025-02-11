@@ -57,6 +57,7 @@ import com.zayaanit.entity.pk.AcheaderPK;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.CabunitPK;
+import com.zayaanit.entity.pk.TempvoucherPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ExcelCellType;
 import com.zayaanit.enums.SubmitFor;
@@ -713,4 +714,203 @@ public class FA16 extends KitController {
 		return asyncCSVResult;
 	}
 
+	@GetMapping("/import/edit")
+	public String loadEditForm(@RequestParam Integer xrow, Model model) {
+		Optional<Tempvoucher> vOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), xrow));
+		Tempvoucher t = vOp.isPresent() ? vOp.get() : new Tempvoucher();
+		if(t.getBusinessUnit() != null) {
+			Optional<Cabunit> businessUnitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), t.getBusinessUnit()));
+			if(businessUnitOp.isPresent()) t.setBusinessUnitName(businessUnitOp.get().getXname());
+		}
+
+		if(t.getDebitAcc() != null) {
+			Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getDebitAcc()));
+			if(accountOp.isPresent()) t.setDebitAccountName(accountOp.get().getXdesc());
+		}
+
+		if(t.getDebitSubAcc() != null) {
+			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getDebitSubAcc()));
+			if(acsubOp.isPresent()) t.setDebitSubAccountName(acsubOp.get().getXname());
+		}
+
+		if(t.getCreditAcc() != null) {
+			Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getCreditAcc()));
+			if(accountOp.isPresent()) t.setCreditAccountName(accountOp.get().getXdesc());
+		}
+
+		if(t.getCreditSubAcc() != null) {
+			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getCreditSubAcc()));
+			if(acsubOp.isPresent()) t.setCreditSubAccountName(acsubOp.get().getXname());
+		}
+		model.addAttribute("t", t);
+		return "pages/FA16/FA16-fragments::row-edit-form";
+	}
+
+	@GetMapping("/import/row-actual")
+	public String loadTableRow(@RequestParam Integer xrow, Model model) {
+		Optional<Tempvoucher> vOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), xrow));
+		Tempvoucher t = vOp.isPresent() ? vOp.get() : new Tempvoucher();
+		if(t.getBusinessUnit() != null) {
+			Optional<Cabunit> businessUnitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), t.getBusinessUnit()));
+			if(businessUnitOp.isPresent()) t.setBusinessUnitName(businessUnitOp.get().getXname());
+		}
+
+		if(t.getDebitAcc() != null) {
+			Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getDebitAcc()));
+			if(accountOp.isPresent()) t.setDebitAccountName(accountOp.get().getXdesc());
+		}
+
+		if(t.getDebitSubAcc() != null) {
+			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getDebitSubAcc()));
+			if(acsubOp.isPresent()) t.setDebitSubAccountName(acsubOp.get().getXname());
+		}
+
+		if(t.getCreditAcc() != null) {
+			Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getCreditAcc()));
+			if(accountOp.isPresent()) t.setCreditAccountName(accountOp.get().getXdesc());
+		}
+
+		if(t.getCreditSubAcc() != null) {
+			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getCreditSubAcc()));
+			if(acsubOp.isPresent()) t.setCreditSubAccountName(acsubOp.get().getXname());
+		}
+		model.addAttribute("t", t);
+		return "pages/FA16/FA16-fragments::row-actual";
+	}
+
+	@Transactional
+	@PostMapping("/import/update")
+	public @ResponseBody Map<String, Object> update(Tempvoucher tempvoucher, BindingResult bindingResult){
+
+		// VALIDATE
+		if(tempvoucher.getXrow() == null) {
+			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
+			return responseHelper.getResponse();
+		}
+
+		Optional<Tempvoucher> existOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), tempvoucher.getXrow()));
+		if(!existOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Data not found in this system to do update");
+			return responseHelper.getResponse();
+		}
+
+		Tempvoucher existObj = existOp.get();
+
+		if(tempvoucher.getVoucherDate() == null) {
+			responseHelper.setErrorStatusAndMessage("Voucher date required");
+			return responseHelper.getResponse();
+		}
+
+		if(tempvoucher.getBusinessUnit() == null) {
+			responseHelper.setErrorStatusAndMessage("Business unit required");
+			return responseHelper.getResponse();
+		}
+
+		Optional<Cabunit> businessUnitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), tempvoucher.getBusinessUnit()));
+		if(!businessUnitOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Business unit not exist in this system");
+			return responseHelper.getResponse();
+		}
+
+		if(tempvoucher.getDebitAcc() == null) {
+			responseHelper.setErrorStatusAndMessage("Debit account required");
+			return responseHelper.getResponse();
+		}
+
+		Optional<Acmst> debitAccountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), tempvoucher.getDebitAcc()));
+		if(!debitAccountOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Debit account not exist in this system");
+			return responseHelper.getResponse();
+		}
+
+		Acmst debitAccount = debitAccountOp.get();
+		String dAccUsage = debitAccount.getXaccusage();
+
+		if("Default".equals(dAccUsage)) {
+			if(tempvoucher.getDebitSubAcc() != null) {
+				responseHelper.setErrorStatusAndMessage("You can't set any debit sub account for this Default debit account type");
+				return responseHelper.getResponse();
+			}
+		} else {
+			if(tempvoucher.getDebitSubAcc() == null) {
+				responseHelper.setErrorStatusAndMessage("Debit sub account required");
+				return responseHelper.getResponse();
+			} else {
+				Optional<Acsub> debitSubAccOp = acsubRepo.findByZidAndXsubAndXtype(sessionManager.getBusinessId(), tempvoucher.getDebitSubAcc(), dAccUsage);
+				if(!debitSubAccOp.isPresent()) {
+					responseHelper.setErrorStatusAndMessage("Debit sub account not exist in this system");
+					return responseHelper.getResponse();
+				}
+			}
+		}
+
+		Optional<Acmst> creditAccountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), tempvoucher.getCreditAcc()));
+		if(!creditAccountOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Credit account not exist in this system");
+			return responseHelper.getResponse();
+		}
+
+		Acmst creditAccount = creditAccountOp.get();
+		String cAccUsage = creditAccount.getXaccusage();
+
+		if("Default".equals(cAccUsage)) {
+			if(tempvoucher.getCreditSubAcc() != null) {
+				responseHelper.setErrorStatusAndMessage("You can't set any credit sub account for this Default credit account type");
+				return responseHelper.getResponse();
+			}
+		} else {
+			if(tempvoucher.getCreditSubAcc() == null) {
+				responseHelper.setErrorStatusAndMessage("Credit sub account required");
+				return responseHelper.getResponse();
+			} else {
+				Optional<Acsub> creditSubAccOp = acsubRepo.findByZidAndXsubAndXtype(sessionManager.getBusinessId(), tempvoucher.getCreditSubAcc(), dAccUsage);
+				if(!creditSubAccOp.isPresent()) {
+					responseHelper.setErrorStatusAndMessage("Credit sub account not exist in this system");
+					return responseHelper.getResponse();
+				}
+			}
+		}
+
+		if(tempvoucher.getAmount() == null) {
+			responseHelper.setErrorStatusAndMessage("Amount required");
+			return responseHelper.getResponse();
+		}
+
+		if(tempvoucher.getAmount().compareTo(BigDecimal.ZERO) != 1) {
+			responseHelper.setErrorStatusAndMessage("Invalid amount");
+			return responseHelper.getResponse();
+		}
+
+		if(StringUtils.isNotBlank(tempvoucher.getNarration()) && tempvoucher.getNarration().length() > 200) {
+			responseHelper.setErrorStatusAndMessage("Narration is too long. Write narration up to 200 character");
+			return responseHelper.getResponse();
+		}
+
+		BeanUtils.copyProperties(tempvoucher, existObj, "zid", "xrow");
+
+		try {
+			existObj = tempVoucherRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("row-actual-container-" + tempvoucher.getXrow(), "/FA16/import/row-actual?xrow=" + tempvoucher.getXrow()));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Data updated successfully");
+		return responseHelper.getResponse();
+	}
+
+	@GetMapping("/subaccount/{type}")
+	public String loadSubAccountForm(@PathVariable String type, @RequestParam Integer xrow, @RequestParam Integer xacc, Model model) {
+		Optional<Tempvoucher> vOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), xrow));
+		Tempvoucher t = vOp.isPresent() ? vOp.get() : new Tempvoucher();
+		if("credit".equals(type)) {
+			t.setCreditAcc(xacc);
+		} else {
+			t.setDebitAcc(xacc);
+		}
+		model.addAttribute("t", t);
+		return "pages/FA16/FA16-fragments::"+type+"subacc-field";
+	}
 }
