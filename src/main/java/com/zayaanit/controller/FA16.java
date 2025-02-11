@@ -31,6 +31,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -77,7 +78,7 @@ import com.zayaanit.service.impl.AsyncCSVProcessor;
 
 /**
  * @author Zubayer Ahamed
- * @since Jul 3, 2023
+ * @since Feb 11, 2025
  */
 @Controller
 @RequestMapping("/FA16")
@@ -127,7 +128,8 @@ public class FA16 extends KitController {
 		model.addAttribute("deftab", "tab1");
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
-		Pageable pageable = PageRequest.of(page, size);
+		Sort.Direction direction = Sort.Direction.ASC; 
+		Pageable pageable = PageRequest.of(page, size, Sort.by(new Sort.Order(direction, "xrow")));
 		List<Tempvoucher> tempvouchers = tempVoucherRepo.findAllByZid(sessionManager.getBusinessId(), pageable).toList();
 		for(Tempvoucher t : tempvouchers) {
 			if(t.getBusinessUnit() != null) {
@@ -156,6 +158,10 @@ public class FA16 extends KitController {
 			}
 		}
 		model.addAttribute("tempvouchers", tempvouchers);
+		long totalData = tempVoucherRepo.countByZid(sessionManager.getBusinessId());
+		model.addAttribute("totalData", totalData);
+		model.addAttribute("totalPages", (int) Math.ceil((double) totalData / size));
+		model.addAttribute("currentPage", page);
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xvoucher)) {
@@ -263,7 +269,8 @@ public class FA16 extends KitController {
 		model.addAttribute("deftab", "tab1");
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
-		Pageable pageable = PageRequest.of(page, size);
+		Sort.Direction direction = Sort.Direction.ASC; 
+		Pageable pageable = PageRequest.of(page, size, Sort.by(new Sort.Order(direction, "xrow")));
 		List<Tempvoucher> tempvouchers = tempVoucherRepo.findAllByZid(sessionManager.getBusinessId(), pageable).toList();
 		for(Tempvoucher t : tempvouchers) {
 			if(t.getBusinessUnit() != null) {
@@ -292,6 +299,10 @@ public class FA16 extends KitController {
 			}
 		}
 		model.addAttribute("tempvouchers", tempvouchers);
+		long totalData = tempVoucherRepo.countByZid(sessionManager.getBusinessId());
+		model.addAttribute("totalData", totalData);
+		model.addAttribute("totalPages", (int) Math.ceil((double) totalData / size));
+		model.addAttribute("currentPage", page);
 
 		return "pages/FA16/FA16-fragments::import-table";
 	}

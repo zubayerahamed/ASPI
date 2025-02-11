@@ -643,7 +643,7 @@
 	</script>
 </div>
 
-<div th:fragment="row-edit-form" xmlns:th="http://www.thymeleaf.org" class="bg-primary bg-opacity-25 p-3 border rounded">
+<div th:fragment="row-edit-form" xmlns:th="http://www.thymeleaf.org" class="bg-primary bg-opacity-25 p-3 border rounded animated bounceIn">
 	<form 	th:attr="id='row-form-' + ${t.xrow}" 
 			class="form-validate-jquery"
 			th:action="@{/FA16/import/update}" th:object="${t}" method="POST"
@@ -801,29 +801,76 @@
 
 		<div class="card-footer">
 			<ul class="pagination justify-content-center">
-				<li class="page-item disabled">
-					<a href="#" class="page-link">&larr;</a>
+				<!-- Previous Page Button -->
+				<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+					<a href="javascript:void(0);" class="page-link"
+						th:attr="onclick=${currentPage > 0} ? 'loadPage(' + (${currentPage} - 1) + ')' : ''">
+						&larr;
+					</a>
 				</li>
-				<li class="page-item active">
-					<a href="#" class="page-link">1</a>
+			
+				<!-- First Page -->
+				<li class="page-item" th:classappend="${currentPage == 0} ? 'active'">
+					<a href="javascript:void(0);" class="page-link" th:attr="onclick='loadPage(0)'">1</a>
 				</li>
-				<li class="page-item">
-					<a href="#" class="page-link">2</a>
+			
+				<!-- Dots Before Current Page (if needed) -->
+				<li class="page-item disabled" th:if="${currentPage > 2}">
+					<a href="javascript:void(0);" class="page-link">...</a>
 				</li>
-				<li class="page-item">
-					<a href="#" class="page-link">...</a>
+			
+				<!-- Previous Page (only if not the first two pages) -->
+				<li class="page-item" th:if="${currentPage > 1}">
+					<a href="javascript:void(0);" class="page-link" th:attr="onclick='loadPage(' + (${currentPage} - 1) + ')'">
+						[[${currentPage}]]
+					</a>
 				</li>
-				<li class="page-item">
-					<a href="#" class="page-link">10</a>
+			
+				<!-- Current Page (only if not first or last page) -->
+				<li class="page-item active" th:if="${currentPage > 0 and currentPage < totalPages - 1}">
+					<a href="javascript:void(0);" class="page-link">[[${currentPage + 1}]]</a>
 				</li>
-				<li class="page-item">
-					<a href="#" class="page-link">&rarr;</a>
+			
+				<!-- Next Page (only if not the last two pages) -->
+				<li class="page-item" th:if="${currentPage < totalPages - 2}">
+					<a href="javascript:void(0);" class="page-link" th:attr="onclick='loadPage(' + (${currentPage} + 1) + ')'">
+						[[${currentPage + 2}]]
+					</a>
+				</li>
+			
+				<!-- Dots After Current Page (if needed) -->
+				<li class="page-item disabled" th:if="${currentPage < totalPages - 3}">
+					<a href="javascript:void(0);" class="page-link">...</a>
+				</li>
+			
+				<!-- Last Page -->
+				<li class="page-item" th:if="${totalPages > 1}" th:classappend="${currentPage == totalPages - 1} ? 'active'">
+					<a href="javascript:void(0);" class="page-link" th:attr="onclick='loadPage(' + (${totalPages - 1}) + ')'">
+						[[${totalPages}]]
+					</a>
+				</li>
+			
+				<!-- Next Page Button -->
+				<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+					<a href="javascript:void(0);" class="page-link"
+						th:attr="onclick=${currentPage < totalPages - 1} ? 'loadPage(' + (${currentPage} + 1) + ')' : ''">
+						&rarr;
+					</a>
 				</li>
 			</ul>
+
 		</div>
 
 	</div>
 	<script type="text/javascript">
+		function loadPage(page) {
+			console.log("here");
+			sectionReloadAjaxReq({
+				id : 'import-table-container',
+				url : '/FA16/import-table?size=10&page=' + page
+			});
+		}
+
 		function tableBtnEvent(){
 			$('.btn-row-edit').off('click').on('click', function(e){
 				e.preventDefault();
@@ -868,6 +915,12 @@
 
 							if(data.allOk == true) {
 								showMessage('success', 'Data imported successfully');
+
+								sectionReloadAjaxReq({
+									id : 'import-table-container',
+									url : '/FA16/import-table'
+								});
+
 							} else {
 								showMessage('error', 'Data import failed');
 							}

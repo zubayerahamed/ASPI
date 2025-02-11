@@ -142,8 +142,9 @@ public class FA16ImportExport extends AbstractImportExport {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		int cellCount = 1;
+		//int cellCount = 0;
 		for (Cell cell : row) {
+			//cellCount++;
 
 			Object data = "";
 
@@ -166,12 +167,11 @@ public class FA16ImportExport extends AbstractImportExport {
 			}
 
 			try {
-				t = prepareTemVoucher(cellCount, t, data, businessId);
+				t = prepareTemVoucher(cell.getColumnIndex() + 1, t, data, businessId);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			cellCount++;
 		}
 
 		try {
