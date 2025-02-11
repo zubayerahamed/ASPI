@@ -253,9 +253,47 @@ public class FA16 extends KitController {
 		return "pages/FA16/FA16-fragments::detail-table";
 	}
 
-	@GetMapping("/list-table")
-	public String loadListTableFragment(Model model) {
-		return "pages/FA16/FA16-fragments::list-table";
+	@GetMapping("/import-table")
+	public String loadImportTableFragment(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request, Model model) {
+
+		model.addAttribute("fa16ImportToken", sessionManager.getFromMap("FA16_IMPORT_TOKEN"));
+		model.addAttribute("deftab", "tab1");
+		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
+
+		Pageable pageable = PageRequest.of(page, size);
+		List<Tempvoucher> tempvouchers = tempVoucherRepo.findAllByZid(sessionManager.getBusinessId(), pageable).toList();
+		for(Tempvoucher t : tempvouchers) {
+			if(t.getBusinessUnit() != null) {
+				Optional<Cabunit> businessUnitOp = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), t.getBusinessUnit()));
+				if(businessUnitOp.isPresent()) t.setBusinessUnitName(businessUnitOp.get().getXname());
+			}
+
+			if(t.getDebitAcc() != null) {
+				Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getDebitAcc()));
+				if(accountOp.isPresent()) t.setDebitAccountName(accountOp.get().getXdesc());
+			}
+
+			if(t.getDebitSubAcc() != null) {
+				Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getDebitSubAcc()));
+				if(acsubOp.isPresent()) t.setDebitSubAccountName(acsubOp.get().getXname());
+			}
+
+			if(t.getCreditAcc() != null) {
+				Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getCreditAcc()));
+				if(accountOp.isPresent()) t.setCreditAccountName(accountOp.get().getXdesc());
+			}
+
+			if(t.getCreditSubAcc() != null) {
+				Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), t.getCreditSubAcc()));
+				if(acsubOp.isPresent()) t.setCreditSubAccountName(acsubOp.get().getXname());
+			}
+		}
+		model.addAttribute("tempvouchers", tempvouchers);
+
+		return "pages/FA16/FA16-fragments::import-table";
 	}
 
 	@Transactional
@@ -863,7 +901,7 @@ public class FA16 extends KitController {
 				responseHelper.setErrorStatusAndMessage("Credit sub account required");
 				return responseHelper.getResponse();
 			} else {
-				Optional<Acsub> creditSubAccOp = acsubRepo.findByZidAndXsubAndXtype(sessionManager.getBusinessId(), tempvoucher.getCreditSubAcc(), dAccUsage);
+				Optional<Acsub> creditSubAccOp = acsubRepo.findByZidAndXsubAndXtype(sessionManager.getBusinessId(), tempvoucher.getCreditSubAcc(), cAccUsage);
 				if(!creditSubAccOp.isPresent()) {
 					responseHelper.setErrorStatusAndMessage("Credit sub account not exist in this system");
 					return responseHelper.getResponse();
@@ -901,14 +939,57 @@ public class FA16 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
+	@DeleteMapping("/import/delete")
+	public @ResponseBody Map<String, Object> deleteRow(@RequestParam Integer xrow){
+
+		Optional<Tempvoucher> existOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), xrow));
+		if(!existOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Data not found in this system to do delete");
+			return responseHelper.getResponse();
+		}
+
+		Tempvoucher existObj = existOp.get();
+
+		try {
+			tempVoucherRepo.delete(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("import-table-container", "/FA16/import-table?page=0&size=10"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Data deleted successfully");
+		return responseHelper.getResponse();
+	}
+
 	@GetMapping("/subaccount/{type}")
 	public String loadSubAccountForm(@PathVariable String type, @RequestParam Integer xrow, @RequestParam Integer xacc, Model model) {
 		Optional<Tempvoucher> vOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), xrow));
 		Tempvoucher t = vOp.isPresent() ? vOp.get() : new Tempvoucher();
 		if("credit".equals(type)) {
 			t.setCreditAcc(xacc);
+			t.setCreditSubAcc(null);
+
+			if(t.getCreditAcc() != null) {
+				Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getCreditAcc()));
+				if(accountOp.isPresent()) {
+					t.setCreditAccountName(accountOp.get().getXdesc());
+					model.addAttribute("accountUsage", accountOp.get().getXaccusage());
+				}
+			}
 		} else {
 			t.setDebitAcc(xacc);
+			t.setDebitSubAcc(null);
+
+			if(t.getDebitAcc() != null) {
+				Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), t.getDebitAcc()));
+				if(accountOp.isPresent()) {
+					t.setDebitAccountName(accountOp.get().getXdesc());
+					model.addAttribute("accountUsage", accountOp.get().getXaccusage());
+				}
+			}
 		}
 		model.addAttribute("t", t);
 		return "pages/FA16/FA16-fragments::"+type+"subacc-field";

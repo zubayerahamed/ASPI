@@ -451,6 +451,8 @@ kit.ui.config.advancedSearchBtInit = function(){
 		$(this).siblings('input.search-val').val("");
 
 		var ids = $(this).data('dependentfieldsid');
+		if(ids == undefined) return;
+
 		const idarr = ids.split(',');
 
 		$.each(idarr, function(index, value) {
