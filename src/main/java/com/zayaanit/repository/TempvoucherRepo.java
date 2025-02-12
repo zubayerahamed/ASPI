@@ -37,4 +37,6 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 	public Page<Tempvoucher> findAllByZid(Integer zid, Pageable pageable);
 
 	long countByZid(Integer zid);
+
+	long countByZidAndAllOk(Integer zid, Boolean allOk);
 }

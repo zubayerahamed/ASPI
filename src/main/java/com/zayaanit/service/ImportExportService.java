@@ -27,6 +27,8 @@ public interface ImportExportService {
 
 	public void importCSV(AsyncCSVResult asyncCSVResult);
 
+	public void confirmImportData(AsyncCSVResult asyncCSVResult);
+
 	public <E extends Enum<E> & GenericImportExportColumns> String getHeader(Class<E> clazz);
 
 	public String getHeader();

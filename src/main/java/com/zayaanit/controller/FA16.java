@@ -586,7 +586,7 @@ public class FA16 extends KitController {
 	}
 
 	@GetMapping("/download/template")
-	public void exportExcel(HttpServletResponse response) throws IOException {
+	public void downloadExcelTemplate(HttpServletResponse response) throws IOException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
 		ServletOutputStream out = response.getOutputStream();
 
@@ -725,6 +725,7 @@ public class FA16 extends KitController {
 				}
 
 				sessionManager.addToMap(token, asyncCSVResult);
+				sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
 				sessionManager.addToMap("FA16_IMPORT_TOKEN", token);
 
 				responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
@@ -737,6 +738,39 @@ public class FA16 extends KitController {
 		}
 
 		responseHelper.setSuccessStatusAndMessage("File uploaded successfully");
+		return responseHelper.getResponse();
+	}
+
+	@PostMapping("/import/validation/confirm")
+	public @ResponseBody Map<String, Object> validateAndConfirmImport() throws IOException {
+
+		String token = UUID.randomUUID().toString();
+		AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
+				.setUpdateExisting(false)
+				.setIgnoreHeading(true)
+				.setDelimeterType(',')
+				.setImportDate(new Date())
+				.setLatch(new CountDownLatch(1))
+				.setToken(token)
+				.setProgress(0.0)
+				.setIsWorkInProgress(true)
+				.setAllOk(true)
+				.setFileName(null)
+				.setUploadedFileLocation(null)
+				.setModuleName("FA16")
+				.setBusinessId(sessionManager.getBusinessId())
+				.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
+
+		ImportExportService importExportService = getImportExportService("FA16");
+
+		asyncCSVProcessor.confirmImportData(asyncCSVResult, importExportService);
+
+		sessionManager.addToMap(token, asyncCSVResult);
+		sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
+		sessionManager.addToMap("FA16_IMPORT_TOKEN", token);
+
+		responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
+		responseHelper.setSuccessStatusAndMessage("Validation & Confirm Import process started");
 		return responseHelper.getResponse();
 	}
 
@@ -764,7 +798,7 @@ public class FA16 extends KitController {
 	}
 
 	@GetMapping("/import/edit")
-	public String loadEditForm(@RequestParam Integer xrow, Model model) {
+	public String loadRowEditForm(@RequestParam Integer xrow, Model model) {
 		Optional<Tempvoucher> vOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), xrow));
 		Tempvoucher t = vOp.isPresent() ? vOp.get() : new Tempvoucher();
 		if(t.getBusinessUnit() != null) {
@@ -796,7 +830,7 @@ public class FA16 extends KitController {
 	}
 
 	@GetMapping("/import/row-actual")
-	public String loadTableRow(@RequestParam Integer xrow, Model model) {
+	public String loadSingleRow(@RequestParam Integer xrow, Model model) {
 		Optional<Tempvoucher> vOp = tempVoucherRepo.findById(new TempvoucherPK(sessionManager.getBusinessId(), xrow));
 		Tempvoucher t = vOp.isPresent() ? vOp.get() : new Tempvoucher();
 		if(t.getBusinessUnit() != null) {
@@ -829,7 +863,7 @@ public class FA16 extends KitController {
 
 	@Transactional
 	@PostMapping("/import/update")
-	public @ResponseBody Map<String, Object> update(Tempvoucher tempvoucher, BindingResult bindingResult){
+	public @ResponseBody Map<String, Object> updateRow(Tempvoucher tempvoucher, BindingResult bindingResult){
 
 		// VALIDATE
 		if(tempvoucher.getXrow() == null) {
@@ -893,6 +927,11 @@ public class FA16 extends KitController {
 			}
 		}
 
+		if(tempvoucher.getCreditAcc() == null) {
+			responseHelper.setErrorStatusAndMessage("Credit account required");
+			return responseHelper.getResponse();
+		}
+
 		Optional<Acmst> creditAccountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), tempvoucher.getCreditAcc()));
 		if(!creditAccountOp.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Credit account not exist in this system");
@@ -938,6 +977,8 @@ public class FA16 extends KitController {
 		BeanUtils.copyProperties(tempvoucher, existObj, "zid", "xrow");
 
 		try {
+			existObj.setAllOk(true);
+			existObj.setErrorDetails(null);
 			existObj = tempVoucherRepo.save(existObj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());

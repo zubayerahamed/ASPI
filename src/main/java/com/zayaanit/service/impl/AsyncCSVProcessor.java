@@ -48,6 +48,12 @@ public class AsyncCSVProcessor {
 	}
 
 	@Async
+	public void confirmImportData(AsyncCSVResult asyncCSVResult, ImportExportService importExportService) {
+		importExportService.confirmImportData(asyncCSVResult);
+		asyncCSVResult.getLatch().countDown();
+	}
+
+	@Async
 	public void importDataFromCSV(AsyncCSVResult asyncCSVResult, ImportExportService importExportService) {
 		importExportService.importCSV(asyncCSVResult);
 		asyncCSVResult.getLatch().countDown();

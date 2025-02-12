@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.commons.csv.CSVFormat;
@@ -21,6 +22,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -29,13 +31,24 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.zayaanit.entity.Acmst;
+import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Tempvoucher;
+import com.zayaanit.entity.pk.AcmstPK;
+import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.model.AsyncCSVResult;
 import com.zayaanit.model.CSVError;
 import com.zayaanit.model.ImportExportModuleColumn;
+import com.zayaanit.repository.AcmstRepo;
+import com.zayaanit.repository.AcsubRepo;
+import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.TempvoucherRepo;
 import com.zayaanit.service.GenericImportExportColumns;
 
@@ -50,6 +63,9 @@ import lombok.extern.slf4j.Slf4j;
 public class FA16ImportExport extends AbstractImportExport {
 
 	@Autowired private TempvoucherRepo tempvoucherRepo;
+	@Autowired private CabunitRepo cabunitRepo;
+	@Autowired private AcmstRepo acmstRepo;
+	@Autowired private AcsubRepo acsubRepo;
 
 	@Override
 	public String showExportImportPage(Model model) {
@@ -370,6 +386,143 @@ public class FA16ImportExport extends AbstractImportExport {
 	public void importCSV(AsyncCSVResult asyncCSVResult) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void confirmImportData(AsyncCSVResult asyncCSVResult) {
+		long totalLine = tempvoucherRepo.countByZid(asyncCSVResult.getBusinessId());
+		int pageSize = 100;
+		int page = 0;
+		Integer currentRowCount = 0;
+		Sort.Direction direction = Sort.Direction.ASC;
+
+		Pageable pageable;
+		List<Tempvoucher> tempvouchers;
+
+		do {
+			pageable = PageRequest.of(page, pageSize, Sort.by(new Sort.Order(direction, "xrow")));
+			tempvouchers = tempvoucherRepo.findAllByZid(asyncCSVResult.getBusinessId(), pageable).toList();
+
+			// Process the retrieved chunk
+			processTempVouchers(tempvouchers, currentRowCount, totalLine, asyncCSVResult);
+
+			page++; // Move to the next page
+		} while (!tempvouchers.isEmpty()); // Continue until no more data
+
+		long totalErrors = tempvoucherRepo.countByZidAndAllOk(asyncCSVResult.getBusinessId(), Boolean.FALSE);
+		if(totalErrors > 0) {
+			asyncCSVResult.setAllOk(false);
+		} else {
+			asyncCSVResult.setAllOk(true);
+			try {
+				tempvoucherRepo.FA_ImportVoucher(asyncCSVResult.getBusinessId(), asyncCSVResult.getLoggedInUserDetail().getUsername());
+			} catch (Exception e) {
+				log.error(e.getCause().getMessage());
+				asyncCSVResult.setAllOk(false);
+			}
+		}
+	}
+
+	private void processTempVouchers(List<Tempvoucher> tempvouchers, Integer currentRowCount, long totalLine, AsyncCSVResult asyncCSVResult) {
+		for (Tempvoucher tempvoucher : tempvouchers) {
+			currentRowCount++;
+
+			Double progress = ((double) (currentRowCount) / totalLine) * 100;
+			asyncCSVResult.setProgress(progress);
+			asyncCSVResult.setAllOk(true);
+
+			// Your processing logic here
+			// validate every thing
+			StringBuilder errorDetail = new StringBuilder();
+
+			if(tempvoucher.getVoucherDate() == null) {
+				errorDetail.append("Voucher date required | ");
+			}
+
+			if(tempvoucher.getBusinessUnit() == null) {
+				errorDetail.append("Business unit required | ");
+			} else {
+				Optional<Cabunit> businessUnitOp = cabunitRepo.findById(new CabunitPK(asyncCSVResult.getBusinessId(), tempvoucher.getBusinessUnit()));
+				if(!businessUnitOp.isPresent()) {
+					errorDetail.append("Business unit not exist in this system | ");
+				}
+			}
+
+			if(tempvoucher.getDebitAcc() == null) {
+				errorDetail.append("Debit account required | ");
+			} else {
+				Optional<Acmst> debitAccountOp =  acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getDebitAcc()));
+				if(!debitAccountOp.isPresent()) {
+					errorDetail.append("Debit account not exist in this system | ");
+				} else {
+					Acmst debitAccount = debitAccountOp.get();
+					String dAccUsage = debitAccount.getXaccusage();
+
+					if("Default".equals(dAccUsage)) {
+						if(tempvoucher.getDebitSubAcc() != null) {
+							errorDetail.append("You can't set any debit sub account for this Default debit account type | ");
+						}
+					} else {
+						if(tempvoucher.getDebitSubAcc() == null) {
+							errorDetail.append("Debit sub account required | ");
+						} else {
+							Optional<Acsub> debitSubAccOp = acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getDebitSubAcc(), dAccUsage);
+							if(!debitSubAccOp.isPresent()) {
+								errorDetail.append("Debit sub account not exist in this system | ");
+							}
+						}
+					}
+				}
+			}
+
+			
+
+			if(tempvoucher.getCreditAcc() == null) {
+				errorDetail.append("Credit account required | ");
+			} else {
+				Optional<Acmst> creditAccountOp =  acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getCreditAcc()));
+				if(!creditAccountOp.isPresent()) {
+					errorDetail.append("Credit account not exist in this system | ");
+				} else {
+					Acmst creditAccount = creditAccountOp.get();
+					String cAccUsage = creditAccount.getXaccusage();
+
+					if("Default".equals(cAccUsage)) {
+						if(tempvoucher.getCreditSubAcc() != null) {
+							errorDetail.append("You can't set any credit sub account for this Default credit account type | ");
+						}
+					} else {
+						if(tempvoucher.getCreditSubAcc() == null) {
+							errorDetail.append("Credit sub account required | ");
+						} else {
+							Optional<Acsub> creditSubAccOp = acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getCreditSubAcc(), cAccUsage);
+							if(!creditSubAccOp.isPresent()) {
+								errorDetail.append("Credit sub account not exist in this system | ");
+							}
+						}
+					}
+				}
+			}
+
+			if(tempvoucher.getAmount() == null) {
+				errorDetail.append("Amount required | ");
+			} else {
+				if(tempvoucher.getAmount().compareTo(BigDecimal.ZERO) != 1) {
+					errorDetail.append("Invalid amount | ");
+				}
+			}
+
+			if(StringUtils.isNotBlank(tempvoucher.getNarration()) && tempvoucher.getNarration().length() > 200) {
+				errorDetail.append("Narration is too long. Write narration up to 200 character | ");
+			}
+
+			if(StringUtils.isNotBlank(errorDetail.toString())) {
+				tempvoucher.setAllOk(false);
+				tempvoucher.setErrorDetails(errorDetail.toString());
+				tempvoucherRepo.save(tempvoucher);
+			}
+
+		}
 	}
 
 	@Override

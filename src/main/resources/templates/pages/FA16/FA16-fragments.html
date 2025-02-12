@@ -472,7 +472,7 @@
 
 
 <tr th:remove="tag" th:fragment="row-actual" xmlns:th="http://www.thymeleaf.org" th:with="df=${'yyyy-MM-dd'}">
-	<td th:classappend="${'row-' + t.xrow}">
+	<td class="text-center" th:classappend="${t.allOk eq false} ? 'bg-danger bg-opacity-25 row-'  + ${t.xrow} : 'row-' + ${t.xrow}">
 		<input type="checkbox" class="voucher-selection" th:attr="data-xrow=${t.xrow}">
 	</td>
 	<td th:classappend="${'row-' + t.xrow}" th:text="${t.voucherDate == null ? '' : #dates.format(t.voucherDate, df)}"></td>
@@ -484,6 +484,7 @@
 	<td th:classappend="${'row-' + t.xrow}" th:text="${t.amount}"></td>
 	<td th:classappend="${'row-' + t.xrow}" th:text="${t.narration}"></td>
 	<td th:classappend="${'row-' + t.xrow}" class="text-end">
+		<button th:if="${t.allOk eq false}" type="button" class="btn btn-sm btn-warning" data-bs-popup="tooltip" th:title="${t.errorDetails}" data-bs-placement="left" id="left"><i class="ph-bug"></i></button>
 		<button th:attr="data-reloadurl='/FA16/import/edit?xrow=' + ${t.xrow}, data-xrow=${t.xrow}" type="button" class="btn btn-primary btn-sm btn-row-edit">
 			<i class="ph-note-pencil"></i>
 		</button>
@@ -779,7 +780,7 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th><input type="checkbox" id="select-all-rows"></th>
+						<th class="text-center"><input type="checkbox" id="select-all-rows"></th>
 						<th>Voucher Date</th>
 						<th>Business Unit</th>
 						<th>Debit Acc</th>
@@ -963,6 +964,71 @@
 				e.preventDefault();
 				var linkUrl = getBasepath() + '/FA16/download/template';
 				window.open(linkUrl, '_blank');
+			});
+
+			$('.btn-confirm-upload').off('click').on('click', function(e){
+				e.preventDefault();
+				var linkUrl = getBasepath() + '/FA16/import/validation/confirm';
+				var formData = new FormData();
+
+				resetProgressBar();
+				showProgress('bg-success', 'Validating Data');
+				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+
+				$.ajax({
+					url: linkUrl,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (data) {
+						if(data.status == 'SUCCESS'){
+							if(data.displayMessage == true) showMessage(data.status.toLowerCase(), data.message);
+
+							if(data.asyncCSVResult.isWorkInProgress == true){
+
+								setTimeout(() => {
+									checkUploadStatus(data.asyncCSVResult.token);
+								}, 1000);
+
+							} else {
+
+								setTimeout(() => {
+									hideProgress(true);
+									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+
+									if(data.asyncCSVResult.allOk == true) {
+										showMessage('success', 'Import Confirmed successfully');
+									} else {
+										showMessage('error', 'Import failed. There has some error in data.');
+									}
+
+									sectionReloadAjaxReq({
+										id : 'import-table-container',
+										url : '/FA16/import-table'
+									});
+
+								}, 1000);
+
+							}
+
+						} else {
+							$('#progressBar').addClass('bg-danger');
+							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+							showMessage(data.status.toLowerCase(), data.message);
+						}
+					},
+					error: function (jqXHR, status, errorThrown) {
+						loadingMask2.hide();
+						if (jqXHR.status === 401) {
+							// Session is invalid, reload the url to go back to login page
+							location.reload();
+						} else {
+							showMessage("error", jqXHR.responseJSON.message);
+						}
+					}
+				});
+				
 			});
 
 			$('.btn-upload-file').click(function () {

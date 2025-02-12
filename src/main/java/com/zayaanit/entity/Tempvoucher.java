@@ -84,6 +84,12 @@ public class Tempvoucher implements Serializable {
 	@Column(name = "Narration", length = 200)
 	private String narration;
 
+	@Column(name = "AllOk")
+	private Boolean allOk;
+
+	@Column(name = "ErrorDetails")
+	private String errorDetails;
+
 	@Transient
 	private String businessUnitName;
 	@Transient
