@@ -2,6 +2,8 @@ package com.zayaanit.repository;
 
 
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -39,4 +41,6 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 	long countByZid(Integer zid);
 
 	long countByZidAndAllOk(Integer zid, Boolean allOk);
+
+	void deleteByZidAndXrowIn(Integer zid, List<Integer> xrows);
 }

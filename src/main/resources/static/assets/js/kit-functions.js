@@ -368,7 +368,7 @@ function submitMultipartForm(submitUrl, submitType, targettedForm, frommodal){
 }
 
 
-function deleteRequest(customurl, data){
+function deleteRequest(customurl, data, callbackFunction, callbackFunctionIfSuccess, callbackFunctionIfError){
 	loadingMask2.show();
 	$.ajax({
 		url : customurl,
@@ -378,6 +378,10 @@ function deleteRequest(customurl, data){
 			loadingMask2.hide();
 			if(data.status == 'SUCCESS'){
 				if(data.displayMessage == true) showMessage(data.status.toLowerCase(), data.message);
+
+				if(callbackFunctionIfSuccess != undefined && callbackFunctionIfSuccess != null){
+					callbackFunctionIfSuccess();
+				}
 
 				if(data.triggermodalurl){
 					modalLoader(getBasepath() + data.triggermodalurl, data.modalid);
@@ -429,7 +433,7 @@ function deleteRequest(customurl, data){
 
 
 
-function actionPostRequest(customurl, data, timeout){
+function actionPostRequest(customurl, data, timeout, callbackFunction, callbackFunctionIfSuccess, callbackFunctionIfError){
 	loadingMask2.show();
 	$.ajax({
 		url : customurl,
@@ -439,6 +443,10 @@ function actionPostRequest(customurl, data, timeout){
 			loadingMask2.hide();
 			if(data.status == 'SUCCESS'){
 				if(data.displayMessage == true) showMessage(data.status.toLowerCase(), data.message);
+
+				if(callbackFunctionIfSuccess != undefined && callbackFunctionIfSuccess != null){
+					callbackFunctionIfSuccess();
+				}
 
 				if(data.triggermodalurl){
 					modalLoader(getBasepath() + data.triggermodalurl, data.modalid);
@@ -473,6 +481,7 @@ function actionPostRequest(customurl, data, timeout){
 					});
 				}
 
+				if(timeout == undefined || timeout == null) timeout = 2000;
 				showMessage(data.status.toLowerCase(), data.message, timeout);
 			}
 		}, 

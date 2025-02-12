@@ -7,7 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,9 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ExcelCellType;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.AsyncCSVResult;
+import com.zayaanit.model.FA18SearchParam;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.ReloadSectionParams;
 import com.zayaanit.model.YearPeriodResult;
 import com.zayaanit.repository.AcdetailRepo;
 import com.zayaanit.repository.AcheaderRepo;
@@ -988,6 +992,39 @@ public class FA16 extends KitController {
 		reloadSections.add(new ReloadSection("row-actual-container-" + tempvoucher.getXrow(), "/FA16/import/row-actual?xrow=" + tempvoucher.getXrow()));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Data updated successfully");
+		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@PostMapping("/import/delete-selected-rows")
+	public @ResponseBody Map<String, Object> deleteAllSelectedRows(@RequestParam String selectedVouchers) {
+
+		if(StringUtils.isBlank(selectedVouchers)) {
+			responseHelper.setErrorStatusAndMessage("No voucher seleted");
+			return responseHelper.getResponse();
+		}
+
+		List<String> vouchers = Arrays.asList(selectedVouchers.split(","));
+		if(vouchers.isEmpty()) {
+			responseHelper.setErrorStatusAndMessage("No voucher seleted");
+			return responseHelper.getResponse();
+		}
+
+		List<Integer> xrows = new ArrayList<>();
+		vouchers.stream().forEach(f -> {
+			xrows.add(Integer.valueOf(f));
+		});
+
+		try {
+			tempVoucherRepo.deleteByZidAndXrowIn(sessionManager.getBusinessId(), xrows);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("import-table-container", "/FA16/import-table?page=0&size=10"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Slected data deleted successfully");
 		return responseHelper.getResponse();
 	}
 

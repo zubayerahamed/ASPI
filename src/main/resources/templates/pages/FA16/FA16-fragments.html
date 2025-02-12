@@ -473,7 +473,7 @@
 
 <tr th:remove="tag" th:fragment="row-actual" xmlns:th="http://www.thymeleaf.org" th:with="df=${'yyyy-MM-dd'}">
 	<td class="text-center" th:classappend="${t.allOk eq false} ? 'bg-danger bg-opacity-25 row-'  + ${t.xrow} : 'row-' + ${t.xrow}">
-		<input type="checkbox" class="voucher-selection" th:attr="data-xrow=${t.xrow}">
+		<input type="checkbox" class="row-selection" th:attr="data-xrow=${t.xrow}">
 	</td>
 	<td th:classappend="${'row-' + t.xrow}" th:text="${t.voucherDate == null ? '' : #dates.format(t.voucherDate, df)}"></td>
 	<td th:classappend="${'row-' + t.xrow}" th:text="${t.businessUnit != null ? t.businessUnit + ' - ' + t.businessUnitName : ''}"></td>
@@ -526,6 +526,7 @@
 
 		$(document).ready(function(){
 			tableBtnEvent();
+			rowSelectionEvent();
 		})
 	</script>
 </tr>
@@ -758,8 +759,8 @@
 	<div class="card">
 		<div class="card-header d-sm-flex justify-content-center align-items-sm-center p-2">
 			<input type="hidden" class="fa16ImportToken" th:value="${fa16ImportToken}"/>
-			<button class="btn btn-light btn-sm btn-download-template ms-1 mb-1"><i class="ph-download me-2"></i> Download Template</button>
 			<button class="btn btn-light btn-sm selection-counter mb-1 d-none"></button>
+			<button class="btn btn-light btn-sm btn-download-template ms-1 mb-1"><i class="ph-download me-2"></i> Download Template</button>
 			<button class="btn btn-primary btn-sm btn-upload-file ms-1 mb-1"><i class="ph-upload me-2"></i> Upload File</button>
 			<button class="btn btn-primary btn-sm btn-confirm-upload ms-1 mb-1"><i class="ph-thumbs-up me-2"></i> Confirm Upload</button>
 			<button class="btn btn-danger btn-sm btn-delete-all ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
@@ -864,6 +865,133 @@
 
 	</div>
 	<script type="text/javascript">
+	
+		function initRowSelection(){
+			var allSelectedCounter = 0;
+			$('.row-selection').each(function(i, item){
+				var voucher = $(item).data('xrow');
+				if(selectedVouchers.includes(voucher)){
+					$(item).prop('checked', true);
+					allSelectedCounter ++;
+				} else {
+					$(item).prop('checked', false);
+				}
+
+				if(selectedVouchers.length > 0){
+					$('.selection-counter').removeClass('d-none');
+					$('.selection-counter').html(selectedVouchers.length + ' Selected');
+				} else {
+					$('.selection-counter').addClass('d-none');
+				}
+
+				if(allSelectedCounter == $('.row-selection').length){
+					if(!$('#select-all-rows').is(":checked")){
+						$('#select-all-rows').prop('checked', true);
+					}
+				} else {
+					if($('#select-all-rows').is(":checked")){
+						$('#select-all-rows').prop('checked', false);
+					}
+				}
+			})
+		}
+
+		function rowSelectionEvent(){
+			// Pre select
+			initRowSelection();
+
+			$('#select-all-rows').off('click').on('click', function(){
+				if($(this).is(":checked")){
+					$('.row-selection').each(function(i, item){
+						$(item).prop('checked', true);
+						var voucher = $(item).data('xrow');
+						if (!selectedVouchers.includes(voucher)) {
+							selectedVouchers.push(voucher); // Add only if not already in array
+						}
+					})
+				} else {
+					$('.row-selection').each(function(i, item){
+						$(item).prop('checked', false);
+						var voucher = $(item).data('xrow');
+						selectedVouchers = selectedVouchers.filter(function(item) {
+							return item !== voucher; // Remove the unchecked voucher
+						});
+					})
+				}
+
+				/* if(selectedVouchers.length > 0){
+					$('.selection-counter').removeClass('d-none');
+					$('.selection-counter').html(selectedVouchers.length + ' Selected');
+				} else {
+					$('.selection-counter').addClass('d-none');
+				}
+
+				if(selectedVouchers.length == 10){
+					if(!$('#select-all-rows').is(":checked")){
+						$('#select-all-rows').prop('checked', true);
+					}
+				} else {
+					if($('#select-all-rows').is(":checked")){
+						$('#select-all-rows').prop('checked', false);
+					}
+				} */
+
+				initRowSelection();
+			});
+
+			$('.row-selection').on('change', function(e){
+				var voucher = $(this).data('xrow');
+				if ($(this).is(':checked')) {
+					if (!selectedVouchers.includes(voucher)) {
+						selectedVouchers.push(voucher); // Add only if not already in array
+					}
+				} else {
+					selectedVouchers = selectedVouchers.filter(function(item) {
+						return item !== voucher; // Remove the unchecked voucher
+					});
+				}
+
+				/* if(selectedVouchers.length > 0){
+					$('.selection-counter').removeClass('d-none');
+					$('.selection-counter').html(selectedVouchers.length + ' Selected');
+				} else {
+					$('.selection-counter').addClass('d-none');
+				} */
+
+				/* if(selectedVouchers.length == 10){
+					if(!$('#select-all-rows').is(":checked")){
+						$('#select-all-rows').prop('checked', true);
+					}
+				} else {
+					if($('#select-all-rows').is(":checked")){
+						$('#select-all-rows').prop('checked', false);
+					}
+				} */
+
+				initRowSelection();
+			});
+
+			$('.btn-delete-all').off('click').on('click', function(e){
+				e.preventDefault();
+
+				if(selectedVouchers.length <= 0){
+					showMessage('error', 'Please select vouchers first');
+					return;
+				}
+
+				if(!confirm("Are you sure, to delete all selected vouchers?")){
+					return;
+				}
+
+				actionPostRequest(getBasepath() + '/FA16/import/delete-selected-rows', {
+					"selectedVouchers" : selectedVouchers.length > 0 ? selectedVouchers.join(',') : "",
+				}, null, null, () => {
+					selectedVouchers = [];
+				});
+			});
+		}
+	
+	
 		function loadPage(page) {
 			console.log("here");
 			sectionReloadAjaxReq({
@@ -890,10 +1018,15 @@
 
 			$('.btn-row-delete').off('click').on('click', function(e){
 				e.preventDefault();
+				var rowId = $(this).data('xrow');
 				if(!confirm("Are you sure, to delete this?")){
 					return;
 				}
-				deleteRequest($(this).data('url'));
+				deleteRequest($(this).data('url'), null, null, () => {
+					selectedVouchers = selectedVouchers.filter(function(item) {
+						return item !== rowId; // Remove the unchecked voucher
+					});
+				});
 			})
 		}
 
@@ -917,6 +1050,8 @@
 							if(data.allOk == true) {
 								showMessage('success', 'Data imported successfully');
 
+								selectedVouchers = [];
+
 								sectionReloadAjaxReq({
 									id : 'import-table-container',
 									url : '/FA16/import-table'
@@ -924,6 +1059,11 @@
 
 							} else {
 								showMessage('error', 'Data import failed');
+
+								sectionReloadAjaxReq({
+									id : 'import-table-container',
+									url : '/FA16/import-table'
+								});
 							}
 						}, 1000);
 						return;
@@ -949,8 +1089,6 @@
 
 		$(document).ready(function(){
 			kit.ui.init();
-			
-			//tableBtnEvent();
 
 			const fa16ImportToken = $('.fa16ImportToken').val();
 			if(fa16ImportToken != undefined && fa16ImportToken != null && fa16ImportToken != ''){
@@ -999,6 +1137,7 @@
 
 									if(data.asyncCSVResult.allOk == true) {
 										showMessage('success', 'Import Confirmed successfully');
+										selectedVouchers = [];
 									} else {
 										showMessage('error', 'Import failed. There has some error in data.');
 									}
@@ -1016,6 +1155,11 @@
 							$('#progressBar').addClass('bg-danger');
 							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
 							showMessage(data.status.toLowerCase(), data.message);
+
+							sectionReloadAjaxReq({
+								id : 'import-table-container',
+								url : '/FA16/import-table'
+							});
 						}
 					},
 					error: function (jqXHR, status, errorThrown) {
