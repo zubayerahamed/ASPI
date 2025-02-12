@@ -764,6 +764,8 @@
 			<button class="btn btn-primary btn-sm btn-upload-file ms-1 mb-1"><i class="ph-upload me-2"></i> Upload File</button>
 			<button class="btn btn-primary btn-sm btn-confirm-upload ms-1 mb-1"><i class="ph-thumbs-up me-2"></i> Confirm Upload</button>
 			<button class="btn btn-danger btn-sm btn-delete-all ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
+			<button class="btn btn-danger btn-sm btn-delete-all-rows ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All</button>
+			<button class="btn btn-warning btn-sm btn-terminate-process ms-1 mb-1"><i class="ph-crosshair me-2"></i> Terminate Process</button>
 		</div>
 
 		<div class="card-body">
@@ -919,23 +921,6 @@
 					})
 				}
 
-				/* if(selectedVouchers.length > 0){
-					$('.selection-counter').removeClass('d-none');
-					$('.selection-counter').html(selectedVouchers.length + ' Selected');
-				} else {
-					$('.selection-counter').addClass('d-none');
-				}
-
-				if(selectedVouchers.length == 10){
-					if(!$('#select-all-rows').is(":checked")){
-						$('#select-all-rows').prop('checked', true);
-					}
-				} else {
-					if($('#select-all-rows').is(":checked")){
-						$('#select-all-rows').prop('checked', false);
-					}
-				} */
-
 				initRowSelection();
 			});
 
@@ -950,23 +935,6 @@
 						return item !== voucher; // Remove the unchecked voucher
 					});
 				}
-
-				/* if(selectedVouchers.length > 0){
-					$('.selection-counter').removeClass('d-none');
-					$('.selection-counter').html(selectedVouchers.length + ' Selected');
-				} else {
-					$('.selection-counter').addClass('d-none');
-				} */
-
-				/* if(selectedVouchers.length == 10){
-					if(!$('#select-all-rows').is(":checked")){
-						$('#select-all-rows').prop('checked', true);
-					}
-				} else {
-					if($('#select-all-rows').is(":checked")){
-						$('#select-all-rows').prop('checked', false);
-					}
-				} */
 
 				initRowSelection();
 			});
@@ -989,11 +957,23 @@
 					selectedVouchers = [];
 				});
 			});
+
+			$('.btn-delete-all-rows').off('click').on('click', function(e){
+				e.preventDefault();
+
+				if(!confirm("Are you sure, to delete all vouchers?")){
+					return;
+				}
+
+				actionPostRequest(getBasepath() + '/FA16/import/delete-all-rows', null, null, null, () => {
+					selectedVouchers = [];
+				});
+			});
+
 		}
 	
 	
 		function loadPage(page) {
-			console.log("here");
 			sectionReloadAjaxReq({
 				id : 'import-table-container',
 				url : '/FA16/import-table?size=10&page=' + page
@@ -1030,6 +1010,27 @@
 			})
 		}
 
+		function terminateProcess(){
+
+			var statusUrl = getBasepath() + '/FA16/process/terminate/';
+
+			$.ajax({
+				type : 'GET',
+				url : statusUrl,
+				success : function(data){
+
+				},
+				error : function(jqXHR, status, errorThrown){
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				}
+			});
+		}
+
 		function checkUploadStatus(token){
 			if(token == undefined || token == '') return;
 
@@ -1045,7 +1046,8 @@
 					if(data.isWorkInProgress == false){
 						setTimeout(() => {
 							hideProgress(true);
-							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+							enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 							if(data.allOk == true) {
 								showMessage('success', 'Data imported successfully');
@@ -1092,7 +1094,8 @@
 
 			const fa16ImportToken = $('.fa16ImportToken').val();
 			if(fa16ImportToken != undefined && fa16ImportToken != null && fa16ImportToken != ''){
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+				disableBtn(['btn-row-edit', 'btn-row-delete']);
 				resetProgressBar();
 				showProgress('bg-warning', 'Preparing Data');
 				checkUploadStatus(fa16ImportToken);
@@ -1104,6 +1107,16 @@
 				window.open(linkUrl, '_blank');
 			});
 
+			$('.btn-terminate-process').off('click').on('click', function(e){
+				e.preventDefault();
+
+				if(!confirm("Are you sure, to terminate process?")){
+					return;
+				}
+
+				terminateProcess();
+			});
+
 			$('.btn-confirm-upload').off('click').on('click', function(e){
 				e.preventDefault();
 				var linkUrl = getBasepath() + '/FA16/import/validation/confirm';
@@ -1111,7 +1124,8 @@
 
 				resetProgressBar();
 				showProgress('bg-success', 'Validating Data');
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+				disableBtn(['btn-row-edit', 'btn-row-delete']);
 
 				$.ajax({
 					url: linkUrl,
@@ -1133,7 +1147,8 @@
 
 								setTimeout(() => {
 									hideProgress(true);
-									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+									enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 									if(data.asyncCSVResult.allOk == true) {
 										showMessage('success', 'Import Confirmed successfully');
@@ -1153,7 +1168,8 @@
 
 						} else {
 							$('#progressBar').addClass('bg-danger');
-							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+							enableBtn(['btn-row-edit', 'btn-row-delete']);
 							showMessage(data.status.toLowerCase(), data.message);
 
 							sectionReloadAjaxReq({
@@ -1195,7 +1211,8 @@
 
 				resetProgressBar();
 				showProgress(null, 'Uploading file to server');
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+				disableBtn(['btn-row-edit', 'btn-row-delete']);
 
 				function uploadNextChunk(initialStart) {
 					var start = currentChunk * chunkSize;
@@ -1245,7 +1262,8 @@
 
 												setTimeout(() => {
 													hideProgress(true);
-													enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+													enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+													enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 													if(data.asyncCSVResult.allOk == true) {
 														showMessage('success', 'Data imported successfully');
@@ -1258,14 +1276,16 @@
 											}
 
 										} else {
-											enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+											enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+											enableBtn(['btn-row-edit', 'btn-row-delete']);
 										}
 
 									}, 1000);
 
 								} else {
 									$('#progressBar').addClass('bg-danger');
-									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all']);
+									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+									enableBtn(['btn-row-edit', 'btn-row-delete']);
 									showMessage(data.status.toLowerCase(), data.message);
 								}
 							}

@@ -87,6 +87,8 @@ public class FA16ImportExport extends AbstractImportExport {
 
 	@Override
 	public void processDataFromExcel(AsyncCSVResult asyncCSVResult) {
+		if(asyncCSVResult.isTerminated()) return;
+
 		String fileLocation = asyncCSVResult.getUploadedFileLocation();
 
 		// Make shure uploaded file is exist
@@ -110,12 +112,12 @@ public class FA16ImportExport extends AbstractImportExport {
 
 		if("xlsx".equalsIgnoreCase(extention) || "xls".equalsIgnoreCase(extention)) {
 			processXlsxFile(file, asyncCSVResult, extention);
-		} else if ("csv".equalsIgnoreCase(extention)) {
-			
-		}
+		} 
 	}
 
 	private void processXlsxFile(File file, AsyncCSVResult asyncCSVResult, String extention){
+		if(asyncCSVResult.isTerminated()) return;
+
 		try (
 			InputStream inputStream = new FileInputStream(file); 
 			Workbook workbook = "xlsx".equalsIgnoreCase(extention) ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream);
@@ -126,14 +128,20 @@ public class FA16ImportExport extends AbstractImportExport {
 			long totalLines = asyncCSVResult.isIgnoreHeading() ? sheet.getLastRowNum() : sheet.getLastRowNum() + 1;
 			int currentRowCount = asyncCSVResult.isIgnoreHeading() ? 0 : 1;
 
+			if(asyncCSVResult.isTerminated()) return;
+
 			while (rowIterator.hasNext()) {
+				if(asyncCSVResult.isTerminated()) {
+					throw new IllegalStateException("Process Terminated");
+				}
+
 				Row row = rowIterator.next();
 				if (currentRowCount == 0) { // Skip header row
 					currentRowCount++;
 					continue;
 				}
 
-				processExcelRow(row, asyncCSVResult.getBusinessId());
+				processExcelRow(row, asyncCSVResult);
 
 				currentRowCount++;
 
@@ -148,18 +156,24 @@ public class FA16ImportExport extends AbstractImportExport {
 		}
 	}
 
-	private void processExcelRow(Row row, Integer businessId) {
+	private void processExcelRow(Row row, AsyncCSVResult asyncCSVResult) {
 		// Process each cell in the row
+		if(asyncCSVResult.isTerminated()) {
+			throw new IllegalStateException("Process Terminated");
+		}
 
 		Tempvoucher t;
 		try {
-			t = prepareTemVoucher(0, null, null, businessId);
+			t = prepareTemVoucher(0, null, null, asyncCSVResult.getBusinessId());
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
 		//int cellCount = 0;
 		for (Cell cell : row) {
+			if(asyncCSVResult.isTerminated()) {
+				throw new IllegalStateException("Process Terminated");
+			}
 			//cellCount++;
 
 			Object data = "";
@@ -183,7 +197,7 @@ public class FA16ImportExport extends AbstractImportExport {
 			}
 
 			try {
-				t = prepareTemVoucher(cell.getColumnIndex() + 1, t, data, businessId);
+				t = prepareTemVoucher(cell.getColumnIndex() + 1, t, data, asyncCSVResult.getBusinessId());
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
@@ -191,6 +205,9 @@ public class FA16ImportExport extends AbstractImportExport {
 		}
 
 		try {
+			if(asyncCSVResult.isTerminated()) {
+				throw new IllegalStateException("Process Terminated");
+			}
 			tempvoucherRepo.save(t);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
@@ -247,6 +264,10 @@ public class FA16ImportExport extends AbstractImportExport {
 
 	@Override
 	public void processCSV(AsyncCSVResult asyncCSVResult) {
+		if(asyncCSVResult.isTerminated()) {
+			throw new IllegalStateException("Process Terminated");
+		}
+
 		String fileLocation = asyncCSVResult.getUploadedFileLocation();
 		boolean ignoreHeading = asyncCSVResult.isIgnoreHeading();
 		char delimeterType = asyncCSVResult.getDelimeterType();
@@ -287,6 +308,9 @@ public class FA16ImportExport extends AbstractImportExport {
 				int currentRowCount = ignoreHeading ? 1 : 0;
 
 				for (CSVRecord row : csvParser) {
+					if(asyncCSVResult.isTerminated()) {
+						throw new IllegalStateException("Process Terminated");
+					}
 
 					Tempvoucher t = prepareTemVoucher(0, null, null, businessId);
 
@@ -390,6 +414,10 @@ public class FA16ImportExport extends AbstractImportExport {
 
 	@Override
 	public void confirmImportData(AsyncCSVResult asyncCSVResult) {
+		if(asyncCSVResult.isTerminated()) {
+			throw new IllegalStateException("Process Terminated");
+		}
+	
 		long totalLine = tempvoucherRepo.countByZid(asyncCSVResult.getBusinessId());
 		int pageSize = 100;
 		int page = 0;
@@ -400,11 +428,16 @@ public class FA16ImportExport extends AbstractImportExport {
 		List<Tempvoucher> tempvouchers;
 
 		do {
+			if(asyncCSVResult.isTerminated()) {
+				throw new IllegalStateException("Process Terminated");
+			}
+
 			pageable = PageRequest.of(page, pageSize, Sort.by(new Sort.Order(direction, "xrow")));
 			tempvouchers = tempvoucherRepo.findAllByZid(asyncCSVResult.getBusinessId(), pageable).toList();
 
 			// Process the retrieved chunk
 			processTempVouchers(tempvouchers, currentRowCount, totalLine, asyncCSVResult);
+			currentRowCount += tempvouchers.size();
 
 			page++; // Move to the next page
 		} while (!tempvouchers.isEmpty()); // Continue until no more data
@@ -425,6 +458,10 @@ public class FA16ImportExport extends AbstractImportExport {
 
 	private void processTempVouchers(List<Tempvoucher> tempvouchers, Integer currentRowCount, long totalLine, AsyncCSVResult asyncCSVResult) {
 		for (Tempvoucher tempvoucher : tempvouchers) {
+			if(asyncCSVResult.isTerminated()) {
+				throw new IllegalStateException("Process Terminated");
+			}
+
 			currentRowCount++;
 
 			Double progress = ((double) (currentRowCount) / totalLine) * 100;

@@ -41,6 +41,7 @@ public class AsyncCSVResult {
 	private Map<String, Object> response;
 
 	private boolean allOk = false;
+	private boolean terminated = false;
 	private String error;
 	private List<CSVError> csvErrors;
 

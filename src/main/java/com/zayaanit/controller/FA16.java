@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -65,9 +64,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ExcelCellType;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.AsyncCSVResult;
-import com.zayaanit.model.FA18SearchParam;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.model.ReloadSectionParams;
 import com.zayaanit.model.YearPeriodResult;
 import com.zayaanit.repository.AcdetailRepo;
 import com.zayaanit.repository.AcheaderRepo;
@@ -782,6 +779,15 @@ public class FA16 extends KitController {
 	public @ResponseBody AsyncCSVResult checkProgressStatus(@PathVariable String token){
 		AsyncCSVResult asyncCSVResult = (AsyncCSVResult) sessionManager.getFromMap(token);
 
+		if(asyncCSVResult.isTerminated()) {
+			asyncCSVResult.setIsWorkInProgress(false);
+			asyncCSVResult.setAllOk(false);
+			asyncCSVResult.setError("Process Terminated");
+			sessionManager.removeFromMap(token);
+			sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
+			return asyncCSVResult;
+		}
+
 		if(asyncCSVResult.getIsWorkInProgress()) {
 			if(!asyncCSVResult.isAllOk()) {
 				asyncCSVResult.setIsWorkInProgress(false);
@@ -796,6 +802,21 @@ public class FA16 extends KitController {
 			asyncCSVResult.setProgress(100.00);
 			sessionManager.removeFromMap(token);
 			sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
+		}
+
+		return asyncCSVResult;
+	}
+
+	@GetMapping("/process/terminate")
+	public @ResponseBody AsyncCSVResult terminateProcess(){
+		AsyncCSVResult asyncCSVResult = (AsyncCSVResult) sessionManager.getFromMap((String) sessionManager.getFromMap("FA16_IMPORT_TOKEN"));
+
+		if(asyncCSVResult.getIsWorkInProgress()) {
+			asyncCSVResult.setIsWorkInProgress(false);
+			asyncCSVResult.setAllOk(false);
+			asyncCSVResult.setTerminated(true);
+			asyncCSVResult.setError("Process Terminated");
+			return asyncCSVResult;
 		}
 
 		return asyncCSVResult;
@@ -1025,6 +1046,23 @@ public class FA16 extends KitController {
 		reloadSections.add(new ReloadSection("import-table-container", "/FA16/import-table?page=0&size=10"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Slected data deleted successfully");
+		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@PostMapping("/import/delete-all-rows")
+	public @ResponseBody Map<String, Object> deleteAllRows() {
+
+		try {
+			tempVoucherRepo.deleteAllByZid(sessionManager.getBusinessId());
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("import-table-container", "/FA16/import-table?page=0&size=10"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("All data deleted successfully");
 		return responseHelper.getResponse();
 	}
 
