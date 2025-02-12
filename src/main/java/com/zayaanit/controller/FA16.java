@@ -1,7 +1,9 @@
 package com.zayaanit.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,12 +24,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -599,7 +603,7 @@ public class FA16 extends KitController {
 		response.setHeader(headerKey, headerValue);
 
 		Workbook workbook = new SXSSFWorkbook(BATCH_SIZE);
-		Sheet sheet = workbook.createSheet("01");
+		Sheet sheet = workbook.createSheet("Voucher");
 		Row row = sheet.createRow(0);
 
 		CellStyle textStyle = workbook.createCellStyle();
@@ -665,6 +669,59 @@ public class FA16 extends KitController {
 		cell.setCellStyle(style);
 	}
 
+	@PostMapping("/process/excel")
+	public @ResponseBody Map<String, Object> processExcel(
+			@RequestParam("fileName") String fileName,
+			@RequestParam("sheetName") String sheetName
+			){
+
+		String fileLocation = appConfig.getImportExportPath() + File.separator + fileName;
+
+		File uploadedFile = null;
+		try {
+			uploadedFile = new File(fileLocation);
+			if (!uploadedFile.exists()) {
+				responseHelper.setErrorStatusAndMessage("File upload failed");
+				return responseHelper.getResponse();
+			}
+		} catch (Exception e) {
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
+		}
+
+		String token = UUID.randomUUID().toString();
+
+		AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
+				.setUpdateExisting(false)
+				.setIgnoreHeading(true)
+				.setDelimeterType(',')
+				.setImportDate(new Date())
+				.setLatch(new CountDownLatch(1))
+				.setToken(token)
+				.setProgress(0.0)
+				.setIsWorkInProgress(true)
+				.setAllOk(true)
+				.setFileName(fileName)
+				.setSelectedSheetName(sheetName)
+				.setUploadedFileLocation(fileLocation)
+				.setModuleName("FA16")
+				.setBusinessId(sessionManager.getBusinessId())
+				.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
+
+		ImportExportService importExportService = getImportExportService("FA16");
+
+		asyncCSVProcessor.processDataFromExcel(asyncCSVResult, importExportService);
+
+		sessionManager.addToMap(token, asyncCSVResult);
+		sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
+		sessionManager.addToMap("FA16_IMPORT_TOKEN", token);
+
+		responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
+
+		responseHelper.setSuccessStatusAndMessage("Excel processing started");
+		return responseHelper.getResponse();
+	}
+
 	@PostMapping("/upload/chunk")
 	public @ResponseBody Map<String, Object> uploadChunk(
 			@RequestParam("file") MultipartFile file,
@@ -692,15 +749,42 @@ public class FA16 extends KitController {
 
 		if (currentChunk == totalChunks - 1) {
 
-			if (fileName != null) {
+			String fileLocation = appConfig.getImportExportPath() + File.separator + fileName;
 
-				String csvFilenameWithLoation = appConfig.getImportExportPath() + File.separator + fileName;
-				if(StringUtils.isBlank(csvFilenameWithLoation)) {
-					responseHelper.setErrorStatusAndMessage("Something is wrong on processing file.");
+			File uploadedFile = null;
+			try {
+				uploadedFile = new File(fileLocation);
+				if (!uploadedFile.exists()) {
+					responseHelper.setErrorStatusAndMessage("File upload failed");
 					return responseHelper.getResponse();
 				}
+			} catch (Exception e) {
+				responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+				return responseHelper.getResponse();
+			}
 
+			String extention = getFileExtension(uploadedFile);
+			responseHelper.addDataToResponse("fileType", extention);
+			responseHelper.addDataToResponse("fileName", fileName);
+			if("xlsx".equalsIgnoreCase(extention) || "xls".equalsIgnoreCase(extention)) {
+				try (
+						InputStream inputStream = new FileInputStream(uploadedFile); 
+						Workbook workbook = "xlsx".equalsIgnoreCase(extention) ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream);
+					) {
+
+					List<String> sheetNames = new ArrayList<>();
+					for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+						sheetNames.add(workbook.getSheetName(i));
+					}
+
+					responseHelper.addDataToResponse("sheetNames", sheetNames);
+				} catch (Exception e) {
+					responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+					return responseHelper.getResponse();
+				}
+			} else {
 				String token = UUID.randomUUID().toString();
+
 				AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
 						.setUpdateExisting(false)
 						.setIgnoreHeading(true)
@@ -712,29 +796,65 @@ public class FA16 extends KitController {
 						.setIsWorkInProgress(true)
 						.setAllOk(true)
 						.setFileName(fileName)
-						.setUploadedFileLocation(csvFilenameWithLoation)
+						.setUploadedFileLocation(fileLocation)
 						.setModuleName("FA16")
 						.setBusinessId(sessionManager.getBusinessId())
 						.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
 
 				ImportExportService importExportService = getImportExportService("FA16");
 
-				if((fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))) {
-					asyncCSVProcessor.processDataFromExcel(asyncCSVResult, importExportService);
-				} else {
-					asyncCSVProcessor.processDataFromCSV(asyncCSVResult, importExportService);
-				}
+				asyncCSVProcessor.processDataFromCSV(asyncCSVResult, importExportService);
 
 				sessionManager.addToMap(token, asyncCSVResult);
 				sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
 				sessionManager.addToMap("FA16_IMPORT_TOKEN", token);
 
 				responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
-
-			} else {
-				responseHelper.setErrorStatusAndMessage("File name not found");
-				return responseHelper.getResponse();
 			}
+
+//			if (fileName != null) {
+//
+//				String csvFilenameWithLoation = appConfig.getImportExportPath() + File.separator + fileName;
+//				if(StringUtils.isBlank(csvFilenameWithLoation)) {
+//					responseHelper.setErrorStatusAndMessage("Something is wrong on processing file.");
+//					return responseHelper.getResponse();
+//				}
+//
+//				String token = UUID.randomUUID().toString();
+//				AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
+//						.setUpdateExisting(false)
+//						.setIgnoreHeading(true)
+//						.setDelimeterType(',')
+//						.setImportDate(new Date())
+//						.setLatch(new CountDownLatch(1))
+//						.setToken(token)
+//						.setProgress(0.0)
+//						.setIsWorkInProgress(true)
+//						.setAllOk(true)
+//						.setFileName(fileName)
+//						.setUploadedFileLocation(csvFilenameWithLoation)
+//						.setModuleName("FA16")
+//						.setBusinessId(sessionManager.getBusinessId())
+//						.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
+//
+//				ImportExportService importExportService = getImportExportService("FA16");
+//
+//				if((fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))) {
+//					asyncCSVProcessor.processDataFromExcel(asyncCSVResult, importExportService);
+//				} else {
+//					asyncCSVProcessor.processDataFromCSV(asyncCSVResult, importExportService);
+//				}
+//
+//				sessionManager.addToMap(token, asyncCSVResult);
+//				sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
+//				sessionManager.addToMap("FA16_IMPORT_TOKEN", token);
+//
+//				responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
+//
+//			} else {
+//				responseHelper.setErrorStatusAndMessage("File name not found");
+//				return responseHelper.getResponse();
+//			}
 
 		}
 

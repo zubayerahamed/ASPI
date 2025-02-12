@@ -217,6 +217,17 @@ public abstract class KitController extends BaseController {
 		}
 	}
 
+	protected String getFileExtension(File file) {
+		String fileName = file.getName();
+		int lastDotIndex = fileName.lastIndexOf('.');
+
+		if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
+			return fileName.substring(lastDotIndex + 1);
+		} else {
+			return ""; // No extension found
+		}
+	}
+
 	protected void prepareUnavailableStockList(Map<Integer, BigDecimal> qtyMap, Integer business, Integer store) {
 		if(unavailableStockList != null && !unavailableStockList.isEmpty()) {
 			unavailableStockList.clear();

@@ -122,7 +122,8 @@ public class FA16ImportExport extends AbstractImportExport {
 			InputStream inputStream = new FileInputStream(file); 
 			Workbook workbook = "xlsx".equalsIgnoreCase(extention) ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream);
 		) {
-			Sheet sheet = workbook.getSheetAt(0);
+//			Sheet sheet = workbook.getSheetAt(0);
+			Sheet sheet = workbook.getSheet(asyncCSVResult.getSelectedSheetName());
 			Iterator<Row> rowIterator = sheet.iterator();
 
 			long totalLines = asyncCSVResult.isIgnoreHeading() ? sheet.getLastRowNum() : sheet.getLastRowNum() + 1;

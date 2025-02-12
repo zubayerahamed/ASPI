@@ -31,6 +31,7 @@ public class AsyncCSVResult {
 	private String uploadedFileSize;
 	private String uploadedFileLocation;
 	private String fileLocationToImportData;
+	private String selectedSheetName;
 
 	private int totalNumberOfRecords;
 	private int numberOfCreateRecord;
