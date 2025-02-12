@@ -10,6 +10,52 @@
 	<!-- Content area -->
 	<div class="content">
 
+		<img th:src="@{/assets/images/excel_sample.png}" class="d-none excel-image-link">
+		<style>
+			.sheet-selection-container {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 15px;
+			}
+
+			.sheet-option {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				cursor: pointer;
+				padding: 10px;
+				border: 2px solid transparent;
+				border-radius: 10px;
+				transition: all 0.3s ease-in-out;
+			}
+
+			.sheet-option input {
+				display: none;
+			}
+
+			.sheet-option img {
+				width: 150px;
+				height: 150px;
+				object-fit: contain;
+				border: 1px solid #b3b3b3;
+				box-shadow: 0px 0px 10px #ddd;
+				border-radius: 10px;
+			}
+
+			.sheet-option label {
+				font-size: 18px;
+				font-weight: 500;
+				cursor: pointer;
+			}
+
+			.sheet-option.selected {
+				border-color: #007bff;
+				background-color: rgba(0, 123, 255, 0.1);
+			}
+		</style>
+
 		<div class="row">
 			<div class="col-xl-12">
 				<div class="card card-body">
@@ -17,12 +63,12 @@
 						<li class="nav-item" role="presentation">
 							<a href="#" class="nav-link" th:classappend="${deftab eq 'tab1' ? 'active' : ''}" id="pills-import-tab" data-bs-toggle="pill" data-bs-target="#pills-import" type="button" role="tab" aria-controls="pills-import" aria-selected="true">
 								<i class="ph-file-arrow-up me-2"></i>
-								Imported Voucher
+								Import Voucher
 							</a>
 						</li>
 						<li class="nav-item" role="presentation">
 							<a href="#" class="nav-link" th:classappend="${deftab eq 'tab2' ? 'active' : ''}" id="pills-voucher-tab" data-bs-toggle="pill" data-bs-target="#pills-voucher" type="button" role="tab" aria-controls="pills-voucher" aria-selected="false">
-								Voucher
+								Imported Voucher
 							</a>
 						</li>
 					</ul>

@@ -763,6 +763,8 @@
 			<button class="btn btn-light btn-sm btn-download-template ms-1 mb-1"><i class="ph-download me-2"></i> Download Template</button>
 			<button class="btn btn-primary btn-sm btn-upload-file ms-1 mb-1"><i class="ph-upload me-2"></i> Upload File</button>
 			<button class="btn btn-primary btn-sm btn-confirm-upload ms-1 mb-1"><i class="ph-thumbs-up me-2"></i> Confirm Upload</button>
+			<!--<button class="btn btn-primary btn-sm btn-confirm-upload ms-1 mb-1" data-post="0"><i class="ph-thumbs-up me-2"></i> Confirm Without Post</button>
+			<button class="btn btn-primary btn-sm btn-confirm-upload ms-1 mb-1" data-post="1"><i class="ph-thumbs-up me-2"></i> Confirm With Post</button>-->
 			<button class="btn btn-danger btn-sm btn-delete-all ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
 			<button class="btn btn-danger btn-sm btn-delete-all-rows ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All</button>
 			<button class="btn btn-warning btn-sm btn-terminate-process ms-1 mb-1"><i class="ph-crosshair me-2"></i> Terminate Process</button>
@@ -1246,41 +1248,81 @@
 
 									updateProgress(progress, 'bg-success');
 
-									setTimeout(() => {
-										hideProgress(true);
+									if(data.fileType == 'xlsx' || data.fileType == 'xls'){
 
-										if(data.asyncCSVResult){
+										setTimeout(() => {
+											hideProgress(true);
 
-											if(data.asyncCSVResult.isWorkInProgress == true){
+											console.log({data});
 
-												setTimeout(() => {
-													showProgress('bg-warning', 'Preparing Data');
-													checkUploadStatus(data.asyncCSVResult.token);
-												}, 1000);
+											$('#importExcelSheetSelectionModal').modal('show');
+											var container = $(".sheet-selection-container");
+											container.empty();
+
+											var imageLink = $('.excel-image-link').attr('src');
+
+											data.sheetNames.forEach(function (sheet, index) {
+												var optionHtml = `
+													<div class="sheet-option" data-sheet="${sheet}">
+														<input type="radio" name="sheetSelection" id="sheet-${index}" value="${sheet}">
+														<img src="`+ imageLink +`" alt="Excel Sheet">
+														<label for="sheet-${index}">${sheet}</label>
+													</div>
+												`;
+												container.append(optionHtml);
+											});
+
+											// Set first option as selected
+											$(".sheet-option").first().addClass("selected").find("input").prop("checked", true);
+
+											// Handle click event
+											$(".sheet-option").on("click", function () {
+												$(".sheet-option").removeClass("selected");
+												$(this).addClass("selected");
+												$(this).find("input").prop("checked", true);
+											});
+
+										}, 1000);
+
+									} else {
+										setTimeout(() => {
+											hideProgress(true);
+
+											if(data.asyncCSVResult){
+
+												if(data.asyncCSVResult.isWorkInProgress == true){
+
+													setTimeout(() => {
+														showProgress('bg-warning', 'Preparing Data');
+														checkUploadStatus(data.asyncCSVResult.token);
+													}, 1000);
+
+												} else {
+
+													setTimeout(() => {
+														hideProgress(true);
+														enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+														enableBtn(['btn-row-edit', 'btn-row-delete']);
+
+														if(data.asyncCSVResult.allOk == true) {
+															showMessage('success', 'Data imported successfully');
+														} else {
+															showMessage('error', 'Data import failed');
+														}
+
+													}, 1000);
+
+												}
 
 											} else {
-
-												setTimeout(() => {
-													hideProgress(true);
-													enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
-													enableBtn(['btn-row-edit', 'btn-row-delete']);
-
-													if(data.asyncCSVResult.allOk == true) {
-														showMessage('success', 'Data imported successfully');
-													} else {
-														showMessage('error', 'Data import failed');
-													}
-
-												}, 1000);
-
+												enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+												enableBtn(['btn-row-edit', 'btn-row-delete']);
 											}
 
-										} else {
-											enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
-											enableBtn(['btn-row-edit', 'btn-row-delete']);
-										}
+										}, 1000);
+									}
 
-									}, 1000);
+									
 
 								} else {
 									$('#progressBar').addClass('bg-danger');
