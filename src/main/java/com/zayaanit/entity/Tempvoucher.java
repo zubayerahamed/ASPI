@@ -42,6 +42,7 @@ import lombok.Data;
 	@NamedStoredProcedureQuery(name = "FA_ImportVoucher", procedureName = "FA_ImportVoucher", parameters = {
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
 			@StoredProcedureParameter(mode = ParameterMode.IN, name = "user", type = String.class),
+			@StoredProcedureParameter(mode = ParameterMode.IN, name = "post", type = Boolean.class),
 	}),
 })
 public class Tempvoucher implements Serializable {

@@ -812,58 +812,14 @@ public class FA16 extends KitController {
 				responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
 			}
 
-//			if (fileName != null) {
-//
-//				String csvFilenameWithLoation = appConfig.getImportExportPath() + File.separator + fileName;
-//				if(StringUtils.isBlank(csvFilenameWithLoation)) {
-//					responseHelper.setErrorStatusAndMessage("Something is wrong on processing file.");
-//					return responseHelper.getResponse();
-//				}
-//
-//				String token = UUID.randomUUID().toString();
-//				AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
-//						.setUpdateExisting(false)
-//						.setIgnoreHeading(true)
-//						.setDelimeterType(',')
-//						.setImportDate(new Date())
-//						.setLatch(new CountDownLatch(1))
-//						.setToken(token)
-//						.setProgress(0.0)
-//						.setIsWorkInProgress(true)
-//						.setAllOk(true)
-//						.setFileName(fileName)
-//						.setUploadedFileLocation(csvFilenameWithLoation)
-//						.setModuleName("FA16")
-//						.setBusinessId(sessionManager.getBusinessId())
-//						.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
-//
-//				ImportExportService importExportService = getImportExportService("FA16");
-//
-//				if((fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))) {
-//					asyncCSVProcessor.processDataFromExcel(asyncCSVResult, importExportService);
-//				} else {
-//					asyncCSVProcessor.processDataFromCSV(asyncCSVResult, importExportService);
-//				}
-//
-//				sessionManager.addToMap(token, asyncCSVResult);
-//				sessionManager.removeFromMap("FA16_IMPORT_TOKEN");
-//				sessionManager.addToMap("FA16_IMPORT_TOKEN", token);
-//
-//				responseHelper.addDataToResponse("asyncCSVResult", asyncCSVResult);
-//
-//			} else {
-//				responseHelper.setErrorStatusAndMessage("File name not found");
-//				return responseHelper.getResponse();
-//			}
-
 		}
 
 		responseHelper.setSuccessStatusAndMessage("File uploaded successfully");
 		return responseHelper.getResponse();
 	}
 
-	@PostMapping("/import/validation/confirm")
-	public @ResponseBody Map<String, Object> validateAndConfirmImport() throws IOException {
+	@PostMapping("/import/validation/confirm/{post}")
+	public @ResponseBody Map<String, Object> validateAndConfirmImport(@PathVariable Integer post) throws IOException {
 
 		String token = UUID.randomUUID().toString();
 		AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
@@ -879,6 +835,7 @@ public class FA16 extends KitController {
 				.setFileName(null)
 				.setUploadedFileLocation(null)
 				.setModuleName("FA16")
+				.setPost(post)
 				.setBusinessId(sessionManager.getBusinessId())
 				.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
 
@@ -929,6 +886,9 @@ public class FA16 extends KitController {
 
 	@GetMapping("/process/terminate")
 	public @ResponseBody AsyncCSVResult terminateProcess(){
+		if(sessionManager.getFromMap("FA16_IMPORT_TOKEN") == null) return new AsyncCSVResult();
+		if(sessionManager.getFromMap((String) sessionManager.getFromMap("FA16_IMPORT_TOKEN")) == null) return new AsyncCSVResult();
+
 		AsyncCSVResult asyncCSVResult = (AsyncCSVResult) sessionManager.getFromMap((String) sessionManager.getFromMap("FA16_IMPORT_TOKEN"));
 
 		if(asyncCSVResult.getIsWorkInProgress()) {

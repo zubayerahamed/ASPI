@@ -30,7 +30,7 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 
 	@Transactional
 	@Procedure(name = "FA_ImportVoucher")
-	public void FA_ImportVoucher(@Param("zid") Integer zid, @Param("user") String user);
+	public void FA_ImportVoucher(@Param("zid") Integer zid, @Param("user") String user, @Param("post") Boolean post);
 
 	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from tempvoucher where zid=?1", nativeQuery = true)
 	public Integer getNextAvailableRow(Integer zid);

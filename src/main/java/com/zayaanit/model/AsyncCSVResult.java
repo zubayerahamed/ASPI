@@ -50,6 +50,7 @@ public class AsyncCSVResult {
 	private boolean ignoreHeading;
 	private char delimeterType;
 	private Date importDate;
+	private Integer post;
 
 	private Integer businessId;
 	private String moduleName;

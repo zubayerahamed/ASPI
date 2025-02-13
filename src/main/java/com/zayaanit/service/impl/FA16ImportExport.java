@@ -449,7 +449,7 @@ public class FA16ImportExport extends AbstractImportExport {
 		} else {
 			asyncCSVResult.setAllOk(true);
 			try {
-				tempvoucherRepo.FA_ImportVoucher(asyncCSVResult.getBusinessId(), asyncCSVResult.getLoggedInUserDetail().getUsername());
+				tempvoucherRepo.FA_ImportVoucher(asyncCSVResult.getBusinessId(), asyncCSVResult.getLoggedInUserDetail().getUsername(), asyncCSVResult.getPost().equals(1));
 			} catch (Exception e) {
 				log.error(e.getCause().getMessage());
 				asyncCSVResult.setAllOk(false);
