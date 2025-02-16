@@ -2,6 +2,8 @@ package com.zayaanit.repository;
 
 
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -48,4 +50,12 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 	@Modifying
 	@Query(value = "delete from tempvoucher where zid=?1", nativeQuery = true)
 	void deleteAllByZid(Integer zid);
+
+	@Modifying
+	@Transactional
+	@Query(value = "INSERT INTO tempvoucher (zid, xrow, Voucher_Date, Business_Unit, Debit_Acc, Debit_SubAcc, Credit_Acc, Credit_SubAcc, Amount, Narration, AllOk, ErrorDetails) "
+			+ "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)", nativeQuery = true)
+	int insertTempvoucher(Integer zid, Integer xrow, Date voucherDate, Integer businessUnit, Integer debitAcc,
+			Integer debitSubAcc, Integer creditAcc, Integer creditSubAcc, BigDecimal amount, String narration,
+			Boolean allOk, String errorDetails);
 }

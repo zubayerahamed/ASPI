@@ -735,15 +735,13 @@
 	<div class="card">
 		<div class="card-header d-sm-flex justify-content-center align-items-sm-center p-2">
 			<input type="hidden" class="fa16ImportToken" th:value="${fa16ImportToken}"/>
-			<button class="btn btn-light btn-sm selection-counter mb-1 d-none"></button>
 			<button class="btn btn-light btn-sm btn-download-template ms-1 mb-1"><i class="ph-download me-2"></i> Download Template</button>
 			<button class="btn btn-primary btn-sm btn-upload-file ms-1 mb-1"><i class="ph-upload me-2"></i> Upload File</button>
-			<!-- <button class="btn btn-primary btn-sm btn-confirm-upload ms-1 mb-1"><i class="ph-thumbs-up me-2"></i> Confirm Upload</button> -->
-			<button class="btn btn-info btn-sm btn-confirm-upload ms-1 mb-1" data-post="0"><i class="ph-thumbs-up me-2"></i> Confirm Without Post</button>
-			<button class="btn btn-info btn-sm btn-confirm-upload ms-1 mb-1" data-post="1"><i class="ph-thumbs-up me-2"></i> Confirm With Post</button>
-			<button class="btn btn-danger btn-sm btn-delete-all ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
-			<button class="btn btn-danger btn-sm btn-delete-all-rows ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All</button>
-			<button class="btn btn-warning btn-sm btn-terminate-process ms-1 mb-1"><i class="ph-crosshair me-2"></i> Terminate Process</button>
+			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-info btn-sm btn-confirm-upload ms-1 mb-1" data-post="0"><i class="ph-thumbs-up me-2"></i> Confirm Without Post</button>
+			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-info btn-sm btn-confirm-upload ms-1 mb-1" data-post="1"><i class="ph-thumbs-up me-2"></i> Confirm With Post</button>
+			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-danger btn-sm btn-delete-all-selected ms-1 mb-1 d-none"><i class="ph-trash me-2"></i> Delete All Selected <span class="selection-counter d-none"></span></button>
+			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-danger btn-sm btn-delete-all-rows ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All</button>
+			<button class="btn btn-warning btn-sm btn-terminate-process ms-1 mb-1 d-none"><i class="ph-crosshair me-2"></i> Terminate Process</button>
 		</div>
 
 		<div class="card-body">
@@ -858,9 +856,11 @@
 				}
 
 				if(selectedVouchers.length > 0){
+					$('.btn-delete-all-selected').removeClass('d-none');
 					$('.selection-counter').removeClass('d-none');
-					$('.selection-counter').html(selectedVouchers.length + ' Selected');
+					$('.selection-counter').html(' &nbsp; (' + selectedVouchers.length + ')');
 				} else {
+					$('.btn-delete-all-selected').addClass('d-none');
 					$('.selection-counter').addClass('d-none');
 				}
 
@@ -917,7 +917,7 @@
 				initRowSelection();
 			});
 
-			$('.btn-delete-all').off('click').on('click', function(e){
+			$('.btn-delete-all-selected').off('click').on('click', function(e){
 				e.preventDefault();
 
 				if(selectedVouchers.length <= 0){
@@ -1024,7 +1024,8 @@
 					if(data.isWorkInProgress == false){
 						setTimeout(() => {
 							hideProgress(true);
-							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+							hideBtn(['btn-terminate-process']);
+							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 							enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 							if(data.allOk == true) {
@@ -1072,10 +1073,11 @@
 
 			const fa16ImportToken = $('.fa16ImportToken').val();
 			if(fa16ImportToken != undefined && fa16ImportToken != null && fa16ImportToken != ''){
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 				disableBtn(['btn-row-edit', 'btn-row-delete']);
 				resetProgressBar();
 				showProgress('bg-warning', 'Preparing Data');
+				showBtn(['btn-terminate-process']);
 				checkUploadStatus(fa16ImportToken);
 			}
 
@@ -1103,7 +1105,8 @@
 
 				resetProgressBar();
 				showProgress('bg-success', 'Validating Data');
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+				showBtn(['btn-terminate-process']);
+				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 				disableBtn(['btn-row-edit', 'btn-row-delete']);
 
 				$.ajax({
@@ -1126,7 +1129,8 @@
 
 								setTimeout(() => {
 									hideProgress(true);
-									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+									hideBtn(['btn-terminate-process']);
+									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 									enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 									if(data.asyncCSVResult.allOk == true) {
@@ -1147,7 +1151,7 @@
 
 						} else {
 							$('#progressBar').addClass('bg-danger');
-							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 							enableBtn(['btn-row-edit', 'btn-row-delete']);
 							showMessage(data.status.toLowerCase(), data.message);
 
@@ -1190,7 +1194,8 @@
 
 				resetProgressBar();
 				showProgress(null, 'Uploading file to server');
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+				showBtn(['btn-terminate-process']);
+				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 				disableBtn(['btn-row-edit', 'btn-row-delete']);
 
 				function uploadNextChunk(initialStart) {
@@ -1230,6 +1235,7 @@
 
 										setTimeout(() => {
 											hideProgress(true);
+											hideBtn(['btn-terminate-process']);
 
 											$('#importExcelSheetSelectionModal').modal('show');
 											var container = $(".sheet-selection-container");
@@ -1256,7 +1262,7 @@
 												e.preventDefault();
 												$('#importExcelSheetSelectionModal').modal('hide');
 												container.empty();
-												enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+												enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 												enableBtn(['btn-row-edit', 'btn-row-delete']);
 											})
 
@@ -1298,6 +1304,7 @@
 
 																		setTimeout(() => {
 																			showProgress('bg-warning', 'Preparing Data');
+																			showBtn(['btn-terminate-process']);
 																			checkUploadStatus(data.asyncCSVResult.token);
 																		}, 1000);
 
@@ -1305,7 +1312,8 @@
 
 																		setTimeout(() => {
 																			hideProgress(true);
-																			enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+																			hideBtn(['btn-terminate-process']);
+																			enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 																			enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 																			if(data.asyncCSVResult.allOk == true) {
@@ -1319,13 +1327,14 @@
 																	}
 
 																} else {
-																	enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+																	enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 																	enableBtn(['btn-row-edit', 'btn-row-delete']);
 																}
 
 															} else {
 																hideProgress(true);
-																enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+																hideBtn(['btn-terminate-process']);
+																enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 																enableBtn(['btn-row-edit', 'btn-row-delete']);
 																showMessage('error', "Excel processing failed");
 															}
@@ -1348,6 +1357,7 @@
 									} else {
 										setTimeout(() => {
 											hideProgress(true);
+											hideBtn(['btn-terminate-process']);
 
 											if(data.asyncCSVResult){
 
@@ -1355,6 +1365,7 @@
 
 													setTimeout(() => {
 														showProgress('bg-warning', 'Preparing Data');
+														showBtn(['btn-terminate-process']);
 														checkUploadStatus(data.asyncCSVResult.token);
 													}, 1000);
 
@@ -1362,7 +1373,8 @@
 
 													setTimeout(() => {
 														hideProgress(true);
-														enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+														hideBtn(['btn-terminate-process']);
+														enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 														enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 														if(data.asyncCSVResult.allOk == true) {
@@ -1376,7 +1388,7 @@
 												}
 
 											} else {
-												enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+												enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 												enableBtn(['btn-row-edit', 'btn-row-delete']);
 											}
 
@@ -1387,7 +1399,7 @@
 
 								} else {
 									$('#progressBar').addClass('bg-danger');
-									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all', 'btn-delete-all-rows']);
+									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 									enableBtn(['btn-row-edit', 'btn-row-delete']);
 									showMessage(data.status.toLowerCase(), data.message);
 								}

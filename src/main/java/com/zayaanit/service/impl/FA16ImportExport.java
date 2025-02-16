@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -131,6 +132,9 @@ public class FA16ImportExport extends AbstractImportExport {
 
 			if(asyncCSVResult.isTerminated()) return;
 
+			List<Tempvoucher> tList = new ArrayList<>(100);
+			Integer xrow = tempvoucherRepo.getNextAvailableRow(asyncCSVResult.getBusinessId());
+
 			while (rowIterator.hasNext()) {
 				if(asyncCSVResult.isTerminated()) {
 					throw new IllegalStateException("Process Terminated");
@@ -142,8 +146,9 @@ public class FA16ImportExport extends AbstractImportExport {
 					continue;
 				}
 
-				processExcelRow(row, asyncCSVResult);
+				processExcelRow(row, asyncCSVResult, tList, xrow, totalLines, currentRowCount);
 
+				xrow++;
 				currentRowCount++;
 
 				Double progress = ((double) (currentRowCount) / totalLines) * 100;
@@ -157,7 +162,7 @@ public class FA16ImportExport extends AbstractImportExport {
 		}
 	}
 
-	private void processExcelRow(Row row, AsyncCSVResult asyncCSVResult) {
+	private void processExcelRow(Row row, AsyncCSVResult asyncCSVResult, List<Tempvoucher> tList, Integer xrow, long totalLines, int currentRowCount) {
 		// Process each cell in the row
 		if(asyncCSVResult.isTerminated()) {
 			throw new IllegalStateException("Process Terminated");
@@ -165,7 +170,7 @@ public class FA16ImportExport extends AbstractImportExport {
 
 		Tempvoucher t;
 		try {
-			t = prepareTemVoucher(0, null, null, asyncCSVResult.getBusinessId());
+			t = prepareTemVoucher(0, null, null, asyncCSVResult.getBusinessId(), xrow);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
@@ -198,7 +203,7 @@ public class FA16ImportExport extends AbstractImportExport {
 			}
 
 			try {
-				t = prepareTemVoucher(cell.getColumnIndex() + 1, t, data, asyncCSVResult.getBusinessId());
+				t = prepareTemVoucher(cell.getColumnIndex() + 1, t, data, asyncCSVResult.getBusinessId(), null);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
@@ -209,17 +214,30 @@ public class FA16ImportExport extends AbstractImportExport {
 			if(asyncCSVResult.isTerminated()) {
 				throw new IllegalStateException("Process Terminated");
 			}
-			tempvoucherRepo.save(t);
+			tList.add(t);
+
+			if(tList.size() == 100 || currentRowCount == totalLines - 1) {
+				for(Tempvoucher te : tList) {
+					prepareAndInsert(te);
+				}
+				tList.clear();
+			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 	}
 
-	private Tempvoucher prepareTemVoucher(int cellCount, Tempvoucher tempVoucher, Object value, Integer businessId) throws Exception {
+	private int prepareAndInsert(Tempvoucher t) {
+		return tempvoucherRepo.insertTempvoucher(t.getZid(), t.getXrow(), t.getVoucherDate(), t.getBusinessUnit(),
+				t.getDebitAcc(), t.getDebitSubAcc(), t.getCreditAcc(), t.getCreditSubAcc(), t.getAmount(),
+				t.getNarration(), t.getAllOk(), t.getErrorDetails());
+	}
+
+	private Tempvoucher prepareTemVoucher(int cellCount, Tempvoucher tempVoucher, Object value, Integer businessId, Integer xrow) throws Exception {
 		if(cellCount == 0) {
 			Tempvoucher t = new Tempvoucher();
 			t.setZid(businessId);
-			t.setXrow(tempvoucherRepo.getNextAvailableRow(businessId));
+			t.setXrow(xrow);
 			return t;
 		}
 
@@ -304,6 +322,7 @@ public class FA16ImportExport extends AbstractImportExport {
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 				Integer businessId = asyncCSVResult.getBusinessId();
+				Integer xrow = tempvoucherRepo.getNextAvailableRow(asyncCSVResult.getBusinessId());
 				long totalLines = stream.count();
 				if(ignoreHeading) totalLines--;
 				int currentRowCount = ignoreHeading ? 1 : 0;
@@ -313,14 +332,15 @@ public class FA16ImportExport extends AbstractImportExport {
 						throw new IllegalStateException("Process Terminated");
 					}
 
-					Tempvoucher t = prepareTemVoucher(0, null, null, businessId);
+					Tempvoucher t = prepareTemVoucher(0, null, null, businessId, xrow);
+					xrow++;
 
 					long totalColumn = row.size();
 
 					String c_voucherDae = getRecordValue(row, totalColumn, 0);
 					try {
 						Date date = dateFormat.parse(c_voucherDae);
-						t = prepareTemVoucher(1, t, date, businessId);
+						t = prepareTemVoucher(1, t, date, businessId, null);
 					} catch (Exception e) {
 						log.error(e.getMessage());
 					}
@@ -328,7 +348,7 @@ public class FA16ImportExport extends AbstractImportExport {
 					String c_businessUnit = getRecordValue(row, totalColumn, 1);
 					try {
 						Double businessUnit = Double.valueOf(c_businessUnit);
-						t = prepareTemVoucher(2, t, businessUnit, businessId);
+						t = prepareTemVoucher(2, t, businessUnit, businessId, null);
 					} catch (Exception e) {
 						log.error(e.getMessage());
 					}
@@ -336,7 +356,7 @@ public class FA16ImportExport extends AbstractImportExport {
 					String c_debitAcc = getRecordValue(row, totalColumn, 2);
 					try {
 						Double debitAcc = Double.valueOf(c_debitAcc);
-						t = prepareTemVoucher(3, t, debitAcc, businessId);
+						t = prepareTemVoucher(3, t, debitAcc, businessId, null);
 					} catch (Exception e) {
 						log.error(e.getMessage());
 					}
@@ -344,7 +364,7 @@ public class FA16ImportExport extends AbstractImportExport {
 					String c_debitSubAcc = getRecordValue(row, totalColumn, 3);
 					try {
 						Double debitSubAcc = Double.valueOf(c_debitSubAcc);
-						t = prepareTemVoucher(4, t, debitSubAcc, businessId);
+						t = prepareTemVoucher(4, t, debitSubAcc, businessId, null);
 					} catch (Exception e) {
 						log.error(e.getMessage());
 					}
@@ -352,7 +372,7 @@ public class FA16ImportExport extends AbstractImportExport {
 					String c_creditAcc = getRecordValue(row, totalColumn, 4);
 					try {
 						Double creditAcc = Double.valueOf(c_creditAcc);
-						t = prepareTemVoucher(5, t, creditAcc, businessId);
+						t = prepareTemVoucher(5, t, creditAcc, businessId, null);
 					} catch (Exception e) {
 						log.error(e.getMessage());
 					}
@@ -360,7 +380,7 @@ public class FA16ImportExport extends AbstractImportExport {
 					String c_creditSubAcc = getRecordValue(row, totalColumn, 5);
 					try {
 						Double creditSubAcc = Double.valueOf(c_creditSubAcc);
-						t = prepareTemVoucher(6, t, creditSubAcc, businessId);
+						t = prepareTemVoucher(6, t, creditSubAcc, businessId, null);
 					} catch (Exception e) {
 						log.error(e.getMessage());
 					}
@@ -368,16 +388,17 @@ public class FA16ImportExport extends AbstractImportExport {
 					String c_amount = getRecordValue(row, totalColumn, 6);
 					try {
 						Double amount = Double.valueOf(c_amount);
-						t = prepareTemVoucher(7, t, amount, businessId);
+						t = prepareTemVoucher(7, t, amount, businessId, null);
 					} catch (Exception e) {
 						log.error(e.getMessage());
 					}
 
 					String c_narration = getRecordValue(row, totalColumn, 7);
-					t = prepareTemVoucher(8, t, c_narration, businessId);
+					t = prepareTemVoucher(8, t, c_narration, businessId, null);
 
 					try {
-						tempvoucherRepo.save(t);
+						prepareAndInsert(t);
+//						tempvoucherRepo.save(t);
 					} catch (Exception e) {
 						throw new IllegalStateException(e.getCause().getMessage());
 					}
