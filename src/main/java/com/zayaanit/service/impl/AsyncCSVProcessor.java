@@ -28,9 +28,11 @@ public class AsyncCSVProcessor {
 	@Bean
 	public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(10);
-		executor.setMaxPoolSize(100);
-		executor.setQueueCapacity(50);
+		executor.setCorePoolSize(5);  // Reduce core threads to save memory
+		executor.setMaxPoolSize(20);  // Limit max threads
+		executor.setQueueCapacity(10); // Reduce queue size to prevent memory overload
+		executor.setKeepAliveSeconds(60); // Threads will be removed if idle for 60s
+		executor.setAllowCoreThreadTimeOut(true);
 		executor.setThreadNamePrefix("async-");
 		return executor;
 	}

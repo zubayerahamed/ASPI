@@ -41,7 +41,8 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 
 	public Page<Tempvoucher> findAllByZid(Integer zid, Pageable pageable);
 
-	long countByZid(Integer zid);
+	@Query("SELECT COUNT(t) FROM Tempvoucher t WHERE t.zid = :zid")
+	long countByZid(@Param("zid") Integer zid);
 
 	long countByZidAndAllOk(Integer zid, Boolean allOk);
 
@@ -53,9 +54,14 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 
 	@Modifying
 	@Transactional
-	@Query(value = "INSERT INTO tempvoucher (zid, xrow, Voucher_Date, Business_Unit, Debit_Acc, Debit_SubAcc, Credit_Acc, Credit_SubAcc, Amount, Narration, AllOk, ErrorDetails) "
+	@Query(value = "INSERT INTO tempvoucher (zid, xrow, Voucher_Date, Business_Unit, Debit_Acc, Debit_SubAcc, Credit_Acc, Credit_SubAcc, Amount, Narration, Status, ErrorDetails) "
 			+ "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)", nativeQuery = true)
 	int insertTempvoucher(Integer zid, Integer xrow, Date voucherDate, Integer businessUnit, Integer debitAcc,
 			Integer debitSubAcc, Integer creditAcc, Integer creditSubAcc, BigDecimal amount, String narration,
 			Boolean allOk, String errorDetails);
+
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE tempvoucher set Status = ?3, ErrorDetails=?4 WHERE zid=?1 and xrow=?2)", nativeQuery = true)
+	int updateTempvoucher(Integer zid, Integer xrow, Boolean allOk, String errorDetails);
 }

@@ -446,16 +446,17 @@ public class FA16ImportExport extends AbstractImportExport {
 		Integer currentRowCount = 0;
 		Sort.Direction direction = Sort.Direction.ASC;
 
-		Pageable pageable;
-		List<Tempvoucher> tempvouchers;
+		List<Tempvoucher> tempvouchers = null;
 
 		do {
+			tempvouchers = new ArrayList<>(100);
+
 			if(asyncCSVResult.isTerminated()) {
 				throw new IllegalStateException("Process Terminated");
 			}
 
-			pageable = PageRequest.of(page, pageSize, Sort.by(new Sort.Order(direction, "xrow")));
-			tempvouchers = tempvoucherRepo.findAllByZid(asyncCSVResult.getBusinessId(), pageable).toList();
+			Pageable pageable = PageRequest.of(page, pageSize, Sort.by(new Sort.Order(direction, "xrow")));
+			tempvouchers.addAll(tempvoucherRepo.findAllByZid(asyncCSVResult.getBusinessId(), pageable).toList());
 
 			// Process the retrieved chunk
 			processTempVouchers(tempvouchers, currentRowCount, totalLine, asyncCSVResult);
@@ -480,6 +481,8 @@ public class FA16ImportExport extends AbstractImportExport {
 
 	private void processTempVouchers(List<Tempvoucher> tempvouchers, Integer currentRowCount, long totalLine, AsyncCSVResult asyncCSVResult) {
 		for (Tempvoucher tempvoucher : tempvouchers) {
+			tempvoucher.setErrorDetails("");
+
 			if(asyncCSVResult.isTerminated()) {
 				throw new IllegalStateException("Process Terminated");
 			}
@@ -492,96 +495,91 @@ public class FA16ImportExport extends AbstractImportExport {
 
 			// Your processing logic here
 			// validate every thing
-			StringBuilder errorDetail = new StringBuilder();
 
 			if(tempvoucher.getVoucherDate() == null) {
-				errorDetail.append("Voucher date required | ");
+				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Voucher date required | ");
 			}
 
 			if(tempvoucher.getBusinessUnit() == null) {
-				errorDetail.append("Business unit required | ");
+				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Business unit required | ");
 			} else {
-				Optional<Cabunit> businessUnitOp = cabunitRepo.findById(new CabunitPK(asyncCSVResult.getBusinessId(), tempvoucher.getBusinessUnit()));
-				if(!businessUnitOp.isPresent()) {
-					errorDetail.append("Business unit not exist in this system | ");
+				if(!cabunitRepo.findById(new CabunitPK(asyncCSVResult.getBusinessId(), tempvoucher.getBusinessUnit())).isPresent()) {
+					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Business unit not exist in this system | ");
 				}
 			}
 
 			if(tempvoucher.getDebitAcc() == null) {
-				errorDetail.append("Debit account required | ");
+				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit account required | ");
 			} else {
-				Optional<Acmst> debitAccountOp =  acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getDebitAcc()));
-				if(!debitAccountOp.isPresent()) {
-					errorDetail.append("Debit account not exist in this system | ");
-				} else {
-					Acmst debitAccount = debitAccountOp.get();
-					String dAccUsage = debitAccount.getXaccusage();
-
-					if("Default".equals(dAccUsage)) {
+				acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getDebitAcc()))
+				.map(debitAccount -> {
+					if("Default".equals(debitAccount.getXaccusage())) {
 						if(tempvoucher.getDebitSubAcc() != null) {
-							errorDetail.append("You can't set any debit sub account for this Default debit account type | ");
+							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "You can't set any debit sub account for this Default debit account type | ");
 						}
 					} else {
 						if(tempvoucher.getDebitSubAcc() == null) {
-							errorDetail.append("Debit sub account required | ");
+							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit sub account required | ");
 						} else {
-							Optional<Acsub> debitSubAccOp = acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getDebitSubAcc(), dAccUsage);
-							if(!debitSubAccOp.isPresent()) {
-								errorDetail.append("Debit sub account not exist in this system | ");
+							if(!acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getDebitSubAcc(), debitAccount.getXaccusage()).isPresent()) {
+								tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit sub account not exist in this system | ");
 							}
 						}
 					}
-				}
+					return debitAccount;
+				}).orElseGet(() -> {
+					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit account not exist in this system | ");
+					return null;
+				});
 			}
 
-			
-
 			if(tempvoucher.getCreditAcc() == null) {
-				errorDetail.append("Credit account required | ");
+				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit account required | ");
 			} else {
-				Optional<Acmst> creditAccountOp =  acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getCreditAcc()));
-				if(!creditAccountOp.isPresent()) {
-					errorDetail.append("Credit account not exist in this system | ");
-				} else {
-					Acmst creditAccount = creditAccountOp.get();
-					String cAccUsage = creditAccount.getXaccusage();
-
-					if("Default".equals(cAccUsage)) {
+				acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getCreditAcc()))
+				.map(creditAccount -> {
+					if("Default".equals(creditAccount.getXaccusage())) {
 						if(tempvoucher.getCreditSubAcc() != null) {
-							errorDetail.append("You can't set any credit sub account for this Default credit account type | ");
+							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "You can't set any credit sub account for this Default credit account type | ");
 						}
 					} else {
 						if(tempvoucher.getCreditSubAcc() == null) {
-							errorDetail.append("Credit sub account required | ");
+							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit sub account required | ");
 						} else {
-							Optional<Acsub> creditSubAccOp = acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getCreditSubAcc(), cAccUsage);
-							if(!creditSubAccOp.isPresent()) {
-								errorDetail.append("Credit sub account not exist in this system | ");
+							if(!acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getCreditSubAcc(), creditAccount.getXaccusage()).isPresent()) {
+								tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit sub account not exist in this system | ");
 							}
 						}
 					}
-				}
+					return creditAccount;
+				}).orElseGet(() -> {
+					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit account not exist in this system | ");
+					return null;
+				});
 			}
 
 			if(tempvoucher.getAmount() == null) {
-				errorDetail.append("Amount required | ");
+				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Amount required | ");
 			} else {
 				if(tempvoucher.getAmount().compareTo(BigDecimal.ZERO) != 1) {
-					errorDetail.append("Invalid amount | ");
+					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Invalid amount | ");
 				}
 			}
 
 			if(StringUtils.isNotBlank(tempvoucher.getNarration()) && tempvoucher.getNarration().length() > 200) {
-				errorDetail.append("Narration is too long. Write narration up to 200 character | ");
+				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Narration is too long. Write narration up to 200 character | ");
 			}
 
-			if(StringUtils.isNotBlank(errorDetail.toString())) {
+			if(StringUtils.isNotBlank(tempvoucher.getErrorDetails())) {
 				tempvoucher.setAllOk(false);
-				tempvoucher.setErrorDetails(errorDetail.toString());
-				tempvoucherRepo.save(tempvoucher);
-			}
+				prepareAndUpdate(tempvoucher);
+			} 
 
 		}
+	}
+
+	private int prepareAndUpdate(Tempvoucher t) {
+		return tempvoucherRepo.updateTempvoucher(t.getZid(), t.getXrow(), t.getAllOk(), t.getErrorDetails());
 	}
 
 	@Override
