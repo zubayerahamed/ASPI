@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.commons.csv.CSVFormat;
@@ -38,9 +37,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import com.zayaanit.entity.Acmst;
-import com.zayaanit.entity.Acsub;
-import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Tempvoucher;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.CabunitPK;
@@ -218,7 +214,11 @@ public class FA16ImportExport extends AbstractImportExport {
 
 			if(tList.size() == 100 || currentRowCount == totalLines - 1) {
 				for(Tempvoucher te : tList) {
-					prepareAndInsert(te);
+					try {
+						prepareAndInsert(te);
+					} catch (Exception e) {
+						log.error(e.getCause().getMessage());
+					}
 				}
 				tList.clear();
 			}
@@ -228,9 +228,18 @@ public class FA16ImportExport extends AbstractImportExport {
 	}
 
 	private int prepareAndInsert(Tempvoucher t) {
-		return tempvoucherRepo.insertTempvoucher(t.getZid(), t.getXrow(), t.getVoucherDate(), t.getBusinessUnit(),
-				t.getDebitAcc(), t.getDebitSubAcc(), t.getCreditAcc(), t.getCreditSubAcc(), t.getAmount(),
-				t.getNarration(), t.getAllOk(), t.getErrorDetails());
+		return tempvoucherRepo.insertTempvoucher(
+			t.getZid(), 
+			t.getXrow(), 
+			t.getVoucherDate(), 
+			t.getBusinessUnit(),
+			t.getDebitAcc(), 
+			t.getDebitSubAcc(), 
+			t.getCreditAcc(), 
+			t.getCreditSubAcc(), 
+			t.getAmount(),
+			t.getNarration()
+		);
 	}
 
 	private Tempvoucher prepareTemVoucher(int cellCount, Tempvoucher tempVoucher, Object value, Integer businessId, Integer xrow) throws Exception {
@@ -579,7 +588,7 @@ public class FA16ImportExport extends AbstractImportExport {
 	}
 
 	private int prepareAndUpdate(Tempvoucher t) {
-		return tempvoucherRepo.updateTempvoucher(t.getZid(), t.getXrow(), t.getAllOk(), t.getErrorDetails());
+		return tempvoucherRepo.updateTempvoucher(t.getZid(), t.getXrow(), Boolean.TRUE.equals(t.getAllOk()) ? 1 : 0, t.getErrorDetails());
 	}
 
 	@Override

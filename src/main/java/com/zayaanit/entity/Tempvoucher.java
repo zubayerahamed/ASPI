@@ -88,7 +88,7 @@ public class Tempvoucher implements Serializable {
 	@Column(name = "Status")
 	private Boolean allOk;
 
-	@Column(name = "ErrorDetails", columnDefinition = "VARBINARY(MAX)")
+	@Column(name = "ErrorDetails", columnDefinition = "TEXT")
 	private String errorDetails;
 
 	@Transient

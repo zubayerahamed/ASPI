@@ -168,6 +168,17 @@ public class FA16 extends KitController {
 		model.addAttribute("totalPages", (int) Math.ceil((double) totalData / size));
 		model.addAttribute("currentPage", page);
 
+		int startRecord = 0;
+		int endRecord = 0;
+
+		if (totalData > 0) {
+			startRecord = (page * size) + 1;
+			endRecord = Math.min(startRecord + tempvouchers.size() - 1, (int) totalData);
+		}
+
+		model.addAttribute("startRecord", startRecord);
+		model.addAttribute("endRecord", endRecord);
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xvoucher)) {
 				model.addAttribute("acheader", Acheader.getDefaultInstance());
@@ -308,6 +319,17 @@ public class FA16 extends KitController {
 		model.addAttribute("totalData", totalData);
 		model.addAttribute("totalPages", (int) Math.ceil((double) totalData / size));
 		model.addAttribute("currentPage", page);
+
+		int startRecord = 0;
+		int endRecord = 0;
+
+		if (totalData > 0) {
+			startRecord = (page * size) + 1;
+			endRecord = Math.min(startRecord + tempvouchers.size() - 1, (int) totalData);
+		}
+
+		model.addAttribute("startRecord", startRecord);
+		model.addAttribute("endRecord", endRecord);
 
 		return "pages/FA16/FA16-fragments::import-table";
 	}
