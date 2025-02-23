@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.zayaanit.entity.pk.XwidgetsPK;
+import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,4 +42,17 @@ public class Xwidgets extends AbstractModel<String> {
 
 	@Column(name = "xtitle", length = 50)
 	private String xtitle;
+
+	@Column(name = "xdefault")
+	private Integer xdefault;
+
+	@Transient
+	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public static Xwidgets getDefaultInstance() {
+		Xwidgets obj = new Xwidgets();
+		obj.setSubmitFor(SubmitFor.INSERT);
+		obj.setXdefault(1);
+		return obj;
+	}
 }

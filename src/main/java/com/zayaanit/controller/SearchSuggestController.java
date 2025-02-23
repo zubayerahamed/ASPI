@@ -37,6 +37,7 @@ import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Xwhs;
+import com.zayaanit.entity.Xwidgets;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.service.AcgroupService;
@@ -61,6 +62,7 @@ import com.zayaanit.service.XprofilesService;
 import com.zayaanit.service.XscreensService;
 import com.zayaanit.service.XusersService;
 import com.zayaanit.service.XwhsService;
+import com.zayaanit.service.XwidgetsService;
 
 /**
  * @author Zubayer Ahamed
@@ -92,6 +94,7 @@ public class SearchSuggestController {
 	@Autowired private ImopenheaderService imopenheaderService;
 	@Autowired private MoheaderService moheaderService;
 	@Autowired private OpcrnheaderService opcrnheaderService;
+	@Autowired private XwidgetsService xwidgetsService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
@@ -155,6 +158,22 @@ public class SearchSuggestController {
 		int totalRows = xscreensService.LSA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Xscreens> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LSA14/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Xwidgets> LSA14(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Xwidgets> list = xwidgetsService.LSA14(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = xwidgetsService.LSA14(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Xwidgets> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

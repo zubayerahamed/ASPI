@@ -1,60 +1,48 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
-		<div th:if="${not #strings.isEmpty(xmenus.xmenu)}" class="card-header d-sm-flex align-items-sm-center py-sm-0">
+		<div th:if="${not #strings.isEmpty(xwidgets.xwidget)}" class="card-header d-sm-flex align-items-sm-center py-sm-0">
 
 		</div>
 
 		<div class="card-body">
-			<form id="mainform" class="form-validate-jquery" th:action="@{/SA11/store}" th:object="${xmenus}" method="POST">
+			<form id="mainform" class="form-validate-jquery" th:action="@{/SA14/store}" th:object="${xwidgets}" method="POST">
 				<input type="hidden" th:field="*{submitFor}"/>
-				<input type="hidden" th:if="${not #strings.isEmpty(xmenus.xmenu)}" th:field="*{xmenu}">
+				<input type="hidden" th:if="${not #strings.isEmpty(xwidgets.xwidget)}" th:field="*{xwidget}">
 
 				<div class="row">
 					<div class="col-md-3">
-						<div class="mb-3 form-group" th:if="${#strings.isEmpty(xmenus.xmenu)}">
-							<label class="form-label required">Menu Code</label>
-							<input type="text" class="form-control" th:field="*{xmenu}" required="required">
+						<div class="mb-3 form-group" th:if="${#strings.isEmpty(xwidgets.xwidget)}">
+							<label class="form-label required">Widget Code</label>
+							<input type="text" class="form-control" th:field="*{xwidget}" required="required">
 						</div>
 		
-						<div class="mb-3 form-group" th:if="${not #strings.isEmpty(xmenus.xmenu)}">
-							<label class="form-label">Menu Code</label>
-							<input type="text" class="form-control" th:value="${xmenus.xmenu}" disabled="disabled">
+						<div class="mb-3 form-group" th:if="${not #strings.isEmpty(xwidgets.xwidget)}">
+							<label class="form-label">Widget Code</label>
+							<input type="text" class="form-control" th:value="${xwidgets.xwidget}" disabled="disabled">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Menu Title</label>
+							<label class="form-label required">Widget Title</label>
 							<input type="text" class="form-control" th:field="*{xtitle}" required="required">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Parent Menu</label>
-							<input type="text" class="form-control" th:field="*{xpmenu}" required="required">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Image/Icon</label>
-							<input type="text" class="form-control" th:field="*{xicon}">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label required">Sequence</label>
-							<input type="number" class="form-control numeric-only" th:field="*{xsequence}" min="0" required="required">
+							<label class="form-label required">Default Value</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xdefault}" min="0" required="required">
 						</div>
 					</div>
 				</div>
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/SA11?xmenu=RESET', data-reloadid='main-form-container', data-detailid='header-table-container', data-detailurl='/SA11/header-table'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" th:attr="data-reloadurl='/SA14?xwidget=RESET', data-reloadid='main-form-container', data-detailid='header-table-container', data-detailurl='/SA14/header-table'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${not #strings.isEmpty(xmenus.xmenu)}" th:attr="data-url=@{/SA11?xmenu=} + ${xmenus.xmenu}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
-						<button th:if="${not #strings.isEmpty(xmenus.xmenu)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
-						<button th:if="${#strings.isEmpty(xmenus.xmenu)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
+						<button th:if="${not #strings.isEmpty(xwidgets.xwidget)}" th:attr="data-url=@{/SA14?xwidget=} + ${xwidgets.xwidget}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${not #strings.isEmpty(xwidgets.xwidget)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${#strings.isEmpty(xwidgets.xwidget)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
 				</div>
 			</form>
@@ -98,18 +86,16 @@
 <div th:fragment="header-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
-			<h6 class="py-sm-3 mb-sm-auto">List of Master Menus</h6>
+			<h6 class="py-sm-3 mb-sm-auto">List of Widgets</h6>
 		</div>
 
 		<div class="table-responsive">
 			<table class="table datatable">
 				<thead>
 					<tr>
-						<th>Menu Code</th>
-						<th>Menu Title</th>
-						<th class="text-center">Parent Menu</th>
-						<th>Image/Icon</th>
-						<th class="text-end">Sequence</th>
+						<th>Widget Code</th>
+						<th>Widget Title</th>
+						<th class="text-end">Default Value</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -124,10 +110,10 @@
 			var columns = [
 				{
 					suffix : [0],
-					name : 'xmenu',
-					rendername : 'xmenu',
+					name : 'xwidget',
+					rendername : 'xwidget',
 					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA11?xmenu=" data-value="'+ data +'">' + data + '</a>';
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA14?xwidget=" data-value="'+ data +'">' + data + '</a>';
 					}
 				}, {
 					suffix : [0],
@@ -135,18 +121,9 @@
 					rendername: 'xtitle',
 				}, {
 					suffix : [0],
-					class: 'text-center',
-					name : 'xpmenu',
-					rendername: 'xpmenu',
-				}, {
-					suffix : [0],
-					name : 'xicon',
-					rendername: 'xicon',
-				}, {
-					suffix : [0],
 					class: 'text-end',
-					name : 'xsequence',
-					rendername: 'xsequence',
+					name : 'xdefault',
+					rendername: 'xdefault',
 				}
 			];
 
@@ -176,10 +153,10 @@
 				"deferLoading": true,
 				"processing" : true,
 				"serverSide" : true,
-				"order" : [4, 'asc'],
+				"order" : [0, 'asc'],
 				"columnDefs": columnDefs,
 				"ajax": {
-					"url": getBasepath() + "/search/LSA11/0",
+					"url": getBasepath() + "/search/LSA14/0",
 					"type": 'POST'
 				},
 				"columns": dataRetreiver,

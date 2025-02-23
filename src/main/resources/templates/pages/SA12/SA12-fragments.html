@@ -12,7 +12,7 @@
 				<div class="row">
 					<div class="col-md-3" th:if="${#strings.isEmpty(xscreens.xscreen)}">
 						<div class="mb-3 form-group">
-							<label class="form-label">Screen Code</label>
+							<label class="form-label required">Screen Code</label>
 							<input type="text" class="form-control" th:field="*{xscreen}" required="required">
 						</div>
 					</div>
@@ -24,13 +24,13 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Screen Title</label>
+							<label class="form-label required">Screen Title</label>
 							<input type="text" class="form-control" th:field="*{xtitle}" required="required">
 						</div>
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Type</label>
+							<label class="form-label required">Type</label>
 							<select class="form-control select" th:field="*{xtype}" required="required" data-minimum-results-for-search="Infinity">
 								<option value="Screen">Screen</option>
 								<option value="Report">Report</option>
@@ -41,7 +41,7 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Starting From</label>
+							<label class="form-label required">Starting From</label>
 							<input type="number" class="form-control numeric-only" th:field="*{xnum}" min="0" step="1" required="required">
 						</div>
 					</div>

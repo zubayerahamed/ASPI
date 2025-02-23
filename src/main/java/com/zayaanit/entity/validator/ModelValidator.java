@@ -36,6 +36,7 @@ import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Xwhs;
+import com.zayaanit.entity.Xwidgets;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcmstPK;
@@ -50,6 +51,7 @@ import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.entity.pk.XwhsPK;
+import com.zayaanit.entity.pk.XwidgetsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.AcmstRepo;
@@ -64,6 +66,7 @@ import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.repository.XwhsRepo;
+import com.zayaanit.repository.XwidgetsRepo;
 import com.zayaanit.service.KitSessionManager;
 /**
  * @author Zubayer Ahamed
@@ -86,6 +89,22 @@ public class ModelValidator extends ConstraintValidator {
 	@Autowired private PotogliRepo potogliRepo;
 	@Autowired private OptogliRepo optogliRepo;
 	@Autowired private ImtogliRepo imtogliRepo;
+	@Autowired private XwidgetsRepo xwidgetsRepo;
+
+	public void validateXwidgets(Xwidgets xwidgets, Errors errors, Validator validator) {
+		if(xwidgets == null) return;
+
+		super.validate(xwidgets, errors, validator);
+		if (errors.hasErrors()) return;
+
+		// check profile already exist
+		Optional<Xwidgets> op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), xwidgets.getXwidget()));
+		if(!op.isPresent()) return;
+
+		if(SubmitFor.INSERT.equals(xwidgets.getSubmitFor()) && op.isPresent()) {
+			errors.rejectValue("xwidget", "Widget code already exist in the system");
+		}
+	}
 
 	public void validateXmenus(Xmenus xmenus, Errors errors, Validator validator) {
 		if(xmenus == null) return;
