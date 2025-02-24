@@ -1,5 +1,7 @@
 package com.zayaanit.config;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,4 +35,22 @@ public class AppConfig {
 
 	@Value("${app.import-export}")
 	private String importExportPath;
+
+	@Value("${client.service.names}")
+	private List<String> services;
+
+	@Value("${client.interval}")
+	private Integer intervalTime;
+
+	@Value("${client.name}")
+	private String clientName;
+
+	@Value("${socket.server.conurl}")
+	private String socketServerUrl;
+
+	@Value("${socket.server.subscribe}")
+	private String subscribeEndPoint;
+
+	@Value("${socket.server.sendurl}")
+	private String sendMessageEndPoint;
 }

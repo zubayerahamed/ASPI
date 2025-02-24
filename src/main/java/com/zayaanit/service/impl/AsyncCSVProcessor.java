@@ -3,6 +3,7 @@ package com.zayaanit.service.impl;
 import java.io.IOException;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -26,6 +27,7 @@ public class AsyncCSVProcessor {
 	}
 
 	@Bean
+	@Primary
 	public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(5);  // Reduce core threads to save memory

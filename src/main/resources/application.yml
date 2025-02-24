@@ -20,9 +20,22 @@ spring:
     cache: false
   banner:
     location: banner.txt
-  jackson:
-   serialization:
-     FAIL_ON_EMPTY_BEANS: false
+  jackson: 
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
+socket: 
+  server: 
+    conurl: ws://192.168.9.149:2023/websocket-server
+    subscribe: /topic/messages/
+    sendurl: /app/process-message/
+
+client: 
+  name: ASPI
+  interval: 10000
+  service: 
+    names: SQLSERVERAGENT
+
 javax: 
   xml: 
     XMLConstants: 

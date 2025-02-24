@@ -65,7 +65,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					"/configuration/security",
 					"/swagger-resources/**",
 					"/v2/api-docs/**",
-					"/v2/rest/**"
+					"/v2/rest/**",
+					"/actuator/**"
 					).permitAll()
 				.antMatchers("/SA11/**").hasRole("ZADMIN")
 				.antMatchers("/SA12/**").hasRole("ZADMIN")

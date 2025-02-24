@@ -258,23 +258,3 @@
 		})
 	</script>
 </div>
-
-
-<div th:fragment="list-table" xmlns:th="http://www.thymeleaf.org">
-	<script>
-		$(document).ready(function(){
-			kit.ui.init();
-
-			sectionReloadAjaxPostReq({
-				id : 'list-table-container',
-				url : '/search/table/LAD12/0'
-			}, {
-				mainscreen: true, 
-				mainreloadurl: '/AD12?xprofile=',
-				mainreloadid: 'main-form-container',
-				detailreloadurl: '/AD12/detail-table?xwh=RESET&xprofile=',
-				detailreloadid: 'detail-table-container'
-			});
-		})
-	</script>
-</div>
