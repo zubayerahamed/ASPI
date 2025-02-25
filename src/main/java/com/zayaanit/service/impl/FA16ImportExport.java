@@ -474,18 +474,18 @@ public class FA16ImportExport extends AbstractImportExport {
 			page++; // Move to the next page
 		} while (!tempvouchers.isEmpty()); // Continue until no more data
 
-		long totalErrors = tempvoucherRepo.countByZidAndAllOk(asyncCSVResult.getBusinessId(), Boolean.FALSE);
-		if(totalErrors > 0) {
-			asyncCSVResult.setAllOk(false);
-		} else {
-			asyncCSVResult.setAllOk(true);
-			try {
-				tempvoucherRepo.FA_ImportVoucher(asyncCSVResult.getBusinessId(), asyncCSVResult.getLoggedInUserDetail().getUsername(), asyncCSVResult.getPost().equals(1));
-			} catch (Exception e) {
-				log.error(e.getCause().getMessage());
-				asyncCSVResult.setAllOk(false);
-			}
-		}
+//		long totalErrors = tempvoucherRepo.countByZidAndAllOk(asyncCSVResult.getBusinessId(), Boolean.FALSE);
+//		if(totalErrors > 0) {
+//			asyncCSVResult.setAllOk(false);
+//		} else {
+//			asyncCSVResult.setAllOk(true);
+//			try {
+//				tempvoucherRepo.FA_ImportVoucher(asyncCSVResult.getBusinessId(), asyncCSVResult.getLoggedInUserDetail().getUsername(), asyncCSVResult.getPost().equals(1));
+//			} catch (Exception e) {
+//				log.error(e.getCause().getMessage());
+//				asyncCSVResult.setAllOk(false);
+//			}
+//		}
 	}
 
 	private void processTempVouchers(List<Tempvoucher> tempvouchers, Integer currentRowCount, long totalLine, AsyncCSVResult asyncCSVResult) {
@@ -582,7 +582,10 @@ public class FA16ImportExport extends AbstractImportExport {
 			if(StringUtils.isNotBlank(tempvoucher.getErrorDetails())) {
 				tempvoucher.setAllOk(false);
 				prepareAndUpdate(tempvoucher);
-			} 
+			} else {
+				tempvoucher.setAllOk(true);
+				prepareAndUpdate(tempvoucher);
+			}
 
 		}
 	}

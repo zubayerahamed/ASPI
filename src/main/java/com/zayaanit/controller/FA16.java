@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -613,23 +614,50 @@ public class FA16 extends KitController {
 	}
 
 	@GetMapping("/download/template")
-	public void downloadExcelTemplate(HttpServletResponse response) throws IOException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+	public void downloadTemplate(@RequestParam String type, HttpServletResponse response) throws IOException {
+		String fileName;
+		String contentType;
+
+		if ("XLSX".equalsIgnoreCase(type)) {
+			fileName = "Vouchers.xlsx";
+			contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+		} else if ("XLS".equalsIgnoreCase(type)) {
+			fileName = "Vouchers.xls";
+			contentType = "application/vnd.ms-excel";
+		} else {
+			fileName = "Vouchers.csv";
+			contentType = "text/csv";
+		}
+
+		response.setContentType(contentType);
+		response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+
 		ServletOutputStream out = response.getOutputStream();
 
-		response.setContentType("application/octet-stream");
+		if ("CSV".equalsIgnoreCase(type)) {
+			writeCsv(out);
+		} else {
+			writeExcel(type, out);
+		}
 
-		String headerKey = "content-disposition";
-		String headerValue = "attachment; filename=" + sdf.format(new Date()) +".xlsx";
-		
-		response.setHeader(headerKey, headerValue);
+		out.flush();
+		out.close();
+		response.flushBuffer();
+	}
 
-		Workbook workbook = new SXSSFWorkbook(BATCH_SIZE);
+	private void writeExcel(String type, ServletOutputStream out) throws IOException {
+		Workbook workbook;
+
+		if ("XLSX".equalsIgnoreCase(type)) {
+			workbook = new SXSSFWorkbook(100); // Efficient for large files
+		} else {
+			workbook = new HSSFWorkbook(); // For older XLS format
+		}
+
 		Sheet sheet = workbook.createSheet("Voucher");
 		Row row = sheet.createRow(0);
 
 		CellStyle textStyle = workbook.createCellStyle();
-
 		CellStyle integerStyle = workbook.createCellStyle();
 		integerStyle.setDataFormat(workbook.createDataFormat().getFormat("0"));
 
@@ -650,11 +678,14 @@ public class FA16 extends KitController {
 		createCell(workbook, sheet, row, 7, "Narration", ExcelCellType.RICHTEXT, textStyle);
 
 		workbook.write(out);
-		out.flush();
 		workbook.close();
+	}
 
-		response.flushBuffer();
-		response.getOutputStream().close();
+	private void writeCsv(ServletOutputStream out) throws IOException {
+		StringBuilder csvData = new StringBuilder();
+		csvData.append("Voucher Date,Business Unit,Debit Account,Debit Sub Account,Credit Account,Credit Sub Account,Amount,Narration\n");
+
+		out.write(csvData.toString().getBytes(StandardCharsets.UTF_8));
 	}
 
 	private void createCell(Workbook workbook, Sheet sheet, Row row, int columnCount, Object valueOfCell, ExcelCellType type, CellStyle style) {
