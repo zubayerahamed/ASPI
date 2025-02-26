@@ -455,7 +455,7 @@ public class FA16ImportExport extends AbstractImportExport {
 		}
 
 		long totalLine = tempvoucherRepo.countByZid(asyncCSVResult.getBusinessId());
-		int pageSize = 100;
+		int pageSize = 1000;
 		int page = 0;
 		Integer currentRowCount = 0;
 		Sort.Direction direction = Sort.Direction.ASC;
@@ -471,7 +471,7 @@ public class FA16ImportExport extends AbstractImportExport {
 		List<Tempvoucher> tempvouchers = null;
 
 		do {
-			tempvouchers = new ArrayList<>(100);
+			tempvouchers = new ArrayList<>(1000);
 
 			if(asyncCSVResult.isTerminated()) {
 				throw new IllegalStateException("Process Terminated");
