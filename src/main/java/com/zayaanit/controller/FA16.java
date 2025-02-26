@@ -82,10 +82,13 @@ import com.zayaanit.service.AcheaderService;
 import com.zayaanit.service.ImportExportService;
 import com.zayaanit.service.impl.AsyncCSVProcessor;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Zubayer Ahamed
  * @since Feb 11, 2025
  */
+@Slf4j
 @Controller
 @RequestMapping("/FA16")
 public class FA16 extends KitController {
@@ -101,7 +104,6 @@ public class FA16 extends KitController {
 	@Autowired private AsyncCSVProcessor asyncCSVProcessor;
 
 	private String pageTitle = null;
-	private static final int BATCH_SIZE = 100;
 
 	@Override
 	protected String screenCode() {
@@ -168,6 +170,7 @@ public class FA16 extends KitController {
 		model.addAttribute("totalData", totalData);
 		model.addAttribute("totalPages", (int) Math.ceil((double) totalData / size));
 		model.addAttribute("currentPage", page);
+		model.addAttribute("errorRecords", tempVoucherRepo.countErrorRecords(sessionManager.getBusinessId()));
 
 		int startRecord = 0;
 		int endRecord = 0;
@@ -320,6 +323,7 @@ public class FA16 extends KitController {
 		model.addAttribute("totalData", totalData);
 		model.addAttribute("totalPages", (int) Math.ceil((double) totalData / size));
 		model.addAttribute("currentPage", page);
+		model.addAttribute("errorRecords", tempVoucherRepo.countErrorRecords(sessionManager.getBusinessId()));
 
 		int startRecord = 0;
 		int endRecord = 0;
@@ -871,8 +875,26 @@ public class FA16 extends KitController {
 		return responseHelper.getResponse();
 	}
 
-	@PostMapping("/import/validation/confirm/{post}")
-	public @ResponseBody Map<String, Object> validateAndConfirmImport(@PathVariable Integer post) throws IOException {
+	@PostMapping("/import/data/confirm/{post}")
+	public @ResponseBody Map<String, Object> confirmDataImport(@PathVariable Integer post) throws IOException {
+
+		try {
+			tempVoucherRepo.FA_ImportVoucher(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), post.equals(1));
+		} catch (Exception e) {
+			log.error(e.getCause().getMessage());
+			responseHelper.setErrorStatusAndMessage(e.getCause().getMessage());
+			return responseHelper.getResponse();
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("import-table-container", "/FA16/import-table?page=0&size=10"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Vouchers confirmed " + (post.equals(1) ? "with post" : "without post"));
+		return responseHelper.getResponse();
+	}
+
+	@PostMapping("/import/validation/confirm")
+	public @ResponseBody Map<String, Object> validateAndConfirmImport() throws IOException {
 
 		String token = UUID.randomUUID().toString();
 		AsyncCSVResult asyncCSVResult = new AsyncCSVResult()
@@ -888,7 +910,6 @@ public class FA16 extends KitController {
 				.setFileName(null)
 				.setUploadedFileLocation(null)
 				.setModuleName("FA16")
-				.setPost(post)
 				.setBusinessId(sessionManager.getBusinessId())
 				.setLoggedInUserDetail(sessionManager.getLoggedInUserDetails());
 

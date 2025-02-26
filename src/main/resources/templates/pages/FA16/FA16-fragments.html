@@ -528,8 +528,9 @@
 				</div>
 			</div>
 			<button class="btn btn-primary btn-sm btn-upload-file ms-1 mb-1"><i class="ph-upload me-2"></i> Upload File</button>
-			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-info btn-sm btn-confirm-upload ms-1 mb-1" data-post="0"><i class="ph-thumbs-up me-2"></i> Confirm Without Post</button>
-			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-info btn-sm btn-confirm-upload ms-1 mb-1" data-post="1"><i class="ph-thumbs-up me-2"></i> Confirm With Post</button>
+			<button th:if="${not #lists.isEmpty(tempvouchers) and errorRecords gt 0}" class="btn btn-info btn-sm btn-validate-data ms-1 mb-1" data-post="0"><i class="ph-brain me-2"></i> Validate Data</button>
+			<button th:if="${not #lists.isEmpty(tempvouchers) and errorRecords eq 0}" class="btn btn-info btn-sm btn-confirm-data ms-1 mb-1" data-post="0"><i class="ph-thumbs-up me-2"></i> Confirm Without Post</button>
+			<button th:if="${not #lists.isEmpty(tempvouchers) and errorRecords eq 0}" class="btn btn-info btn-sm btn-confirm-data ms-1 mb-1" data-post="1"><i class="ph-thumbs-up me-2"></i> Confirm With Post</button>
 			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-danger btn-sm btn-delete-all-selected ms-1 mb-1 d-none"><i class="ph-trash me-2"></i> Delete All Selected <span class="selection-counter d-none"></span></button>
 			<button th:if="${not #lists.isEmpty(tempvouchers)}" class="btn btn-danger btn-sm btn-delete-all-rows ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All</button>
 			<button class="btn btn-warning btn-sm btn-terminate-process ms-1 mb-1 d-none"><i class="ph-crosshair me-2"></i> Terminate Process</button>
@@ -822,7 +823,7 @@
 						setTimeout(() => {
 							hideProgress(true);
 							hideBtn(['btn-terminate-process']);
-							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+							enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 							enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 							if(data.allOk == true) {
@@ -870,7 +871,7 @@
 
 			const fa16ImportToken = $('.fa16ImportToken').val();
 			if(fa16ImportToken != undefined && fa16ImportToken != null && fa16ImportToken != ''){
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+				disableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 				disableBtn(['btn-row-edit', 'btn-row-delete']);
 				resetProgressBar();
 				showProgress('bg-warning', 'Preparing Data');
@@ -895,16 +896,25 @@
 				terminateProcess();
 			});
 
-			$('.btn-confirm-upload').off('click').on('click', function(e){
+			$('.btn-confirm-data').off('click').on('click', function(e){
 				e.preventDefault();
+				if(!confirm("Are you sure?")){
+					return;
+				}
 				var post = $(this).data('post');
-				var linkUrl = getBasepath() + '/FA16/import/validation/confirm/' + post;
+				var linkUrl = getBasepath() + '/FA16/import/data/confirm/' + post;
+				actionPostRequest(linkUrl);
+			});
+
+			$('.btn-validate-data').off('click').on('click', function(e){
+				e.preventDefault();
+				var linkUrl = getBasepath() + '/FA16/import/validation/confirm/';
 				var formData = new FormData();
 
 				resetProgressBar();
 				showProgress('bg-success', 'Validating Data');
 				showBtn(['btn-terminate-process']);
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+				disableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 				disableBtn(['btn-row-edit', 'btn-row-delete']);
 
 				$.ajax({
@@ -928,7 +938,7 @@
 								setTimeout(() => {
 									hideProgress(true);
 									hideBtn(['btn-terminate-process']);
-									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+									enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 									enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 									if(data.asyncCSVResult.allOk == true) {
@@ -949,7 +959,7 @@
 
 						} else {
 							$('#progressBar').addClass('bg-danger');
-							enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+							enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 							enableBtn(['btn-row-edit', 'btn-row-delete']);
 							showMessage(data.status.toLowerCase(), data.message);
 
@@ -993,7 +1003,7 @@
 				resetProgressBar();
 				showProgress(null, 'Uploading file to server');
 				showBtn(['btn-terminate-process']);
-				disableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+				disableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 				disableBtn(['btn-row-edit', 'btn-row-delete']);
 
 				function uploadNextChunk(initialStart) {
@@ -1060,7 +1070,7 @@
 												e.preventDefault();
 												$('#importExcelSheetSelectionModal').modal('hide');
 												container.empty();
-												enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+												enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 												enableBtn(['btn-row-edit', 'btn-row-delete']);
 											})
 
@@ -1111,7 +1121,7 @@
 																		setTimeout(() => {
 																			hideProgress(true);
 																			hideBtn(['btn-terminate-process']);
-																			enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+																			enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 																			enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 																			if(data.asyncCSVResult.allOk == true) {
@@ -1125,14 +1135,14 @@
 																	}
 
 																} else {
-																	enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+																	enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 																	enableBtn(['btn-row-edit', 'btn-row-delete']);
 																}
 
 															} else {
 																hideProgress(true);
 																hideBtn(['btn-terminate-process']);
-																enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+																enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 																enableBtn(['btn-row-edit', 'btn-row-delete']);
 																showMessage('error', "Excel processing failed");
 															}
@@ -1172,7 +1182,7 @@
 													setTimeout(() => {
 														hideProgress(true);
 														hideBtn(['btn-terminate-process']);
-														enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+														enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 														enableBtn(['btn-row-edit', 'btn-row-delete']);
 
 														if(data.asyncCSVResult.allOk == true) {
@@ -1186,7 +1196,7 @@
 												}
 
 											} else {
-												enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+												enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 												enableBtn(['btn-row-edit', 'btn-row-delete']);
 											}
 
@@ -1197,7 +1207,7 @@
 
 								} else {
 									$('#progressBar').addClass('bg-danger');
-									enableBtn(['btn-upload-file', 'btn-confirm-upload', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
+									enableBtn(['btn-upload-file', 'btn-validate-data', 'btn-confirm-data', 'btn-download-template', 'btn-delete-all-selected', 'btn-delete-all-rows']);
 									enableBtn(['btn-row-edit', 'btn-row-delete']);
 									showMessage(data.status.toLowerCase(), data.message);
 								}

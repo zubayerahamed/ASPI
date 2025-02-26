@@ -38,14 +38,16 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from tempvoucher where zid=?1", nativeQuery = true)
 	public Integer getNextAvailableRow(Integer zid);
 
-//	public List<Tempvoucher> findAllByZid(Integer zid);
-
 	public Page<Tempvoucher> findAllByZid(Integer zid, Pageable pageable);
 
 	@Query("SELECT COUNT(t) FROM Tempvoucher t WHERE t.zid = :zid")
 	long countByZid(@Param("zid") Integer zid);
 
-	long countByZidAndAllOk(Integer zid, Boolean allOk);
+	@Query("SELECT COUNT(t) FROM Tempvoucher t WHERE t.zid = :zid AND t.allOk = :allOk")
+	long countByZidAndAllOk(@Param("zid") Integer zid, @Param("allOk") Boolean allOk);
+
+	@Query(value = "SELECT COUNT(*) FROM tempvoucher t WHERE t.zid = ?1 AND (t.Status is NULL or t.Status = 0)", nativeQuery = true)
+	long countErrorRecords(Integer zid);
 
 	void deleteByZidAndXrowIn(Integer zid, List<Integer> xrows);
 
@@ -64,4 +66,5 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 	@Transactional
 	@Query(value = "UPDATE tempvoucher set Status = ?3, ErrorDetails=?4 WHERE zid=?1 and xrow=?2", nativeQuery = true)
 	int updateTempvoucher(Integer zid, Integer xrow, int allOk, String errorDetails);
+
 }

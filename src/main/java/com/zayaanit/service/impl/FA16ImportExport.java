@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.csv.CSVFormat;
@@ -37,9 +40,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.zayaanit.entity.Acmst;
+import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Tempvoucher;
-import com.zayaanit.entity.pk.AcmstPK;
-import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.model.AsyncCSVResult;
 import com.zayaanit.model.CSVError;
 import com.zayaanit.model.ImportExportModuleColumn;
@@ -48,6 +52,7 @@ import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.TempvoucherRepo;
 import com.zayaanit.service.GenericImportExportColumns;
+import com.zayaanit.service.TempvoucherService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +68,7 @@ public class FA16ImportExport extends AbstractImportExport {
 	@Autowired private CabunitRepo cabunitRepo;
 	@Autowired private AcmstRepo acmstRepo;
 	@Autowired private AcsubRepo acsubRepo;
+	@Autowired private TempvoucherService tempvoucherService;
 
 	@Override
 	public String showExportImportPage(Model model) {
@@ -119,7 +125,6 @@ public class FA16ImportExport extends AbstractImportExport {
 			InputStream inputStream = new FileInputStream(file); 
 			Workbook workbook = "xlsx".equalsIgnoreCase(extention) ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream);
 		) {
-//			Sheet sheet = workbook.getSheetAt(0);
 			Sheet sheet = workbook.getSheet(asyncCSVResult.getSelectedSheetName());
 			Iterator<Row> rowIterator = sheet.iterator();
 
@@ -212,7 +217,7 @@ public class FA16ImportExport extends AbstractImportExport {
 			}
 			tList.add(t);
 
-			if(tList.size() == 100 || currentRowCount == totalLines - 1) {
+			if(tList.size() == 100 || currentRowCount == totalLines) {
 				for(Tempvoucher te : tList) {
 					try {
 						prepareAndInsert(te);
@@ -448,12 +453,20 @@ public class FA16ImportExport extends AbstractImportExport {
 		if(asyncCSVResult.isTerminated()) {
 			throw new IllegalStateException("Process Terminated");
 		}
-	
+
 		long totalLine = tempvoucherRepo.countByZid(asyncCSVResult.getBusinessId());
 		int pageSize = 100;
 		int page = 0;
 		Integer currentRowCount = 0;
 		Sort.Direction direction = Sort.Direction.ASC;
+
+		List<Integer> cabunitList = cabunitRepo.findAllByZid(asyncCSVResult.getBusinessId()).stream().map(Cabunit::getXbuid).collect(Collectors.toList());
+		Map<Integer, String> acmstMap = acmstRepo.findAllByZid(asyncCSVResult.getBusinessId())
+												.stream()
+												.collect(Collectors.toMap(Acmst::getXacc, Acmst::getXaccusage));
+		Map<Integer, String> acsubMap = acsubRepo.findAllByZid(asyncCSVResult.getBusinessId())
+												.stream()
+												.collect(Collectors.toMap(Acsub::getXsub, Acsub::getXtype));
 
 		List<Tempvoucher> tempvouchers = null;
 
@@ -468,126 +481,125 @@ public class FA16ImportExport extends AbstractImportExport {
 			tempvouchers.addAll(tempvoucherRepo.findAllByZid(asyncCSVResult.getBusinessId(), pageable).toList());
 
 			// Process the retrieved chunk
-			processTempVouchers(tempvouchers, currentRowCount, totalLine, asyncCSVResult);
+			processTempVouchers(tempvouchers, currentRowCount, totalLine, asyncCSVResult, cabunitList, acmstMap, acsubMap);
 			currentRowCount += tempvouchers.size();
 
 			page++; // Move to the next page
 		} while (!tempvouchers.isEmpty()); // Continue until no more data
 
-//		long totalErrors = tempvoucherRepo.countByZidAndAllOk(asyncCSVResult.getBusinessId(), Boolean.FALSE);
-//		if(totalErrors > 0) {
-//			asyncCSVResult.setAllOk(false);
-//		} else {
-//			asyncCSVResult.setAllOk(true);
-//			try {
-//				tempvoucherRepo.FA_ImportVoucher(asyncCSVResult.getBusinessId(), asyncCSVResult.getLoggedInUserDetail().getUsername(), asyncCSVResult.getPost().equals(1));
-//			} catch (Exception e) {
-//				log.error(e.getCause().getMessage());
-//				asyncCSVResult.setAllOk(false);
-//			}
-//		}
 	}
 
-	private void processTempVouchers(List<Tempvoucher> tempvouchers, Integer currentRowCount, long totalLine, AsyncCSVResult asyncCSVResult) {
-		for (Tempvoucher tempvoucher : tempvouchers) {
+	private void processTempVouchers(
+			List<Tempvoucher> tempvouchers, 
+			Integer currentRowCount, 
+			long totalLine, 
+			AsyncCSVResult asyncCSVResult, 
+			List<Integer> cabunitList,
+			Map<Integer, String> acmstMap,
+			Map<Integer, String> acsubMap
+		) {
+
+		AtomicInteger currentRowCounter = new AtomicInteger(currentRowCount);
+
+		tempvouchers.parallelStream().forEach(tempvoucher -> {
 			tempvoucher.setErrorDetails("");
 
 			if(asyncCSVResult.isTerminated()) {
 				throw new IllegalStateException("Process Terminated");
 			}
 
-			currentRowCount++;
+			int count = currentRowCounter.incrementAndGet();
 
-			Double progress = ((double) (currentRowCount) / totalLine) * 100;
+			Double progress = ((double) (count) / totalLine) * 100;
 			asyncCSVResult.setProgress(progress);
 			asyncCSVResult.setAllOk(true);
 
+			StringBuilder errors = new StringBuilder();
+
 			// Your processing logic here
 			// validate every thing
-
 			if(tempvoucher.getVoucherDate() == null) {
-				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Voucher date required | ");
+				errors.append("Voucher date required | ");
 			}
 
 			if(tempvoucher.getBusinessUnit() == null) {
-				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Business unit required | ");
+				errors.append("Business unit required | ");
 			} else {
-				if(!cabunitRepo.findById(new CabunitPK(asyncCSVResult.getBusinessId(), tempvoucher.getBusinessUnit())).isPresent()) {
-					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Business unit not exist in this system | ");
+				if(!cabunitList.contains(tempvoucher.getBusinessUnit())) {
+					errors.append("Business unit not exist in this system | ");
 				}
 			}
 
 			if(tempvoucher.getDebitAcc() == null) {
-				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit account required | ");
+				errors.append("Debit account required | ");
 			} else {
-				acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getDebitAcc()))
-				.map(debitAccount -> {
-					if("Default".equals(debitAccount.getXaccusage())) {
+				if(acmstMap.get(tempvoucher.getDebitAcc()) != null) {
+					String xaccusage = acmstMap.get(tempvoucher.getDebitAcc());
+					if("Default".equals(xaccusage)) {
 						if(tempvoucher.getDebitSubAcc() != null) {
-							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "You can't set any debit sub account for this Default debit account type | ");
+							errors.append("You can't set any debit sub account for this Default debit account type | ");
 						}
 					} else {
 						if(tempvoucher.getDebitSubAcc() == null) {
-							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit sub account required | ");
+							errors.append("Debit sub account required | ");
 						} else {
-							if(!acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getDebitSubAcc(), debitAccount.getXaccusage()).isPresent()) {
-								tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit sub account not exist in this system | ");
+							if(acsubMap.get(tempvoucher.getDebitSubAcc()) == null || !acsubMap.get(tempvoucher.getDebitSubAcc()).equalsIgnoreCase(xaccusage)) {
+								errors.append("Debit sub account not exist in this system | ");
 							}
 						}
 					}
-					return debitAccount;
-				}).orElseGet(() -> {
-					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Debit account not exist in this system | ");
-					return null;
-				});
+				} else {
+					errors.append("Debit account not exist in this system | ");
+				}
 			}
 
 			if(tempvoucher.getCreditAcc() == null) {
-				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit account required | ");
+				errors.append("Credit account required | ");
 			} else {
-				acmstRepo.findById(new AcmstPK(asyncCSVResult.getBusinessId(), tempvoucher.getCreditAcc()))
-				.map(creditAccount -> {
-					if("Default".equals(creditAccount.getXaccusage())) {
+				if(acmstMap.get(tempvoucher.getCreditAcc()) != null) {
+					String xaccusage = acmstMap.get(tempvoucher.getCreditAcc());
+					if("Default".equals(xaccusage)) {
 						if(tempvoucher.getCreditSubAcc() != null) {
-							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "You can't set any credit sub account for this Default credit account type | ");
+							errors.append("You can't set any credit sub account for this Default credit account type | ");
 						}
 					} else {
 						if(tempvoucher.getCreditSubAcc() == null) {
-							tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit sub account required | ");
+							errors.append("Credit sub account required | ");
 						} else {
-							if(!acsubRepo.findByZidAndXsubAndXtype(asyncCSVResult.getBusinessId(), tempvoucher.getCreditSubAcc(), creditAccount.getXaccusage()).isPresent()) {
-								tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit sub account not exist in this system | ");
+							if(acsubMap.get(tempvoucher.getCreditSubAcc()) == null || !acsubMap.get(tempvoucher.getCreditSubAcc()).equalsIgnoreCase(xaccusage)) {
+								errors.append("Credit sub account not exist in this system | ");
 							}
 						}
 					}
-					return creditAccount;
-				}).orElseGet(() -> {
-					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Credit account not exist in this system | ");
-					return null;
-				});
+				} else {
+					errors.append("Credit account not exist in this system | ");
+				}
 			}
 
 			if(tempvoucher.getAmount() == null) {
-				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Amount required | ");
+				errors.append("Amount required | ");
 			} else {
 				if(tempvoucher.getAmount().compareTo(BigDecimal.ZERO) != 1) {
-					tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Invalid amount | ");
+					errors.append("Invalid amount | ");
 				}
 			}
 
 			if(StringUtils.isNotBlank(tempvoucher.getNarration()) && tempvoucher.getNarration().length() > 200) {
-				tempvoucher.setErrorDetails(tempvoucher.getErrorDetails() + "Narration is too long. Write narration up to 200 character | ");
+				errors.append("Narration is too long. Write narration up to 200 character | ");
 			}
 
-			if(StringUtils.isNotBlank(tempvoucher.getErrorDetails())) {
+			if(StringUtils.isNotBlank(errors.toString())) {
 				tempvoucher.setAllOk(false);
-				prepareAndUpdate(tempvoucher);
+				tempvoucher.setErrorDetails(errors.toString());
 			} else {
 				tempvoucher.setAllOk(true);
-				prepareAndUpdate(tempvoucher);
 			}
+		});
 
-		}
+		tempvoucherService.batchUpdateTempvouchers(tempvouchers);
+//		tempvouchers.stream().forEach(t -> {
+//			prepareAndUpdate(t);
+//		});
 	}
 
 	private int prepareAndUpdate(Tempvoucher t) {

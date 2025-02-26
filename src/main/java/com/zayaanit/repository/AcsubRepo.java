@@ -23,4 +23,6 @@ public interface AcsubRepo extends JpaRepository<Acsub, AcsubPK> {
 	List<Acsub> findAllByZidAndXacc(Integer zid, Integer xacc);
 
 	Optional<Acsub> findByZidAndXsubAndXtype(Integer zid, Integer xsub, String xtype);
+
+	List<Acsub> findAllByZid(Integer zid);
 }
