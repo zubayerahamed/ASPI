@@ -67,6 +67,12 @@ public class Xscreens extends AbstractModel<String> {
 	@Column(name = "xkeywords", length = 200)
 	private String xkeywords;
 
+	@Column(name = "xfile", length = 20)
+	private String xfile;
+
+	@Column(name = "xengine", length = 20)
+	private String xengine;
+
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 

@@ -58,6 +58,24 @@
 							<textarea rows="1" class="form-control" th:field="*{xkeywords}"></textarea>
 						</div>
 					</div>
+
+					<div class="col-md-3 d-none" id="reportFileSection">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Report File</label>
+							<input type="text" class="form-control" th:field="*{xfile}">
+						</div>
+					</div>
+					<div class="col-md-3 d-none" id="reportEngineSection">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Report Engine</label>
+							<select class="form-control select" th:field="*{xengine}" data-minimum-results-for-search="Infinity">
+								<option value="">-- Please Select --</option>
+								<option value="CRYSTAL">Crystal Report</option>
+								<option value="FOP">FOP Report</option>
+								<option value="JASPER">Jasper Report</option>
+							</select>
+						</div>
+					</div>
 				</div>
 
 				<div class="d-flex justify-content-between align-items-center">
@@ -103,7 +121,301 @@
 				}
 				deleteRequest($(this).data('url'));
 			});
+
+			function toggleReportFields() {
+				const type = $('#xtype').val();
+				if (type === 'Report') {
+					$('#reportFileSection, #reportEngineSection').removeClass('d-none');
+					$('#xfile, #xengine').attr('required', true);
+				} else {
+					$('#reportFileSection, #reportEngineSection').addClass('d-none');
+					$('#xfile, #xengine').removeAttr('required').val('');
+				}
+			}
+
+			toggleReportFields(); // Run on load
+			$('#xtype').change(toggleReportFields); // Run on change
 	
+		})
+	</script>
+</div>
+
+
+
+<div th:fragment="detail-table" xmlns:th="http://www.thymeleaf.org">
+	<div class="card" th:if="${xscreens.xscreen ne null and xscreens.xtype eq 'Report'}">
+		<div class="card-header d-sm-flex align-items-sm-center py-sm-0">
+			<h6 class="py-sm-3 mb-sm-auto" th:text="${'Report Fields'}"></h6>
+		</div>
+
+		<div class="card-body">
+			<form id="detailform" class="form-validate-jquery" th:action="@{/SA12/detail/store}" th:object="${xscreendetail}" method="POST" th:with="df=${'yyyy-MM-dd'}">
+				<input type="hidden" name="submitFor" th:value="*{submitFor}"/>
+				<input type="hidden" name="xscreen" th:value="*{xscreen}">
+				<input type="hidden" name="xrow" th:value="*{xrow}">
+
+				<div class="row">
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Field Type</label>
+							<select class="form-control select field-xtype" th:field="*{xtype}" data-minimum-results-for-search="Infinity" required="required">
+								<option value="">-- Please Select --</option>
+								<option value="HIDDEN">Hidden</option>
+								<option value="TEXT">Text</option>
+								<option value="NUMBER">Number</option>
+								<option value="DATE">Date</option>
+								<option value="TIME">Time</option>
+								<option value="DROPDOWN">Dropdown</option>
+								<option value="SELECT2">Select dropdown</option>
+								<option value="SEARCH_ADVANCED">Search</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-3" id="parameter-data-type">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Parameter Data Type</label>
+							<select class="form-control select" th:field="*{xparamtype}" data-minimum-results-for-search="Infinity" required="required">
+								<option value="">-- Please Select --</option>
+								<option value="STRING">String</option>
+								<option value="INTEGER">Integer</option>
+								<option value="DATE">Date</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-title">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Field Title</label>
+							<input type="text" class="form-control" th:field="*{xlabel}" required="required">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-seqn">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Order Sequence</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xseqn}" required="required" min="2">
+							<span class="text-info">Sequence 1 is Reserved for Business ID</span>
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-max">
+						<div class="mb-3 form-group">
+							<label class="form-label">Max</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xmax}">
+						</div>
+					</div>
+					<div class="col-md-3" id="field-min">
+						<div class="mb-3 form-group">
+							<label class="form-label">Min</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xmin}">
+						</div>
+					</div>
+					<div class="col-md-3" id="field-step">
+						<div class="mb-3 form-group">
+							<label class="form-label">Step</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xstep}">
+						</div>
+					</div>
+
+					<div class="col-md-6" id="field-options">
+						<div class="mb-3 form-group">
+							<label class="form-label">Options</label>
+							<textarea cols="" rows="3" class="form-control" th:field="*{xoptions}"></textarea>
+							<span class="text-info">Ex: val1:promp1|val2:promp2|val3:promp3</span>
+						</div>
+					</div>
+					<div class="col-md-6" id="field-options-query">
+						<div class="mb-3 form-group">
+							<label class="form-label">Options Query</label>
+							<textarea cols="" rows="3" class="form-control" th:field="*{xoptionsquery}"></textarea>
+							<span class="text-info">Ex: SELECT colA as DV, colB as DP from table where cond1='con' and cond2=##session##</span>
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-default-value">
+						<div class="mb-3 form-group">
+							<label class="form-label">Default Value</label>
+							<input type="text" class="form-control" th:field="*{xdefaultvalue}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-search-code">
+						<div class="mb-3 form-group">
+							<label class="form-label">Search Code</label>
+							<input type="text" class="form-control" th:field="*{xsearchcode}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-search-suffix">
+						<div class="mb-3 form-group">
+							<label class="form-label">Search Suffix</label>
+							<input type="text" class="form-control" th:field="*{xsearchsuffix}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-dependent-field-id">
+						<div class="mb-3 form-group">
+							<label class="form-label">Dependent Field ID</label>
+							<input type="text" class="form-control" th:field="*{xdependentfieldid}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-reset-field-id">
+						<div class="mb-3 form-group">
+							<label class="form-label">Reset Field ID</label>
+							<input type="text" class="form-control" th:field="*{xresetfieldid}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-is-disabled">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xisdisable">Is Disabled?</label>
+							<input type="checkbox" id="xisdisable" th:field="*{xisdisable}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-is-required">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xisrequired">Is Required?</label>
+							<input type="checkbox" id="xisrequired" th:field="*{xisrequired}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-is-start-date">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xisstartdate">Is Start Date?</label>
+							<input type="checkbox" id="xisstartdate" th:field="*{xisstartdate}">
+						</div>
+					</div>
+
+					<div class="col-md-3" id="field-is-end-date">
+						<div class="mb-3 form-group">
+							<label class="form-label d-block" for="xisenddate">Is End Date?</label>
+							<input type="checkbox" id="xisenddate" th:field="*{xisenddate}">
+						</div>
+					</div>
+
+				</div>
+
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<button type="reset" th:attr="data-reloadurl='/SA12/detail-table?xscreen='+ ${xscreens.xscreen} +'&xrow=RESET', data-reloadid='detail-table-container'" class="btn btn-light btn-sm btn-detail-reset">Clear</button>
+					</div>
+					<div>
+						<button th:if="${xscreendetail.xrow ne 0}" th:attr="data-url=@{/SA12/detail-table?xscreen=} + ${xscreendetail.xscreen} + '&xrow=' + ${xscreendetail.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${xscreendetail.xrow ne 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
+						<button th:if="${xscreendetail.xrow eq 0}" type="submit" class="btn btn-primary btn-sm btn-detail-submit"><i class="ph-plus me-2"></i> Add New</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="table-responsive" th:if="${not #lists.isEmpty(detailList)}">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Field Type</th>
+						<th>Field Title</th>
+						<th>Parameter Data Type</th>
+						<th>Sequence</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="x : ${detailList}">
+						<td>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:href="@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:text="${x.xtype}"></a>
+						</td>
+						<td th:text="${x.xlabel}"></td>
+						<td th:text="${x.xparamtype}"></td>
+						<td th:text="${x.xseqn}"></td>
+						<td class="text-end">
+							<button th:attr="data-url=@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+
+			$('.btn-detail-reset').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			$('.btn-detail-submit').off('click').on('click', function(e){
+				e.preventDefault();
+				submitMainForm(null, $('form#detailform'));
+			});
+
+			$('.btn-detail-delete').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+	
+			$('a.detail-dataindex').off('click').on('click', function(e){
+				e.preventDefault();
+
+				sectionReloadAjaxReq({
+					id : $(this).data('reloadid'),
+					url : $(this).data('reloadurl')
+				});
+			});
+
+			const fieldMap = {
+				HIDDEN: ['field-seqn', 'parameter-data-type', 'field-default-value'],
+				TEXT: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required'],
+				NUMBER: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-max', 'field-min', 'field-step'],
+				DATE: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-is-start-date', 'field-is-end-date'],
+				TIME: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required'],
+				DROPDOWN: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-options-query', 'field-options'],
+				SELECT2: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-options-query', 'field-options'],
+				SEARCH_ADVANCED: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-search-code', 'field-search-suffix', 'field-dependent-field-id', 'field-reset-field-id']
+			};
+
+			const requiredFields = ['parameter-data-type', 'field-title', 'field-seqn'];
+
+			function resetFields() {
+				// Hide all possible fields
+				$.each($('[id^="field-"], #parameter-data-type'), function () {
+					$(this).addClass('d-none');
+					$(this).find('input, select, textarea').prop('required', false);
+				});
+			}
+
+			function showFields(type) {
+				const fields = fieldMap[type] || [];
+				fields.forEach(function (id) {
+					$('#' + id).removeClass('d-none');
+
+					// Set required for relevant fields
+					if (requiredFields.includes(id)) {
+						$('#' + id).find('input, select, textarea').prop('required', true);
+					}
+				});
+			}
+
+			// Trigger on change
+			$('.field-xtype').on('change', function () {
+				const selectedType = $(this).val();
+				resetFields();
+				showFields(selectedType);
+			});
+
+			// Trigger once on page load if value is preselected
+			$('.field-xtype').trigger('change');
 		})
 	</script>
 </div>
@@ -142,7 +454,7 @@
 					name : 'xscreen',
 					rendername : 'xscreen',
 					render: function(data, type, row, meta) {
-						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" href="/SA12?xscreen=" data-value="'+ data +'">' + data + '</a>';
+						return '<a style="text-decoration: underline; cursor: pointer;" class="dataindex" reloadid="main-form-container" detail-reloadid="detail-table-container" detail-reloadurl="/SA12/detail-table?xrow=RESET&xscreen=" href="/SA12?xscreen=" data-value="'+ data +'">' + data + '</a>';
 					}
 				}, {
 					suffix : [0],
@@ -218,6 +530,15 @@
 					id : mainreloadid,
 					url : mainreloadurl + value
 				});
+
+				var detailreloadurl = $(this).attr('detail-reloadurl');
+				var detailreloadid = $(this).attr('detail-reloadid');
+				if(detailreloadid){
+					sectionReloadAjaxReq({
+						id : detailreloadid,
+						url : detailreloadurl + value
+					});
+				}
 			})
 		})
 	</script>
