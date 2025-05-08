@@ -5,26 +5,25 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zayaanit.entity.Xcodes;
+import com.ibm.icu.text.SimpleDateFormat;
 import com.zayaanit.entity.Xscreendetail;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ReportMenu;
 import com.zayaanit.model.DropdownOption;
 import com.zayaanit.model.FormFieldBuilder;
-import com.zayaanit.repository.XscreendetailRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,8 +38,6 @@ public class ReportController extends AbstractReportController{
 
 	private String pageTitle = null;
 	private String screenCode = null;
-
-	@Autowired private XscreendetailRepo xscreendetailRepo;
 
 	@Override
 	protected String screenCode() {
@@ -62,7 +59,7 @@ public class ReportController extends AbstractReportController{
 	}
 
 	@GetMapping
-	public String index(@PathVariable String rptcode, HttpServletRequest request, Model model) {
+	public String index(@PathVariable String rptcode, HttpServletRequest request, Model model) throws Exception {
 		this.screenCode = rptcode;
 		model.addAttribute("isFavorite", isFavorite());
 
@@ -104,7 +101,7 @@ public class ReportController extends AbstractReportController{
 		return "pages/RP/RP";
 	}
 
-	private List<FormFieldBuilder> getReportFields(List<Xscreendetail> details){
+	private List<FormFieldBuilder> getReportFields(List<Xscreendetail> details) throws Exception{
 		details.sort(Comparator.comparing(Xscreendetail::getXseqn));
 
 		List<FormFieldBuilder> fieldsList = new ArrayList<>();
@@ -113,7 +110,16 @@ public class ReportController extends AbstractReportController{
 
 		for(Xscreendetail detail : details) {
 			if("DATE".equalsIgnoreCase(detail.getXtype())) {
-				fieldsList.add(FormFieldBuilder.generateDateField(detail.getXseqn(), detail.getXisstartdate(), detail.getXlabel(), new Date(), detail.getXisrequired()));
+				Date defDate = null;
+				String defaultValue = detail.getXdefaultvalue().trim();
+				if("TODAY".equalsIgnoreCase(defaultValue)) {
+					defDate = new Date();
+				} else if (StringUtils.isNotBlank(defaultValue)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					defDate = sdf.parse(defaultValue);
+				}
+
+				fieldsList.add(FormFieldBuilder.generateDateField(detail.getXseqn(), detail.getXisstartdate(), detail.getXlabel(), defDate, detail.getXisrequired()));
 			} else if ("SEARCH_ADVANCED".equalsIgnoreCase(detail.getXtype())) {
 				fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(detail.getXseqn(), detail.getXlabel(), "/search/table/"+ detail.getXsearchcode() +"/"+ detail.getXsearchsuffix() +"?hint=", detail.getXdefaultvalue(), detail.getXisrequired()));
 			} else if ("SELECT2".equalsIgnoreCase(detail.getXtype()) || "DROPDOWN".equalsIgnoreCase(detail.getXtype())) {
@@ -130,10 +136,23 @@ public class ReportController extends AbstractReportController{
 				}
 
 				if(StringUtils.isNotBlank(detail.getXoptionsquery())) {
-//					List<Xcodes> groups = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Group", Boolean.TRUE, sessionManager.getBusinessId());
-//					groups.forEach(f -> {
-//						options.add(new DropdownOption(f.getXcode(), f.getXcode()));
-//					});
+					String sql = detail.getXoptionsquery().trim();
+					sql = sql.replaceAll("##zid##", sessionManager.getBusinessId().toString());
+
+					List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();
+					try {
+						resultList = jdbcTemplate.queryForList(sql);
+					} catch (Exception e) {
+						throw new Exception(e.getCause().getMessage());
+					}
+
+					if(resultList != null && !resultList.isEmpty()) {
+						for(Map<String, Object> row : resultList) {
+							String value = (String) row.get("DV");
+							String prompt = (String) row.get("DP");
+							options.add(new DropdownOption(value, prompt));
+						}
+					}
 				}
 
 				fieldsList.add(FormFieldBuilder.generateDropdownField(detail.getXseqn(), detail.getXlabel(), options, detail.getXdefaultvalue(), detail.getXisrequired()));

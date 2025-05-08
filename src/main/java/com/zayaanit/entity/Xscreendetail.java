@@ -101,6 +101,9 @@ public class Xscreendetail extends AbstractModel<String> {
 	@Column(name = "xparamtype", length = 20)
 	private String xparamtype;
 
+	@Column(name = "xrparam", length = 20)
+	private String xrparam;
+
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 

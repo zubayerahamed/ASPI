@@ -184,6 +184,13 @@
 						</div>
 					</div>
 
+					<div class="col-md-3" id="parameter-id">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Parameter ID</label>
+							<input type="text" class="form-control" th:field="*{xrparam}" required="required">
+						</div>
+					</div>
+
 					<div class="col-md-3" id="field-title">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Field Title</label>
@@ -218,14 +225,14 @@
 						</div>
 					</div>
 
-					<div class="col-md-6" id="field-options">
+					<div class="col-md-3" id="field-options">
 						<div class="mb-3 form-group">
 							<label class="form-label">Options</label>
 							<textarea cols="" rows="3" class="form-control" th:field="*{xoptions}"></textarea>
 							<span class="text-info">Ex: val1:promp1|val2:promp2|val3:promp3</span>
 						</div>
 					</div>
-					<div class="col-md-6" id="field-options-query">
+					<div class="col-md-3" id="field-options-query">
 						<div class="mb-3 form-group">
 							<label class="form-label">Options Query</label>
 							<textarea cols="" rows="3" class="form-control" th:field="*{xoptionsquery}"></textarea>
@@ -237,6 +244,7 @@
 						<div class="mb-3 form-group">
 							<label class="form-label">Default Value</label>
 							<input type="text" class="form-control" th:field="*{xdefaultvalue}">
+							<span class="text-info" id="field-date-example">EX: (2025-05-08, today) for date field</span>
 						</div>
 					</div>
 
@@ -315,21 +323,23 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th>Field Type</th>
+						<th class="text-center">Parameter No.</th>
 						<th>Field Title</th>
+						<th>Field Type</th>
 						<th>Parameter Data Type</th>
-						<th>Sequence</th>
+						<th>Parameter ID</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="x : ${detailList}">
+						<td th:text="${x.xseqn}" class="text-center"></td>
 						<td>
-							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:href="@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:text="${x.xtype}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:href="@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:text="${x.xlabel}"></a>
 						</td>
-						<td th:text="${x.xlabel}"></td>
+						<td th:text="${x.xtype}"></td>
 						<td th:text="${x.xparamtype}"></td>
-						<td th:text="${x.xseqn}"></td>
+						<td th:text="${x.xrparam}"></td>
 						<td class="text-end">
 							<button th:attr="data-url=@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
 						</td>
@@ -375,17 +385,17 @@
 			});
 
 			const fieldMap = {
-				HIDDEN: ['field-seqn', 'parameter-data-type', 'field-default-value'],
-				TEXT: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required'],
-				NUMBER: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-max', 'field-min', 'field-step'],
-				DATE: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-is-start-date', 'field-is-end-date'],
-				TIME: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required'],
-				DROPDOWN: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-options-query', 'field-options'],
-				SELECT2: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-options-query', 'field-options'],
-				SEARCH_ADVANCED: ['field-seqn', 'parameter-data-type', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-search-code', 'field-search-suffix', 'field-dependent-field-id', 'field-reset-field-id']
+				HIDDEN: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-default-value'],
+				TEXT: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required'],
+				NUMBER: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-max', 'field-min', 'field-step'],
+				DATE: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-is-start-date', 'field-is-end-date', 'field-date-example'],
+				TIME: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required'],
+				DROPDOWN: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-options-query', 'field-options'],
+				SELECT2: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-options-query', 'field-options'],
+				SEARCH_ADVANCED: ['field-seqn', 'parameter-data-type', 'parameter-id', 'field-title', 'field-default-value', 'field-is-disabled', 'field-is-required', 'field-search-code', 'field-search-suffix', 'field-dependent-field-id', 'field-reset-field-id']
 			};
 
-			const requiredFields = ['parameter-data-type', 'field-title', 'field-seqn'];
+			const requiredFields = ['parameter-data-type', 'field-title', 'field-seqn', 'parameter-id'];
 
 			function resetFields() {
 				// Hide all possible fields

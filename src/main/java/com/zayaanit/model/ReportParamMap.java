@@ -192,7 +192,6 @@ public class ReportParamMap {
 		R104.put("param2", "xgitem|" + ReportParamDataType.STRING.name());
 		R104.put("param3", "xcatitem|" + ReportParamDataType.STRING.name());
 		R104.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R104.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R105.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R105.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -206,7 +205,6 @@ public class ReportParamMap {
 		R105.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R105.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R105.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R105.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R106.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R106.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -217,7 +215,6 @@ public class ReportParamMap {
 		R106.put("param7", "xgsup|" + ReportParamDataType.STRING.name());
 		R106.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R106.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R106.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R107.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R107.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -227,7 +224,6 @@ public class ReportParamMap {
 		R107.put("param6", "xgsup|" + ReportParamDataType.STRING.name());
 		R107.put("param7", "xcus|" + ReportParamDataType.INTEGER.name());
 		R107.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R107.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R108.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R108.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -237,7 +233,6 @@ public class ReportParamMap {
 		R108.put("param6", "xgsup|" + ReportParamDataType.STRING.name());
 		R108.put("param7", "xcus|" + ReportParamDataType.INTEGER.name());
 		R108.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R108.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R109.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R109.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -251,7 +246,6 @@ public class ReportParamMap {
 		R109.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R109.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R109.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R109.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R110.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R110.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -262,7 +256,6 @@ public class ReportParamMap {
 		R110.put("param7", "xgcus|" + ReportParamDataType.STRING.name());
 		R110.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R110.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R110.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R111.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R111.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -272,7 +265,6 @@ public class ReportParamMap {
 		R111.put("param6", "xgcus|" + ReportParamDataType.STRING.name());
 		R111.put("param7", "xcus|" + ReportParamDataType.INTEGER.name());
 		R111.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R111.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R112.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R112.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -282,7 +274,6 @@ public class ReportParamMap {
 		R112.put("param6", "xgcus|" + ReportParamDataType.STRING.name());
 		R112.put("param7", "xcus|" + ReportParamDataType.INTEGER.name());
 		R112.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R112.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R113.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R113.put("param2", "xbuid|" + ReportParamDataType.INTEGER.name());
@@ -291,7 +282,6 @@ public class ReportParamMap {
 		R113.put("param5", "xcatitem|" + ReportParamDataType.STRING.name());
 		R113.put("param6", "xitem|" + ReportParamDataType.INTEGER.name());
 		R113.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R113.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R114.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R114.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -300,7 +290,6 @@ public class ReportParamMap {
 		R114.put("param5", "xwh|" + ReportParamDataType.INTEGER.name());
 		R114.put("param6", "xitem|" + ReportParamDataType.INTEGER.name());
 		R114.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R114.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R115.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R115.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -311,7 +300,6 @@ public class ReportParamMap {
 		R115.put("param7", "xcatitem|" + ReportParamDataType.STRING.name());
 		R115.put("param8", "xitem|" + ReportParamDataType.INTEGER.name());
 		R115.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R115.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R116.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R116.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -322,14 +310,12 @@ public class ReportParamMap {
 		R116.put("param7", "xcatitem|" + ReportParamDataType.STRING.name());
 		R116.put("param8", "xitem|" + ReportParamDataType.INTEGER.name());
 		R116.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R116.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R117.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R117.put("param2", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R117.put("param3", "xwh|" + ReportParamDataType.INTEGER.name());
 		R117.put("param4", "xitem|" + ReportParamDataType.INTEGER.name());
 		R117.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R117.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R118.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R118.put("param2", "xbuid|" + ReportParamDataType.INTEGER.name());
@@ -338,22 +324,18 @@ public class ReportParamMap {
 		R118.put("param5", "xcatitem|" + ReportParamDataType.STRING.name());
 		R118.put("param6", "xitem|" + ReportParamDataType.INTEGER.name());
 		R118.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R118.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R201.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R201.put("param2", "xagcode|" + ReportParamDataType.INTEGER.name());
 		R201.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R201.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R202.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R202.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R202.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R203.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R203.put("param2", "xtype|" + ReportParamDataType.STRING.name());
 		R203.put("param3", "xacc|" + ReportParamDataType.INTEGER.name());
 		R203.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R203.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R204.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R204.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -363,7 +345,6 @@ public class ReportParamMap {
 		R204.put("param6", "xvtype|" + ReportParamDataType.STRING.name());
 		R204.put("param7", "xstatusjv|" + ReportParamDataType.STRING.name());
 		R204.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R204.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R205.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R205.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -373,7 +354,6 @@ public class ReportParamMap {
 		R205.put("param6", "xsub|" + ReportParamDataType.INTEGER.name());
 		R205.put("param7", "xyear|" + ReportParamDataType.INTEGER.name());
 		R205.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R205.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R206.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R206.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -382,7 +362,6 @@ public class ReportParamMap {
 		R206.put("param5", "xacc|" + ReportParamDataType.INTEGER.name());
 		R206.put("param6", "xyear|" + ReportParamDataType.INTEGER.name());
 		R206.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R206.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R207.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R207.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -390,7 +369,6 @@ public class ReportParamMap {
 		R207.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R207.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
 		R207.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R207.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R208.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R208.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -398,7 +376,6 @@ public class ReportParamMap {
 		R208.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R208.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
 		R208.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R208.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R209.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R209.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -406,7 +383,6 @@ public class ReportParamMap {
 		R209.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R209.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
 		R209.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R209.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R210.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R210.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -414,7 +390,6 @@ public class ReportParamMap {
 		R210.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R210.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
 		R210.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R210.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R211.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R211.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -422,7 +397,6 @@ public class ReportParamMap {
 		R211.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R211.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
 		R211.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R211.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R212.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R212.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -430,7 +404,6 @@ public class ReportParamMap {
 		R212.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R212.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
 		R212.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R212.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R213.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R213.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -439,21 +412,18 @@ public class ReportParamMap {
 		R213.put("param5", "xacc|" + ReportParamDataType.INTEGER.name());
 		R213.put("param6", "xsub|" + ReportParamDataType.INTEGER.name());
 		R213.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R213.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R214.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R214.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
 		R214.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
 		R214.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R214.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R214.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R215.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R215.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
 		R215.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
 		R215.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R215.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R215.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R216.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R216.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -462,7 +432,6 @@ public class ReportParamMap {
 		R216.put("param5", "xacc|" + ReportParamDataType.INTEGER.name());
 		R216.put("param6", "xsub|" + ReportParamDataType.INTEGER.name());
 		R216.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R216.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R217.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R217.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -470,14 +439,12 @@ public class ReportParamMap {
 		R217.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R217.put("param5", "xacc|" + ReportParamDataType.INTEGER.name());
 		R217.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R217.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R218.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R218.put("param2", "xdate|" + ReportParamDataType.DATE.name());
 		R218.put("param3", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R218.put("param4", "xyear|" + ReportParamDataType.INTEGER.name());
 		R218.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R218.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R301.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R301.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -491,7 +458,6 @@ public class ReportParamMap {
 		R301.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R301.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R301.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R301.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R302.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R302.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -502,7 +468,6 @@ public class ReportParamMap {
 		R302.put("param7", "xgsup|" + ReportParamDataType.STRING.name());
 		R302.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R302.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R302.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R303.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R303.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -515,7 +480,6 @@ public class ReportParamMap {
 		R303.put("param9", "xcatitem|" + ReportParamDataType.STRING.name());
 		R303.put("param10", "xitem|" + ReportParamDataType.INTEGER.name());
 		R303.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R303.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R304.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R304.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -528,7 +492,6 @@ public class ReportParamMap {
 		R304.put("param9", "xcatitem|" + ReportParamDataType.STRING.name());
 		R304.put("param10", "xitem|" + ReportParamDataType.INTEGER.name());
 		R304.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R304.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R305.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R305.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -541,7 +504,6 @@ public class ReportParamMap {
 		R305.put("param9", "xcatitem|" + ReportParamDataType.STRING.name());
 		R305.put("param10", "xitem|" + ReportParamDataType.INTEGER.name());
 		R305.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R305.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R306.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R306.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -555,7 +517,6 @@ public class ReportParamMap {
 		R306.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R306.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R306.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R306.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R307.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R307.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -566,7 +527,6 @@ public class ReportParamMap {
 		R307.put("param7", "xgsup|" + ReportParamDataType.STRING.name());
 		R307.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R307.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R307.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R308.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R308.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -580,7 +540,6 @@ public class ReportParamMap {
 		R308.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R308.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R308.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R308.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R309.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R309.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -591,7 +550,6 @@ public class ReportParamMap {
 		R309.put("param7", "xgsup|" + ReportParamDataType.STRING.name());
 		R309.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R309.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R309.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R310.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R310.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -605,7 +563,6 @@ public class ReportParamMap {
 		R310.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R310.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R310.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R310.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R311.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R311.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -616,7 +573,6 @@ public class ReportParamMap {
 		R311.put("param7", "xgsup|" + ReportParamDataType.STRING.name());
 		R311.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R311.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R311.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R312.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R312.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -630,7 +586,6 @@ public class ReportParamMap {
 		R312.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R312.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R312.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R312.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R401.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R401.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -644,7 +599,6 @@ public class ReportParamMap {
 		R401.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R401.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R401.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R401.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R402.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R402.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -655,7 +609,6 @@ public class ReportParamMap {
 		R402.put("param7", "xgcus|" + ReportParamDataType.STRING.name());
 		R402.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R402.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R402.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R403.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R403.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -668,7 +621,6 @@ public class ReportParamMap {
 		R403.put("param9", "xcatitem|" + ReportParamDataType.STRING.name());
 		R403.put("param10", "xitem|" + ReportParamDataType.INTEGER.name());
 		R403.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R403.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R404.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R404.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -681,7 +633,6 @@ public class ReportParamMap {
 		R404.put("param9", "xcatitem|" + ReportParamDataType.STRING.name());
 		R404.put("param10", "xitem|" + ReportParamDataType.INTEGER.name());
 		R404.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R404.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R405.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R405.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -694,7 +645,6 @@ public class ReportParamMap {
 		R405.put("param9", "xcatitem|" + ReportParamDataType.STRING.name());
 		R405.put("param10", "xitem|" + ReportParamDataType.INTEGER.name());
 		R405.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R405.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R406.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R406.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -708,7 +658,6 @@ public class ReportParamMap {
 		R406.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R406.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R406.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R406.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R407.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R407.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -719,7 +668,6 @@ public class ReportParamMap {
 		R407.put("param7", "xgcus|" + ReportParamDataType.STRING.name());
 		R407.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R407.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R407.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R408.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R408.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -733,7 +681,6 @@ public class ReportParamMap {
 		R408.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R408.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R408.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R408.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R409.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R409.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -744,7 +691,6 @@ public class ReportParamMap {
 		R409.put("param7", "xgcus|" + ReportParamDataType.STRING.name());
 		R409.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R409.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R409.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R410.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R410.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -754,7 +700,6 @@ public class ReportParamMap {
 		R410.put("param6", "xgcus|" + ReportParamDataType.STRING.name());
 		R410.put("param7", "xcus|" + ReportParamDataType.INTEGER.name());
 		R410.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R410.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R411.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R411.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -768,7 +713,6 @@ public class ReportParamMap {
 		R411.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R411.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R411.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R411.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R412.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R412.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -779,7 +723,6 @@ public class ReportParamMap {
 		R412.put("param7", "xgcus|" + ReportParamDataType.STRING.name());
 		R412.put("param8", "xcus|" + ReportParamDataType.INTEGER.name());
 		R412.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R412.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R413.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R413.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -793,7 +736,6 @@ public class ReportParamMap {
 		R413.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R413.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R413.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R413.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R501.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R501.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -807,7 +749,6 @@ public class ReportParamMap {
 		R501.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R501.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R501.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R501.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R502.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R502.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -818,7 +759,6 @@ public class ReportParamMap {
 		R502.put("param7", "xtwh|" + ReportParamDataType.INTEGER.name());
 		R502.put("param8", "xtype|" + ReportParamDataType.STRING.name());
 		R502.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R502.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R503.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R503.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -832,7 +772,6 @@ public class ReportParamMap {
 		R503.put("param10", "xcatitem|" + ReportParamDataType.STRING.name());
 		R503.put("param11", "xitem|" + ReportParamDataType.INTEGER.name());
 		R503.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R503.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R504.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R504.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -844,7 +783,6 @@ public class ReportParamMap {
 		R504.put("param8", "xcatitem|" + ReportParamDataType.STRING.name());
 		R504.put("param9", "xitem|" + ReportParamDataType.INTEGER.name());
 		R504.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R504.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R505.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R505.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -853,7 +791,6 @@ public class ReportParamMap {
 		R505.put("param5", "xwh|" + ReportParamDataType.INTEGER.name());
 		R505.put("param6", "xisstype|" + ReportParamDataType.STRING.name());
 		R505.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R505.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R506.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R506.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -865,7 +802,6 @@ public class ReportParamMap {
 		R506.put("param8", "xcatitem|" + ReportParamDataType.STRING.name());
 		R506.put("param9", "xitem|" + ReportParamDataType.INTEGER.name());
 		R506.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R506.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R507.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R507.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -873,7 +809,6 @@ public class ReportParamMap {
 		R507.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R507.put("param5", "xwh|" + ReportParamDataType.INTEGER.name());
 		R507.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R507.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R508.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R508.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -881,7 +816,6 @@ public class ReportParamMap {
 		R508.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R508.put("param5", "xwh|" + ReportParamDataType.INTEGER.name());
 		R508.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R508.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R509.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R509.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -891,7 +825,6 @@ public class ReportParamMap {
 		R509.put("param6", "xcatitem|" + ReportParamDataType.STRING.name());
 		R509.put("param7", "xitem|" + ReportParamDataType.INTEGER.name());
 		R509.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R509.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R510.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R510.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -901,7 +834,6 @@ public class ReportParamMap {
 		R510.put("param6", "xcatitem|" + ReportParamDataType.STRING.name());
 		R510.put("param7", "xitem|" + ReportParamDataType.INTEGER.name());
 		R510.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R510.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R511.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R511.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -911,7 +843,6 @@ public class ReportParamMap {
 		R511.put("param6", "xcatitem|" + ReportParamDataType.STRING.name());
 		R511.put("param7", "xitem|" + ReportParamDataType.INTEGER.name());
 		R511.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R511.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R512.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R512.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -922,7 +853,6 @@ public class ReportParamMap {
 		R512.put("param7", "xcatitem|" + ReportParamDataType.STRING.name());
 		R512.put("param8", "xitem|" + ReportParamDataType.INTEGER.name());
 		R512.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R512.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R513.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R513.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -930,7 +860,6 @@ public class ReportParamMap {
 		R513.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R513.put("param5", "xwh|" + ReportParamDataType.INTEGER.name());
 		R513.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R513.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R514.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R514.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -941,7 +870,6 @@ public class ReportParamMap {
 		R514.put("param7", "xcatitem|" + ReportParamDataType.STRING.name());
 		R514.put("param8", "xitem|" + ReportParamDataType.INTEGER.name());
 		R514.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R514.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R515.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R515.put("param2", "xbuid|" + ReportParamDataType.INTEGER.name());
@@ -950,7 +878,6 @@ public class ReportParamMap {
 		R515.put("param5", "xcatitem|" + ReportParamDataType.STRING.name());
 		R515.put("param6", "xitem|" + ReportParamDataType.INTEGER.name());
 		R515.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R515.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R516.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R516.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -959,7 +886,6 @@ public class ReportParamMap {
 		R516.put("param5", "xwh|" + ReportParamDataType.INTEGER.name());
 		R516.put("param6", "xitem|" + ReportParamDataType.INTEGER.name());
 		R516.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R516.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R517.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R517.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
@@ -970,6 +896,5 @@ public class ReportParamMap {
 		R517.put("param7", "xcatitem|" + ReportParamDataType.STRING.name());
 		R517.put("param8", "xitem|" + ReportParamDataType.INTEGER.name());
 		R517.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R517.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 	}
 }

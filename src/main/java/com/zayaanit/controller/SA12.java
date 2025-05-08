@@ -1,6 +1,7 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -98,6 +99,7 @@ public class SA12 extends KitController {
 		model.addAttribute("xscreens", oph.get());
 
 		List<Xscreendetail> detailList = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+		detailList.sort(Comparator.comparing(Xscreendetail::getXseqn));
 		model.addAttribute("detailList", detailList);
 
 		if("RESET".equalsIgnoreCase(xrow)) {

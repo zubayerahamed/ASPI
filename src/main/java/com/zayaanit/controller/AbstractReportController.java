@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +22,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,13 +35,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
 
+import com.zayaanit.entity.Xscreendetail;
+import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Zbusiness;
+import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ReportMenu;
 import com.zayaanit.enums.ReportParamDataType;
 import com.zayaanit.enums.ReportType;
 import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.Report;
 import com.zayaanit.model.RequestParameters;
+import com.zayaanit.repository.XscreendetailRepo;
 import com.zayaanit.service.rp.ReportFieldService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +56,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public abstract class AbstractReportController extends KitController {
+
+
+	@Autowired protected XscreendetailRepo xscreendetailRepo;
+	@Autowired protected JdbcTemplate jdbcTemplate;
 
 	protected List<Report> getReports(String code) {
 
@@ -136,44 +147,77 @@ public abstract class AbstractReportController extends KitController {
 	public ResponseEntity<Object> print(RequestParameters params) throws IOException {
 		ReportMenu rm = ReportMenu.valueOf(params.getReportCode());
 
+		Xscreens xscreen = null;
+		Optional<Xscreens> xscreenOp = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), params.getReportCode()));
+		if(xscreenOp.isPresent()) xscreen = xscreenOp.get();
+
 		String message = "";
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(new MediaType("text", "html"));
 		headers.add("X-Content-Type-Options", "nosniff");
 
+		if(xscreen == null) {
+			String error = "Screen not found";
+			String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
+			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
+		}
+
+		String fileName = rm.getFileName();
+		if(StringUtils.isNotBlank(xscreen.getXfile())) fileName = xscreen.getXfile().trim();
+
 		Optional<Zbusiness> z = zbusinessRepo.findById(sessionManager.getBusinessId());
-		String reportName = filePath(z.get().getXrptpath()).concat("/").concat(rm.getFileName());
-		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) reportName = filePath(z.get().getXrptdefautl()).concat("/").concat(rm.getFileName());
+		String reportName = filePath(z.get().getXrptpath()).concat("/").concat(fileName);
+		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) reportName = filePath(z.get().getXrptdefautl()).concat("/").concat(fileName);
 		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) {
 			try {
 				reportName = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath())
 								.append(File.separator).append("cr").append(File.separator).append("v2").append(File.separator)
-								.append(rm.getFileName()).toString();
+								.append(fileName).toString();
 			} catch (URISyntaxException e) {
 				log.error(ERROR, e.getMessage(), e);
 			}
 		}
 
 		String reportTitle = StringUtils.isBlank(params.getXtitle()) ? rm.getDescription() : params.getXtitle();
+		if(StringUtils.isNotBlank(xscreen.getXtitle())) reportTitle = xscreen.getXtitle().trim();
 		boolean attachment = true;
 
-		ReportType reportType = ReportType.PDF;
+		ReportType reportType = params.getReportType();
 		Map<String, Object> reportParams = new HashMap<>();
-		for(Map.Entry<String, String> m : rm.getParamMap().entrySet()) {
-			String reportParamFieldName = m.getKey();
-			String[] arr = m.getValue().split("\\|");
-			String cristalReportParamName = arr[0];
-			ReportParamDataType paramType = ReportParamDataType.valueOf(arr[1]);
-			Object method = RequestParameters.invokeGetter(params, reportParamFieldName);
-			if("reportViewType".equalsIgnoreCase(cristalReportParamName)) {
-				reportType = (ReportType) method;
-				continue;
+		List<Xscreendetail> details = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), params.getReportCode());
+		if(details == null || details.isEmpty()) {
+			for(Map.Entry<String, String> m : rm.getParamMap().entrySet()) {
+				String reportParamFieldName = m.getKey();
+				String[] arr = m.getValue().split("\\|");
+				String cristalReportParamName = arr[0];
+				ReportParamDataType paramType = ReportParamDataType.valueOf(arr[1]);
+				Object method = RequestParameters.invokeGetter(params, reportParamFieldName);
+				convertObjectAndPutIntoMap(cristalReportParamName, paramType, method, reportParams);
 			}
-			convertObjectAndPutIntoMap(cristalReportParamName, paramType, method, reportParams);
+		} else {
+			reportParams.put("zid", sessionManager.getBusinessId());
+			reportParams.put("xtitle", reportTitle);
+			details.sort(Comparator.comparing(Xscreendetail::getXseqn));
+			for(Xscreendetail detail : details) {
+				String reportParamFieldName = "param".concat(detail.getXseqn().toString());
+				String cristalReportParamName = detail.getXrparam().trim();
+				ReportParamDataType paramType = ReportParamDataType.valueOf(detail.getXparamtype());
+				Object method = RequestParameters.invokeGetter(params, reportParamFieldName);
+				convertObjectAndPutIntoMap(cristalReportParamName, paramType, method, reportParams);
+			}
+		}
+
+		String engine = xscreen.getXengine();
+		if(StringUtils.isBlank(engine)) {
+			if(rm.isEnabledFop()) {
+				engine = "FOP";
+			} else {
+				engine = "CRYSTAL";
+			}
 		}
 
 		// FOP
-		if(rm.isEnabledFop()) {
+		if("FOP".equalsIgnoreCase(engine)) {
 			try {
 				reportName = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath())
 								.append(File.separator).append("xsl").append(File.separator)
