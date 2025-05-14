@@ -10,7 +10,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.zayaanit.entity.pk.XscreendetailPK;
+import com.zayaanit.entity.pk.XscreenrpdtPK;
 import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
@@ -25,10 +25,10 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @Entity
-@Table(name = "xscreendetail")
-@IdClass(XscreendetailPK.class)
+@Table(name = "xscreenrpdt")
+@IdClass(XscreenrpdtPK.class)
 @EqualsAndHashCode(callSuper = true)
-public class Xscreendetail extends AbstractModel<String> {
+public class Xscreenrpdt extends AbstractModel<String> {
 
 	private static final long serialVersionUID = -7051210656876929495L;
 
@@ -107,8 +107,8 @@ public class Xscreendetail extends AbstractModel<String> {
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
-	public static Xscreendetail getDefaultInstance(String xscreen) {
-		Xscreendetail obj = new Xscreendetail();
+	public static Xscreenrpdt getDefaultInstance(String xscreen) {
+		Xscreenrpdt obj = new Xscreenrpdt();
 		obj.setXrow(0);
 		obj.setXscreen(xscreen);
 		obj.setSubmitFor(SubmitFor.INSERT);

@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zayaanit.entity.Xscreendetail;
+import com.zayaanit.entity.Xscreenrpdt;
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.pk.XscreendetailPK;
+import com.zayaanit.entity.pk.XscreenrpdtPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.XmenuscreensRepo;
 import com.zayaanit.repository.XprofilesdtRepo;
-import com.zayaanit.repository.XscreendetailRepo;
+import com.zayaanit.repository.XscreenrpdtRepo;
 
 /**
  * @author Zubayer Ahamed
@@ -44,7 +44,7 @@ public class SA12 extends KitController {
 
 	@Autowired private XmenuscreensRepo xmenuscreensRepo;
 	@Autowired private XprofilesdtRepo xprofilesdtRepo;
-	@Autowired private XscreendetailRepo xscreendetailRepo;
+	@Autowired private XscreenrpdtRepo xscreenrpdtRepo;
 
 	@Override
 	protected String screenCode() {
@@ -98,18 +98,18 @@ public class SA12 extends KitController {
 		}
 		model.addAttribute("xscreens", oph.get());
 
-		List<Xscreendetail> detailList = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
-		detailList.sort(Comparator.comparing(Xscreendetail::getXseqn));
+		List<Xscreenrpdt> detailList = xscreenrpdtRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+		detailList.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
 		model.addAttribute("detailList", detailList);
 
 		if("RESET".equalsIgnoreCase(xrow)) {
-			Xscreendetail xscreendetail = Xscreendetail.getDefaultInstance(xscreen);
+			Xscreenrpdt xscreendetail = Xscreenrpdt.getDefaultInstance(xscreen);
 			model.addAttribute("xscreendetail", xscreendetail);
 			return "pages/SA12/SA12-fragments::detail-table";
 		}
 
-		Optional<Xscreendetail> xscreendetailOp = xscreendetailRepo.findById(new XscreendetailPK(sessionManager.getBusinessId(), xscreen, Integer.parseInt(xrow)));
-		Xscreendetail xscreendetail = xscreendetailOp.isPresent() ? xscreendetailOp.get() : Xscreendetail.getDefaultInstance(xscreen);
+		Optional<Xscreenrpdt> xscreendetailOp = xscreenrpdtRepo.findById(new XscreenrpdtPK(sessionManager.getBusinessId(), xscreen, Integer.parseInt(xrow)));
+		Xscreenrpdt xscreendetail = xscreendetailOp.isPresent() ? xscreendetailOp.get() : Xscreenrpdt.getDefaultInstance(xscreen);
 		model.addAttribute("xscreendetail", xscreendetail);
 		return "pages/SA12/SA12-fragments::detail-table";
 	}
@@ -189,7 +189,7 @@ public class SA12 extends KitController {
 
 	@Transactional
 	@PostMapping("/detail/store")
-	public @ResponseBody Map<String, Object> storeDetail(Xscreendetail xscreendetail, BindingResult bindingResult){
+	public @ResponseBody Map<String, Object> storeDetail(Xscreenrpdt xscreendetail, BindingResult bindingResult){
 		if(xscreendetail.getXscreen() == null) {
 			responseHelper.setErrorStatusAndMessage("Screen id not selected");
 			return responseHelper.getResponse();
@@ -209,10 +209,11 @@ public class SA12 extends KitController {
 
 		// Create new
 		if(SubmitFor.INSERT.equals(xscreendetail.getSubmitFor())) {
-			xscreendetail.setXrow(xscreendetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), xscreendetail.getXscreen()));
+			xscreendetail.setXseqn(xscreenrpdtRepo.getNextAvailableSequence(sessionManager.getBusinessId(), xscreendetail.getXscreen()));
+			xscreendetail.setXrow(xscreenrpdtRepo.getNextAvailableRow(sessionManager.getBusinessId(), xscreendetail.getXscreen()));
 			xscreendetail.setZid(sessionManager.getBusinessId());
 			try {
-				xscreendetail = xscreendetailRepo.save(xscreendetail);
+				xscreendetail = xscreenrpdtRepo.save(xscreendetail);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
@@ -226,16 +227,16 @@ public class SA12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		Optional<Xscreendetail> existOp = xscreendetailRepo.findById(new XscreendetailPK(sessionManager.getBusinessId(), xscreendetail.getXscreen(), xscreendetail.getXrow()));
+		Optional<Xscreenrpdt> existOp = xscreenrpdtRepo.findById(new XscreenrpdtPK(sessionManager.getBusinessId(), xscreendetail.getXscreen(), xscreendetail.getXrow()));
 		if(!existOp.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Field not found in this system");
 			return responseHelper.getResponse();
 		}
 
-		Xscreendetail exist = existOp.get();
-		BeanUtils.copyProperties(xscreendetail, exist, "zid", "zuserid", "ztime", "xscreen", "xrow");
+		Xscreenrpdt exist = existOp.get();
+		BeanUtils.copyProperties(xscreendetail, exist, "zid", "zuserid", "ztime", "xscreen", "xrow", "xseqn");
 		try {
-			exist = xscreendetailRepo.save(exist);
+			exist = xscreenrpdtRepo.save(exist);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
@@ -281,5 +282,29 @@ public class SA12 extends KitController {
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
 	}
-	
+
+	@Transactional
+	@DeleteMapping("/detail-table")
+	public @ResponseBody Map<String, Object> deleterptdt(@RequestParam String xscreen, @RequestParam Integer xrow){
+		Optional<Xscreenrpdt> existOp = xscreenrpdtRepo.findById(new XscreenrpdtPK(sessionManager.getBusinessId(), xscreen, xrow));
+		if(!existOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Field not found in this system");
+			return responseHelper.getResponse();
+		}
+
+		Xscreenrpdt obj = existOp.get();
+		try {
+			xscreenrpdtRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/SA12?xscreen=" + xscreen));
+		reloadSections.add(new ReloadSection("detail-table-container", "/SA12/detail-table?xscreen=" + xscreen + "&xrow=RESET"));
+		reloadSections.add(new ReloadSection("header-table-container", "/SA12/header-table"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Field deleted successfully");
+		return responseHelper.getResponse();
+	}
 }

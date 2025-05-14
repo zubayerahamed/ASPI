@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
 
-import com.zayaanit.entity.Xscreendetail;
+import com.zayaanit.entity.Xscreenrpdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.XscreensPK;
@@ -45,7 +45,7 @@ import com.zayaanit.enums.ReportType;
 import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.Report;
 import com.zayaanit.model.RequestParameters;
-import com.zayaanit.repository.XscreendetailRepo;
+import com.zayaanit.repository.XscreenrpdtRepo;
 import com.zayaanit.service.rp.ReportFieldService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +58,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractReportController extends KitController {
 
 
-	@Autowired protected XscreendetailRepo xscreendetailRepo;
+	@Autowired protected XscreenrpdtRepo xscreendetailRepo;
 	@Autowired protected JdbcTemplate jdbcTemplate;
 
 	protected List<Report> getReports(String code) {
@@ -184,7 +184,7 @@ public abstract class AbstractReportController extends KitController {
 
 		ReportType reportType = params.getReportType();
 		Map<String, Object> reportParams = new HashMap<>();
-		List<Xscreendetail> details = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), params.getReportCode());
+		List<Xscreenrpdt> details = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), params.getReportCode());
 		if(details == null || details.isEmpty()) {
 			for(Map.Entry<String, String> m : rm.getParamMap().entrySet()) {
 				String reportParamFieldName = m.getKey();
@@ -197,8 +197,8 @@ public abstract class AbstractReportController extends KitController {
 		} else {
 			reportParams.put("zid", sessionManager.getBusinessId());
 			reportParams.put("xtitle", reportTitle);
-			details.sort(Comparator.comparing(Xscreendetail::getXseqn));
-			for(Xscreendetail detail : details) {
+			details.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
+			for(Xscreenrpdt detail : details) {
 				String reportParamFieldName = "param".concat(detail.getXseqn().toString());
 				String cristalReportParamName = detail.getXrparam().trim();
 				ReportParamDataType paramType = ReportParamDataType.valueOf(detail.getXparamtype());

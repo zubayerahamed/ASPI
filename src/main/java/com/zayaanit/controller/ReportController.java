@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ibm.icu.text.SimpleDateFormat;
-import com.zayaanit.entity.Xscreendetail;
+import com.zayaanit.entity.Xscreenrpdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ReportMenu;
@@ -85,7 +85,7 @@ public class ReportController extends AbstractReportController{
 		}
 
 		List<FormFieldBuilder> fields = null;
-		List<Xscreendetail> fieldsList = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), rptcode);
+		List<Xscreenrpdt> fieldsList = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), rptcode);
 		if(fieldsList != null && !fieldsList.isEmpty()) {
 			fields = getReportFields(fieldsList);
 		} else {
@@ -101,14 +101,14 @@ public class ReportController extends AbstractReportController{
 		return "pages/RP/RP";
 	}
 
-	private List<FormFieldBuilder> getReportFields(List<Xscreendetail> details) throws Exception{
-		details.sort(Comparator.comparing(Xscreendetail::getXseqn));
+	private List<FormFieldBuilder> getReportFields(List<Xscreenrpdt> details) throws Exception{
+		details.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
 
 		List<FormFieldBuilder> fieldsList = new ArrayList<>();
 
 		fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
 
-		for(Xscreendetail detail : details) {
+		for(Xscreenrpdt detail : details) {
 			if("DATE".equalsIgnoreCase(detail.getXtype())) {
 				Date defDate = null;
 				String defaultValue = detail.getXdefaultvalue().trim();

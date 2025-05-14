@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class XscreendetailPK implements Serializable {
+public class XscreenrpdtPK implements Serializable {
 
 	private static final long serialVersionUID = -519996461723964270L;
 
