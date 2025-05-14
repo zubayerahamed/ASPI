@@ -1,6 +1,7 @@
 package com.zayaanit.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,6 +23,8 @@ public interface XscreenrpdtRepo extends JpaRepository<Xscreenrpdt, XscreenrpdtP
 	List<Xscreenrpdt> findAllByZidAndXscreen(Integer zid, String xscreen);
 
 	void deleteAllByZidAndXscreen(Integer zid, String xscreen);
+
+	Optional<Xscreenrpdt> findByZidAndXscreenAndXseqn(Integer zid, String xscreen, Integer xseqn);
 
 	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from xscreenrpdt where zid=?1 and xscreen=?2", nativeQuery = true)
 	public Integer getNextAvailableRow(Integer zid, String xscreen);

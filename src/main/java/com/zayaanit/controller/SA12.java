@@ -1,6 +1,7 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -87,7 +89,6 @@ public class SA12 extends KitController {
 	public String detailFormFragment(@RequestParam String xscreen, @RequestParam String xrow, Model model) {
 		if("RESET".equalsIgnoreCase(xscreen) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("xscreens", Xscreens.getDefaultInstance());
-
 			return "pages/SA12/SA12-fragments::detail-table";
 		}
 
@@ -306,5 +307,71 @@ public class SA12 extends KitController {
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Field deleted successfully");
 		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@PostMapping("/detail-table/seqn/{direction}")
+	public String updateSequence(@PathVariable String direction, @RequestParam String xscreen, @RequestParam Integer xrow, Model model){
+		Optional<Xscreens> oph = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), xscreen));
+		if(!oph.isPresent()) {
+			model.addAttribute("xscreens", Xscreens.getDefaultInstance());
+			model.addAttribute("xscreendetail", Xscreenrpdt.getDefaultInstance(xscreen));
+			return "pages/SA12/SA12-fragments::detail-table";
+		}
+		model.addAttribute("xscreens", oph.get());
+		model.addAttribute("xscreendetail", Xscreenrpdt.getDefaultInstance(xscreen));
+
+		Optional<Xscreenrpdt> existOp = xscreenrpdtRepo.findById(new XscreenrpdtPK(sessionManager.getBusinessId(), xscreen, xrow));
+		if(!existOp.isPresent()) return "pages/SA12/SA12-fragments::detail-table";
+
+		Xscreenrpdt xscreendetail = existOp.get();
+
+		// Check xscreen has more than one field? if don't then return existing lists only
+		List<Xscreenrpdt> detailList = xscreenrpdtRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+		if(detailList == null || detailList.isEmpty()) {
+			model.addAttribute("detailList", Collections.emptyList());
+			return "pages/SA12/SA12-fragments::detail-table";
+		}
+		if(detailList.size() < 2) {
+			detailList.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
+			model.addAttribute("detailList", detailList);
+			return "pages/SA12/SA12-fragments::detail-table";
+		}
+
+		Integer existingSeqn = xscreendetail.getXseqn();
+		Integer currentSeqn = null;
+		if("UP".equalsIgnoreCase(direction)) {
+			currentSeqn = existingSeqn - 1;
+		} else {
+			currentSeqn = existingSeqn + 1;
+		}
+
+		Optional<Xscreenrpdt> effecteddtOp = xscreenrpdtRepo.findByZidAndXscreenAndXseqn(sessionManager.getBusinessId(), xscreen, currentSeqn);
+		if(!effecteddtOp.isPresent()) {
+			detailList.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
+			model.addAttribute("detailList", detailList);
+			return "pages/SA12/SA12-fragments::detail-table";
+		}
+
+		Xscreenrpdt effecteddt = effecteddtOp.get();
+		if("UP".equalsIgnoreCase(direction)) {
+			effecteddt.setXseqn(effecteddt.getXseqn() + 1);
+		} else {
+			effecteddt.setXseqn(effecteddt.getXseqn() - 1);
+		}
+
+		xscreendetail.setXseqn(currentSeqn);
+
+		try {
+			xscreenrpdtRepo.save(xscreendetail);
+			xscreenrpdtRepo.save(effecteddt);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		detailList = xscreenrpdtRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), xscreen);
+		detailList.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
+		model.addAttribute("detailList", detailList);
+		return "pages/SA12/SA12-fragments::detail-table";
 	}
 }
