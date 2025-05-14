@@ -200,7 +200,11 @@ public class SA15 extends KitController {
 		String sql = (String) sessionManager.getFromMap("QW_SQL");
 		if (sql.endsWith(";")) sql = sql.substring(0, sql.length() - 1);
 		if(!sql.toLowerCase().startsWith("select top")) {
-			sql = "SELECT TOP 1000 " + sql.substring("select ".length());
+			if(sql.toLowerCase().startsWith("select distinct")) {
+				sql = "SELECT DISTINCT TOP 1000 " + sql.substring("select distinct".length());
+			} else {
+				sql = "SELECT TOP 1000 " + sql.substring("select ".length());
+			}
 		}
 		sessionManager.removeFromMap("QW_SQL");
 
