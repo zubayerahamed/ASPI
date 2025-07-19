@@ -45,8 +45,10 @@ import com.zayaanit.enums.ReportType;
 import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.Report;
 import com.zayaanit.model.RequestParameters;
+import com.zayaanit.model.VirtualReportMenu;
 import com.zayaanit.repository.XscreenrpdtRepo;
 import com.zayaanit.service.rp.ReportFieldService;
+import com.zayaanit.service.rp.ReportMenuBase;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -108,10 +110,10 @@ public abstract class AbstractReportController extends KitController {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected ReportFieldService getReportFieldService(ReportMenu reportMenu) {
+	protected ReportFieldService getReportFieldService(ReportMenuBase reportMenu) {
 		if(reportMenu == null) return null;
 		try {
-			return (ReportFieldService) appContext.getBean(reportMenu.name() + "_Service");
+			return (ReportFieldService) appContext.getBean(reportMenu.getGroup() + "_Service");
 		} catch (Exception e) {
 			log.error(ERROR, e.getMessage(), e);
 			return null;
@@ -121,7 +123,29 @@ public abstract class AbstractReportController extends KitController {
 	@SuppressWarnings("unchecked")
 	@PostMapping("/validate")
 	public @ResponseBody Map<String, Object> validate(RequestParameters params){
-		ReportMenu rm = ReportMenu.valueOf(params.getReportCode());
+//		ReportMenuBase rm = ReportMenu.valueOf(params.getReportCode());
+		
+		ReportMenuBase rm = null;
+		try {
+			rm = ReportMenu.valueOf(params.getReportCode());
+		} catch (Exception e) {
+			log.error(ERROR, e.getMessage(), e);
+			// Simulate virtual enum
+			try {
+				rm = new VirtualReportMenu(
+					"VIRTUAL", 
+					"Custom Report: " + params.getReportCode(), 
+					params.getReportCode().toLowerCase() + ".rpt", 
+					new HashMap<>(), // or load custom paramMap from DB
+					"N", 
+					false
+				);
+			} catch (Exception e2) {
+				log.error(ERROR, e2.getMessage(), e2);
+			}
+		}
+		
+		
 
 		ReportType reportType = ReportType.PDF;
 		Map<String, Object> reportParams = new HashMap<>();

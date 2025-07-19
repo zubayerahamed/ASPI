@@ -329,6 +329,7 @@
 							<a style="cursor: pointer;" data-bs-popup="tooltip" title="Sequence Down" th:if="${x.xseqn < #lists.size(detailList) + 1}" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table/seqn/down?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" class="btn-detail-seqn"><i class="ph-arrow-fat-lines-down"></i></a>
 							<span class="ps-3 pe-3" th:text="${x.xseqn - 1}"></span>
 							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:href="@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:text="${x.xlabel}"></a>
+							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:href="@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:if="${x.xtype eq 'HIDDEN'}">HIDDEN FIELD</a>
 						</td>
 						<td th:text="${x.xtype}"></td>
 						<td th:text="${x.xparamtype}"></td>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +25,8 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.ReportMenu;
 import com.zayaanit.model.DropdownOption;
 import com.zayaanit.model.FormFieldBuilder;
+import com.zayaanit.model.VirtualReportMenu;
+import com.zayaanit.service.rp.ReportMenuBase;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -70,18 +73,31 @@ public class ReportController extends AbstractReportController{
 		model.addAttribute("screenCode", rptcode);
 		model.addAttribute("xtitle", pageTitle);
 
-		ReportMenu rm = null;
+		ReportMenuBase rm = null;
 		try {
 			rm = ReportMenu.valueOf(rptcode);
 		} catch (Exception e) {
 			log.error(ERROR, e.getMessage(), e);
-			if(!isAjaxRequest(request)) {
-				return "redirect:/";
-			}
+			// Simulate virtual enum
+			try {
+				rm = new VirtualReportMenu(
+					"VIRTUAL", 
+					"Custom Report: " + rptcode, 
+					rptcode.toLowerCase() + ".rpt", 
+					new HashMap<>(), // or load custom paramMap from DB
+					"N", 
+					false
+				);
+			} catch (Exception e2) {
+				log.error(ERROR, e2.getMessage(), e2);
+				if(!isAjaxRequest(request)) {
+					return "redirect:/";
+				}
 
-			model.addAttribute("error", "Page Not found");
-			model.addAttribute("status", "404");
-			return "pages/404";
+				model.addAttribute("error", "Page Not found");
+				model.addAttribute("status", "404");
+				return "pages/404";
+			}
 		}
 
 		List<FormFieldBuilder> fields = null;
@@ -96,7 +112,7 @@ public class ReportController extends AbstractReportController{
 		model.addAttribute("reportFound", true);
 		model.addAttribute("group", rm.getGroup());
 		model.addAttribute("reportName", rm.getDescription());
-		model.addAttribute("reportCode", rm.name());
+		model.addAttribute("reportCode", rm.getGroup());
 
 		return "pages/RP/RP";
 	}
@@ -109,7 +125,13 @@ public class ReportController extends AbstractReportController{
 		fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
 
 		for(Xscreenrpdt detail : details) {
-			if("DATE".equalsIgnoreCase(detail.getXtype())) {
+			if("HIDDEN".equalsIgnoreCase(detail.getXtype())) {
+				String defautlValue = detail.getXdefaultvalue();
+				String parsedValue = "";
+				if("##zid##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getBusinessId().toString();
+				if("##xstaff##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getLoggedInUserDetails().getXstaff().toString();
+				fieldsList.add(FormFieldBuilder.generateHiddenField(detail.getXseqn(), parsedValue));
+			} else if("DATE".equalsIgnoreCase(detail.getXtype())) {
 				Date defDate = null;
 				String defaultValue = detail.getXdefaultvalue().trim();
 				if("TODAY".equalsIgnoreCase(defaultValue)) {

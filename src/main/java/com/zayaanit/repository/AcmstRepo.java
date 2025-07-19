@@ -16,8 +16,8 @@ import com.zayaanit.entity.pk.AcmstPK;
 @Repository
 public interface AcmstRepo extends JpaRepository<Acmst, AcmstPK> {
 
-	@Query(value = "select isnull(max(COALESCE(xacc,0)) + 1, 10001) from acmst where zid=?1", nativeQuery = true)
-	public Integer getNextAvailableId(Integer zid);
+	@Query(value = "select max(COALESCE(xacc,0)) + 1 from acmst where zid=?1 and xgroup=?2", nativeQuery = true)
+	public Integer getNextAvailableId(Integer zid, Integer xgroup);
 
 	List<Acmst> findAllByZid(Integer zid);
 }

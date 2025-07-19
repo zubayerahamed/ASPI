@@ -3,40 +3,41 @@ package com.zayaanit.enums;
 import java.util.Map;
 
 import com.zayaanit.model.ReportParamMap;
+import com.zayaanit.service.rp.ReportMenuBase;
 
 /**
  * @author Zubayer Ahamed
  * @since Dec 26, 2020
  */
-public enum ReportMenu {
+public enum ReportMenu implements ReportMenuBase{
 
 	// ON SCREEN REPORT
-	voucher("FA15", "Voucher", "voucher.rpt", ReportParamMap.voucher, "Y", false),
+	voucher("voucher", "Voucher", "voucher.rpt", ReportParamMap.voucher, "Y", false),
 
-	poord("PO12", "Print Order", "poord.rpt", ReportParamMap.poord, "Y", false),
-	poordgrn("PO12", "Print GRNs", "poordgrn.rpt", ReportParamMap.poordgrn, "Y", false),
+	poord("poord", "Print Order", "poord.rpt", ReportParamMap.poord, "Y", false),
+	poordgrn("poordgrn", "Print GRNs", "poordgrn.rpt", ReportParamMap.poordgrn, "Y", false),
 
-	pogrn("PO14", "Print GRN", "pogrn.rpt", ReportParamMap.pogrn, "Y", false),
-	pogrnbill("PO14", "Print Bill", "pogrnbill.rpt", ReportParamMap.pogrnbill, "Y", false),
+	pogrn("pogrn", "Print GRN", "pogrn.rpt", ReportParamMap.pogrn, "Y", false),
+	pogrnbill("pogrnbill", "Print Bill", "pogrnbill.rpt", ReportParamMap.pogrnbill, "Y", false),
 
-	pocrn("PO16", "Print Return", "pocrn.rpt", ReportParamMap.pocrn, "Y", false),
-	opcrn("PO16", "Print Return", "opcrn.rpt", ReportParamMap.opcrn, "Y", false),
+	pocrn("pocrn", "Print Return", "pocrn.rpt", ReportParamMap.pocrn, "Y", false),
+	opcrn("opcrn", "Print Return", "opcrn.rpt", ReportParamMap.opcrn, "Y", false),
 
-	opord("SO12", "Print Order", "opord.rpt", ReportParamMap.opord, "Y", false),
-	opordinv("SO12", "Print Invoice", "opordinv.rpt", ReportParamMap.opordinv, "Y", false),
+	opord("opord", "Print Order", "opord.rpt", ReportParamMap.opord, "Y", false),
+	opordinv("opordinv", "Print Invoice", "opordinv.rpt", ReportParamMap.opordinv, "Y", false),
 
-	opdoinv("SO14", "Print Invoice", "opdoinv.rpt", ReportParamMap.opdoinv, "Y", false),
-	opdocln("SO14", "Print Challan", "opdocln.rpt", ReportParamMap.opdocln, "Y", false),
+	opdoinv("opdoinv", "Print Invoice", "opdoinv.rpt", ReportParamMap.opdoinv, "Y", false),
+	opdocln("opdocln", "Print Challan", "opdocln.rpt", ReportParamMap.opdocln, "Y", false),
 
-	imtor("IM11", "Print Transfer", "imtor.rpt", ReportParamMap.imtor, "Y", false),
-	imtorc("IM11", "Print Challan", "imtorc.rpt", ReportParamMap.imtorc, "Y", false),
-	imiss("IM13", "Print Challan", "imiss.rpt", ReportParamMap.imiss, "Y", false),
-	mobatch("IM14", "Print Batch", "mobatch.rpt", ReportParamMap.mobatch, "Y", false),
-	imadj("IM15", "Print Adjustment", "imadj.rpt", ReportParamMap.imadj, "Y", false),
-	imopen("IM16", "Print", "imopen.rpt", ReportParamMap.imopen, "Y", false),
+	imtor("imtor", "Print Transfer", "imtor.rpt", ReportParamMap.imtor, "Y", false),
+	imtorc("imtorc", "Print Challan", "imtorc.rpt", ReportParamMap.imtorc, "Y", false),
+	imiss("imiss", "Print Challan", "imiss.rpt", ReportParamMap.imiss, "Y", false),
+	mobatch("mobatch", "Print Batch", "mobatch.rpt", ReportParamMap.mobatch, "Y", false),
+	imadj("imadj", "Print Adjustment", "imadj.rpt", ReportParamMap.imadj, "Y", false),
+	imopen("imopen", "Print", "imopen.rpt", ReportParamMap.imopen, "Y", false),
 
-	oppos("SO18", "Print Invoice", "oppos.rpt", ReportParamMap.oppos, "Y", false),
-	opposd("SO18", "Print Invoice Duplicate", "opposd.rpt", ReportParamMap.opposd, "Y", false),
+	oppos("oppos", "Print Invoice", "oppos.rpt", ReportParamMap.oppos, "Y", false),
+	opposd("opposd", "Print Invoice Duplicate", "opposd.rpt", ReportParamMap.opposd, "Y", false),
 
 	// REPORT MODULES REPORT
 	R101("R101", "User Listing Report", "R101.rpt", ReportParamMap.R101, "Y", false),
@@ -138,26 +139,32 @@ public enum ReportMenu {
 		this.enabledFop = enabledFop;
 	}
 
+	@Override
 	public String getFileName() {
 		return this.fileName;
 	}
 
+	@Override
 	public String getGroup() {
 		return this.group;
 	}
 
+	@Override
 	public String getDescription() {
 		return this.description;
 	}
 
+	@Override
 	public Map<String, String> getParamMap() {
 		return this.paramMap;
 	}
 
+	@Override
 	public String getDefaultAccess() {
 		return this.defaultAccess;
 	}
 
+	@Override
 	public boolean isEnabledFop() {
 		return this.enabledFop;
 	}

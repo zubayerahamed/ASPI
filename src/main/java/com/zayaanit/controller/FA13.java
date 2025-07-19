@@ -125,8 +125,18 @@ public class FA13 extends KitController {
 	@PostMapping("/store")
 	public @ResponseBody Map<String, Object> store(Acmst acmst, BindingResult bindingResult){
 
+		if(acmst.getXgroup() == null) {
+			responseHelper.setErrorStatusAndMessage("Account group required");
+			return responseHelper.getResponse();
+		}
+
 		if(acmst.getXacc() == null) {
-			Integer xacc = acmstRepo.getNextAvailableId(sessionManager.getBusinessId());
+			Integer xacc = acmstRepo.getNextAvailableId(sessionManager.getBusinessId(), acmst.getXgroup());
+			if(xacc == null) {
+				responseHelper.setErrorStatusAndMessage("Account code required");
+				return responseHelper.getResponse();
+			}
+
 			acmst.setXacc(xacc);
 		}
 
@@ -134,10 +144,7 @@ public class FA13 extends KitController {
 		modelValidator.validateAcmst(acmst, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
-		if(acmst.getXgroup() == null) {
-			responseHelper.setErrorStatusAndMessage("Account group required");
-			return responseHelper.getResponse();
-		}
+		
 
 		if(StringUtils.isBlank(acmst.getXdesc())) {
 			responseHelper.setErrorStatusAndMessage("Account name required");
