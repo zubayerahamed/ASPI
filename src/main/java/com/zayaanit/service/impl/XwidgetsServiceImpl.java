@@ -37,6 +37,7 @@ public class XwidgetsServiceImpl extends AbstractService implements XwidgetsServ
 		return list;
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public int LSA14(String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam) {
 		searchText = searchText.replaceAll("'", "''");
@@ -51,7 +52,6 @@ public class XwidgetsServiceImpl extends AbstractService implements XwidgetsServ
 		Xwidgets em = new Xwidgets();
 		em.setXwidget((String) row.get("xwidget"));
 		em.setXtitle((String) row.get("xtitle"));
-		em.setXdefault((Integer) row.get("xdefault"));
 		return em;
 	}
 

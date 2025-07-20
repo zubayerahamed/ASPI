@@ -28,14 +28,18 @@ import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserprofiles;
 import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Xuserwidgets;
 import com.zayaanit.entity.Xwhs;
+import com.zayaanit.entity.Xwidgets;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XuserprofilesPK;
 import com.zayaanit.entity.pk.XusersPK;
+import com.zayaanit.entity.pk.XuserwidgetsPK;
 import com.zayaanit.entity.pk.XwhsPK;
+import com.zayaanit.entity.pk.XwidgetsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.AcsubRepo;
@@ -43,7 +47,9 @@ import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
+import com.zayaanit.repository.XuserwidgetsRepo;
 import com.zayaanit.repository.XwhsRepo;
+import com.zayaanit.repository.XwidgetsRepo;
 
 /**
  * @author Zubayer Ahamed
@@ -59,6 +65,8 @@ public class AD13 extends KitController {
 	@Autowired private AcsubRepo acsubRepo;
 	@Autowired private CabunitRepo cabunitRepo;
 	@Autowired private XwhsRepo xwhsRepo;
+	@Autowired private XuserwidgetsRepo xuserwidgetRepo;
+	@Autowired private XwidgetsRepo xwidgetsRepo;
 
 	private String pageTitle = null;
 
@@ -148,6 +156,41 @@ public class AD13 extends KitController {
 		
 		model.addAttribute("xuserprofiles", userProfile);
 		return "pages/AD13/AD13-fragments::detail-table";
+	}
+
+	@GetMapping("/widget-table")
+	public String widgetFormFragment(@RequestParam String zemail, @RequestParam String xwidget, Model model) {
+		if("RESET".equalsIgnoreCase(zemail) && "RESET".equalsIgnoreCase(xwidget)) {
+			return "pages/AD13/AD13-fragments::widget-table";
+		}
+
+		Optional<Xusers> userOp = xuserRepo.findById(new XusersPK(sessionManager.getBusinessId(), zemail));
+		if(!userOp.isPresent()) return "pages/AD13/AD13-fragments::widget-table";
+		model.addAttribute("xusers", userOp.get());
+
+		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+		model.addAttribute("detailList", detailsList);
+
+		if("RESET".equalsIgnoreCase(xwidget)) {
+			model.addAttribute("xuserwidgets", Xuserwidgets.getDefaultInstance(zemail));
+			return "pages/AD13/AD13-fragments::widget-table";
+		}
+
+		Optional<Xuserwidgets> xuserwidgetOp =  xuserwidgetRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), zemail, xwidget));
+		Xuserwidgets xuserwidgets = null;
+		if(!xuserwidgetOp.isPresent()) {
+			xuserwidgets = Xuserwidgets.getDefaultInstance(zemail);
+			Optional<Xwidgets> xwidgetsOp = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), xwidget));
+			if(xwidgetsOp.isPresent()) {
+				xuserwidgets.setXwidget(xwidgetsOp.get().getXwidget());
+			}
+		} else {
+			xuserwidgets = xuserwidgetOp.get();
+		}
+		
+		model.addAttribute("xuserwidgets", xuserwidgets);
+		return "pages/AD13/AD13-fragments::widget-table";
 	}
 
 	@Transactional
@@ -241,6 +284,7 @@ public class AD13 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + existObj.getZemail()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + existObj.getZemail() + "&xprofile=RESET"));
+		reloadSections.add(new ReloadSection("widget-table-container", "/AD13/widget-table?zemail=" + existObj.getZemail() + "&xwidget=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
@@ -282,6 +326,43 @@ public class AD13 extends KitController {
 		return responseHelper.getResponse();
 	}
 
+	@Transactional
+	@PostMapping("/widget/store")
+	public @ResponseBody Map<String, Object> storeWidget(Xuserwidgets xuserwidgets, BindingResult bindingResult){
+		// VALIDATE
+		if(xuserwidgets.getXwidget() == null) {
+			responseHelper.setErrorStatusAndMessage("Wiget required");
+			return responseHelper.getResponse();
+		}
+
+		// Create new
+		if(SubmitFor.INSERT.equals(xuserwidgets.getSubmitFor())) {
+			Optional<Xuserwidgets> existOp = xuserwidgetRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), xuserwidgets.getZemail(), xuserwidgets.getXwidget()));
+			if(existOp.isPresent()) {
+				responseHelper.setErrorStatusAndMessage("Widget already added");
+				return responseHelper.getResponse();
+			}
+
+			xuserwidgets.setZid(sessionManager.getBusinessId());
+			xuserwidgets.setXsequence(xuserwidgetRepo.getNextAvailableSeqn(sessionManager.getBusinessId(), xuserwidgets.getZemail()));
+			try {
+				xuserwidgets = xuserwidgetRepo.save(xuserwidgets);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
+
+			List<ReloadSection> reloadSections = new ArrayList<>();
+			reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + xuserwidgets.getZemail()));
+			reloadSections.add(new ReloadSection("widget-table-container", "/AD13/widget-table?zemail=" + xuserwidgets.getZemail() + "&xwidget=RESET"));
+			responseHelper.setReloadSections(reloadSections);
+			responseHelper.setSuccessStatusAndMessage("Saved successfully");
+			return responseHelper.getResponse();
+		}
+
+		responseHelper.setErrorStatusAndMessage("Update is not allowed");
+		return responseHelper.getResponse();
+	}
+
 	@DeleteMapping
 	public @ResponseBody Map<String, Object> delete(@RequestParam String zemail){
 		Optional<Xusers> op = xuserRepo.findById(new XusersPK(sessionManager.getBusinessId(), zemail));
@@ -310,6 +391,7 @@ public class AD13 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=RESET"));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=RESET&xprofile=RESET"));
+		reloadSections.add(new ReloadSection("widget-table-container", "/AD13/widget-table?zemail=RESET&xwidget=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
@@ -334,6 +416,30 @@ public class AD13 extends KitController {
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + zemail));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + zemail + "&xprofile=RESET"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
+		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@DeleteMapping("/widget-table")
+	public @ResponseBody Map<String, Object> deleteWidget(@RequestParam String zemail, @RequestParam String xwidget){
+		Optional<Xuserwidgets> existOp = xuserwidgetRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), zemail, xwidget));
+		if(!existOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Data not found");
+			return responseHelper.getResponse();
+		}
+
+		Xuserwidgets obj = existOp.get();
+		try {
+			xuserwidgetRepo.delete(obj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + zemail));
+		reloadSections.add(new ReloadSection("widget-table-container", "/AD13/widget-table?zemail=" + zemail + "&xwidget=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();

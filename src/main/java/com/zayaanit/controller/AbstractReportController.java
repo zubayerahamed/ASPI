@@ -180,14 +180,14 @@ public abstract class AbstractReportController extends KitController {
 		headers.setContentType(new MediaType("text", "html"));
 		headers.add("X-Content-Type-Options", "nosniff");
 
-		if(xscreen == null) {
-			String error = "Screen not found";
-			String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
-			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
-		}
+//		if(rm == null && xscreen == null) {
+//			String error = "Screen not found";
+//			String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
+//			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
+//		}
 
 		String fileName = rm.getFileName();
-		if(StringUtils.isNotBlank(xscreen.getXfile())) fileName = xscreen.getXfile().trim();
+		if(xscreen != null && StringUtils.isNotBlank(xscreen.getXfile())) fileName = xscreen.getXfile().trim();
 
 		Optional<Zbusiness> z = zbusinessRepo.findById(sessionManager.getBusinessId());
 		String reportName = filePath(z.get().getXrptpath()).concat("/").concat(fileName);
@@ -203,7 +203,7 @@ public abstract class AbstractReportController extends KitController {
 		}
 
 		String reportTitle = StringUtils.isBlank(params.getXtitle()) ? rm.getDescription() : params.getXtitle();
-		if(StringUtils.isNotBlank(xscreen.getXtitle())) reportTitle = xscreen.getXtitle().trim();
+		if(xscreen != null && StringUtils.isNotBlank(xscreen.getXtitle())) reportTitle = xscreen.getXtitle().trim();
 		boolean attachment = true;
 
 		ReportType reportType = params.getReportType();
@@ -231,7 +231,7 @@ public abstract class AbstractReportController extends KitController {
 			}
 		}
 
-		String engine = xscreen.getXengine();
+		String engine = xscreen != null ? xscreen.getXengine() : null;
 		if(StringUtils.isBlank(engine)) {
 			if(rm.isEnabledFop()) {
 				engine = "FOP";

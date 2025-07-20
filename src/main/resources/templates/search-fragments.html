@@ -483,9 +483,8 @@
 			<table class="table" th:classappend="${tablename}">
 				<thead>
 					<tr>
-						<th>Widget Code</th>
-						<th>Widget Title</th>
-						<th class="text-end">Default Value</th>
+						<th>Widget</th>
+						<th>Title</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -526,11 +525,6 @@
 					suffix : [0],
 					name : 'xtitle',
 					rendername: 'xtitle',
-				}, {
-					suffix : [0],
-					class: 'text-end',
-					name : 'xdefault',
-					rendername: 'xdefault',
 				}
 			];
 
@@ -580,11 +574,8 @@
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
-				
-
 				if(mainscreen == true){
 					$('#searchSuggestTableModal').modal('hide');
-
 
 					var value = $(this).data('value');
 
