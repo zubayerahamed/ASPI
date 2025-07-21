@@ -6,62 +6,41 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zayaanit.model.AD05WG05;
+import com.zayaanit.model.ProfileWiseUser;
 import com.zayaanit.repository.XlogsRepo;
 import com.zayaanit.repository.XusersRepo;
-import com.zayaanit.service.WidgetService;
 
 /**
  * @author Zubayer Ahaned
- * @since Oct 28, 2024
+ * @since Jul 21, 2025
  * @contact +8801748562164
  * @email zubayerahamed1990@gmail.com
  * @website https://www.zubayerahamed.com
  */
 @Service
-public class WidgetServiceImpl extends AbstractGenericService implements WidgetService {
+public class WA01Service extends AbstractGenericService {
 
 	@Autowired private XusersRepo xusersRepo;
 	@Autowired private XlogsRepo xlogsRepo;
 
-	/**
-	 * Total Users
-	 */
-	@Override
-	public long AD05WG01() {
+	public long totalUsers() {
 		return xusersRepo.countByZid(sessionManager.getBusinessId());
 	}
 
-	/**
-	 * Total Active Users
-	 */
-	@Override
-	public long AD05WG02() {
+	public long activeUsers() {
 		return xusersRepo.countByZidAndZactive(sessionManager.getBusinessId(), Boolean.TRUE);
 	}
 
-	/**
-	 * Today Logged-In Users
-	 */
-	@Override
-	public long AD05WG03() {
+	public long todaysLoggedInUsers() {
 		return xlogsRepo.getTodaysLoggedInUsers(sessionManager.getBusinessId());
 	}
 
-	/**
-	 * Current Logged-In Users
-	 */
-	@Override
-	public long AD05WG04() {
+	public long currentLoggedInUsers() {
 		return xlogsRepo.getCurrentLoggedInUsers(sessionManager.getBusinessId());
 	}
 
-	/**
-	 * Profile Wise Users
-	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<AD05WG05> AD05WG05() {
+	public List<ProfileWiseUser> profileWiseUsers() {
 		String query = "SELECT p.xprofile as profile, "
 				+ "(SELECT COUNT(*) FROM xuserprofiles xup WHERE xup.xprofile = p.xprofile AND xup.zid = p.zid) AS total, "
 				+ "(SELECT COUNT(*) FROM xuserprofiles xup "
@@ -71,9 +50,9 @@ public class WidgetServiceImpl extends AbstractGenericService implements WidgetS
 
 		List<Object[]> results = em.createNativeQuery(query).setParameter("zid", sessionManager.getBusinessId()).getResultList();
 
-		List<AD05WG05> profileWiseUsers = new ArrayList<>();
+		List<ProfileWiseUser> profileWiseUsers = new ArrayList<>();
 		for (Object[] row : results) {
-			AD05WG05 ad05wg05 = new AD05WG05();
+			ProfileWiseUser ad05wg05 = new ProfileWiseUser();
 			ad05wg05.setProfile((String) row[0]);
 			ad05wg05.setTotal(((Number) row[1]).longValue());
 			ad05wg05.setActive(((Number) row[2]).longValue());
@@ -82,6 +61,4 @@ public class WidgetServiceImpl extends AbstractGenericService implements WidgetS
 
 		return profileWiseUsers;
 	}
-
-	
 }

@@ -10,7 +10,7 @@ import lombok.Data;
  * @website https://www.zubayerahamed.com
  */
 @Data
-public class AD05WG05 {
+public class ProfileWiseUser {
 
 	private String profile;
 	private Long active;

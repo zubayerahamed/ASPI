@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.exceptions.ResourceNotFoundException;
-import com.zayaanit.service.WidgetService;
+import com.zayaanit.service.impl.WA01Service;
 
 /**
  * @author Zubayer Ahamed
@@ -24,7 +24,7 @@ import com.zayaanit.service.WidgetService;
 @RequestMapping("/AD05")
 public class AD05 extends KitController{
 
-	@Autowired private WidgetService widgetService;
+	@Autowired private WA01Service widgetService;
 
 	private String pageTitle = null;
 
@@ -49,11 +49,11 @@ public class AD05 extends KitController{
 
 	@GetMapping
 	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) throws ResourceNotFoundException {
-		model.addAttribute("AD05WG01", widgetService.AD05WG01());
-		model.addAttribute("AD05WG02", widgetService.AD05WG02());
-		model.addAttribute("AD05WG03", widgetService.AD05WG03());
-		model.addAttribute("AD05WG04", widgetService.AD05WG04());
-		model.addAttribute("AD05WG05", widgetService.AD05WG05());
+		model.addAttribute("AD05WG01", widgetService.currentLoggedInUsers());
+		model.addAttribute("AD05WG02", widgetService.currentLoggedInUsers());
+		model.addAttribute("AD05WG03", widgetService.currentLoggedInUsers());
+		model.addAttribute("AD05WG04", widgetService.currentLoggedInUsers());
+		model.addAttribute("AD05WG05", widgetService.profileWiseUsers());
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			return "pages/AD05/AD05-fragments::main-form";
