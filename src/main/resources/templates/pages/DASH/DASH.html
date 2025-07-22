@@ -10,7 +10,112 @@
 	<!-- Content area -->
 	<div class="content">
 
-		
+		<!-- WA01 Widgets Section -->
+		<div class="row">
+			<!-- 1st Column -->
+			<div class="col-lg-12 col-xl-12">
+				<div class="row">
+					<div class="col-sm-6 col-xl-3">
+						<div class="WA01WG01-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG01"></div>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WA01WG02-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG02"></div>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WA01WG03-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG03"></div>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WA01WG04-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG04"></div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<!-- 2nd Column -->
+			<div class="col-lg-12 col-xl-6">
+				<div class="row">
+					<div class="col-sm-12 col-xl-12">
+						<div class="WA01WG05-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG05"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+
+		<!-- WF01 Widgets Section -->
+		<div class="row">
+			<!-- 1st Column -->
+			<div class="col-lg-12 col-xl-12">
+				<div class="row">
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WF01WG01-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG01"></div>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WF01WG02-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG02"></div>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WF01WG03-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG03"></div>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WF01WG04-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG04"></div>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-xl-3">
+						<div class="WF01WG05-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG05"></div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+
+
+
+		<!-- WF02 Widgets Section -->
+		<div class="row">
+			<!-- 1st Column -->
+			<div class="col-lg-12 col-xl-12">
+				<div class="row">
+
+					
+
+					<div id="main-chart" style="width: 100%; height: 500px; padding: 50px; border: 1px solid red;"></div>
+
+					
+
+				</div>
+			</div>
+
+		</div>
 
 	</div>
 	<!-- /content area -->
@@ -18,6 +123,140 @@
 	<!-- Footer -->
 	<div th:remove="tag" th:include="commons :: footer-section"></div>
 	<!-- /footer -->
+
+	<script type="text/javascript">
+		function loadWidgets(widgetparent, widgetno, intervaltime){
+			sectionReloadAjaxReq({
+				id : widgetparent+ widgetno +'-container',
+				url : '/DASH/'+ widgetparent +'/' + widgetno
+			}, null, true);
+
+			if(intervaltime != -1){
+				setInterval(() => {
+					sectionReloadAjaxReq({
+						id : widgetparent+ widgetno +'-container',
+						url : '/DASH/'+ widgetparent +'/' + widgetno
+					}, null, true);
+				}, intervaltime);
+			}
+		}
+
+		$(document).ready(function(){
+			kit.ui.init();
+
+			// Initial Load Calling
+			loadWidgets('WA01', 'WG01', -1);
+			loadWidgets('WA01', 'WG02', -1);
+			loadWidgets('WA01', 'WG03', -1);
+			loadWidgets('WA01', 'WG04', -1);
+			loadWidgets('WA01', 'WG05', -1);
+
+			loadWidgets('WF01', 'WG01', -1);
+			loadWidgets('WF01', 'WG02', -1);
+			loadWidgets('WF01', 'WG03', -1);
+			loadWidgets('WF01', 'WG04', -1);
+			loadWidgets('WF01', 'WG05', -1);
+
+			loadWF02WG01();
+
+		})
+		
+		
+		function generateChart(){
+			console.log("here");
+			
+			if (typeof echarts == 'undefined') {
+	            console.warn('Warning - echarts.min.js is not loaded.');
+	            return;
+	        }
+			
+			var dom = document.getElementById('main-chart');
+		    var myChart = echarts.init(dom, null, {
+		      renderer: 'canvas',
+		      useDirtyRect: false
+		    });
+		    var app = {};
+		    
+		    var option;
+
+		    const labelRight = {
+		  position: 'right'
+		};
+		option = {
+		  title: {
+		    text: 'Bar Chart with Negative Value'
+		  },
+		  tooltip: {
+		    trigger: 'axis',
+		    axisPointer: {
+		      type: 'shadow'
+		    }
+		  },
+		  grid: {
+		    top: 80,
+		    bottom: 30
+		  },
+		  yAxis: {
+		    type: 'value',
+		    position: 'top',
+		    splitLine: {
+		      lineStyle: {
+		        type: 'dashed'
+		      }
+		    }
+		  },
+		  xAxis: {
+		    type: 'category',
+		    axisLine: { show: false },
+		    axisLabel: { show: false },
+		    axisTick: { show: false },
+		    splitLine: { show: false },
+		    data: [
+		      'ten',
+		      'nine',
+		      'eight',
+		      'seven',
+		      'six',
+		      'five',
+		      'four',
+		      'three',
+		      'two',
+		      'one'
+		    ]
+		  },
+		  series: [
+		    {
+		      name: 'Cost',
+		      type: 'bar',
+		      stack: 'Total',
+		      label: {
+		        show: true,
+		        formatter: '{b}'
+		      },
+		      data: [
+		        { value: -0.07, label: labelRight },
+		        { value: -0.09, label: labelRight },
+		        0.2,
+		        0.44,
+		        { value: -0.23, label: labelRight },
+		        0.08,
+		        { value: -0.17, label: labelRight },
+		        0.47,
+		        { value: -0.36, label: labelRight },
+		        0.18
+		      ]
+		    }
+		  ]
+		};
+
+		    if (option && typeof option === 'object') {
+		      myChart.setOption(option);
+		    }
+
+		    window.addEventListener('resize', myChart.resize);
+
+		}
+	</script>
 
 </div>
 <!-- /inner content -->

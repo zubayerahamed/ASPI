@@ -13,12 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserwidgets;
+import com.zayaanit.entity.Xwidgets;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XuserwidgetsPK;
-import com.zayaanit.model.ProfileWiseUser;
+import com.zayaanit.entity.pk.XwidgetsPK;
+import com.zayaanit.model.WF01Dto;
+import com.zayaanit.model.WF02Dto;
+import com.zayaanit.model.WF02ReqParam;
+import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.XuserwidgetsRepo;
+import com.zayaanit.repository.XwidgetsRepo;
 import com.zayaanit.service.impl.WA01Service;
 
 /**
@@ -36,6 +43,8 @@ public class DashboardController extends KitController {
 
 	@Autowired private WA01Service wa01Service;
 	@Autowired private XuserwidgetsRepo xuserwidgetsRepo;
+	@Autowired private XwidgetsRepo xwidgetsRepo;
+	@Autowired private AcmstRepo acmstRepo;
 
 	@Override
 	protected String pageTitle() {
@@ -64,6 +73,16 @@ public class DashboardController extends KitController {
 			model.addAttribute("WA01", "Y");
 			model.addAttribute("WF01", "Y");
 			model.addAttribute("WF02", "Y");
+
+			Optional<Xwidgets> wf02Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WF02"));
+			Xwidgets wf02 = wf02Op.isPresent() ? wf02Op.get() : null;
+			int last = wf02 != null ? wf02.getXdefault() : 10;
+
+			Optional<Acmst> acmstOp = acmstRepo.findTopByOrderByZtimeDesc();
+			Integer xacc = acmstOp.isPresent() ? acmstOp.get().getXacc() : null;
+
+			model.addAttribute("WF02REQPARAM", WF02ReqParam.builder().xacc(xacc).last(last).type("DAY").build());
+
 		} else {
 			// Check user has access those widgets
 			Optional<Xuserwidgets> wa01Op = xuserwidgetsRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), "WA01"));
@@ -81,28 +100,89 @@ public class DashboardController extends KitController {
 		return "pages/DASH/DASH";
 	}
 
-	@GetMapping("/WA01/total-users")
-	public @ResponseBody long getTotalUsers() {
-		return wa01Service.totalUsers();
+	@GetMapping("/WA01/WG01")
+	public String getTotalUsers(Model model) {
+		model.addAttribute("WA01WG01", wa01Service.totalUsers());
+		return "pages/DASH/DASH-fragments::WA01WG01";
 	}
 
-	@GetMapping("/WA01/active-users")
-	public @ResponseBody long getActiveUsers() {
-		return wa01Service.activeUsers();
+	@GetMapping("/WA01/WG02")
+	public String getActiveUsers(Model model) {
+		model.addAttribute("WA01WG02", wa01Service.activeUsers());
+		return "pages/DASH/DASH-fragments::WA01WG02";
 	}
 
-	@GetMapping("/WA01/todays-loggedin-users")
-	public @ResponseBody long getTodaysLoggedinUsers() {
-		return wa01Service.todaysLoggedInUsers();
+	@GetMapping("/WA01/WG03")
+	public String getTodaysLoggedinUsers(Model model) {
+		model.addAttribute("WA01WG03", wa01Service.todaysLoggedInUsers());
+		return "pages/DASH/DASH-fragments::WA01WG03";
 	}
 
-	@GetMapping("/WA01/current-loggedin-users")
-	public @ResponseBody long getCurrentLoggedinUsers() {
-		return wa01Service.currentLoggedInUsers();
+	@GetMapping("/WA01/WG04")
+	public String getCurrentLoggedinUsers(Model model) {
+		model.addAttribute("WA01WG04", wa01Service.currentLoggedInUsers());
+		return "pages/DASH/DASH-fragments::WA01WG04";
 	}
 
-	@GetMapping("/WA01/profile-wise-users")
-	public @ResponseBody List<ProfileWiseUser> getProfilewiseUsers() {
-		return wa01Service.profileWiseUsers();
+	@GetMapping("/WA01/WG05")
+	public String  getProfilewiseUsers(Model model) {
+		model.addAttribute("WA01WG05", wa01Service.profileWiseUsers());
+		return "pages/DASH/DASH-fragments::WA01WG05";
+	}
+
+	@GetMapping("/WF01/WG01")
+	public String WF01WG01(Model model) {
+		WF01Dto dto = wa01Service.totalVouchers();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WF01WG01";
+	}
+
+	@GetMapping("/WF01/WG02")
+	public String WF01WG02(Model model) {
+		WF01Dto dto = wa01Service.openVouchers();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WF01WG02";
+	}
+
+	@GetMapping("/WF01/WG03")
+	public String WF01WG03(Model model) {
+		WF01Dto dto = wa01Service.suspendedVouchers();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WF01WG03";
+	}
+
+	@GetMapping("/WF01/WG04")
+	public String WF01WG04(Model model) {
+		WF01Dto dto = wa01Service.waitingForPosting();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WF01WG04";
+	}
+
+	@GetMapping("/WF01/WG05")
+	public String WF01WG05(Model model) {
+		WF01Dto dto = wa01Service.postedVouchers();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WF01WG05";
+	}
+
+	@GetMapping("/WF02/WG01")
+	public @ResponseBody List<WF02Dto> WF02WG01(@RequestParam(required = true) Integer xacc, @RequestParam(required = true) Integer days, Model model) {
+		List<WF02Dto> datas = wa01Service.ledgerTransactionSummary(xacc, days);
+		datas.stream().forEach(f -> {
+			System.out.println(f.toString());
+		});
+		return datas;
+//		model.addAttribute("datas", datas);
+//		return "pages/DASH/DASH-fragments::WF02WG01";
 	}
 }

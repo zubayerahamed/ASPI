@@ -103,20 +103,21 @@ var loadingMask2 = {
 };
 
 
-function sectionReloadAjaxReq(section, callback) {
-	loadingMask2.show();
+function sectionReloadAjaxReq(section, callback, disableloadingmaskeffect) {
+	if(disableloadingmaskeffect == undefined || disableloadingmaskeffect == null || disableloadingmaskeffect == false) loadingMask2.show();
+
 	$.ajax({
 		url: getBasepath() + section.url,
 		type: "GET",
 		success: function (data) {
-			loadingMask2.hide();
+			if(disableloadingmaskeffect == undefined || disableloadingmaskeffect == null || disableloadingmaskeffect == false) loadingMask2.hide();
 			$("." + section.id).html("");
 			$("." + section.id).append(data);
 			
 			if(callback) callback();
 		},
 		error: function (jqXHR, status, errorThrown) {
-			loadingMask2.hide();
+			if(disableloadingmaskeffect == undefined || disableloadingmaskeffect == null || disableloadingmaskeffect == false) loadingMask2.hide();
 			if (jqXHR.status === 401) {
 				// Session is invalid, reload the url to go back to login page
 				location.reload();

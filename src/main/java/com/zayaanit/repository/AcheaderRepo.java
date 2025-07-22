@@ -1,5 +1,6 @@
 package com.zayaanit.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -21,6 +22,14 @@ import com.zayaanit.entity.pk.AcheaderPK;
  */
 @Repository
 public interface AcheaderRepo extends JpaRepository<Acheader, AcheaderPK>{
+
+	public long countByZidAndXdate(Integer zid, Date xdate);
+	public long countByZidAndXper(Integer zid, Integer xper);
+	public long countByZidAndXyear(Integer zid, Integer xyear);
+
+	public long countByZidAndXdateAndXstatusjv(Integer zid, Date xdate, String xstatusjv);
+	public long countByZidAndXperAndXstatusjv(Integer zid, Integer xper, String xstatusjv);
+	public long countByZidAndXyearAndXstatusjv(Integer zid, Integer xyear, String xstatusjv);
 
 	@Transactional
 	@Procedure(name = "FA_VoucherPost")

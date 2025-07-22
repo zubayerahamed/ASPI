@@ -1,6 +1,7 @@
 package com.zayaanit.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,6 @@ public interface AcmstRepo extends JpaRepository<Acmst, AcmstPK> {
 	public Integer getNextAvailableId(Integer zid, Integer xgroup);
 
 	List<Acmst> findAllByZid(Integer zid);
+
+	Optional<Acmst> findTopByOrderByZtimeDesc();
 }
