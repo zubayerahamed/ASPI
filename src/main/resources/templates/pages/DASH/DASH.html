@@ -236,6 +236,17 @@
 			var last = $('input[name="last"]').val()
 			var type = $('select[name="type"]').val()
 
+			if(xacc == null || xacc == ''){
+				showMessage("error", "Account selection required");
+				return;
+			}
+
+			if(last == null || last == ''){
+				showMessage("error", "Last "+ type +" required");
+				return;
+			}
+
+			if(last < 0) last = 0;
 			if("DAYS" === type){
 				if(last > 31) $('input[name="last"]').val("31");
 			} else {
