@@ -48,4 +48,42 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 					"GROUP BY d.xdate " +
 					"ORDER BY d.xdate", nativeQuery = true)
 	List<Object[]> getLedgerTransactionSummaryForDays(@Param("zid") Integer zid, @Param("xacc") Integer xacc, @Param("days") Integer days);
+
+	@Query(value = "DECLARE @year int, @per int "
+			+ "EXEC [dbo].[FA_GetYearPeriod] :zid, :xdate, @year OUTPUT, @per OUTPUT; "
+			+ "WITH YearPer AS ( "
+			+ "    SELECT @year AS xyear, @per AS xper, 1 AS xrow "
+			+ "    UNION ALL "
+			+ "    SELECT "
+			+ "        CASE  "
+			+ "            WHEN xper = 1 THEN xyear - 1  "
+			+ "            ELSE xyear  "
+			+ "        END, "
+			+ "        CASE  "
+			+ "            WHEN xper = 1 THEN 12  "
+			+ "            ELSE xper - 1  "
+			+ "        END, "
+			+ "        xrow + 1 "
+			+ "    FROM YearPer "
+			+ "    WHERE xrow < :months "
+			+ "), "
+			+ "TrnData AS ( "
+			+ "    SELECT  "
+			+ "        xyear,  "
+			+ "        xper,   "
+			+ "        ISNULL(SUM(xprime), 0) AS xprime "
+			+ "    FROM acbal "
+			+ "    WHERE zid=:zid "
+			+ "	AND xacc = :xacc "
+			+ "    GROUP BY xyear, xper "
+			+ ") "
+			+ "SELECT  "
+			+ "    dr.xyear,  "
+			+ "    dr.xper,  "
+			+ "    ISNULL(d.xprime, 0) AS xprime "
+			+ "FROM YearPer dr "
+			+ "LEFT JOIN TrnData d  "
+			+ "    ON dr.xyear = d.xyear AND dr.xper = d.xper "
+			+ "ORDER BY dr.xyear ASC, dr.xper ASC", nativeQuery = true)
+	List<Object[]> getLedgerTransactionSummaryForMonths(@Param("zid") Integer zid, @Param("xacc") Integer xacc, @Param("months") Integer months, @Param("xdate") String xdate);
 }

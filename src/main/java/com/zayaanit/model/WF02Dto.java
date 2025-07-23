@@ -1,7 +1,6 @@
 package com.zayaanit.model;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import lombok.Builder;
 import lombok.Data;
@@ -17,10 +16,10 @@ import lombok.Data;
 @Builder
 public class WF02Dto {
 
-	private Date xdate;
+	private String xdate;
 	private BigDecimal amount;
 	
-	public WF02Dto(Date xdate, BigDecimal amount) {
+	public WF02Dto(String xdate, BigDecimal amount) {
 		this.xdate = xdate;
 		this.amount = amount;
 	}

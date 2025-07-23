@@ -80,8 +80,9 @@ public class DashboardController extends KitController {
 
 			Optional<Acmst> acmstOp = acmstRepo.findTopByOrderByZtimeDesc();
 			Integer xacc = acmstOp.isPresent() ? acmstOp.get().getXacc() : null;
+			String accountName = acmstOp.isPresent() ? acmstOp.get().getXdesc() : null;
 
-			model.addAttribute("WF02REQPARAM", WF02ReqParam.builder().xacc(xacc).last(last).type("DAY").build());
+			model.addAttribute("WF02REQPARAM", WF02ReqParam.builder().xacc(xacc).accountName(accountName).last(last).type("DAYS").build());
 
 		} else {
 			// Check user has access those widgets
@@ -93,6 +94,18 @@ public class DashboardController extends KitController {
 
 			Optional<Xuserwidgets> wf02OP = xuserwidgetsRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), "WF02"));
 			model.addAttribute("WF02", wf02OP.isPresent() ? "Y" : "N");
+			if(wf02OP.isPresent()) {
+				Optional<Xwidgets> wf02Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WF02"));
+				Xwidgets wf02 = wf02Op.isPresent() ? wf02Op.get() : null;
+				int last = wf02 != null ? wf02.getXdefault() : 10;
+
+				Optional<Acmst> acmstOp = acmstRepo.findTopByOrderByZtimeDesc();
+				Integer xacc = acmstOp.isPresent() ? acmstOp.get().getXacc() : null;
+				String accountName = acmstOp.isPresent() ? acmstOp.get().getXdesc() : null;
+
+				model.addAttribute("WF02REQPARAM", WF02ReqParam.builder().xacc(xacc).accountName(accountName).last(last).type("DAYS").build());
+			}
+
 		}
 
 		if(frommenu == null) return "redirect:/";
@@ -176,13 +189,14 @@ public class DashboardController extends KitController {
 	}
 
 	@GetMapping("/WF02/WG01")
-	public @ResponseBody List<WF02Dto> WF02WG01(@RequestParam(required = true) Integer xacc, @RequestParam(required = true) Integer days, Model model) {
-		List<WF02Dto> datas = wa01Service.ledgerTransactionSummary(xacc, days);
-		datas.stream().forEach(f -> {
-			System.out.println(f.toString());
-		});
+	public @ResponseBody List<WF02Dto> WF02WG01(
+			@RequestParam(required = true) Integer xacc, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,  
+			Model model
+		) {
+
+		List<WF02Dto> datas = wa01Service.ledgerTransactionSummary(xacc, last, type);
 		return datas;
-//		model.addAttribute("datas", datas);
-//		return "pages/DASH/DASH-fragments::WF02WG01";
 	}
 }

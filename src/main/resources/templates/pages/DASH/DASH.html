@@ -1,5 +1,8 @@
 <!-- Inner content -->
 <div class="content-inner" xmlns:th="http://www.thymeleaf.org">
+	<input type="hidden" id="WA01" th:value="${WA01}"/>
+	<input type="hidden" id="WF01" th:value="${WF01}"/>
+	<input type="hidden" id="WF02" th:value="${WF02}"/>
 
 	<!-- Page header -->
 	<div class="page-header-container">
@@ -11,7 +14,7 @@
 	<div class="content">
 
 		<!-- WA01 Widgets Section -->
-		<div class="row">
+		<div class="row" th:if="${WA01 eq 'Y'}">
 			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
 				<div class="row">
@@ -58,7 +61,7 @@
 
 
 		<!-- WF01 Widgets Section -->
-		<div class="row">
+		<div class="row" th:if="${WF01 eq 'Y'}">
 			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
 				<div class="row">
@@ -101,18 +104,71 @@
 
 
 		<!-- WF02 Widgets Section -->
-		<div class="row">
+		<div class="row" th:if="${WF02 eq 'Y'}">
 			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
-				<div class="row">
 
-					
+				<div class="card">
+					<div class="card-body">
+						<form id="WF02WG01-form" class="form-validate-jquery" th:action="@{/FA31/store}" method="POST">
 
-					<div id="main-chart" style="width: 100%; height: 500px; padding: 50px; border: 1px solid red;"></div>
+							<div class="row">
 
-					
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Account</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="xacc"
+													th:value="${WF02REQPARAM.xacc ne null ? WF02REQPARAM.xacc + ' - ' + WF02REQPARAM.accountName : ''}">
+											<input 	type="hidden" class="search-val" name="xacc" th:value="${WF02REQPARAM.xacc}" required/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LFA13/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='xacc',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
 
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Last</label>
+										<input type="number" class="form-control numeric-only" name="last" th:value="${WF02REQPARAM.last}" required="required">
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Day Type</label>
+										<select class="form-control select" id="type" name="type" th:value="${WF02REQPARAM.type}" required="required">
+											<option value="DAYS" th:selected="${WF02REQPARAM.type eq 'DAYS'}">Days</option>
+											<option value="MONTHS" th:selected="${WF02REQPARAM.type eq 'MONTHS'}">Months</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WF02WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WF02WG01-chart" style="height: 500px;">
+
+					</div>
 				</div>
+
 			</div>
 
 		</div>
@@ -144,117 +200,158 @@
 		$(document).ready(function(){
 			kit.ui.init();
 
+			var WA01 = $('#WA01').val();
+			var WF01 = $('#WF01').val();
+			var WF02 = $('#WF02').val();
+
 			// Initial Load Calling
-			loadWidgets('WA01', 'WG01', -1);
-			loadWidgets('WA01', 'WG02', -1);
-			loadWidgets('WA01', 'WG03', -1);
-			loadWidgets('WA01', 'WG04', -1);
-			loadWidgets('WA01', 'WG05', -1);
+			if("Y" === WA01){
+				loadWidgets('WA01', 'WG01', 5000);
+				loadWidgets('WA01', 'WG02', 5000);
+				loadWidgets('WA01', 'WG03', 5000);
+				loadWidgets('WA01', 'WG04', 5000);
+				loadWidgets('WA01', 'WG05', 5000);
+			}
 
-			loadWidgets('WF01', 'WG01', -1);
-			loadWidgets('WF01', 'WG02', -1);
-			loadWidgets('WF01', 'WG03', -1);
-			loadWidgets('WF01', 'WG04', -1);
-			loadWidgets('WF01', 'WG05', -1);
+			if("Y" === WF01){
+				loadWidgets('WF01', 'WG01', 5000);
+				loadWidgets('WF01', 'WG02', 5000);
+				loadWidgets('WF01', 'WG03', 5000);
+				loadWidgets('WF01', 'WG04', 5000);
+				loadWidgets('WF01', 'WG05', 5000);
+			}
 
-			loadWF02WG01();
+			if("Y" === WF02){
+				loadWF02WG01();
+				$('.btn-WF02WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWF02WG01();
+				});
+			}
 
 		})
-		
-		
-		function generateChart(){
-			console.log("here");
-			
+
+		function loadWF02WG01(){
+			var xacc = $('input[name="xacc"]').val();
+			var last = $('input[name="last"]').val()
+			var type = $('select[name="type"]').val()
+
+			if("DAYS" === type){
+				if(last > 31) $('input[name="last"]').val("31");
+			} else {
+				if(last > 24) $('input[name="last"]').val("24");
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WF02/WG01?xacc='+ xacc +'&last='+ last +'&type=' + type,
+				type: "GET",
+				success: function (data) {
+					prepareBarChart(data, 'WF02WG01-chart', type);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+		function prepareBarChart(data, containerid, type){
+
+			var xdata = [];
+			var ydata = [];
+			$.each(data, function(i, d){
+				xdata.push(d.xdate);
+				ydata.push(d.amount);
+			});
+
 			if (typeof echarts == 'undefined') {
-	            console.warn('Warning - echarts.min.js is not loaded.');
-	            return;
-	        }
-			
-			var dom = document.getElementById('main-chart');
-		    var myChart = echarts.init(dom, null, {
-		      renderer: 'canvas',
-		      useDirtyRect: false
-		    });
-		    var app = {};
-		    
-		    var option;
+				console.warn('Warning - echarts.min.js is not loaded.');
+				return;
+			}
 
-		    const labelRight = {
-		  position: 'right'
-		};
-		option = {
-		  title: {
-		    text: 'Bar Chart with Negative Value'
-		  },
-		  tooltip: {
-		    trigger: 'axis',
-		    axisPointer: {
-		      type: 'shadow'
-		    }
-		  },
-		  grid: {
-		    top: 80,
-		    bottom: 30
-		  },
-		  yAxis: {
-		    type: 'value',
-		    position: 'top',
-		    splitLine: {
-		      lineStyle: {
-		        type: 'dashed'
-		      }
-		    }
-		  },
-		  xAxis: {
-		    type: 'category',
-		    axisLine: { show: false },
-		    axisLabel: { show: false },
-		    axisTick: { show: false },
-		    splitLine: { show: false },
-		    data: [
-		      'ten',
-		      'nine',
-		      'eight',
-		      'seven',
-		      'six',
-		      'five',
-		      'four',
-		      'three',
-		      'two',
-		      'one'
-		    ]
-		  },
-		  series: [
-		    {
-		      name: 'Cost',
-		      type: 'bar',
-		      stack: 'Total',
-		      label: {
-		        show: true,
-		        formatter: '{b}'
-		      },
-		      data: [
-		        { value: -0.07, label: labelRight },
-		        { value: -0.09, label: labelRight },
-		        0.2,
-		        0.44,
-		        { value: -0.23, label: labelRight },
-		        0.08,
-		        { value: -0.17, label: labelRight },
-		        0.47,
-		        { value: -0.36, label: labelRight },
-		        0.18
-		      ]
-		    }
-		  ]
-		};
+			var dom = document.getElementById(containerid);
+			var myChart = echarts.init(dom, null, {
+				renderer: 'canvas',
+				useDirtyRect: false
+			});
+			var app = {};
+			var option;
 
-		    if (option && typeof option === 'object') {
-		      myChart.setOption(option);
-		    }
+			const labelRight = {
+				position: 'right'
+			};
 
-		    window.addEventListener('resize', myChart.resize);
+			option = {
+				title: {
+					text: 'Ledger Transaction Summary'
+				},
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'shadow'
+					}
+				},
+				grid: {
+					left: '0%',
+					right: '0%',
+					bottom: '3%',
+					containLabel: true
+				},
+				xAxis: [
+					{
+						type: 'category',
+						data: xdata,
+						axisTick: {
+							alignWithLabel: true
+						}, 
+						axisLabel: {
+							formatter: function (value) {
+								if(type === 'MONTHS') {
+									const trimmedValue = value.trim();
+									const yearMatch = trimmedValue.match(/Year\s*:\s*\d+/);
+									const periodMatch = trimmedValue.match(/Period\s*:\s*\d+/);
 
+									const year = yearMatch ? yearMatch[0].trim() : '';
+									const period = periodMatch ? periodMatch[0].trim() : '';
+
+									return `${period}\n${year}`;
+								}
+								
+								const date = new Date(value);
+								const day = date.getDate();
+								const month = date.toLocaleString('en-US', { month: 'short' });
+								const year = date.getFullYear();
+								return `${day} ${month}\n${year}`; // '\n' breaks line in ECharts
+							},
+							align: 'center'
+						}
+					}
+				],
+				yAxis: [
+					{
+						type: 'value',
+					},
+				],
+				series: [
+					{
+						name: 'Amount',
+						type: 'bar',
+						barWidth: '60%',
+						data: ydata,
+					}
+				]
+			}; // END OPTION
+
+			if (option && typeof option === 'object') {
+				myChart.setOption(option);
+			}
+
+			window.addEventListener('resize', myChart.resize);
 		}
 	</script>
 

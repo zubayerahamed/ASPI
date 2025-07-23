@@ -1,6 +1,7 @@
 package com.zayaanit.service.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -150,12 +151,23 @@ public class WA01Service extends AbstractGenericService {
 				.build();
 	}
 
-	public List<WF02Dto> ledgerTransactionSummary(Integer xacc, int days) {
+	public List<WF02Dto> ledgerTransactionSummary(Integer xacc, Integer last, String type) {
 		if(xacc == null) return Collections.emptyList();
-		if(days > 31) days = 31;
-		List<WF02Dto> result = acbalRepo.getLedgerTransactionSummaryForDays(sessionManager.getBusinessId(), xacc, days)
+		if("DAYS".equalsIgnoreCase(type)) {
+			if(last > 31) last = 31;
+			List<WF02Dto> result = acbalRepo.getLedgerTransactionSummaryForDays(sessionManager.getBusinessId(), xacc, last - 1)
+					.stream()
+					.map(row -> new WF02Dto(((Date) row[0]).toString(), (BigDecimal) row[1]))
+					.collect(Collectors.toList());
+			return result;
+		} 
+
+		if(last > 24) last = 24;
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		List<WF02Dto> result = acbalRepo.getLedgerTransactionSummaryForMonths(sessionManager.getBusinessId(), xacc, last, sdf.format(new Date()))
 				.stream()
-				.map(row -> new WF02Dto((Date) row[0], (BigDecimal) row[1]))
+				.map(row -> new WF02Dto("Year : " + (Integer) row[0] + " | Period : " + (Integer) row[1], (BigDecimal) row[2]))
 				.collect(Collectors.toList());
 		return result;
 	}

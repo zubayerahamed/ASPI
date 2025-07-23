@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 public class WF02ReqParam {
 
 	private Integer xacc;
+	private String accountName;
 	private int last;
 	private String type; 
 }
