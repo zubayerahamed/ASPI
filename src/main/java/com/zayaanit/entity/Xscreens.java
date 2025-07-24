@@ -18,6 +18,7 @@ import com.zayaanit.enums.SubmitFor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Zubayer Ahamed
@@ -28,6 +29,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "xscreens")
 @IdClass(XscreensPK.class)
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @NamedStoredProcedureQueries({
 	@NamedStoredProcedureQuery(name = "Fn_getTrn", procedureName = "Fn_getTrn", parameters = {
 		@StoredProcedureParameter(mode = ParameterMode.IN, name = "zid", type = Integer.class),
@@ -75,6 +77,13 @@ public class Xscreens extends AbstractModel<String> {
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
+
+	public Xscreens(String xscreen, String xtitle, String xkeywords, String xtype) {
+		this.xscreen = xscreen;
+		this.xtitle = xtitle;
+		this.xkeywords = xkeywords;
+		this.xtype = xtype;
+	}
 
 	public static Xscreens getDefaultInstance() {
 		Xscreens obj = new Xscreens();

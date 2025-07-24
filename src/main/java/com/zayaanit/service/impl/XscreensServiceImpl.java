@@ -1,10 +1,14 @@
 package com.zayaanit.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.zayaanit.model.MenuResDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.zayaanit.entity.Xscreens;
@@ -19,6 +23,58 @@ import com.zayaanit.service.XscreensService;
 @Service
 public class XscreensServiceImpl extends AbstractService implements XscreensService {
 	@Autowired private KitSessionManager sessionManager;
+
+	private final RowMapper<MenuResDto> ROW_MAPPER = (rs, rowNum) -> new MenuResDto(
+		rs.getString("xscreen"),
+		rs.getString("xtitle"),
+		rs.getString("xkeywords"),
+		rs.getString("xtype")
+	);
+
+	@Override
+	public List<MenuResDto> searchMenus(String hint) {
+
+		String sql = "WITH ranked_screens AS ( " +
+				"    SELECT " +
+				"        xscreen, xtitle, xkeywords, xtype, " +
+				"        ROW_NUMBER() OVER ( " +
+				"            PARTITION BY xtype  " +
+				"            ORDER BY xscreen " +
+				"        ) AS rn " +
+				"    FROM " +
+				"        xscreens " +
+				"    WHERE " +
+				"        zid = "+ sessionManager.getBusinessId() +" " +
+				"        AND xtype IN ('Screen', 'Report') " +
+				"        AND ( " +
+				"            xscreen LIKE '%"+ hint +"%' " +
+				"            OR xtitle = '"+ hint +"' " +
+				"            OR xtitle LIKE '"+ hint +" %' " +
+				"            OR xtitle LIKE '% "+ hint +"' " +
+				"            OR xtitle LIKE '% "+ hint +" %' " +
+				"            OR xkeywords = '"+ hint +"' " +
+				"            OR xkeywords LIKE '"+ hint +" %' " +
+				"            OR xkeywords LIKE '% "+ hint +"' " +
+				"            OR xkeywords LIKE '% "+ hint +" %' " +
+				"        ) " +
+				") " +
+				"SELECT xscreen, xtitle, xkeywords, xtype " +
+				"FROM ranked_screens " +
+				"WHERE rn <= 5 " +
+				"ORDER BY  " +
+				"    CASE xtype  " +
+				"        WHEN 'Screen' THEN 1 " +
+				"        WHEN 'Report' THEN 2 " +
+				"        ELSE 3 " +
+				"    END, " +
+				"    xscreen ";
+
+
+
+		MapSqlParameterSource params = new MapSqlParameterSource();
+
+		return jdbcTemplate.query(sql, ROW_MAPPER);
+	}
 
 	@Override
 	public List<Xscreens> LSA12(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText,  int suffix, String dependentParam) {

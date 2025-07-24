@@ -500,7 +500,7 @@ kit.ui.init = function(){
 	kit.ui.config.advancedSearchBtInit();
 	kit.ui.config.inputFieldsEvents();
 }
- 
+
 $(document).ready(function(){
 	kit.ui.init();
 
@@ -576,6 +576,28 @@ $(document).ready(function(){
 			//}
 		});
 	})
+
+	var dbo;
+	$(".input-menu-search").off('input').on('input', function(){
+		var hint = $(this).val();
+		if(hint == '') return;
+
+		if(dbo != null) clearTimeout(dbo);
+		dbo = setTimeout(function(){
+			$.ajax({
+				url : getBasepath() + '/search/menus?hint=' + hint,
+				type : 'GET',
+				success : function(data) {
+					$(".menu-search-container").html("");
+					$(".menu-search-container").append(data);
+				},
+				error : function(jqXHR, status, errorThrown){
+					//showMessage(status, "Something went wrong .... ");
+				}
+			});
+		}, 1000);
+	});
+
 
 	$(".menu-search").off('input').on('input', function(){
 		var hint = $(this).val();

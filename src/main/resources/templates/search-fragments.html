@@ -1,3 +1,22 @@
+<div th:fragment="menus-table" xmlns:th="http://www.thymeleaf.org">
+	<table class="table table-stripped search-menu-table">
+		<tbody>
+			<tr th:each="menu : ${menus}">
+				<td>
+					<a th:href="@{/menu.xscreen}" class="navlink screen-item" th:attr="data-screen=${menu.xscreen}" th:text="${menu.xscreen}"></a>
+				</td>
+				<td th:text="${menu.xtitle}"></td>
+				<td th:text="${menu.xtype}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript" th:inline="javascript">
+		$(document).ready(function(){
+			kit.ui.init();
+		});
+	</script>
+</div>
+
 <div th:fragment="LSA11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">

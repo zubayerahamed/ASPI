@@ -100,10 +100,9 @@ public class SearchSuggestController {
 	@Autowired private XwidgetsService xwidgetsService;
 
 	@GetMapping("/menus")
-	public List<Xscreens> loadSearchdMenus(@RequestParam String hint) {
-		if(StringUtils.isBlank(hint)) return Collections.emptyList();
-
-		return null;
+	public String loadSearchdMenus(@RequestParam String hint, Model model) {
+		model.addAttribute("menus", StringUtils.isBlank(hint) ? Collections.emptyList() : xscreensService.searchMenus(hint));
+		return "search-fragments::menus-table";
 	}
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
