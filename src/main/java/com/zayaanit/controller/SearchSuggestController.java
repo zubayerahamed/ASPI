@@ -1,12 +1,15 @@
 package com.zayaanit.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -95,6 +98,13 @@ public class SearchSuggestController {
 	@Autowired private MoheaderService moheaderService;
 	@Autowired private OpcrnheaderService opcrnheaderService;
 	@Autowired private XwidgetsService xwidgetsService;
+
+	@GetMapping("/menus")
+	public List<Xscreens> loadSearchdMenus(@RequestParam String hint) {
+		if(StringUtils.isBlank(hint)) return Collections.emptyList();
+
+		return null;
+	}
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
 	public String loadHeaderTableFragment(
