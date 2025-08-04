@@ -1,11 +1,14 @@
 <div th:fragment="menus-table" xmlns:th="http://www.thymeleaf.org">
-	<table class="table table-stripped search-menu-table">
+	<p th:if="${#lists.isEmpty(menus)}" class="text-center p-10">No matching items found. Try a different keyword.</p>
+	<table class="table table-stripped search-menu-table" th:if="${not #lists.isEmpty(menus)}">
 		<tbody>
 			<tr th:each="menu : ${menus}">
 				<td>
-					<a th:href="@{/menu.xscreen}" class="navlink screen-item" th:attr="data-screen=${menu.xscreen}" th:text="${menu.xscreen}"></a>
+					<i class="ph" th:classappend="${menu.xicon}"></i>
 				</td>
-				<td th:text="${menu.xtitle}"></td>
+				<td>
+					<a th:href="@{/menu.xscreen}" class="navlink screen-item" th:attr="data-screen=${menu.xscreen}" th:text="${menu.xtitle}"></a>
+				</td>
 				<td th:text="${menu.xtype}"></td>
 			</tr>
 		</tbody>

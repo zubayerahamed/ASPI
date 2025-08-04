@@ -1,5 +1,10 @@
 package com.zayaanit.service.impl;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -18,4 +23,9 @@ public abstract class AbstractService {
 	@Autowired protected JdbcTemplate jdbcTemplate;
 
 	protected static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+	protected static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
+	}
 }

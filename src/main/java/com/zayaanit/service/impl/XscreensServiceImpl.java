@@ -1,18 +1,19 @@
 package com.zayaanit.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.zayaanit.model.MenuResDto;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
+import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.enums.DatatableSortOrderType;
+import com.zayaanit.model.MenuResDto;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.XscreensService;
 
@@ -25,6 +26,8 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 	@Autowired private KitSessionManager sessionManager;
 
 	private final RowMapper<MenuResDto> ROW_MAPPER = (rs, rowNum) -> new MenuResDto(
+		rs.getString("xicon"),
+		rs.getString("xprofile"),
 		rs.getString("xscreen"),
 		rs.getString("xtitle"),
 		rs.getString("xkeywords"),
@@ -33,47 +36,81 @@ public class XscreensServiceImpl extends AbstractService implements XscreensServ
 
 	@Override
 	public List<MenuResDto> searchMenus(String hint) {
+		List<MenuResDto> results = new ArrayList<>();
 
-		String sql = "WITH ranked_screens AS ( " +
-				"    SELECT " +
-				"        xscreen, xtitle, xkeywords, xtype, " +
-				"        ROW_NUMBER() OVER ( " +
-				"            PARTITION BY xtype  " +
-				"            ORDER BY xscreen " +
-				"        ) AS rn " +
-				"    FROM " +
-				"        xscreens " +
-				"    WHERE " +
-				"        zid = "+ sessionManager.getBusinessId() +" " +
-				"        AND xtype IN ('Screen', 'Report') " +
-				"        AND ( " +
-				"            xscreen LIKE '%"+ hint +"%' " +
-				"            OR xtitle = '"+ hint +"' " +
-				"            OR xtitle LIKE '"+ hint +" %' " +
-				"            OR xtitle LIKE '% "+ hint +"' " +
-				"            OR xtitle LIKE '% "+ hint +" %' " +
-				"            OR xkeywords = '"+ hint +"' " +
-				"            OR xkeywords LIKE '"+ hint +" %' " +
-				"            OR xkeywords LIKE '% "+ hint +"' " +
-				"            OR xkeywords LIKE '% "+ hint +" %' " +
-				"        ) " +
-				") " +
-				"SELECT xscreen, xtitle, xkeywords, xtype " +
-				"FROM ranked_screens " +
-				"WHERE rn <= 5 " +
-				"ORDER BY  " +
-				"    CASE xtype  " +
-				"        WHEN 'Screen' THEN 1 " +
-				"        WHEN 'Report' THEN 2 " +
-				"        ELSE 3 " +
-				"    END, " +
-				"    xscreen ";
+		String xprofile = null;
+		if(!sessionManager.getLoggedInUserDetails().isAdmin()) {
+			Xprofiles xp = sessionManager.getLoggedInUserDetails().getXprofile();
+			if(xp != null) xprofile = xp.getXprofile();
+		}
 
+		StringBuilder screenSql = new StringBuilder(); 
+		screenSql.append("SELECT xscreen, xprofile,  xicon, xtitle, xtype, xkeywords ");
+		screenSql.append("FROM profilescreenv ");
+		screenSql.append("WHERE ");
+		screenSql.append("    zid = "+ sessionManager.getBusinessId() +" ");
+		if(StringUtils.isNotBlank(xprofile)) screenSql.append("    AND xprofile = '"+ xprofile +"' ");
+		screenSql.append("    AND xtype = 'Screen' ");
+		screenSql.append("    AND LTRIM(RTRIM(xkeywords)) LIKE '%"+ hint.trim() +"%' ");
 
+		List<MenuResDto> screenMenus = jdbcTemplate.query(screenSql.toString(), ROW_MAPPER);
+		List<MenuResDto> uniqueScreenMenus = screenMenus.stream().filter(distinctByKey(MenuResDto::getXscreen)).limit(5).collect(Collectors.toList());
 
-		MapSqlParameterSource params = new MapSqlParameterSource();
+		StringBuilder reportSql = new StringBuilder(); 
+		reportSql.append("SELECT xscreen, xprofile,  xicon, xtitle, xtype, xkeywords ");
+		reportSql.append("FROM profilescreenv ");
+		reportSql.append("WHERE ");
+		reportSql.append("    zid = "+ sessionManager.getBusinessId() +" ");
+		if(StringUtils.isNotBlank(xprofile)) reportSql.append("    AND xprofile = '"+ xprofile +"' ");
+		reportSql.append("    AND xtype = 'Report' ");
+		reportSql.append("    AND LTRIM(RTRIM(xkeywords)) LIKE '%"+ hint.trim() +"%' ");
 
-		return jdbcTemplate.query(sql, ROW_MAPPER);
+		List<MenuResDto> reportMenus = jdbcTemplate.query(reportSql.toString(), ROW_MAPPER);
+		List<MenuResDto> uniqueReportMenus = reportMenus.stream().filter(distinctByKey(MenuResDto::getXscreen)).limit(5).collect(Collectors.toList());
+
+		results.addAll(uniqueScreenMenus);
+		results.addAll(uniqueReportMenus);
+		return results;
+//		String sql = "WITH ranked_screens AS ( " +
+//				"    SELECT " +
+//				"        xscreen, xtitle, xkeywords, xtype, " +
+//				"        ROW_NUMBER() OVER ( " +
+//				"            PARTITION BY xtype  " +
+//				"            ORDER BY xscreen " +
+//				"        ) AS rn " +
+//				"    FROM " +
+//				"        xscreens " +
+//				"    WHERE " +
+//				"        zid = "+ sessionManager.getBusinessId() +" " +
+//				"        AND xtype IN ('Screen', 'Report') " +
+//				"        AND ( " +
+//				"            xscreen LIKE '%"+ hint +"%' " +
+//				"            OR xtitle = '"+ hint +"' " +
+//				"            OR xtitle LIKE '"+ hint +" %' " +
+//				"            OR xtitle LIKE '% "+ hint +"' " +
+//				"            OR xtitle LIKE '% "+ hint +" %' " +
+//				"            OR xkeywords = '"+ hint +"' " +
+//				"            OR xkeywords LIKE '"+ hint +" %' " +
+//				"            OR xkeywords LIKE '% "+ hint +"' " +
+//				"            OR xkeywords LIKE '% "+ hint +" %' " +
+//				"        ) " +
+//				") " +
+//				"SELECT xscreen, xtitle, xkeywords, xtype " +
+//				"FROM ranked_screens " +
+//				"WHERE rn <= 5 " +
+//				"ORDER BY  " +
+//				"    CASE xtype  " +
+//				"        WHEN 'Screen' THEN 1 " +
+//				"        WHEN 'Report' THEN 2 " +
+//				"        ELSE 3 " +
+//				"    END, " +
+//				"    xscreen ";
+//
+//
+//
+//		
+//
+//		return jdbcTemplate.query(sql, ROW_MAPPER);
 	}
 
 	@Override

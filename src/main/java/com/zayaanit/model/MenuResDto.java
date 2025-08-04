@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenuResDto {
+	private String xicon;
+	private String xprofile;
 	private String xscreen;
 	private String xtitle;
 	private String xkeywords;
