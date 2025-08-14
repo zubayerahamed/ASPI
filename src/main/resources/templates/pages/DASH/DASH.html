@@ -5,6 +5,7 @@
 	<input type="hidden" id="WF02" th:value="${WF02}"/>
 	<input type="hidden" id="WF03" th:value="${WF03}"/>
 	<input type="hidden" id="WF04" th:value="${WF04}"/>
+	<input type="hidden" id="WF05" th:value="${WF05}"/>
 
 	<!-- Page header -->
 	<div class="page-header-container">
@@ -96,9 +97,9 @@
 
 
 		<!-- WF02 Widgets Section -->
-		<div class="row" th:if="${WF02 eq 'Y'}">
+		<div class="row">
 			<!-- 1st Column -->
-			<div class="col-lg-12 col-xl-12">
+			<div class="col-lg-6 col-xl-6" th:if="${WF02 eq 'Y'}">
 
 				<div class="card">
 					<div class="card-body">
@@ -106,20 +107,20 @@
 
 							<div class="row">
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label">Business Unit</label>
 										<div class="input-group">
 											<input 	type="text" 
 													class="form-control searchsuggest2"
-													id="xbuid"
+													id="WF02WG01xbuid"
 													th:value="${WF02REQPARAM.xbuid ne null ? WF02REQPARAM.xbuid + ' - ' + WF02REQPARAM.businessUnitName : ''}">
 											<input 	type="hidden" class="search-val" name="WF02WG01xbuid" th:value="${WF02REQPARAM.xbuid}"/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LAD17/0?hint=', 
 													data-reloadid='search-suggest-results-container', 
-													data-fieldid='xbuid',
+													data-fieldid='WF02WG01xbuid',
 													data-mainscreen=false" 
 													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 											<span 	class="input-group-text btn-search-clear" 
@@ -128,20 +129,20 @@
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Account</label>
 										<div class="input-group">
 											<input 	type="text" 
 													class="form-control searchsuggest2"
-													id="xacc"
+													id="WF02WG01xacc"
 													th:value="${WF02REQPARAM.xacc ne null ? WF02REQPARAM.xacc + ' - ' + WF02REQPARAM.accountName : ''}">
 											<input 	type="hidden" class="search-val" name="WF02WG01xacc" th:value="${WF02REQPARAM.xacc}" required/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LFA13/0?hint=', 
 													data-reloadid='search-suggest-results-container', 
-													data-fieldid='xacc',
+													data-fieldid='WF02WG01xacc',
 													data-mainscreen=false" 
 													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 											<span 	class="input-group-text btn-search-clear" 
@@ -150,17 +151,17 @@
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Last</label>
 										<input type="number" class="form-control numeric-only" name="WF02WG01last" th:value="${WF02REQPARAM.last}" required="required">
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Day Type</label>
-										<select class="form-control select" id="type" name="WF02WG01type" th:value="${WF02REQPARAM.type}" required="required">
+										<select class="form-control select" id="WF02WG01type" name="WF02WG01type" th:value="${WF02REQPARAM.type}" required="required">
 											<option value="DAYS" th:selected="${WF02REQPARAM.type eq 'DAYS'}">Days</option>
 											<option value="MONTHS" th:selected="${WF02REQPARAM.type eq 'MONTHS'}">Months</option>
 										</select>
@@ -185,15 +186,10 @@
 
 			</div>
 
-		</div>
 
-
-
-
-		<!-- WF03 Widgets Section -->
-		<div class="row" th:if="${WF03 eq 'Y'}">
+			<!-- WF03 Widgets Section -->
 			<!-- 1st Column -->
-			<div class="col-lg-12 col-xl-12">
+			<div class="col-lg-6 col-xl-6" th:if="${WF03 eq 'Y'}">
 
 				<div class="card">
 					<div class="card-body">
@@ -201,20 +197,20 @@
 
 							<div class="row">
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label">Business Unit</label>
 										<div class="input-group">
 											<input 	type="text" 
 													class="form-control searchsuggest2"
-													id="xbuid"
+													id="WF03WG01xbuid"
 													th:value="${WF03REQPARAM.xbuid ne null ? WF03REQPARAM.xbuid + ' - ' + WF03REQPARAM.businessUnitName : ''}">
 											<input 	type="hidden" class="search-val" name="WF03WG01xbuid" th:value="${WF03REQPARAM.xbuid}"/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LAD17/0?hint=', 
 													data-reloadid='search-suggest-results-container', 
-													data-fieldid='xbuid',
+													data-fieldid='WF03WG01xbuid',
 													data-mainscreen=false" 
 													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 											<span 	class="input-group-text btn-search-clear" 
@@ -223,20 +219,20 @@
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Sub Account</label>
 										<div class="input-group">
 											<input 	type="text" 
 													class="form-control searchsuggest2"
-													id="xsub"
+													id="WF03WG01xsub"
 													th:value="${WF03REQPARAM.xsub ne null ? WF03REQPARAM.xsub + ' - ' + WF03REQPARAM.subAccountName : ''}">
 											<input 	type="hidden" class="search-val" name="WF03WG01xsub" th:value="${WF03REQPARAM.xsub}" required/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LFA14/0?hint=', 
 													data-reloadid='search-suggest-results-container', 
-													data-fieldid='xsub',
+													data-fieldid='WF03WG01xsub',
 													data-mainscreen=false" 
 													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 											<span 	class="input-group-text btn-search-clear" 
@@ -245,17 +241,17 @@
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Last</label>
 										<input type="number" class="form-control numeric-only" name="WF03WG01last" th:value="${WF03REQPARAM.last}" required="required">
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Day Type</label>
-										<select class="form-control select" id="type" name="WF03WG01type" th:value="${WF03REQPARAM.type}" required="required">
+										<select class="form-control select" id="WF03WG01type" name="WF03WG01type" th:value="${WF03REQPARAM.type}" required="required">
 											<option value="DAYS" th:selected="${WF03REQPARAM.type eq 'DAYS'}">Days</option>
 											<option value="MONTHS" th:selected="${WF03REQPARAM.type eq 'MONTHS'}">Months</option>
 										</select>
@@ -286,9 +282,9 @@
 
 
 		<!-- WF04 Widgets Section -->
-		<div class="row" th:if="${WF04 eq 'Y'}">
+		<div class="row">
 			<!-- 1st Column -->
-			<div class="col-lg-12 col-xl-12">
+			<div class="col-lg-6 col-xl-6" th:if="${WF04 eq 'Y'}">
 
 				<div class="card">
 					<div class="card-body">
@@ -296,20 +292,20 @@
 
 							<div class="row">
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label">Business Unit</label>
 										<div class="input-group">
 											<input 	type="text" 
 													class="form-control searchsuggest2"
-													id="xbuid"
+													id="WF04WG01xbuid"
 													th:value="${WF04REQPARAM.xbuid ne null ? WF04REQPARAM.xbuid + ' - ' + WF04REQPARAM.businessUnitName : ''}">
 											<input 	type="hidden" class="search-val" name="WF04WG01xbuid" th:value="${WF04REQPARAM.xbuid}"/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LAD17/0?hint=', 
 													data-reloadid='search-suggest-results-container', 
-													data-fieldid='xbuid',
+													data-fieldid='WF04WG01xbuid',
 													data-mainscreen=false" 
 													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
 											<span 	class="input-group-text btn-search-clear" 
@@ -318,10 +314,10 @@
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Account Type</label>
-										<select class="form-control select" id="type" name="WF04WG01type" th:value="${WF04REQPARAM.type}" required="required">
+										<select class="form-control select" id="WF04WG01type" name="WF04WG01type" th:value="${WF04REQPARAM.type}" required="required">
 											<option value="Asset" th:selected="${WF04REQPARAM.type eq 'Asset'}">Asset</option>
 											<option value="Expenditure" th:selected="${WF04REQPARAM.type eq 'Expenditure'}">Expenditure</option>
 											<option value="Income" th:selected="${WF04REQPARAM.type eq 'Income'}">Income</option>
@@ -342,6 +338,73 @@
 					</div>
 
 					<div class="card-footer" id="WF04WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+			
+			
+			<!-- WF05 -->
+			<div class="col-lg-6 col-xl-6" th:if="${WF05 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WF05WG01-form" class="form-validate-jquery" method="POST">
+
+							<div class="row">
+
+								<div class="col-md-6">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WF05WG01xbuid"
+													th:value="${WF05REQPARAM.xbuid ne null ? WF05REQPARAM.xbuid + ' - ' + WF05REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WF05WG01xbuid" th:value="${WF05REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WF05WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Last</label>
+										<input type="number" class="form-control numeric-only" name="WF05WG01last" th:value="${WF05REQPARAM.last}" required="required">
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Day Type</label>
+										<select class="form-control select" id="WF05WG01type" name="WF05WG01type" th:value="${WF05REQPARAM.type}" required="required">
+											<option value="DAYS" th:selected="${WF05REQPARAM.type eq 'DAYS'}">Days</option>
+											<option value="MONTHS" th:selected="${WF05REQPARAM.type eq 'MONTHS'}">Months</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WF05WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WF05WG01-chart" style="height: 500px;">
 
 					</div>
 				</div>
@@ -382,6 +445,7 @@
 			var WF02 = $('#WF02').val();
 			var WF03 = $('#WF03').val();
 			var WF04 = $('#WF04').val();
+			var WF05 = $('#WF05').val();
 
 			// Initial Load Calling
 			if("Y" === WA01){
@@ -424,6 +488,14 @@
 				});
 			}
 
+			if("Y" === WF05){
+				loadWF05WG01();
+				$('.btn-WF05WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWF05WG01();
+				});
+			}
+
 		})
 
 		function loadWF02WG01(){
@@ -446,9 +518,15 @@
 
 			if(last < 0) last = 0;
 			if("DAYS" === type){
-				if(last > 100) $('input[name="last"]').val("100");
+				if(last > 100) {
+					$('input[name="WF02WG01last"]').val("100");
+					last = 100;
+				}
 			} else {
-				if(last > 30) $('input[name="last"]').val("30");
+				if(last > 30) {
+					$('input[name="WF02WG01last"]').val("30");
+					last = 30;
+				}
 			}
 
 			$.ajax({
@@ -522,9 +600,15 @@
 
 			if(last < 0) last = 0;
 			if("DAYS" === type){
-				if(last > 100) $('input[name="last"]').val("100");
+				if(last > 100) {
+					$('input[name="WF03WG01last"]').val("100");
+					last = 100;
+				}
 			} else {
-				if(last > 30) $('input[name="last"]').val("30");
+				if(last > 30) {
+					$('input[name="WF03WG01last"]').val("30");
+					last = 30;
+				}
 			}
 
 			$.ajax({
@@ -601,6 +685,84 @@
 
 					$.each(data, function(i, d){
 						barchartPrepareData.xdata.push(d.accountName);
+						barchartPrepareData.ydata.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+
+
+		function loadWF05WG01(){
+			var xbuid = $('input[name="WF05WG01xbuid"]').val();
+			var last = $('input[name="WF05WG01last"]').val()
+			var type = $('select[name="WF05WG01type"]').val()
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+
+			if(last == null || last == ''){
+				showMessage("error", "Last "+ type +" required");
+				return;
+			}
+
+			if(last < 0) last = 0;
+			if("DAYS" === type){
+				if(last > 100) {
+					$('input[name="WF05WG01last"]').val("100");
+					last = 100;
+				} 
+			} else {
+				if(last > 30) {
+					$('input[name="WF05WG01last"]').val("30");
+					last = 30;
+				}
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WF05/WG01?xbuid='+ xbuid +'&last='+ last +'&type=' + type,
+				type: "GET",
+				success: function (data) {
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Profit & Loss View';
+					barchartPrepareData.containerid = 'WF05WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.yaxistitle = 'Amount';
+					barchartPrepareData.xaxistitle = function(value, type){
+						if(type === 'MONTHS') {
+							const trimmedValue = value.trim();
+							const yearMatch = trimmedValue.match(/Year\s*:\s*\d+/);
+							const periodMatch = trimmedValue.match(/Period\s*:\s*\d+/);
+
+							const year = yearMatch ? yearMatch[0].trim() : '';
+							const period = periodMatch ? periodMatch[0].trim() : '';
+
+							return `${period}\n${year}`;
+						} else if (type === 'DAYS'){
+							const date = new Date(value);
+							const day = date.getDate();
+							const month = date.toLocaleString('en-US', { month: 'short' });
+							const year = date.getFullYear();
+							return `${day} ${month}\n${year}`; // '\n' breaks line in ECharts
+						} else {
+							return value;
+						}
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.xdate);
 						barchartPrepareData.ydata.push(d.amount);
 					});
 

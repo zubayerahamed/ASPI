@@ -28,6 +28,8 @@ import com.zayaanit.model.WF03Dto;
 import com.zayaanit.model.WF03ReqParam;
 import com.zayaanit.model.WF04Dto;
 import com.zayaanit.model.WF04ReqParam;
+import com.zayaanit.model.WF05Dto;
+import com.zayaanit.model.WF05ReqParam;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.XuserwidgetsRepo;
@@ -37,6 +39,7 @@ import com.zayaanit.service.impl.WF01Service;
 import com.zayaanit.service.impl.WF02Service;
 import com.zayaanit.service.impl.WF03Service;
 import com.zayaanit.service.impl.WF04Service;
+import com.zayaanit.service.impl.WF05Service;
 
 /**
  * @author Zubayer Ahaned
@@ -56,6 +59,7 @@ public class DashboardController extends KitController {
 	@Autowired private WF02Service wf02Service;
 	@Autowired private WF03Service wf03Service;
 	@Autowired private WF04Service wf04Service;
+	@Autowired private WF05Service wf05Service;
 	@Autowired private XuserwidgetsRepo xuserwidgetsRepo;
 	@Autowired private XwidgetsRepo xwidgetsRepo;
 	@Autowired private AcmstRepo acmstRepo;
@@ -90,6 +94,7 @@ public class DashboardController extends KitController {
 			model.addAttribute("WF02", "Y");
 			model.addAttribute("WF03", "Y");
 			model.addAttribute("WF04", "Y");
+			model.addAttribute("WF05", "Y");
 
 			// WF02 
 			Optional<Xwidgets> wf02Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WF02"));
@@ -115,6 +120,13 @@ public class DashboardController extends KitController {
 
 			// WF04
 			model.addAttribute("WF04REQPARAM", WF04ReqParam.builder().type("Asset").build());
+
+			// WF03
+			Optional<Xwidgets> wf05Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WF05"));
+			Xwidgets wf05 = wf05Op.isPresent() ? wf05Op.get() : null;
+			last = wf05 != null ? wf05.getXdefault() : 10;
+
+			model.addAttribute("WF05REQPARAM", WF05ReqParam.builder().last(last).type("DAYS").build());
 
 		} else {
 			// Check user has access those widgets
@@ -158,6 +170,17 @@ public class DashboardController extends KitController {
 			Optional<Xuserwidgets> wf04OP = xuserwidgetsRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), "WF04"));
 			model.addAttribute("WF04", wf04OP.isPresent() ? "Y" : "N");
 			if(wf04OP.isPresent()) model.addAttribute("WF04REQPARAM", WF04ReqParam.builder().type("Asset").build());
+
+			// WF05
+			Optional<Xuserwidgets> wf05OP = xuserwidgetsRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), "WF05"));
+			model.addAttribute("WF05", wf05OP.isPresent() ? "Y" : "N");
+			if(wf05OP.isPresent()) {
+				Optional<Xwidgets> wf05Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WF05"));
+				Xwidgets wf05 = wf05Op.isPresent() ? wf05Op.get() : null;
+				int last = wf05 != null ? wf05.getXdefault() : 10;
+
+				model.addAttribute("WF05REQPARAM", WF05ReqParam.builder().last(last).type("DAYS").build());
+			}
 		}
 
 		if(frommenu == null) return "redirect:/";
@@ -274,6 +297,18 @@ public class DashboardController extends KitController {
 		) {
 
 		List<WF04Dto> datas = wf04Service.accountCurrentBalance(xbuid, type);
+		return datas;
+	}
+
+	@GetMapping("/WF05/WG01")
+	public @ResponseBody List<WF05Dto> WF05WG01(
+			@RequestParam(required = true) Integer xbuid, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,  
+			Model model
+		) {
+
+		List<WF05Dto> datas = wf05Service.profitAndLossView(xbuid, last, type);
 		return datas;
 	}
 }
