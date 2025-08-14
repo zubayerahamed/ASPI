@@ -114,7 +114,7 @@
 													class="form-control searchsuggest2"
 													id="xbuid"
 													th:value="${WF02REQPARAM.xbuid ne null ? WF02REQPARAM.xbuid + ' - ' + WF02REQPARAM.businessUnitName : ''}">
-											<input 	type="hidden" class="search-val" name="xbuid" th:value="${WF02REQPARAM.xbuid}"/>
+											<input 	type="hidden" class="search-val" name="WF02WG01xbuid" th:value="${WF02REQPARAM.xbuid}"/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LAD17/0?hint=', 
@@ -136,7 +136,7 @@
 													class="form-control searchsuggest2"
 													id="xacc"
 													th:value="${WF02REQPARAM.xacc ne null ? WF02REQPARAM.xacc + ' - ' + WF02REQPARAM.accountName : ''}">
-											<input 	type="hidden" class="search-val" name="xacc" th:value="${WF02REQPARAM.xacc}" required/>
+											<input 	type="hidden" class="search-val" name="WF02WG01xacc" th:value="${WF02REQPARAM.xacc}" required/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LFA13/0?hint=', 
@@ -153,14 +153,14 @@
 								<div class="col-md-3">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Last</label>
-										<input type="number" class="form-control numeric-only" name="last" th:value="${WF02REQPARAM.last}" required="required">
+										<input type="number" class="form-control numeric-only" name="WF02WG01last" th:value="${WF02REQPARAM.last}" required="required">
 									</div>
 								</div>
 
 								<div class="col-md-3">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Day Type</label>
-										<select class="form-control select" id="type" name="type" th:value="${WF02REQPARAM.type}" required="required">
+										<select class="form-control select" id="type" name="WF02WG01type" th:value="${WF02REQPARAM.type}" required="required">
 											<option value="DAYS" th:selected="${WF02REQPARAM.type eq 'DAYS'}">Days</option>
 											<option value="MONTHS" th:selected="${WF02REQPARAM.type eq 'MONTHS'}">Months</option>
 										</select>
@@ -209,7 +209,7 @@
 													class="form-control searchsuggest2"
 													id="xbuid"
 													th:value="${WF03REQPARAM.xbuid ne null ? WF03REQPARAM.xbuid + ' - ' + WF03REQPARAM.businessUnitName : ''}">
-											<input 	type="hidden" class="search-val" name="xbuid" th:value="${WF03REQPARAM.xbuid}"/>
+											<input 	type="hidden" class="search-val" name="WF03WG01xbuid" th:value="${WF03REQPARAM.xbuid}"/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LAD17/0?hint=', 
@@ -231,7 +231,7 @@
 													class="form-control searchsuggest2"
 													id="xsub"
 													th:value="${WF03REQPARAM.xsub ne null ? WF03REQPARAM.xsub + ' - ' + WF03REQPARAM.subAccountName : ''}">
-											<input 	type="hidden" class="search-val" name="xsub" th:value="${WF03REQPARAM.xsub}" required/>
+											<input 	type="hidden" class="search-val" name="WF03WG01xsub" th:value="${WF03REQPARAM.xsub}" required/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LFA14/0?hint=', 
@@ -248,14 +248,14 @@
 								<div class="col-md-3">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Last</label>
-										<input type="number" class="form-control numeric-only" name="last" th:value="${WF03REQPARAM.last}" required="required">
+										<input type="number" class="form-control numeric-only" name="WF03WG01last" th:value="${WF03REQPARAM.last}" required="required">
 									</div>
 								</div>
 
 								<div class="col-md-3">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Day Type</label>
-										<select class="form-control select" id="type" name="type" th:value="${WF03REQPARAM.type}" required="required">
+										<select class="form-control select" id="type" name="WF03WG01type" th:value="${WF03REQPARAM.type}" required="required">
 											<option value="DAYS" th:selected="${WF03REQPARAM.type eq 'DAYS'}">Days</option>
 											<option value="MONTHS" th:selected="${WF03REQPARAM.type eq 'MONTHS'}">Months</option>
 										</select>
@@ -304,7 +304,7 @@
 													class="form-control searchsuggest2"
 													id="xbuid"
 													th:value="${WF04REQPARAM.xbuid ne null ? WF04REQPARAM.xbuid + ' - ' + WF04REQPARAM.businessUnitName : ''}">
-											<input 	type="hidden" class="search-val" name="xbuid" th:value="${WF04REQPARAM.xbuid}"/>
+											<input 	type="hidden" class="search-val" name="WF04WG01xbuid" th:value="${WF04REQPARAM.xbuid}"/>
 											<span 	class="input-group-text btn-search" 
 													th:attr="
 													data-reloadurl='/search/table/LAD17/0?hint=', 
@@ -321,7 +321,7 @@
 								<div class="col-md-3">
 									<div class="mb-3 form-group">
 										<label class="form-label required">Account Type</label>
-										<select class="form-control select" id="type" name="type" th:value="${WF04REQPARAM.type}" required="required">
+										<select class="form-control select" id="type" name="WF04WG01type" th:value="${WF04REQPARAM.type}" required="required">
 											<option value="Asset" th:selected="${WF04REQPARAM.type eq 'Asset'}">Asset</option>
 											<option value="Expenditure" th:selected="${WF04REQPARAM.type eq 'Expenditure'}">Expenditure</option>
 											<option value="Income" th:selected="${WF04REQPARAM.type eq 'Income'}">Income</option>
@@ -385,19 +385,19 @@
 
 			// Initial Load Calling
 			if("Y" === WA01){
-				loadWidgets('WA01', 'WG01', -1);
-				loadWidgets('WA01', 'WG02', -1);
-				loadWidgets('WA01', 'WG03', -1);
-				loadWidgets('WA01', 'WG04', -1);
-				loadWidgets('WA01', 'WG05', -1);
+				loadWidgets('WA01', 'WG01', 5000);
+				loadWidgets('WA01', 'WG02', 5000);
+				loadWidgets('WA01', 'WG03', 5000);
+				loadWidgets('WA01', 'WG04', 5000);
+				loadWidgets('WA01', 'WG05', 5000);
 			}
 
 			if("Y" === WF01){
-				loadWidgets('WF01', 'WG01', -1);
-				loadWidgets('WF01', 'WG02', -1);
-				loadWidgets('WF01', 'WG03', -1);
-				loadWidgets('WF01', 'WG04', -1);
-				loadWidgets('WF01', 'WG05', -1);
+				loadWidgets('WF01', 'WG01', 5000);
+				loadWidgets('WF01', 'WG02', 5000);
+				loadWidgets('WF01', 'WG03', 5000);
+				loadWidgets('WF01', 'WG04', 5000);
+				loadWidgets('WF01', 'WG05', 5000);
 			}
 
 			if("Y" === WF02){
@@ -427,10 +427,10 @@
 		})
 
 		function loadWF02WG01(){
-			var xbuid = $('input[name="xbuid"]').val();
-			var xacc = $('input[name="xacc"]').val();
-			var last = $('input[name="last"]').val()
-			var type = $('select[name="type"]').val()
+			var xbuid = $('input[name="WF02WG01xbuid"]').val();
+			var xacc = $('input[name="WF02WG01xacc"]').val();
+			var last = $('input[name="WF02WG01last"]').val()
+			var type = $('select[name="WF02WG01type"]').val()
 
 			if(xbuid == null || xbuid == '') xbuid = -1;
 
@@ -455,7 +455,40 @@
 				url: getBasepath() + '/DASH/WF02/WG01?xbuid='+ xbuid +'&xacc='+ xacc +'&last='+ last +'&type=' + type,
 				type: "GET",
 				success: function (data) {
-					prepareBarChart('Account Transaction', data, 'WF02WG01-chart', type);
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Account Transaction';
+					barchartPrepareData.containerid = 'WF02WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.yaxistitle = 'Amount';
+					barchartPrepareData.xaxistitle = function(value, type){
+						if(type === 'MONTHS') {
+							const trimmedValue = value.trim();
+							const yearMatch = trimmedValue.match(/Year\s*:\s*\d+/);
+							const periodMatch = trimmedValue.match(/Period\s*:\s*\d+/);
+
+							const year = yearMatch ? yearMatch[0].trim() : '';
+							const period = periodMatch ? periodMatch[0].trim() : '';
+
+							return `${period}\n${year}`;
+						} else if (type === 'DAYS'){
+							const date = new Date(value);
+							const day = date.getDate();
+							const month = date.toLocaleString('en-US', { month: 'short' });
+							const year = date.getFullYear();
+							return `${day} ${month}\n${year}`; // '\n' breaks line in ECharts
+						} else {
+							return value;
+						}
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.xdate);
+						barchartPrepareData.ydata.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
 				},
 				error: function (jqXHR, status, errorThrown) {
 					loadingMask2.hide();
@@ -470,10 +503,10 @@
 		}
 
 		function loadWF03WG01(){
-			var xbuid = $('input[name="xbuid"]').val();
-			var xsub = $('input[name="xsub"]').val();
-			var last = $('input[name="last"]').val()
-			var type = $('select[name="type"]').val()
+			var xbuid = $('input[name="WF03WG01xbuid"]').val();
+			var xsub = $('input[name="WF03WG01xsub"]').val();
+			var last = $('input[name="WF03WG01last"]').val()
+			var type = $('select[name="WF03WG01type"]').val()
 
 			if(xbuid == null || xbuid == '') xbuid = -1;
 
@@ -498,7 +531,40 @@
 				url: getBasepath() + '/DASH/WF03/WG01?xbuid='+ xbuid +'&xsub='+ xsub +'&last='+ last +'&type=' + type,
 				type: "GET",
 				success: function (data) {
-					prepareBarChart('Sub Account Transaction', data, 'WF03WG01-chart', type);
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Sub Account Transaction';
+					barchartPrepareData.containerid = 'WF03WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.yaxistitle = 'Amount';
+					barchartPrepareData.xaxistitle = function(value, type){
+						if(type === 'MONTHS') {
+							const trimmedValue = value.trim();
+							const yearMatch = trimmedValue.match(/Year\s*:\s*\d+/);
+							const periodMatch = trimmedValue.match(/Period\s*:\s*\d+/);
+
+							const year = yearMatch ? yearMatch[0].trim() : '';
+							const period = periodMatch ? periodMatch[0].trim() : '';
+
+							return `${period}\n${year}`;
+						} else if (type === 'DAYS'){
+							const date = new Date(value);
+							const day = date.getDate();
+							const month = date.toLocaleString('en-US', { month: 'short' });
+							const year = date.getFullYear();
+							return `${day} ${month}\n${year}`; // '\n' breaks line in ECharts
+						} else {
+							return value;
+						}
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.xdate);
+						barchartPrepareData.ydata.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
 				},
 				error: function (jqXHR, status, errorThrown) {
 					loadingMask2.hide();
@@ -513,8 +579,8 @@
 		}
 
 		function loadWF04WG01(){
-			var xbuid = $('input[name="xbuid"]').val();
-			var type = $('select[name="type"]').val()
+			var xbuid = $('input[name="WF04WG01xbuid"]').val();
+			var type = $('select[name="WF04WG01type"]').val()
 
 			if(xbuid == null || xbuid == '') xbuid = -1;
 
@@ -522,7 +588,23 @@
 				url: getBasepath() + '/DASH/WF04/WG01?xbuid='+ xbuid + '&type=' + type,
 				type: "GET",
 				success: function (data) {
-					prepareBarChart('Accounts Current Balance', data, 'WF04WG01-chart', type);
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Accounts Current Balance';
+					barchartPrepareData.containerid = 'WF04WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.yaxistitle = 'Amount';
+					barchartPrepareData.xaxistitle = function(value, type){
+						return value;
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.accountName);
+						barchartPrepareData.ydata.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
 				},
 				error: function (jqXHR, status, errorThrown) {
 					loadingMask2.hide();
@@ -536,21 +618,15 @@
 			});
 		}
 
-		function prepareBarChart(title, data, containerid, type){
+		var barchartPrepareData = {};
 
-			var xdata = [];
-			var ydata = [];
-			$.each(data, function(i, d){
-				xdata.push(d.xdate);
-				ydata.push(d.amount);
-			});
-
+		function prepareBarChart(barchartPrepareData){
 			if (typeof echarts == 'undefined') {
 				console.warn('Warning - echarts.min.js is not loaded.');
 				return;
 			}
 
-			var dom = document.getElementById(containerid);
+			var dom = document.getElementById(barchartPrepareData.containerid);
 			var myChart = echarts.init(dom, null, {
 				renderer: 'canvas',
 				useDirtyRect: false
@@ -564,7 +640,7 @@
 
 			option = {
 				title: {
-					text: title
+					text: barchartPrepareData.title
 				},
 				tooltip: {
 					trigger: 'axis',
@@ -581,30 +657,13 @@
 				xAxis: [
 					{
 						type: 'category',
-						data: xdata,
+						data: barchartPrepareData.xdata,
 						axisTick: {
 							alignWithLabel: true
 						}, 
 						axisLabel: {
 							formatter: function (value) {
-								if(type === 'MONTHS') {
-									const trimmedValue = value.trim();
-									const yearMatch = trimmedValue.match(/Year\s*:\s*\d+/);
-									const periodMatch = trimmedValue.match(/Period\s*:\s*\d+/);
-
-									const year = yearMatch ? yearMatch[0].trim() : '';
-									const period = periodMatch ? periodMatch[0].trim() : '';
-
-									return `${period}\n${year}`;
-								} else if (type === 'DAYS'){
-									const date = new Date(value);
-									const day = date.getDate();
-									const month = date.toLocaleString('en-US', { month: 'short' });
-									const year = date.getFullYear();
-									return `${day} ${month}\n${year}`; // '\n' breaks line in ECharts
-								} else {
-									return value;
-								}
+								return barchartPrepareData.xaxistitle(value, barchartPrepareData.type);
 							},
 							align: 'center'
 						}
@@ -617,10 +676,10 @@
 				],
 				series: [
 					{
-						name: 'Amount',
+						name: barchartPrepareData.yaxistitle,
 						type: 'bar',
 						barWidth: '60%',
-						data: ydata,
+						data: barchartPrepareData.ydata,
 					}
 				]
 			}; // END OPTION

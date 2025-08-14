@@ -32,7 +32,7 @@ public class WF04Service extends AbstractGenericService {
 
 		List<WF04Dto> result = acbalRepo.getAccountsCurrentBalance(sessionManager.getBusinessId(), xbuid, yp.getYear(), xtype)
 				.stream()
-				.map(row -> new WF04Dto((String) row[0], (BigDecimal) row[2]))
+				.map(row -> new WF04Dto((String) row[0], (BigDecimal) row[1]))
 				.collect(Collectors.toList());
 
 		return result;

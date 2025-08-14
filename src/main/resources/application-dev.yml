@@ -38,7 +38,7 @@ spring:
       max-idle: 20
       min-idle: 15
   jpa:
-    show-sql : false
+    show-sql : true
     generate-ddl: false
     hibernate:
       ddl-auto: none
