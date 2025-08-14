@@ -45,9 +45,10 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 						"AND a.zid = :zid " +
 						"AND a.xacc = :xacc " +
 						"AND a.xdate BETWEEN DATEADD(DAY, -:days, GETDATE()) AND GETDATE() " +
+						"AND (-1=:xbuid OR a.xbuid=:xbuid) " + 
 					"GROUP BY d.xdate " +
 					"ORDER BY d.xdate", nativeQuery = true)
-	List<Object[]> getLedgerTransactionSummaryForDays(@Param("zid") Integer zid, @Param("xacc") Integer xacc, @Param("days") Integer days);
+	List<Object[]> getAccountTransactionSummaryForDays(@Param("zid") Integer zid, @Param("xbuid") Integer xbuid, @Param("xacc") Integer xacc, @Param("days") Integer days);
 
 	@Query(value = "DECLARE @year int, @per int "
 			+ "EXEC [dbo].[FA_GetYearPeriod] :zid, :xdate, @year OUTPUT, @per OUTPUT; "
@@ -74,7 +75,8 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 			+ "        ISNULL(SUM(xprime), 0) AS xprime "
 			+ "    FROM acbal "
 			+ "    WHERE zid=:zid "
-			+ "	AND xacc = :xacc "
+			+ "			AND xacc = :xacc "
+			+ "			AND (-1=:xbuid OR xbuid = :xbuid) "
 			+ "    GROUP BY xyear, xper "
 			+ ") "
 			+ "SELECT  "
@@ -85,5 +87,83 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 			+ "LEFT JOIN TrnData d  "
 			+ "    ON dr.xyear = d.xyear AND dr.xper = d.xper "
 			+ "ORDER BY dr.xyear ASC, dr.xper ASC", nativeQuery = true)
-	List<Object[]> getLedgerTransactionSummaryForMonths(@Param("zid") Integer zid, @Param("xacc") Integer xacc, @Param("months") Integer months, @Param("xdate") String xdate);
+	List<Object[]> getAccountTransactionSummaryForMonths(@Param("zid") Integer zid, @Param("xbuid") Integer xbuid, @Param("xacc") Integer xacc, @Param("months") Integer months, @Param("xdate") String xdate);
+
+	@Query(value = "WITH DateSeries AS ( " +
+			"SELECT CAST(GETDATE() AS DATE) AS xdate " +
+			"UNION ALL " +
+			"SELECT DATEADD(DAY, -1, xdate) " +
+			"FROM DateSeries " +
+			"WHERE xdate > DATEADD(DAY, -:days, GETDATE()) " +
+		") " +
+		"SELECT d.xdate AS xdate, COALESCE(SUM(a.xprime), 0) AS amount " +
+		"FROM DateSeries d " +
+		"LEFT JOIN acbal a " +
+			"ON d.xdate = a.xdate " +
+			"AND a.zid = :zid " +
+			"AND a.xsub = :xsub " +
+			"AND a.xdate BETWEEN DATEADD(DAY, -:days, GETDATE()) AND GETDATE() " +
+			"AND (-1=:xbuid OR a.xbuid=:xbuid) " + 
+		"GROUP BY d.xdate " +
+		"ORDER BY d.xdate", nativeQuery = true)
+	List<Object[]> getSubAccountTransactionSummaryForDays(@Param("zid") Integer zid, @Param("xbuid") Integer xbuid, @Param("xsub") Integer xsub, @Param("days") Integer days);
+
+	@Query(value = "DECLARE @year int, @per int "
+		+ "EXEC [dbo].[FA_GetYearPeriod] :zid, :xdate, @year OUTPUT, @per OUTPUT; "
+		+ "WITH YearPer AS ( "
+		+ "    SELECT @year AS xyear, @per AS xper, 1 AS xrow "
+		+ "    UNION ALL "
+		+ "    SELECT "
+		+ "        CASE  "
+		+ "            WHEN xper = 1 THEN xyear - 1  "
+		+ "            ELSE xyear  "
+		+ "        END, "
+		+ "        CASE  "
+		+ "            WHEN xper = 1 THEN 12  "
+		+ "            ELSE xper - 1  "
+		+ "        END, "
+		+ "        xrow + 1 "
+		+ "    FROM YearPer "
+		+ "    WHERE xrow < :months "
+		+ "), "
+		+ "TrnData AS ( "
+		+ "    SELECT  "
+		+ "        xyear,  "
+		+ "        xper,   "
+		+ "        ISNULL(SUM(xprime), 0) AS xprime "
+		+ "    FROM acbal "
+		+ "    WHERE zid=:zid "
+		+ "			AND xsub = :xsub "
+		+ "			AND (-1=:xbuid OR xbuid = :xbuid) "
+		+ "    GROUP BY xyear, xper "
+		+ ") "
+		+ "SELECT  "
+		+ "    dr.xyear,  "
+		+ "    dr.xper,  "
+		+ "    ISNULL(d.xprime, 0) AS xprime "
+		+ "FROM YearPer dr "
+		+ "LEFT JOIN TrnData d  "
+		+ "    ON dr.xyear = d.xyear AND dr.xper = d.xper "
+		+ "ORDER BY dr.xyear ASC, dr.xper ASC", nativeQuery = true)
+	List<Object[]> getSubAccountTransactionSummaryForMonths(@Param("zid") Integer zid, @Param("xbuid") Integer xbuid, @Param("xsub") Integer xsub, @Param("months") Integer months, @Param("xdate") String xdate);
+
+	@Query(value = "select "
+			+ "	CAST(a.xacc AS VARCHAR(20)) + ' - ' + a.xdesc AS accountName, "
+			+ "	sum(b.xprime) as amount "
+			+ "from  "
+			+ "	acmst a  "
+			+ "	join acbal b on a.zid=b.zid and a.xacc=b.xacc  "
+			+ "where  "
+			+ "	a.zid=:zid "
+			+ "	and b.xyear=:xyear "
+			+ "	and a.xacctype=:xacctype "
+			+ "	and (-1=:xbuid OR b.xbuid=:xbuid) "
+			+ "group by a.xacc, a.xdesc "
+			+ "order by a.xacc", nativeQuery = true)
+	List<Object[]> getAccountsCurrentBalance(
+		@Param("zid") Integer zid, 
+		@Param("xbuid") Integer xbuid,
+		@Param("xyear") Integer xyear, 
+		@Param("xacctype") String xacctype
+	);
 }

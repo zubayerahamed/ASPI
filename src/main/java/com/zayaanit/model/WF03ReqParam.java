@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WF02ReqParam {
+public class WF03ReqParam {
 
 	private Integer xbuid;
 	private String businessUnitName;
-	private Integer xacc;
-	private String accountName;
+	private Integer xsub;
+	private String subAccountName;
 	private int last;
 	private String type; 
 }

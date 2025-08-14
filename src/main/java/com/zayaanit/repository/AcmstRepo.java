@@ -22,5 +22,5 @@ public interface AcmstRepo extends JpaRepository<Acmst, AcmstPK> {
 
 	List<Acmst> findAllByZid(Integer zid);
 
-	Optional<Acmst> findTopByOrderByZtimeDesc();
+	Optional<Acmst> findTopByZidOrderByXaccAsc(Integer zid);
 }

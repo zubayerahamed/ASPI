@@ -1,9 +1,9 @@
 package com.zayaanit.model;
 
-import lombok.AllArgsConstructor;
+import java.math.BigDecimal;
+
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Zubayer Ahaned
@@ -14,14 +14,13 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class WF02ReqParam {
+public class WF04Dto {
 
-	private Integer xbuid;
-	private String businessUnitName;
-	private Integer xacc;
 	private String accountName;
-	private int last;
-	private String type; 
+	private BigDecimal amount;
+	
+	public WF04Dto(String accountName, BigDecimal amount) {
+		this.accountName = accountName;
+		this.amount = amount;
+	}
 }

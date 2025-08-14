@@ -3,6 +3,8 @@
 	<input type="hidden" id="WA01" th:value="${WA01}"/>
 	<input type="hidden" id="WF01" th:value="${WF01}"/>
 	<input type="hidden" id="WF02" th:value="${WF02}"/>
+	<input type="hidden" id="WF03" th:value="${WF03}"/>
+	<input type="hidden" id="WF04" th:value="${WF04}"/>
 
 	<!-- Page header -->
 	<div class="page-header-container">
@@ -14,48 +16,44 @@
 	<div class="content">
 
 		<!-- WA01 Widgets Section -->
-		<div class="row" th:if="${WA01 eq 'Y'}">
+		<div class="col-md-12 mb-3" th:if="${WA01 eq 'Y'}">
 			<!-- 1st Column -->
-			<div class="col-lg-12 col-xl-12">
-				<div class="row">
-					<div class="col-sm-6 col-xl-3">
-						<div class="WA01WG01-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG01"></div>
+			<div class="d-flex justify-content-between align-items-stretch gap-2 flex-wrap">
+				<div class="flex-grow-1 d-flex flex-column p-0 m-0 gap-2">
+					<div class="flex-grow-1 d-flex gap-2">
+						<div class="flex-grow-1 d-flex">
+							<div class="WA01WG01-container flex-grow-1">
+								<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG01"></div>
+							</div>
+						</div>
+	
+						<div class="flex-grow-1 d-flex">
+							<div class="WA01WG02-container flex-grow-1">
+								<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG02"></div>
+							</div>
 						</div>
 					</div>
 
-					<div class="col-sm-6 col-xl-3">
-						<div class="WA01WG02-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG02"></div>
+					<div class="flex-grow-1 d-flex gap-2">
+						<div class="flex-grow-1 d-flex">
+							<div class="WA01WG03-container flex-grow-1">
+								<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG03"></div>
+							</div>
 						</div>
-					</div>
-
-					<div class="col-sm-6 col-xl-3">
-						<div class="WA01WG03-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG03"></div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-xl-3">
-						<div class="WA01WG04-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG04"></div>
-						</div>
-					</div>
-
-				</div>
-			</div>
-
-			<!-- 2nd Column -->
-			<div class="col-lg-12 col-xl-6">
-				<div class="row">
-					<div class="col-sm-12 col-xl-12">
-						<div class="WA01WG05-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG05"></div>
+	
+						<div class="flex-grow-1 d-flex">
+							<div class="WA01WG04-container flex-grow-1">
+								<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG04"></div>
+							</div>
 						</div>
 					</div>
 				</div>
+				<div class="border flex-grow-1 d-flex">
+					<div class="WA01WG05-container flex-grow-1">
+						<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WA01WG05"></div>
+					</div>
+				</div>
 			</div>
-
 		</div>
 
 
@@ -64,38 +62,32 @@
 		<div class="row" th:if="${WF01 eq 'Y'}">
 			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
-				<div class="row">
-
-					<div class="col-sm-6 col-xl-3">
+				<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+					<div class="flex-grow-1">
 						<div class="WF01WG01-container">
 							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG01"></div>
 						</div>
 					</div>
-
-					<div class="col-sm-6 col-xl-3">
+					<div class="flex-grow-1">
 						<div class="WF01WG02-container">
 							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG02"></div>
 						</div>
 					</div>
-
-					<div class="col-sm-6 col-xl-3">
+					<div class="flex-grow-1">
 						<div class="WF01WG03-container">
 							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG03"></div>
 						</div>
 					</div>
-
-					<div class="col-sm-6 col-xl-3">
+					<div class="flex-grow-1">
 						<div class="WF01WG04-container">
 							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG04"></div>
 						</div>
 					</div>
-
-					<div class="col-sm-6 col-xl-3">
+					<div class="flex-grow-1">
 						<div class="WF01WG05-container">
 							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG05"></div>
 						</div>
 					</div>
-
 				</div>
 			</div>
 
@@ -110,9 +102,31 @@
 
 				<div class="card">
 					<div class="card-body">
-						<form id="WF02WG01-form" class="form-validate-jquery" th:action="@{/FA31/store}" method="POST">
+						<form id="WF02WG01-form" class="form-validate-jquery" method="POST">
 
 							<div class="row">
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="xbuid"
+													th:value="${WF02REQPARAM.xbuid ne null ? WF02REQPARAM.xbuid + ' - ' + WF02REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="xbuid" th:value="${WF02REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
 
 								<div class="col-md-3">
 									<div class="mb-3 form-group">
@@ -173,6 +187,169 @@
 
 		</div>
 
+
+
+
+		<!-- WF03 Widgets Section -->
+		<div class="row" th:if="${WF03 eq 'Y'}">
+			<!-- 1st Column -->
+			<div class="col-lg-12 col-xl-12">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WF03WG01-form" class="form-validate-jquery" method="POST">
+
+							<div class="row">
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="xbuid"
+													th:value="${WF03REQPARAM.xbuid ne null ? WF03REQPARAM.xbuid + ' - ' + WF03REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="xbuid" th:value="${WF03REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Sub Account</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="xsub"
+													th:value="${WF03REQPARAM.xsub ne null ? WF03REQPARAM.xsub + ' - ' + WF03REQPARAM.subAccountName : ''}">
+											<input 	type="hidden" class="search-val" name="xsub" th:value="${WF03REQPARAM.xsub}" required/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LFA14/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='xsub',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Last</label>
+										<input type="number" class="form-control numeric-only" name="last" th:value="${WF03REQPARAM.last}" required="required">
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Day Type</label>
+										<select class="form-control select" id="type" name="type" th:value="${WF03REQPARAM.type}" required="required">
+											<option value="DAYS" th:selected="${WF03REQPARAM.type eq 'DAYS'}">Days</option>
+											<option value="MONTHS" th:selected="${WF03REQPARAM.type eq 'MONTHS'}">Months</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WF03WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WF03WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+
+
+
+		<!-- WF04 Widgets Section -->
+		<div class="row" th:if="${WF04 eq 'Y'}">
+			<!-- 1st Column -->
+			<div class="col-lg-12 col-xl-12">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WF04WG01-form" class="form-validate-jquery" method="POST">
+
+							<div class="row">
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="xbuid"
+													th:value="${WF04REQPARAM.xbuid ne null ? WF04REQPARAM.xbuid + ' - ' + WF04REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="xbuid" th:value="${WF04REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Account Type</label>
+										<select class="form-control select" id="type" name="type" th:value="${WF04REQPARAM.type}" required="required">
+											<option value="Asset" th:selected="${WF04REQPARAM.type eq 'Asset'}">Asset</option>
+											<option value="Expenditure" th:selected="${WF04REQPARAM.type eq 'Expenditure'}">Expenditure</option>
+											<option value="Income" th:selected="${WF04REQPARAM.type eq 'Income'}">Income</option>
+											<option value="Liability" th:selected="${WF04REQPARAM.type eq 'Liability'}">Liability</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WF04WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WF04WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
 	</div>
 	<!-- /content area -->
 
@@ -203,22 +380,24 @@
 			var WA01 = $('#WA01').val();
 			var WF01 = $('#WF01').val();
 			var WF02 = $('#WF02').val();
+			var WF03 = $('#WF03').val();
+			var WF04 = $('#WF04').val();
 
 			// Initial Load Calling
 			if("Y" === WA01){
-				loadWidgets('WA01', 'WG01', 5000);
-				loadWidgets('WA01', 'WG02', 5000);
-				loadWidgets('WA01', 'WG03', 5000);
-				loadWidgets('WA01', 'WG04', 5000);
-				loadWidgets('WA01', 'WG05', 5000);
+				loadWidgets('WA01', 'WG01', -1);
+				loadWidgets('WA01', 'WG02', -1);
+				loadWidgets('WA01', 'WG03', -1);
+				loadWidgets('WA01', 'WG04', -1);
+				loadWidgets('WA01', 'WG05', -1);
 			}
 
 			if("Y" === WF01){
-				loadWidgets('WF01', 'WG01', 5000);
-				loadWidgets('WF01', 'WG02', 5000);
-				loadWidgets('WF01', 'WG03', 5000);
-				loadWidgets('WF01', 'WG04', 5000);
-				loadWidgets('WF01', 'WG05', 5000);
+				loadWidgets('WF01', 'WG01', -1);
+				loadWidgets('WF01', 'WG02', -1);
+				loadWidgets('WF01', 'WG03', -1);
+				loadWidgets('WF01', 'WG04', -1);
+				loadWidgets('WF01', 'WG05', -1);
 			}
 
 			if("Y" === WF02){
@@ -229,12 +408,31 @@
 				});
 			}
 
+			if("Y" === WF03){
+				loadWF03WG01();
+				$('.btn-WF03WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWF03WG01();
+				});
+			}
+
+			if("Y" === WF04){
+				loadWF04WG01();
+				$('.btn-WF04WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWF04WG01();
+				});
+			}
+
 		})
 
 		function loadWF02WG01(){
+			var xbuid = $('input[name="xbuid"]').val();
 			var xacc = $('input[name="xacc"]').val();
 			var last = $('input[name="last"]').val()
 			var type = $('select[name="type"]').val()
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
 
 			if(xacc == null || xacc == ''){
 				showMessage("error", "Account selection required");
@@ -248,16 +446,16 @@
 
 			if(last < 0) last = 0;
 			if("DAYS" === type){
-				if(last > 31) $('input[name="last"]').val("31");
+				if(last > 100) $('input[name="last"]').val("100");
 			} else {
-				if(last > 24) $('input[name="last"]').val("24");
+				if(last > 30) $('input[name="last"]').val("30");
 			}
 
 			$.ajax({
-				url: getBasepath() + '/DASH/WF02/WG01?xacc='+ xacc +'&last='+ last +'&type=' + type,
+				url: getBasepath() + '/DASH/WF02/WG01?xbuid='+ xbuid +'&xacc='+ xacc +'&last='+ last +'&type=' + type,
 				type: "GET",
 				success: function (data) {
-					prepareBarChart(data, 'WF02WG01-chart', type);
+					prepareBarChart('Account Transaction', data, 'WF02WG01-chart', type);
 				},
 				error: function (jqXHR, status, errorThrown) {
 					loadingMask2.hide();
@@ -271,7 +469,74 @@
 			});
 		}
 
-		function prepareBarChart(data, containerid, type){
+		function loadWF03WG01(){
+			var xbuid = $('input[name="xbuid"]').val();
+			var xsub = $('input[name="xsub"]').val();
+			var last = $('input[name="last"]').val()
+			var type = $('select[name="type"]').val()
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+
+			if(xsub == null || xsub == ''){
+				showMessage("error", "Sub account selection required");
+				return;
+			}
+
+			if(last == null || last == ''){
+				showMessage("error", "Last "+ type +" required");
+				return;
+			}
+
+			if(last < 0) last = 0;
+			if("DAYS" === type){
+				if(last > 100) $('input[name="last"]').val("100");
+			} else {
+				if(last > 30) $('input[name="last"]').val("30");
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WF03/WG01?xbuid='+ xbuid +'&xsub='+ xsub +'&last='+ last +'&type=' + type,
+				type: "GET",
+				success: function (data) {
+					prepareBarChart('Sub Account Transaction', data, 'WF03WG01-chart', type);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+		function loadWF04WG01(){
+			var xbuid = $('input[name="xbuid"]').val();
+			var type = $('select[name="type"]').val()
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WF04/WG01?xbuid='+ xbuid + '&type=' + type,
+				type: "GET",
+				success: function (data) {
+					prepareBarChart('Accounts Current Balance', data, 'WF04WG01-chart', type);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+		function prepareBarChart(title, data, containerid, type){
 
 			var xdata = [];
 			var ydata = [];
@@ -299,7 +564,7 @@
 
 			option = {
 				title: {
-					text: 'Ledger Transaction Summary'
+					text: title
 				},
 				tooltip: {
 					trigger: 'axis',
