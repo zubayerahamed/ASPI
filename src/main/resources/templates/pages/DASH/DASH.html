@@ -1,11 +1,28 @@
 <!-- Inner content -->
 <div class="content-inner" xmlns:th="http://www.thymeleaf.org">
+	<input type="hidden" id="refreshTimeout" value="-1"/>
 	<input type="hidden" id="WA01" th:value="${WA01}"/>
 	<input type="hidden" id="WF01" th:value="${WF01}"/>
 	<input type="hidden" id="WF02" th:value="${WF02}"/>
 	<input type="hidden" id="WF03" th:value="${WF03}"/>
 	<input type="hidden" id="WF04" th:value="${WF04}"/>
 	<input type="hidden" id="WF05" th:value="${WF05}"/>
+	<input type="hidden" id="WP01" th:value="${WP01}"/>
+	<input type="hidden" id="WP02" th:value="${WP02}"/>
+	<input type="hidden" id="WP03" th:value="${WP03}"/>
+	<input type="hidden" id="WP04" th:value="${WP04}"/>
+	<input type="hidden" id="WP05" th:value="${WP05}"/>
+	<input type="hidden" id="WS01" th:value="${WS01}"/>
+	<input type="hidden" id="WS02" th:value="${WS02}"/>
+	<input type="hidden" id="WS03" th:value="${WS03}"/>
+	<input type="hidden" id="WS04" th:value="${WS04}"/>
+	<input type="hidden" id="WS05" th:value="${WS05}"/>
+	<input type="hidden" id="WS06" th:value="${WS06}"/>
+	<input type="hidden" id="WI01" th:value="${WI01}"/>
+	<input type="hidden" id="WI02" th:value="${WI02}"/>
+	<input type="hidden" id="WI03" th:value="${WI03}"/>
+	<input type="hidden" id="WI04" th:value="${WI04}"/>
+	<input type="hidden" id="WI05" th:value="${WI05}"/>
 
 	<!-- Page header -->
 	<div class="page-header-container">
@@ -413,6 +430,513 @@
 
 		</div>
 
+
+
+
+		<!-- WP01 Widgets Section -->
+		<div class="row" th:if="${WP01 eq 'Y'}">
+			<!-- 1st Column -->
+			<div class="col-lg-12 col-xl-12">
+				<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+					<div class="flex-grow-1">
+						<div class="WP01WG01-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG01"></div>
+						</div>
+					</div>
+					<div class="flex-grow-1">
+						<div class="WP01WG02-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG02"></div>
+						</div>
+					</div>
+					<div class="flex-grow-1">
+						<div class="WP01WG03-container">
+							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG03"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+		<div class="row">
+			<!-- 1st Column -->
+			<div class="col-lg-6 col-xl-6" th:if="${WP02 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WP02WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WP02WG01xbuid"
+													th:value="${WP02REQPARAM.xbuid ne null ? WP02REQPARAM.xbuid + ' - ' + WP02REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WP02WG01xbuid" th:value="${WP02REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WP02WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Supplier</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WP02WG01xcus"
+													th:value="${WP02REQPARAM.xcus ne null ? WP02REQPARAM.xcus + ' - ' + WP02REQPARAM.supplierName : ''}">
+											<input 	type="hidden" class="search-val" name="WP02WG01xcus" th:value="${WP02REQPARAM.xcus}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LFA14/2?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WP02WG01xcus',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WP02WG01type" name="WP02WG01type" th:value="${WP02REQPARAM.type}" required="required">
+											<option value="DAYS" th:selected="${WP02REQPARAM.type eq 'DAYS'}">Days</option>
+											<option value="DATEBETWEEN" th:selected="${WP02REQPARAM.type eq 'DATEBETWEEN'}">Date Between</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP02WG01type-DAYS">
+									<div class="mb-3 form-group">
+										<label class="form-label">Last</label>
+										<input type="number" class="form-control numeric-only" name="WP02WG01last" th:value="${WP02REQPARAM.last}">
+									</div>
+								</div>
+
+								<div class="col-md-4 WP02WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">From Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP02WG01xfdate" 
+													id="WP02WG01xfdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP02REQPARAM.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP02REQPARAM.xfdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP02WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">To Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP02WG01xtdate" 
+													id="WP02WG01xtdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP02REQPARAM.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP02REQPARAM.xtdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WP02WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WP02WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+
+
+			<!-- WP03 Widgets Section -->
+			<!-- 1st Column -->
+			<div class="col-lg-6 col-xl-6" th:if="${WP03 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WP03WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WP03WG01xbuid"
+													th:value="${WP03REQPARAM.xbuid ne null ? WP03REQPARAM.xbuid + ' - ' + WP03REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WP03WG01xbuid" th:value="${WP03REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WP03WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Item</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WP03WG01xitem"
+													th:value="${WP03REQPARAM.xitem ne null ? WP03REQPARAM.xitem + ' - ' + WP03REQPARAM.itemName : ''}">
+											<input 	type="hidden" class="search-val" name="WP03WG01xcus" th:value="${WP03REQPARAM.xitem}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LMD12/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WP03WG01xitem',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WP03WG01type" name="WP03WG01type" th:value="${WP03REQPARAM.type}" required="required">
+											<option value="DAYS" th:selected="${WP03REQPARAM.type eq 'DAYS'}">Days</option>
+											<option value="DATEBETWEEN" th:selected="${WP03REQPARAM.type eq 'DATEBETWEEN'}">Date Between</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP03WG01type-DAYS">
+									<div class="mb-3 form-group">
+										<label class="form-label">Last</label>
+										<input type="number" class="form-control numeric-only" name="WP03WG01last" th:value="${WP03REQPARAM.last}">
+									</div>
+								</div>
+
+								<div class="col-md-4 WP03WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">From Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP03WG01xfdate" 
+													id="WP03WG01xfdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP03REQPARAM.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP03REQPARAM.xfdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP03WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">To Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP03WG01xtdate" 
+													id="WP03WG01xtdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP03REQPARAM.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP03REQPARAM.xtdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WP03WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WP03WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+
+
+		<div class="row">
+			<!-- 1st Column -->
+			<div class="col-lg-6 col-xl-6" th:if="${WP04 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WP04WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WP04WG01xbuid"
+													th:value="${WP04REQPARAM.xbuid ne null ? WP04REQPARAM.xbuid + ' - ' + WP04REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WP04WG01xbuid" th:value="${WP04REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WP04WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Top Supplier</label>
+										<input type="number" class="form-control numeric-only" name="WP04WG01topxcus" th:value="${WP04REQPARAM.topxcus}">
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WP04WG01type" name="WP04WG01type" th:value="${WP04REQPARAM.type}" required="required">
+											<option value="DAYS" th:selected="${WP04REQPARAM.type eq 'DAYS'}">Days</option>
+											<option value="DATEBETWEEN" th:selected="${WP04REQPARAM.type eq 'DATEBETWEEN'}">Date Between</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP04WG01type-DAYS">
+									<div class="mb-3 form-group">
+										<label class="form-label">Last</label>
+										<input type="number" class="form-control numeric-only" name="WP04WG01last" th:value="${WP04REQPARAM.last}">
+									</div>
+								</div>
+
+								<div class="col-md-4 WP04WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">From Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP04WG01xfdate" 
+													id="WP04WG01xfdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP04REQPARAM.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP04REQPARAM.xfdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP04WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">To Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP04WG01xtdate" 
+													id="WP04WG01xtdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP04REQPARAM.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP04REQPARAM.xtdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WP04WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WP04WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+
+
+			<!-- WP05 Widgets Section -->
+			<!-- 1st Column -->
+			<div class="col-lg-6 col-xl-6" th:if="${WP05 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WP05WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WP05WG01xbuid"
+													th:value="${WP05REQPARAM.xbuid ne null ? WP05REQPARAM.xbuid + ' - ' + WP05REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WP05WG01xbuid" th:value="${WP05REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WP05WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Top Items</label>
+										<input type="number" class="form-control numeric-only" name="WP05WG01topxitem" th:value="${WP05REQPARAM.topxitem}">
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WP05WG01type" name="WP05WG01type" th:value="${WP05REQPARAM.type}" required="required">
+											<option value="DAYS" th:selected="${WP05REQPARAM.type eq 'DAYS'}">Days</option>
+											<option value="DATEBETWEEN" th:selected="${WP05REQPARAM.type eq 'DATEBETWEEN'}">Date Between</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP05WG01type-DAYS">
+									<div class="mb-3 form-group">
+										<label class="form-label">Last</label>
+										<input type="number" class="form-control numeric-only" name="WP05WG01last" th:value="${WP05REQPARAM.last}">
+									</div>
+								</div>
+
+								<div class="col-md-4 WP05WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">From Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP05WG01xfdate" 
+													id="WP05WG01xfdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP05REQPARAM.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP05REQPARAM.xfdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 WP05WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">To Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WP05WG01xtdate" 
+													id="WP05WG01xtdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WP05REQPARAM.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WP05REQPARAM.xtdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WP05WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WP05WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
 	</div>
 	<!-- /content area -->
 
@@ -440,28 +964,45 @@
 		$(document).ready(function(){
 			kit.ui.init();
 
+			var refreshTimeout = $('#refreshTimeout').val();
 			var WA01 = $('#WA01').val();
 			var WF01 = $('#WF01').val();
 			var WF02 = $('#WF02').val();
 			var WF03 = $('#WF03').val();
 			var WF04 = $('#WF04').val();
 			var WF05 = $('#WF05').val();
+			var WP01 = $('#WP01').val();
+			var WP02 = $('#WP02').val();
+			var WP03 = $('#WP03').val();
+			var WP04 = $('#WP04').val();
+			var WP05 = $('#WP05').val();
+			var WS01 = $('#WS01').val();
+			var WS02 = $('#WS02').val();
+			var WS03 = $('#WS03').val();
+			var WS04 = $('#WS04').val();
+			var WS05 = $('#WS05').val();
+			var WS06 = $('#WS06').val();
+			var WI01 = $('#WI01').val();
+			var WI02 = $('#WI02').val();
+			var WI03 = $('#WI03').val();
+			var WI04 = $('#WI04').val();
+			var WI05 = $('#WI05').val();
 
 			// Initial Load Calling
 			if("Y" === WA01){
-				loadWidgets('WA01', 'WG01', 5000);
-				loadWidgets('WA01', 'WG02', 5000);
-				loadWidgets('WA01', 'WG03', 5000);
-				loadWidgets('WA01', 'WG04', 5000);
-				loadWidgets('WA01', 'WG05', 5000);
+				loadWidgets('WA01', 'WG01', refreshTimeout);
+				loadWidgets('WA01', 'WG02', refreshTimeout);
+				loadWidgets('WA01', 'WG03', refreshTimeout);
+				loadWidgets('WA01', 'WG04', refreshTimeout);
+				loadWidgets('WA01', 'WG05', refreshTimeout);
 			}
 
 			if("Y" === WF01){
-				loadWidgets('WF01', 'WG01', 5000);
-				loadWidgets('WF01', 'WG02', 5000);
-				loadWidgets('WF01', 'WG03', 5000);
-				loadWidgets('WF01', 'WG04', 5000);
-				loadWidgets('WF01', 'WG05', 5000);
+				loadWidgets('WF01', 'WG01', refreshTimeout);
+				loadWidgets('WF01', 'WG02', refreshTimeout);
+				loadWidgets('WF01', 'WG03', refreshTimeout);
+				loadWidgets('WF01', 'WG04', refreshTimeout);
+				loadWidgets('WF01', 'WG05', refreshTimeout);
 			}
 
 			if("Y" === WF02){
@@ -495,6 +1036,109 @@
 					loadWF05WG01();
 				});
 			}
+
+			if("Y" === WP01){
+				loadWidgets('WP01', 'WG01', refreshTimeout);
+				loadWidgets('WP01', 'WG02', refreshTimeout);
+				loadWidgets('WP01', 'WG03', refreshTimeout);
+			}
+
+			if("Y" === WP02){
+				function toggleWP02WG01type(){
+					var typeValue =  $('#WP02WG01type').val();
+					if('DAYS' === typeValue){
+						$('.WP02WG01type-DAYS').removeClass('d-none');
+						$('.WP02WG01type-DATEBETWEEN').addClass('d-none');
+					} else {
+						$('.WP02WG01type-DAYS').addClass('d-none');
+						$('.WP02WG01type-DATEBETWEEN').removeClass('d-none');
+					}
+				}
+
+				$('#WP02WG01type').on('change', function(){
+					toggleWP02WG01type();
+				});
+				toggleWP02WG01type();
+
+				loadWP02WG01();
+				$('.btn-WP02WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWP02WG01();
+				});
+			}
+
+			if("Y" === WP03){
+				function toggleWP03WG01type(){
+					var typeValue =  $('#WP03WG01type').val();
+					if('DAYS' === typeValue){
+						$('.WP03WG01type-DAYS').removeClass('d-none');
+						$('.WP03WG01type-DATEBETWEEN').addClass('d-none');
+					} else {
+						$('.WP03WG01type-DAYS').addClass('d-none');
+						$('.WP03WG01type-DATEBETWEEN').removeClass('d-none');
+					}
+				}
+
+				$('#WP03WG01type').on('change', function(){
+					toggleWP03WG01type();
+				});
+				toggleWP03WG01type();
+
+				loadWP03WG01();
+				$('.btn-WP03WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWP03WG01();
+				});
+			}
+
+			if("Y" === WP04){
+				function toggleWP04WG01type(){
+					var typeValue =  $('#WP04WG01type').val();
+					if('DAYS' === typeValue){
+						$('.WP04WG01type-DAYS').removeClass('d-none');
+						$('.WP04WG01type-DATEBETWEEN').addClass('d-none');
+					} else {
+						$('.WP04WG01type-DAYS').addClass('d-none');
+						$('.WP04WG01type-DATEBETWEEN').removeClass('d-none');
+					}
+				}
+
+				$('#WP04WG01type').on('change', function(){
+					toggleWP04WG01type();
+				});
+				toggleWP04WG01type();
+
+				loadWP04WG01();
+				$('.btn-WP04WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWP04WG01();
+				});
+			}
+
+			if("Y" === WP05){
+				function toggleWP05WG01type(){
+					var typeValue =  $('#WP05WG01type').val();
+					if('DAYS' === typeValue){
+						$('.WP05WG01type-DAYS').removeClass('d-none');
+						$('.WP05WG01type-DATEBETWEEN').addClass('d-none');
+					} else {
+						$('.WP05WG01type-DAYS').addClass('d-none');
+						$('.WP05WG01type-DATEBETWEEN').removeClass('d-none');
+					}
+				}
+
+				$('#WP05WG01type').on('change', function(){
+					toggleWP05WG01type();
+				});
+				toggleWP05WG01type();
+
+				loadWP05WG01();
+				$('.btn-WP05WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWP05WG01();
+				});
+			}
+
 
 		})
 
@@ -780,6 +1424,380 @@
 			});
 		}
 
+		function loadWP02WG01(){
+			var xbuid = $('input[name="WP02WG01xbuid"]').val();
+			var xcus = $('input[name="WP02WG01xcus"]').val();
+			var type = $('select[name="WP02WG01type"]').val();
+			var last = $('input[name="WP02WG01last"]').val();
+			var xfdate = $('input[name="WP02WG01xfdate"]').val();
+			var xtdate = $('input[name="WP02WG01xtdate"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+
+			if(xcus == null || xcus == '') xcus = -1;
+
+			if('DAYS' === type){
+				if(last == null || last == ''){
+					showMessage("error", "Last "+ type +" required");
+					return;
+				}
+				if(last < 0) last = 0;
+				if(last > 100) {
+					$('input[name="WP02WG01last"]').val("100");
+					last = 100;
+				}
+			} else {
+				if(xfdate == null || xfdate == '') {
+					showMessage("error", "From date required");
+					return;
+				}
+				if(xtdate == null || xtdate == '') {
+					showMessage("error", "To date required");
+					return;
+				}
+
+				// Convert to Date objects
+				let fromDate = new Date(xfdate);
+				let toDate = new Date(xtdate);
+
+				// Check if From date is after To date
+				if (fromDate > toDate) {
+					showMessage("error", "From date must be earlier than or equal to To date");
+					return;
+				}
+
+				// Calculate day difference
+				let dayDiff = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24));
+
+				if (dayDiff > 100) {
+					showMessage("error", "Date range must be 100 days or less");
+					return;
+				}
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WP02/WG01?xbuid='+ xbuid +'&xcus='+ xcus +'&last='+ last +'&type=' + type + '&xfdate=' + xfdate + '&xtdate=' + xtdate,
+				type: "GET",
+				success: function (data) {
+
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Supplier Purchase View';
+					barchartPrepareData.containerid = 'WP02WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.yaxistitle = 'Amount';
+					barchartPrepareData.xaxistitle = function(value, type){
+						const date = new Date(value);
+						const day = date.getDate();
+						const month = date.toLocaleString('en-US', { month: 'short' });
+						const year = date.getFullYear();
+						return `${day} ${month}\n${year}`; // '\n' breaks line in ECharts
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.xdate);
+						barchartPrepareData.ydata.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+
+		function loadWP03WG01(){
+			var xbuid = $('input[name="WP03WG01xbuid"]').val();
+			var xitem = $('input[name="WP03WG01xitem"]').val();
+			var type = $('select[name="WP03WG01type"]').val();
+			var last = $('input[name="WP03WG01last"]').val();
+			var xfdate = $('input[name="WP03WG01xfdate"]').val();
+			var xtdate = $('input[name="WP03WG01xtdate"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+
+			if(xitem == null || xitem == '') xitem = -1;
+
+			if('DAYS' === type){
+				if(last == null || last == ''){
+					showMessage("error", "Last "+ type +" required");
+					return;
+				}
+				if(last < 0) last = 0;
+				if(last > 100) {
+					$('input[name="WP03WG01last"]').val("100");
+					last = 100;
+				}
+			} else {
+				if(xfdate == null || xfdate == '') {
+					showMessage("error", "From date required");
+					return;
+				}
+				if(xtdate == null || xtdate == '') {
+					showMessage("error", "To date required");
+					return;
+				}
+
+				// Convert to Date objects
+				let fromDate = new Date(xfdate);
+				let toDate = new Date(xtdate);
+
+				// Check if From date is after To date
+				if (fromDate > toDate) {
+					showMessage("error", "From date must be earlier than or equal to To date");
+					return;
+				}
+
+				// Calculate day difference
+				let dayDiff = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24));
+
+				if (dayDiff > 100) {
+					showMessage("error", "Date range must be 100 days or less");
+					return;
+				}
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WP03/WG01?xbuid='+ xbuid +'&xitem='+ xitem +'&last='+ last +'&type=' + type + '&xfdate=' + xfdate + '&xtdate=' + xtdate,
+				type: "GET",
+				success: function (data) {
+
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Item Purchase Statement';
+					barchartPrepareData.containerid = 'WP03WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.yaxistitle = 'Quantity';
+					barchartPrepareData.xaxistitle = function(value, type){
+						const date = new Date(value);
+						const day = date.getDate();
+						const month = date.toLocaleString('en-US', { month: 'short' });
+						const year = date.getFullYear();
+						return `${day} ${month}\n${year}`; // '\n' breaks line in ECharts
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.xdate);
+						barchartPrepareData.ydata.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+		function loadWP04WG01(){
+			var xbuid = $('input[name="WP04WG01xbuid"]').val();
+			var topxcus = $('input[name="WP04WG01topxcus"]').val();
+			var type = $('select[name="WP04WG01type"]').val();
+			var last = $('input[name="WP04WG01last"]').val();
+			var xfdate = $('input[name="WP04WG01xfdate"]').val();
+			var xtdate = $('input[name="WP04WG01xtdate"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+
+			if(topxcus == null || topxcus == '') {
+				showMessage("error", "Top Supplier Number Required");
+				return;
+			}
+			if(topxcus < 1) topxcus = 1;
+			if(topxcus > 100) topxcus = 100;
+			$('input[name="WP04WG01topxcus"]').val(topxcus);
+
+			if('DAYS' === type){
+				if(last == null || last == ''){
+					showMessage("error", "Last "+ type +" required");
+					return;
+				}
+				if(last < 1) {
+					last = 1;
+					$('input[name="WP04WG01last"]').val(last);
+				}
+				if(last > 100) {
+					$('input[name="WP04WG01last"]').val(last);
+					last = 100;
+				}
+			} else {
+				if(xfdate == null || xfdate == '') {
+					showMessage("error", "From date required");
+					return;
+				}
+				if(xtdate == null || xtdate == '') {
+					showMessage("error", "To date required");
+					return;
+				}
+
+				// Convert to Date objects
+				let fromDate = new Date(xfdate);
+				let toDate = new Date(xtdate);
+
+				// Check if From date is after To date
+				if (fromDate > toDate) {
+					showMessage("error", "From date must be earlier than or equal to To date");
+					return;
+				}
+
+				// Calculate day difference
+				let dayDiff = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24));
+
+				if (dayDiff > 100) {
+					showMessage("error", "Date range must be 100 days or less");
+					return;
+				}
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WP04/WG01?xbuid='+ xbuid +'&topxcus='+ topxcus +'&last='+ last +'&type=' + type + '&xfdate=' + xfdate + '&xtdate=' + xtdate,
+				type: "GET",
+				success: function (data) {
+
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Top Suppliers Transcation';
+					barchartPrepareData.containerid = 'WP04WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.yaxistitle = 'Amount';
+					barchartPrepareData.xaxistitle = function(value, type){
+						return value;
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.supplier);
+						barchartPrepareData.ydata.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+		function loadWP05WG01(){
+			var xbuid = $('input[name="WP05WG01xbuid"]').val();
+			var topxitem = $('input[name="WP05WG01topxitem"]').val();
+			var type = $('select[name="WP05WG01type"]').val();
+			var last = $('input[name="WP05WG01last"]').val();
+			var xfdate = $('input[name="WP05WG01xfdate"]').val();
+			var xtdate = $('input[name="WP05WG01xtdate"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+
+			if(topxitem == null || topxitem == '') {
+				showMessage("error", "Top Items Number Required");
+				return;
+			}
+			if(topxitem < 1) topxitem = 1;
+			if(topxitem > 100) topxitem = 100;
+			$('input[name="WP05WG01topxitem"]').val(topxitem);
+
+			if('DAYS' === type){
+				if(last == null || last == ''){
+					showMessage("error", "Last "+ type +" required");
+					return;
+				}
+				if(last < 1) {
+					last = 1;
+					$('input[name="WP05WG01last"]').val(last);
+				}
+				if(last > 100) {
+					$('input[name="WP05WG01last"]').val(last);
+					last = 100;
+				}
+			} else {
+				if(xfdate == null || xfdate == '') {
+					showMessage("error", "From date required");
+					return;
+				}
+				if(xtdate == null || xtdate == '') {
+					showMessage("error", "To date required");
+					return;
+				}
+
+				// Convert to Date objects
+				let fromDate = new Date(xfdate);
+				let toDate = new Date(xtdate);
+
+				// Check if From date is after To date
+				if (fromDate > toDate) {
+					showMessage("error", "From date must be earlier than or equal to To date");
+					return;
+				}
+
+				// Calculate day difference
+				let dayDiff = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24));
+
+				if (dayDiff > 100) {
+					showMessage("error", "Date range must be 100 days or less");
+					return;
+				}
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WP05/WG01?xbuid='+ xbuid +'&topxitem='+ topxitem +'&last='+ last +'&type=' + type + '&xfdate=' + xfdate + '&xtdate=' + xtdate,
+				type: "GET",
+				success: function (data) {
+
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Top Item Purchase (Amount)';
+					barchartPrepareData.containerid = 'WP05WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.ydata2 = [];
+					barchartPrepareData.yaxistitle = 'Amount';
+					barchartPrepareData.yaxistitle2 = 'Quantity';
+					barchartPrepareData.xaxistitle = function(value, type){
+						return value;
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.item);
+						barchartPrepareData.ydata.push(d.amount);
+						barchartPrepareData.ydata2.push(d.quantity);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
 		var barchartPrepareData = {};
 
 		function prepareBarChart(barchartPrepareData){
@@ -840,11 +1858,22 @@
 					{
 						name: barchartPrepareData.yaxistitle,
 						type: 'bar',
-						barWidth: '60%',
+						barWidth: '40%',
 						data: barchartPrepareData.ydata,
-					}
+					},
 				]
 			}; // END OPTION
+
+			if(barchartPrepareData.ydata2 != undefined && barchartPrepareData.ydata2 != null && barchartPrepareData.ydata2.length>0){
+				option.series.push(
+					{
+						name: barchartPrepareData.yaxistitle2,
+						type: 'bar',
+						barWidth: '40%',
+						data: barchartPrepareData.ydata2,
+					}
+				);
+			}
 
 			if (option && typeof option === 'object') {
 				myChart.setOption(option);

@@ -1,5 +1,7 @@
 package com.zayaanit.repository;
 
+import java.time.LocalDate;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +32,106 @@ public interface PoordheaderRepo extends JpaRepository<Poordheader, PoordheaderP
 
 	@Query(value = "select count(*) from pogrnheader h where h.zid=?1 and h.xpornum=?2 and h.xstatusim='Confirmed'", nativeQuery = true)
 	public Long getConfirmedGRNCount(Integer zid, Integer xpornum); 
+
+	@Query(value = "select "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as today "
+			+ " from  "
+			+ " poordheader  "
+			+ " where  "
+			+ " zid=:zid  "
+			+ " and xstatus='Confirmed'  "
+			+ " and xdate=:xdate", nativeQuery = true)
+	public String todaysPurchaseOrder(Integer zid, LocalDate xdate);
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as month "
+			+ " from  "
+			+ " poordheader  "
+			+ " where  "
+			+ " zid=:zid "
+			+ " and Year(xdate)=Year(:xdate) "
+			+ " and Month(xdate)=Month(:xdate) "
+			+ " and xstatus='Confirmed'", nativeQuery = true)
+	public String monthsPurchaseOrder(Integer zid, LocalDate xdate);
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as year  "
+			+ " from  "
+			+ " poordheader  "
+			+ " where "
+			+ " zid=:zid  "
+			+ " and Year(xdate)=Year(:xdate)  "
+			+ " and xstatus='Confirmed'", nativeQuery = true)
+	public String yearPurchaseOrder(Integer zid, LocalDate xdate);
+
+
+
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as todays  "
+			+ " from  "
+			+ " pogrnheader  "
+			+ " where  "
+			+ " zid=:zid  "
+			+ " and xstatus='Confirmed'  "
+			+ " and xstatusim='Confirmed'  "
+			+ " and xdate=:xdate ", nativeQuery = true)
+	public String todaysGRNAndDirectPurchase(Integer zid, LocalDate xdate);
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as months  "
+			+ " from  "
+			+ " pogrnheader  "
+			+ " where  "
+			+ " zid =:zid  "
+			+ " and Year(xdate)=Year(:xdate)  "
+			+ " and Month(xdate)=Month(:xdate)  "
+			+ " and xstatus='Confirmed'  "
+			+ " and xstatusim='Confirmed'", nativeQuery = true)
+	public String monthsGRNAndDirectPurchase(Integer zid, LocalDate xdate);
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as year  "
+			+ " from  "
+			+ " pogrnheader  "
+			+ " where  "
+			+ " zid =:zid  "
+			+ " and Year(xdate)=Year(:xdate)  "
+			+ " and xstatus='Confirmed'  "
+			+ " and xstatusim='Confirmed'", nativeQuery = true)
+	public String yearGRNAndDirectPurchase(Integer zid, LocalDate xdate);
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as todays  "
+			+ " from  "
+			+ " pocrnheader  "
+			+ " where  "
+			+ " zid=:zid  "
+			+ " and xstatus='Confirmed'  "
+			+ " and xstatusim='Confirmed'  "
+			+ " and xdate=:xdate", nativeQuery = true)
+	public String todaysPurchaseReturn(Integer zid, LocalDate xdate);
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as months  "
+			+ " from  "
+			+ " pocrnheader  "
+			+ " where  "
+			+ " zid=:zid  "
+			+ " and Year(xdate)=Year(:xdate)  "
+			+ " and Month(xdate)=Month(:xdate)  "
+			+ " and xstatus='Confirmed'  "
+			+ " and xstatusim='Confirmed'", nativeQuery = true)
+	public String monthsPurchaseReturn(Integer zid, LocalDate xdate);
+
+	@Query(value = "select  "
+			+ " CONCAT(isnull(sum(xtotamt),0), '/', COUNT(*)) as year  "
+			+ " from  "
+			+ " pocrnheader  "
+			+ " where  "
+			+ " zid=:zid  "
+			+ " and Year(xdate)=Year(:xdate)  "
+			+ " and xstatus='Confirmed'  "
+			+ " and xstatusim='Confirmed'", nativeQuery = true)
+	public String yearPurchaseReturn(Integer zid, LocalDate xdate);
 }
