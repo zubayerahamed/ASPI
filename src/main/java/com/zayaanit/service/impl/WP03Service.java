@@ -27,6 +27,7 @@ public class WP03Service extends AbstractGenericService {
 	public List<WP03Dto> itemPurchaseStatement(Integer xbuid, Integer xacc, Integer last, String type, String xfdate, String xtdate) {
 		if(xacc == null) return Collections.emptyList();
 		if("DAYS".equalsIgnoreCase(type)) {
+			if(last < 1) last = 1;
 			if(last > 100) last = 100;
 			List<WP03Dto> result = pogrnheaderRepo.getItemPurchaseStatementForDays(sessionManager.getBusinessId(), xbuid, xacc, last)
 					.stream()

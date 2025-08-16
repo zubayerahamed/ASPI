@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OpdodetailPK implements Serializable {
-    
-    private Integer zid;
-    private Integer xdornum;
-    private Integer xrow;
+
+	private static final long serialVersionUID = 7224567783002084166L;
+
+	private Integer zid;
+	private Integer xdornum;
+	private Integer xrow;
 }

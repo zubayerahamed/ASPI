@@ -36,7 +36,7 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 						"UNION ALL " +
 						"SELECT DATEADD(DAY, -1, xdate) " +
 						"FROM DateSeries " +
-						"WHERE xdate > DATEADD(DAY, -:days, GETDATE()) " +
+						"WHERE xdate > DATEADD(DAY, -:days+1, GETDATE()) " +
 					") " +
 					"SELECT d.xdate AS xdate, COALESCE(SUM(a.xprime), 0) AS amount " +
 					"FROM DateSeries d " +
@@ -44,7 +44,7 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 						"ON d.xdate = a.xdate " +
 						"AND a.zid = :zid " +
 						"AND a.xacc = :xacc " +
-						"AND a.xdate BETWEEN DATEADD(DAY, -:days, GETDATE()) AND GETDATE() " +
+						"AND a.xdate BETWEEN DATEADD(DAY, -:days+1, GETDATE()) AND GETDATE() " +
 						"AND (-1=:xbuid OR a.xbuid=:xbuid) " + 
 					"GROUP BY d.xdate " +
 					"ORDER BY d.xdate", nativeQuery = true)
@@ -94,7 +94,7 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 			"UNION ALL " +
 			"SELECT DATEADD(DAY, -1, xdate) " +
 			"FROM DateSeries " +
-			"WHERE xdate > DATEADD(DAY, -:days, GETDATE()) " +
+			"WHERE xdate > DATEADD(DAY, -:days+1, GETDATE()) " +
 		") " +
 		"SELECT d.xdate AS xdate, COALESCE(SUM(a.xprime), 0) AS amount " +
 		"FROM DateSeries d " +
@@ -102,7 +102,7 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 			"ON d.xdate = a.xdate " +
 			"AND a.zid = :zid " +
 			"AND a.xsub = :xsub " +
-			"AND a.xdate BETWEEN DATEADD(DAY, -:days, GETDATE()) AND GETDATE() " +
+			"AND a.xdate BETWEEN DATEADD(DAY, -:days+1, GETDATE()) AND GETDATE() " +
 			"AND (-1=:xbuid OR a.xbuid=:xbuid) " + 
 		"GROUP BY d.xdate " +
 		"ORDER BY d.xdate", nativeQuery = true)

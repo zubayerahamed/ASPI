@@ -29,7 +29,7 @@ public class WF03Service extends AbstractGenericService {
 		if(xsub == null) return Collections.emptyList();
 		if("DAYS".equalsIgnoreCase(type)) {
 			if(last > 100) last = 100;
-			List<WF03Dto> result = acbalRepo.getSubAccountTransactionSummaryForDays(sessionManager.getBusinessId(), xbuid, xsub, last - 1)
+			List<WF03Dto> result = acbalRepo.getSubAccountTransactionSummaryForDays(sessionManager.getBusinessId(), xbuid, xsub, last)
 					.stream()
 					.map(row -> new WF03Dto(((Date) row[0]).toString(), (BigDecimal) row[1]))
 					.collect(Collectors.toList());

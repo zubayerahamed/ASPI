@@ -1,8 +1,12 @@
 package com.zayaanit.repository;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -23,4 +27,12 @@ public interface XuserwidgetsRepo extends JpaRepository<Xuserwidgets, Xuserwidge
 
 	@Query(value = "select isnull(max(COALESCE(xsequence,0)) + 1, 1) from xuserwidgets where zid=?1 and zemail=?2", nativeQuery = true)
 	public Integer getNextAvailableSeqn(Integer zid, String zemail);
+
+	// Update all xdefault = false where zid=?
+	@Modifying
+	@Transactional
+	@Query(value = "update xuserwidgets set xdefault = 0 where zid = ?1", nativeQuery = true)
+	int resetAllDefaults(Integer zid);
+
+	public Optional<Xuserwidgets> findByZidAndZemailAndXdefaultTrue(Integer zid, String zemail);
 }

@@ -34,6 +34,7 @@ import com.zayaanit.model.WF04Dto;
 import com.zayaanit.model.WF04ReqParam;
 import com.zayaanit.model.WF05Dto;
 import com.zayaanit.model.WF05ReqParam;
+import com.zayaanit.model.WI01Dto;
 import com.zayaanit.model.WI02ReqParam;
 import com.zayaanit.model.WI03ReqParam;
 import com.zayaanit.model.WI04ReqParam;
@@ -47,10 +48,16 @@ import com.zayaanit.model.WP04Dto;
 import com.zayaanit.model.WP04ReqParam;
 import com.zayaanit.model.WP05Dto;
 import com.zayaanit.model.WP05ReqParam;
+import com.zayaanit.model.WS01Dto;
+import com.zayaanit.model.WS02Dto;
 import com.zayaanit.model.WS02ReqParam;
+import com.zayaanit.model.WS03Dto;
 import com.zayaanit.model.WS03ReqParam;
+import com.zayaanit.model.WS04Dto;
 import com.zayaanit.model.WS04ReqParam;
+import com.zayaanit.model.WS05Dto;
 import com.zayaanit.model.WS05ReqParam;
+import com.zayaanit.model.WS06Dto;
 import com.zayaanit.model.WS06ReqParam;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.AcsubRepo;
@@ -62,11 +69,18 @@ import com.zayaanit.service.impl.WF02Service;
 import com.zayaanit.service.impl.WF03Service;
 import com.zayaanit.service.impl.WF04Service;
 import com.zayaanit.service.impl.WF05Service;
+import com.zayaanit.service.impl.WI01Service;
 import com.zayaanit.service.impl.WP01Service;
 import com.zayaanit.service.impl.WP02Service;
 import com.zayaanit.service.impl.WP03Service;
 import com.zayaanit.service.impl.WP04Service;
 import com.zayaanit.service.impl.WP05Service;
+import com.zayaanit.service.impl.WS01Service;
+import com.zayaanit.service.impl.WS02Service;
+import com.zayaanit.service.impl.WS03Service;
+import com.zayaanit.service.impl.WS04Service;
+import com.zayaanit.service.impl.WS05Service;
+import com.zayaanit.service.impl.WS06Service;
 
 /**
  * @author Zubayer Ahaned
@@ -92,6 +106,13 @@ public class DashboardController extends KitController {
 	@Autowired private WP03Service wp03Service;
 	@Autowired private WP04Service wp04Service;
 	@Autowired private WP05Service wp05Service;
+	@Autowired private WS01Service ws01Service;
+	@Autowired private WS02Service ws02Service;
+	@Autowired private WS03Service ws03Service;
+	@Autowired private WS04Service ws04Service;
+	@Autowired private WS05Service ws05Service;
+	@Autowired private WS06Service ws06Service;
+	@Autowired private WI01Service wi01Service;
 	@Autowired private XuserwidgetsRepo xuserwidgetsRepo;
 	@Autowired private XwidgetsRepo xwidgetsRepo;
 	@Autowired private AcmstRepo acmstRepo;
@@ -227,7 +248,7 @@ public class DashboardController extends KitController {
 			Xwidgets ws04 = ws04Op.isPresent() ? ws04Op.get() : null;
 			last = ws04 != null ? ws04.getXdefault() : 10;
 
-			model.addAttribute("WS04REQPARAM", WS04ReqParam.builder().xfdate(new Date()).xtdate(new Date()).last(last).type("DAYS").build());
+			model.addAttribute("WS04REQPARAM", WS04ReqParam.builder().topxcus(last).xfdate(new Date()).xtdate(new Date()).last(last).type("DAYS").build());
 
 			// WS05
 			Optional<Xwidgets> ws05Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WS05"));
@@ -715,5 +736,143 @@ public class DashboardController extends KitController {
 
 		List<WP05Dto> datas = wp05Service.topItemPurchase(xbuid, topxitem, last, type, xfdate, xtdate);
 		return datas;
+	}
+
+	@GetMapping("/WS01/WG01")
+	public String WS01WG01(Model model) {
+		WS01Dto dto = ws01Service.salesOrder();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WS01WG01";
+	}
+
+	@GetMapping("/WS01/WG02")
+	public String WS01WG02(Model model) {
+		WS01Dto dto = ws01Service.salesInvocie();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WS01WG02";
+	}
+
+	@GetMapping("/WS01/WG03")
+	public String WS01WG03(Model model) {
+		WS01Dto dto = ws01Service.salesReturn();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WS01WG03";
+	}
+
+	@GetMapping("/WS02/WG01")
+	public @ResponseBody List<WS02Dto> WS02WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xcus, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,
+			@RequestParam(required = true) String xfdate, 
+			@RequestParam(required = true) String xtdate, 
+			Model model
+		) {
+
+		List<WS02Dto> datas = ws02Service.customerSalesStatement(xbuid, xcus, last, type, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WS03/WG01")
+	public @ResponseBody List<WS03Dto> WS03WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xitem, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,
+			@RequestParam(required = true) String xfdate, 
+			@RequestParam(required = true) String xtdate, 
+			Model model
+		) {
+
+		List<WS03Dto> datas = ws03Service.itemSalesStatement(xbuid, xitem, last, type, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WS04/WG01")
+	public @ResponseBody List<WS04Dto> WS04WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer topxcus, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,
+			@RequestParam(required = true) String xfdate, 
+			@RequestParam(required = true) String xtdate, 
+			Model model
+		) {
+
+		List<WS04Dto> datas = ws04Service.topCustomerTransaction(xbuid, topxcus, last, type, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WS05/WG01")
+	public @ResponseBody List<WS05Dto> WS05WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer topxitem, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,
+			@RequestParam(required = true) String xfdate, 
+			@RequestParam(required = true) String xtdate, 
+			Model model
+		) {
+
+		List<WS05Dto> datas = ws05Service.topItemSales(xbuid, topxitem, last, type, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WS06/WG01")
+	public @ResponseBody List<WS06Dto> WS06WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer topxitem, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,
+			@RequestParam(required = true) String xfdate, 
+			@RequestParam(required = true) String xtdate, 
+			Model model
+		) {
+
+		List<WS06Dto> datas = ws06Service.topProfitableItems(xbuid, topxitem, last, type, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WI01/WG01")
+	public String WI01WG01(Model model) {
+		WI01Dto dto = wi01Service.inventoryTransfer();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WI01WG01";
+	}
+
+	@GetMapping("/WI01/WG02")
+	public String WI01WG02(Model model) {
+		WI01Dto dto = wi01Service.batchProcess();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WI01WG02";
+	}
+
+	@GetMapping("/WI01/WG03")
+	public String WI01WG03(Model model) {
+		WI01Dto dto = wi01Service.inventoryIssue();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WI01WG03";
+	}
+
+	@GetMapping("/WI01/WG04")
+	public String WI01WG04(Model model) {
+		WI01Dto dto = wi01Service.inventoryAdjustment();
+		model.addAttribute("today", dto.getToday());
+		model.addAttribute("thisMonth", dto.getThisMonth());
+		model.addAttribute("thisYear", dto.getThisYear());
+		return "pages/DASH/DASH-fragments::WI01WG04";
 	}
 }

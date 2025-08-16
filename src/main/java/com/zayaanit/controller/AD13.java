@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -343,6 +344,11 @@ public class AD13 extends KitController {
 				return responseHelper.getResponse();
 			}
 
+			if(Boolean.TRUE.equals(xuserwidgets.getXdefault())) {
+				// Remove xdefault from others
+				xuserwidgetRepo.resetAllDefaults(sessionManager.getBusinessId());
+			}
+
 			xuserwidgets.setZid(sessionManager.getBusinessId());
 			xuserwidgets.setXsequence(xuserwidgetRepo.getNextAvailableSeqn(sessionManager.getBusinessId(), xuserwidgets.getZemail()));
 			try {
@@ -359,7 +365,31 @@ public class AD13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		responseHelper.setErrorStatusAndMessage("Update is not allowed");
+		Optional<Xuserwidgets> existOp = xuserwidgetRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), xuserwidgets.getZemail(), xuserwidgets.getXwidget()));
+		if(!existOp.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Data not found for update");
+			return responseHelper.getResponse();
+		}
+
+		if(Boolean.TRUE.equals(xuserwidgets.getXdefault())) {
+			// Remove xdefault from others
+			Optional<Xuserwidgets> currentDefaultOp =  xuserwidgetRepo.findByZidAndZemailAndXdefaultTrue(sessionManager.getBusinessId(), xuserwidgets.getZemail());
+			if(currentDefaultOp.isPresent() && !currentDefaultOp.get().getXwidget().equalsIgnoreCase(existOp.get().getXwidget())) {
+				Xuserwidgets currentDefault = currentDefaultOp.get();
+				currentDefault.setXdefault(false);
+				xuserwidgetRepo.save(currentDefault);
+			}
+		}
+
+		Xuserwidgets existObj = existOp.get();
+		existObj.setXdefault(xuserwidgets.getXdefault());
+		existObj = xuserwidgetRepo.save(existObj);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + existObj.getZemail()));
+		reloadSections.add(new ReloadSection("widget-table-container", "/AD13/widget-table?zemail=" + existObj.getZemail() + "&xwidget=" + existObj.getXwidget()));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
 	}
 
@@ -437,11 +467,74 @@ public class AD13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		// Resequence every rows
+		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+		int i = 1;
+		for(Xuserwidgets d : detailsList) {
+			d.setXsequence(i);
+			xuserwidgetRepo.save(d);
+			i++;
+		}
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + zemail));
 		reloadSections.add(new ReloadSection("widget-table-container", "/AD13/widget-table?zemail=" + zemail + "&xwidget=RESET"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");
 		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@PostMapping("/widget-table/seqn/{direction}")
+	public String updateSequence(@PathVariable String direction, @RequestParam Integer xsequence, @RequestParam String zemail, @RequestParam String xwidget, Model model){
+		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+
+		// Check the table has only one row, then return without do nothing
+		if(detailsList.isEmpty() || detailsList.size() == 1) {
+			model.addAttribute("xuserwidgets", Xuserwidgets.getDefaultInstance(zemail));
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD13/AD13-fragments::widget-table";
+		}
+
+		Optional<Xuserwidgets> existOp = xuserwidgetRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), zemail, xwidget));
+		// Is current object is not present then do nothing
+		if(!existOp.isPresent()) {
+			model.addAttribute("xuserwidgets", Xuserwidgets.getDefaultInstance(zemail));
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD13/AD13-fragments::widget-table";
+		}
+
+		Integer min = detailsList.stream().mapToInt(m -> m.getXsequence()).min().orElse(0);
+		Integer max = detailsList.stream().mapToInt(m -> m.getXsequence()).max().orElse(0);
+
+		Xuserwidgets currentRow = existOp.get();
+
+		// If first row the do nothing
+		if(currentRow.getXsequence() == min && "UP".equalsIgnoreCase(direction)) {
+			model.addAttribute("xuserwidgets", Xuserwidgets.getDefaultInstance(zemail));
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD13/AD13-fragments::widget-table";
+		}
+
+		// if last row, then do nothing
+		if(currentRow.getXsequence() == max && "DOWN".equalsIgnoreCase(direction)) {
+			model.addAttribute("xuserwidgets", Xuserwidgets.getDefaultInstance(zemail));
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD13/AD13-fragments::widget-table";
+		}
+
+		Xuserwidgets sibling = detailsList.stream().filter(f -> f.getXsequence() == xsequence).findFirst().orElse(null);
+		sibling.setXsequence(currentRow.getXsequence());
+		xuserwidgetRepo.save(sibling);
+
+		currentRow.setXsequence(xsequence);
+		xuserwidgetRepo.save(currentRow);
+
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+		model.addAttribute("xuserwidgets", Xuserwidgets.getDefaultInstance(zemail));
+		model.addAttribute("detailList", detailsList);
+		return "pages/AD13/AD13-fragments::widget-table";
 	}
 }
