@@ -172,8 +172,8 @@ public abstract class AbstractReportController extends KitController {
 		ReportMenu rm = ReportMenu.valueOf(params.getReportCode());
 
 		Xscreens xscreen = null;
-		Optional<Xscreens> xscreenOp = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), params.getReportCode()));
-		if(xscreenOp.isPresent()) xscreen = xscreenOp.get();
+		//Optional<Xscreens> xscreenOp = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), params.getReportCode()));
+		//if(xscreenOp.isPresent()) xscreen = xscreenOp.get();
 
 		String message = "";
 		HttpHeaders headers = new HttpHeaders();

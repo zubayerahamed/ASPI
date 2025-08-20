@@ -61,7 +61,7 @@
 
 					<div class="col-md-3 d-none" id="reportFileSection">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Report File</label>
+							<label class="form-label">Report File</label>
 							<input type="text" class="form-control" th:field="*{xfile}">
 						</div>
 					</div>
@@ -69,7 +69,6 @@
 						<div class="mb-3 form-group">
 							<label class="form-label required">Report Engine</label>
 							<select class="form-control select" th:field="*{xengine}" data-minimum-results-for-search="Infinity">
-								<option value="">-- Please Select --</option>
 								<option value="CRYSTAL">Crystal Report</option>
 								<option value="FOP">FOP Report</option>
 								<option value="JASPER">Jasper Report</option>
@@ -126,10 +125,10 @@
 				const type = $('#xtype').val();
 				if (type === 'Report') {
 					$('#reportFileSection, #reportEngineSection').removeClass('d-none');
-					$('#xfile, #xengine').attr('required', true);
+					//$('#xfile, #xengine').attr('required', true);
 				} else {
 					$('#reportFileSection, #reportEngineSection').addClass('d-none');
-					$('#xfile, #xengine').removeAttr('required').val('');
+					//$('#xfile, #xengine').removeAttr('required').val('');
 				}
 			}
 
