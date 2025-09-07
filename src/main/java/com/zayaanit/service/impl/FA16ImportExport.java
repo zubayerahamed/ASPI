@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -275,7 +276,7 @@ public class FA16ImportExport extends AbstractImportExport {
 			t.setCreditSubAcc(((Double) value).intValue());
 		} else if (cellCount == 7) {
 			Double doubleValue = (Double) value;
-			t.setAmount(BigDecimal.valueOf(doubleValue).setScale(2));
+			t.setAmount(BigDecimal.valueOf(doubleValue).setScale(2, RoundingMode.DOWN));
 		} else if (cellCount == 8) {
 			t.setNarration((String) value);
 		}
