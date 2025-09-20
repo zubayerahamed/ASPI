@@ -1583,6 +1583,517 @@
 		</div>
 
 
+		<!-- WI02 -->
+		<div class="row" th:if="${WI02 eq 'Y' OR WI05 eq 'Y'}">
+			<!-- WI02 -->
+			<div class="col-lg-6 col-xl-6" th:if="${WI02 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WI02WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI02WG01xbuid"
+													th:value="${WI02REQPARAM.xbuid ne null ? WI02REQPARAM.xbuid + ' - ' + WI02REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WI02WG01xbuid" th:value="${WI02REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI02WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Item Group</label>
+										<select class="form-control select" id="WI02WG01xgroup" name="WI02WG01xgroup" th:value="${WI02REQPARAM.xgroup}" required="required">
+											<option value="">-- Select --</option>
+											<option th:each="xcode : ${WI02REQPARAM.xcodes}" th:value="${xcode}" th:selected="${WI02REQPARAM.xgroup eq xcode}" th:text="${xcode}">Days</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Store</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI02WG01xwh"
+													th:value="${WI02REQPARAM.xwh ne null ? WI02REQPARAM.xwh + ' - ' + WI02REQPARAM.storeName : ''}">
+											<input 	type="hidden" class="search-val" name="WI02WG01xwh" th:value="${WI02REQPARAM.xwh}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LMD11/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI02WG01xwh',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WI02WG01type" name="WI02WG01type" th:value="${WI02REQPARAM.type}" required="required">
+											<option value="Quantity_n_Value" th:selected="${WI02REQPARAM.type eq 'Quantity_n_Value'}">Quantity & Value</option>
+											<option value="Quantity" th:selected="${WI02REQPARAM.type eq 'Quantity'}">Quantity</option>
+											<option value="Value" th:selected="${WI02REQPARAM.type eq 'Value'}">Value</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WI02WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WI02WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+
+			<!-- WI05 -->
+			<div class="col-lg-6 col-xl-6" th:if="${WI05 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WI05WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI05WG01xbuid"
+													th:value="${WI05REQPARAM.xbuid ne null ? WI05REQPARAM.xbuid + ' - ' + WI05REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WI05WG01xbuid" th:value="${WI05REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI05WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label">Item</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI05WG01xitem"
+													th:value="${WI05REQPARAM.xitem ne null ? WI05REQPARAM.xitem + ' - ' + WI05REQPARAM.itemName : ''}">
+											<input 	type="hidden" class="search-val" name="WI05WG01xitem" th:value="${WI05REQPARAM.xitem}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LMD12/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI05WG01xitem',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WI05WG01type" name="WI05WG01type" th:value="${WI05REQPARAM.type}" required="required">
+											<option value="DATEBETWEEN" th:selected="${WI05REQPARAM.type eq 'DATEBETWEEN'}">Date Between</option>
+											<option value="BATCHES" th:selected="${WI05REQPARAM.type eq 'BATCHES'}">Batches</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-4 WI05WG01type-BATCHES">
+									<div class="mb-3 form-group">
+										<label class="form-label">Last</label>
+										<input type="number" class="form-control numeric-only" name="WI05WG01last" th:value="${WI05REQPARAM.last}">
+									</div>
+								</div>
+
+								<div class="col-md-4 WI05WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">From Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WI05WG01xfdate" 
+													id="WI05WG01xfdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WI05REQPARAM.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WI05REQPARAM.xfdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 WI05WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">To Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WI05WG01xtdate" 
+													id="WI05WG01xtdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WI05REQPARAM.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WI05REQPARAM.xtdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WI05WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WI05WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+
+		<!-- WI03 -->
+		<div class="row" th:if="${WI03 eq 'Y'}">
+			<!-- WI03 -->
+			<div class="col-lg-12 col-xl-12" th:if="${WI03 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WI03WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI03WG01xbuid"
+													th:value="${WI03REQPARAM.xbuid ne null ? WI03REQPARAM.xbuid + ' - ' + WI03REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WI03WG01xbuid" th:value="${WI03REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI03WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Store</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI03WG01xwh"
+													th:value="${WI03REQPARAM.xwh ne null ? WI03REQPARAM.xwh + ' - ' + WI03REQPARAM.storeName : ''}">
+											<input 	type="hidden" class="search-val" name="WI03WG01xwh" th:value="${WI03REQPARAM.xwh}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LMD11/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI03WG01xwh',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Item</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI03WG01xitem"
+													th:value="${WI03REQPARAM.xitem ne null ? WI03REQPARAM.xitem + ' - ' + WI03REQPARAM.itemName : ''}">
+											<input 	type="hidden" class="search-val" name="WI03WG01xitem" th:value="${WI03REQPARAM.xitem}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LMD12/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI03WG01xitem',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2 WI03WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">From Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WI03WG01xfdate" 
+													id="WI03WG01xfdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WI03REQPARAM.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WI03REQPARAM.xfdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2 WI03WG01type-DATEBETWEEN">
+									<div class="mb-3 form-group">
+										<label class="form-label">To Date</label>
+										<div class="input-group">
+											<input 	type="text" 
+													name="WI03WG01xtdate" 
+													id="WI03WG01xtdate" 
+													class="form-control datepicker-date-format" 
+													placeholder="yyyy-mm-dd format" 
+													required
+													th:value="${WI03REQPARAM.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(WI03REQPARAM.xtdate, df)}">
+											<span class="input-group-text">
+												<i class="ph-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WI03WG01type" name="WI03WG01type" th:value="${WI03REQPARAM.type}" required="required">
+											<option value="Pie Chart" th:selected="${WI03REQPARAM.type eq 'Pie Chart'}">Pie Chart</option>
+											<option value="Bar Chart" th:selected="${WI03REQPARAM.type eq 'Bar Chart'}">Bar Chart</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WI03WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer">
+						<div class="row WI03WG01_WG02">
+							<div class="col-md-6" id="WI03WG01-chart" style="height: 500px;"></div>
+							<div class="col-md-6" id="WI03WG02-chart" style="height: 500px;"></div>
+						</div>
+						<div class="row WI03WG03_WG04">
+							<div class="col-md-6" id="WI03WG03-chart" style="height: 500px;"></div>
+							<div class="col-md-6" id="WI03WG04-chart" style="height: 500px;"></div>
+						</div>
+						<div class="row WI03WG05_WG06 d-none">
+							<div class="col-md-6" id="WI03WG05-chart" style="height: 500px;"></div>
+							<div class="col-md-6" id="WI03WG06-chart" style="height: 500px;"></div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+
+		<!-- WI04 -->
+		<div class="row" th:if="${WI04 eq 'Y'}">
+			<!-- WI04 -->
+			<div class="col-lg-12 col-xl-12" th:if="${WI04 eq 'Y'}">
+
+				<div class="card">
+					<div class="card-body">
+						<form id="WI04WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
+
+							<div class="row">
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Business Unit</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI04WG01xbuid"
+													th:value="${WI04REQPARAM.xbuid ne null ? WI04REQPARAM.xbuid + ' - ' + WI04REQPARAM.businessUnitName : ''}">
+											<input 	type="hidden" class="search-val" name="WI04WG01xbuid" th:value="${WI04REQPARAM.xbuid}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LAD17/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI04WG01xbuid',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Store</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI04WG01xwh"
+													th:value="${WI04REQPARAM.xwh ne null ? WI04REQPARAM.xwh + ' - ' + WI04REQPARAM.storeName : ''}">
+											<input 	type="hidden" class="search-val" name="WI04WG01xwh" th:value="${WI04REQPARAM.xwh}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LMD11/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI04WG01xwh',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Category</label>
+										<select class="form-control select" id="WI04WG01xcategory" name="WI04WG01xcategory">
+											<option value="">-- Select --</option>
+											<option th:each="xcode : ${WI04REQPARAM.xcodes}" th:value="${xcode}" th:selected="${WI04REQPARAM.xcategory eq xcode}" th:text="${xcode}">Days</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Item</label>
+										<div class="input-group">
+											<input 	type="text" 
+													class="form-control searchsuggest2"
+													id="WI04WG01xitem"
+													th:value="${WI04REQPARAM.xitem ne null ? WI04REQPARAM.xitem + ' - ' + WI04REQPARAM.itemName : ''}">
+											<input 	type="hidden" class="search-val" name="WI04WG01xitem" th:value="${WI04REQPARAM.xitem}"/>
+											<span 	class="input-group-text btn-search" 
+													th:attr="
+													data-reloadurl='/search/table/LMD12/0?hint=', 
+													data-reloadid='search-suggest-results-container', 
+													data-fieldid='WI04WG01xitem',
+													data-mainscreen=false" 
+													style="cursor: pointer;"><i class="ph-magnifying-glass"></i></span>
+											<span 	class="input-group-text btn-search-clear" 
+													style="cursor: pointer;"><i class="ph-arrow-counter-clockwise"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label">Age Between</label>
+										<div class="row">
+											<div class="col-md-5">
+												<input type="number" class="form-control numeric-only" name="WI04WG01xfdays" id="WI04WG01xfdays" th:value="${WI04REQPARAM.xfdays}"/>
+											</div>
+											<div class="col-md-2 text-center">
+												to
+											</div>
+											<div class="col-md-5">
+												<input type="number" class="form-control numeric-only" name="WI04WG01xtdays" id="WI04WG01xtdays" th:value="${WI04REQPARAM.xtdays}"/>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-2">
+									<div class="mb-3 form-group">
+										<label class="form-label required">Type</label>
+										<select class="form-control select" id="WI04WG01type" name="WI04WG01type" th:value="${WI04REQPARAM.type}" required="required">
+											<option value="Quantity_n_Value" th:selected="${WI04REQPARAM.type eq 'Quantity_n_Value'}">Quantity & Value</option>
+											<option value="Quantity" th:selected="${WI04REQPARAM.type eq 'Quantity'}">Quantity</option>
+											<option value="Value" th:selected="${WI04REQPARAM.type eq 'Value'}">Value</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<button type="submit" class="btn btn-primary btn-sm btn-WI04WG01-submit"><i class="ph ph-arrows-clockwise me-2"></i> Refresh</button>
+									</div>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="card-footer" id="WI04WG01-chart" style="height: 500px;">
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
 	</div>
 	<!-- /content area -->
 
@@ -1920,7 +2431,53 @@
 				loadWidgets('WI01', 'WG04', refreshTimeout);
 			}
 
+			if("Y" === WI02){
+				loadWI02WG01();
+				$('.btn-WI02WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWI02WG01();
+				});
+			}
 
+			if("Y" === WI03){
+				loadWI03WG01();
+				$('.btn-WI03WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWI03WG01();
+				});
+			}
+
+			if("Y" === WI04){
+				loadWI04WG01();
+				$('.btn-WI04WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWI04WG01();
+				});
+			}
+
+			if("Y" === WI05){
+				function toggleWI05WG01type(){
+					var typeValue =  $('#WI05WG01type').val();
+					if('BATCHES' === typeValue){
+						$('.WI05WG01type-BATCHES').removeClass('d-none');
+						$('.WI05WG01type-DATEBETWEEN').addClass('d-none');
+					} else {
+						$('.WI05WG01type-BATCHES').addClass('d-none');
+						$('.WI05WG01type-DATEBETWEEN').removeClass('d-none');
+					}
+				}
+
+				$('#WI05WG01type').on('change', function(){
+					toggleWI05WG01type();
+				});
+				toggleWI05WG01type();
+
+				loadWI05WG01();
+				$('.btn-WI05WG01-submit').off('click').on('click', function(e){
+					e.preventDefault();
+					loadWI05WG01();
+				});
+			}
 
 		})
 
@@ -3056,7 +3613,477 @@
 		}
 
 
+		function loadWI02WG01(){
+			var xbuid = $('input[name="WI02WG01xbuid"]').val();
+			var xgroup = $('select[name="WI02WG01xgroup"]').val();
+			var xwh = $('input[name="WI02WG01xwh"]').val();
+			var type = $('select[name="WI02WG01type"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+			if(xgroup == null || xgroup == '') xgroup = '';
+			if(xwh == null || xwh == '') xwh = -1;
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WI02/WG01?xbuid='+ xbuid +'&xgroup='+ xgroup +'&xwh='+ xwh +'&type='+ type,
+				type: "GET",
+				success: function (data) {
+
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Current Stock Status';
+					barchartPrepareData.containerid = 'WI02WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.ydata2 = [];
+					barchartPrepareData.yaxistitle = 'Quantity';
+					barchartPrepareData.yaxistitle2 = 'Value';
+					barchartPrepareData.xaxistitle = function(value, type){
+						return value;
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.category);
+						barchartPrepareData.ydata.push(d.quantity);
+						barchartPrepareData.ydata2.push(d.amount);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+		function loadWI03WG01(){
+			var xbuid = $('input[name="WI03WG01xbuid"]').val();
+			var xitem = $('input[name="WI03WG01xitem"]').val();
+			var xwh = $('input[name="WI03WG01xwh"]').val();
+			var xfdate = $('input[name="WI03WG01xfdate"]').val();
+			var xtdate = $('input[name="WI03WG01xtdate"]').val();
+			var type = $('select[name="WI03WG01type"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+			if(xitem == null || xitem == '') xitem = -1;
+			if(xwh == null || xwh == '') xwh = -1;
+
+			if(xfdate == null || xfdate == '') {
+				showMessage("error", "From date required");
+				return;
+			}
+			if(xtdate == null || xtdate == '') {
+				showMessage("error", "To date required");
+				return;
+			}
+	
+			// Convert to Date objects
+			let fromDate = new Date(xfdate);
+			let toDate = new Date(xtdate);
+	
+			// Check if From date is after To date
+			if (fromDate > toDate) {
+				showMessage("error", "From date must be earlier than or equal to To date");
+				return;
+			}
+	
+			// Calculate day difference
+			let dayDiff = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24));
+	
+			if (dayDiff > 100) {
+				showMessage("error", "Date range must be 100 days or less");
+				return;
+			}
+
+			if(type === 'Pie Chart'){
+				$('.WI03WG01_WG02').removeClass('d-none');
+				$('.WI03WG03_WG04').removeClass('d-none');
+				$('.WI03WG05_WG06').addClass('d-none');
+			} else {
+				$('.WI03WG01_WG02').addClass('d-none');
+				$('.WI03WG03_WG04').addClass('d-none');
+				$('.WI03WG05_WG06').removeClass('d-none');
+			}
+
+			if(type === 'Pie Chart'){
+				$.ajax({
+					url: getBasepath() + '/DASH/WI03/WG01_WG02?xbuid='+ xbuid +'&xitem='+ xitem +'&xwh='+ xwh +'&xfdate='+ xfdate +'&xtdate='+ xtdate +'&type='+ type,
+					type: "GET",
+					success: function (data) {
+	
+						piechartPrepareData = {};
+						piechartPrepareData.title = 'Item Movement Frequency (Inward)';
+						piechartPrepareData.subtitle = 'Quantity Chart';
+						piechartPrepareData.containerid = 'WI03WG01-chart';
+						piechartPrepareData.seriestitle = 'Quantity';
+						piechartPrepareData.seriesdata = [];
+						$.each(data, function(i, d){
+							piechartPrepareData.seriesdata.push(
+								{ 
+									value: d.quantity, 
+									name: d.xdoctype
+								}
+							);
+						});
+						preparePieChart(piechartPrepareData);
+	
+	
+						piechartPrepareData = {};
+						piechartPrepareData.title = 'Item Movement Frequency (Inward)';
+						piechartPrepareData.subtitle = 'Value Chart';
+						piechartPrepareData.containerid = 'WI03WG02-chart';
+						piechartPrepareData.seriestitle = 'Value';
+						piechartPrepareData.seriesdata = [];
+						$.each(data, function(i, d){
+							piechartPrepareData.seriesdata.push(
+								{ 
+									value: d.value, 
+									name: d.xdoctype 
+								}
+							);
+						});
+						preparePieChart(piechartPrepareData);
+					},
+					error: function (jqXHR, status, errorThrown) {
+						loadingMask2.hide();
+						if (jqXHR.status === 401) {
+							// Session is invalid, reload the url to go back to login page
+							location.reload();
+						} else {
+							showMessage("error", jqXHR.responseJSON.message);
+						}
+					},
+				});
+	
+				$.ajax({
+					url: getBasepath() + '/DASH/WI03/WG03_WG04?xbuid='+ xbuid +'&xitem='+ xitem +'&xwh='+ xwh +'&xfdate='+ xfdate +'&xtdate='+ xtdate +'&type='+ type,
+					type: "GET",
+					success: function (data) {
+	
+						piechartPrepareData = {};
+						piechartPrepareData.title = 'Item Movement Frequency (Outward)';
+						piechartPrepareData.subtitle = 'Quantity Chart';
+						piechartPrepareData.containerid = 'WI03WG03-chart';
+						piechartPrepareData.seriestitle = 'Quantity';
+						piechartPrepareData.seriesdata = [];
+						$.each(data, function(i, d){
+							piechartPrepareData.seriesdata.push(
+								{ 
+									value: d.quantity, 
+									name: d.xdoctype
+								}
+							);
+						});
+						preparePieChart(piechartPrepareData);
+	
+	
+						piechartPrepareData = {};
+						piechartPrepareData.title = 'Item Movement Frequency (Outward)';
+						piechartPrepareData.subtitle = 'Value Chart';
+						piechartPrepareData.containerid = 'WI03WG04-chart';
+						piechartPrepareData.seriestitle = 'Value';
+						piechartPrepareData.seriesdata = [];
+						$.each(data, function(i, d){
+							piechartPrepareData.seriesdata.push(
+								{ 
+									value: d.value, 
+									name: d.xdoctype 
+								}
+							);
+						});
+						preparePieChart(piechartPrepareData);
+					},
+					error: function (jqXHR, status, errorThrown) {
+						loadingMask2.hide();
+						if (jqXHR.status === 401) {
+							// Session is invalid, reload the url to go back to login page
+							location.reload();
+						} else {
+							showMessage("error", jqXHR.responseJSON.message);
+						}
+					},
+				});
+			} else {
+				$.ajax({
+					url: getBasepath() + '/DASH/WI03/WG05?xbuid='+ xbuid +'&xitem='+ xitem +'&xwh='+ xwh +'&xfdate='+ xfdate +'&xtdate='+ xtdate +'&type='+ type,
+					type: "GET",
+					success: function (data) {
+	
+						barchartPrepareData = {};
+						barchartPrepareData.title = 'Item Movement Frequency (Quantity)';
+						barchartPrepareData.containerid = 'WI03WG05-chart';
+						barchartPrepareData.type = type;
+						barchartPrepareData.xdata = [];
+						barchartPrepareData.ydata = [];
+						barchartPrepareData.ydata2 = [];
+						barchartPrepareData.yaxistitle = 'Inward Quantity';
+						barchartPrepareData.yaxistitle2 = 'Outward Quantity';
+						barchartPrepareData.xaxistitle = function(value, type){
+							return value;
+						}
+	
+						$.each(data, function(i, d){
+							barchartPrepareData.xdata.push(d.xdoctype);
+							barchartPrepareData.ydata.push(d.quantity);
+							barchartPrepareData.ydata2.push(d.value);
+						});
+	
+						prepareBarChart(barchartPrepareData);
+					},
+					error: function (jqXHR, status, errorThrown) {
+						loadingMask2.hide();
+						if (jqXHR.status === 401) {
+							// Session is invalid, reload the url to go back to login page
+							location.reload();
+						} else {
+							showMessage("error", jqXHR.responseJSON.message);
+						}
+					},
+				});
+
+				$.ajax({
+					url: getBasepath() + '/DASH/WI03/WG06?xbuid='+ xbuid +'&xitem='+ xitem +'&xwh='+ xwh +'&xfdate='+ xfdate +'&xtdate='+ xtdate +'&type='+ type,
+					type: "GET",
+					success: function (data) {
+	
+						barchartPrepareData = {};
+						barchartPrepareData.title = 'Item Movement Frequency (Value)';
+						barchartPrepareData.containerid = 'WI03WG06-chart';
+						barchartPrepareData.type = type;
+						barchartPrepareData.xdata = [];
+						barchartPrepareData.ydata = [];
+						barchartPrepareData.ydata2 = [];
+						barchartPrepareData.yaxistitle = 'Inward Value';
+						barchartPrepareData.yaxistitle2 = 'Outward Value';
+						barchartPrepareData.xaxistitle = function(value, type){
+							return value;
+						}
+	
+						$.each(data, function(i, d){
+							barchartPrepareData.xdata.push(d.xdoctype);
+							barchartPrepareData.ydata.push(d.quantity);
+							barchartPrepareData.ydata2.push(d.value);
+						});
+	
+						prepareBarChart(barchartPrepareData);
+					},
+					error: function (jqXHR, status, errorThrown) {
+						loadingMask2.hide();
+						if (jqXHR.status === 401) {
+							// Session is invalid, reload the url to go back to login page
+							location.reload();
+						} else {
+							showMessage("error", jqXHR.responseJSON.message);
+						}
+					},
+				});
+
+			}
+
+		}
+
+
+		function loadWI04WG01(){
+			var xbuid = $('input[name="WI04WG01xbuid"]').val();
+			var xwh = $('input[name="WI04WG01xwh"]').val();
+			var xcategory = $('select[name="WI04WG01xcategory"]').val();
+			var xitem = $('input[name="WI04WG01xitem"]').val();
+			var xfdays = $('input[name="WI04WG01xfdays"]').val();
+			var xtdays = $('input[name="WI04WG01xtdays"]').val();
+			var type = $('select[name="WI04WG01type"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+			if(xitem == null || xitem == '') xitem = -1;
+			if(xwh == null || xwh == '') xwh = -1;
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WI04/WG01?xbuid='+ xbuid +'&xitem='+ xitem +'&xcategory='+ xcategory +'&xwh='+ xwh +'&xfdays='+ xfdays +'&xtdays='+ xtdays +'&type='+ type,
+				type: "GET",
+				success: function (data) {
+
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Inventory Age View';
+					barchartPrepareData.containerid = 'WI04WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.ydata2 = [];
+					barchartPrepareData.yaxistitle = 'Quantity';
+					barchartPrepareData.yaxistitle2 = 'Value';
+					barchartPrepareData.xaxistitle = function(value, type){
+						return value;
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.duration);
+						barchartPrepareData.ydata.push(d.quantity);
+						barchartPrepareData.ydata2.push(d.value);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+
+		function loadWI05WG01(){
+			var xbuid = $('input[name="WI05WG01xbuid"]').val();
+			var xitem = $('input[name="WI05WG01xitem"]').val();
+			var type = $('select[name="WI05WG01type"]').val();
+			var last = $('input[name="WI05WG01last"]').val();
+			var xfdate = $('input[name="WI05WG01xfdate"]').val();
+			var xtdate = $('input[name="WI05WG01xtdate"]').val();
+
+			if(xbuid == null || xbuid == '') xbuid = -1;
+			if(xitem == null || xitem == '') xitem = -1;
+
+			if('BATCHES' === type){
+				if(last == null || last == ''){
+					showMessage("error", "Last "+ type +" required");
+					return;
+				}
+				if(last < 1) {
+					last = 1;
+					$('input[name="WI05WG01last"]').val(last);
+				}
+				if(last > 100) {
+					$('input[name="WI05WG01last"]').val(last);
+					last = 100;
+				}
+			} else {
+				if(xfdate == null || xfdate == '') {
+					showMessage("error", "From date required");
+					return;
+				}
+				if(xtdate == null || xtdate == '') {
+					showMessage("error", "To date required");
+					return;
+				}
+
+				// Convert to Date objects
+				let fromDate = new Date(xfdate);
+				let toDate = new Date(xtdate);
+
+				// Check if From date is after To date
+				if (fromDate > toDate) {
+					showMessage("error", "From date must be earlier than or equal to To date");
+					return;
+				}
+
+				// Calculate day difference
+				let dayDiff = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24));
+
+				if (dayDiff > 100) {
+					showMessage("error", "Date range must be 100 days or less");
+					return;
+				}
+			}
+
+			$.ajax({
+				url: getBasepath() + '/DASH/WI05/WG01?xbuid='+ xbuid +'&xitem='+ xitem +'&last='+ last +'&type=' + type + '&xfdate=' + xfdate + '&xtdate=' + xtdate,
+				type: "GET",
+				success: function (data) {
+
+					barchartPrepareData = {};
+					barchartPrepareData.title = 'Production Costing View';
+					barchartPrepareData.containerid = 'WI05WG01-chart';
+					barchartPrepareData.type = type;
+					barchartPrepareData.xdata = [];
+					barchartPrepareData.ydata = [];
+					barchartPrepareData.ydata2 = [];
+					barchartPrepareData.yaxistitle = 'Quantity';
+					barchartPrepareData.yaxistitle2 = 'Rate';
+					barchartPrepareData.xaxistitle = function(value, type){
+						return value;
+					}
+
+					$.each(data, function(i, d){
+						barchartPrepareData.xdata.push(d.batch);
+						barchartPrepareData.ydata.push(d.quantity);
+						barchartPrepareData.ydata2.push(d.rate);
+					});
+
+					prepareBarChart(barchartPrepareData);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					loadingMask2.hide();
+					if (jqXHR.status === 401) {
+						// Session is invalid, reload the url to go back to login page
+						location.reload();
+					} else {
+						showMessage("error", jqXHR.responseJSON.message);
+					}
+				},
+			});
+		}
+
+
+
 		var barchartPrepareData = {};
+		var piechartPrepareData = {};
+
+		function preparePieChart(piechartPrepareData){
+			if (typeof echarts == 'undefined') {
+				console.warn('Warning - echarts.min.js is not loaded.');
+				return;
+			}
+
+			var dom = document.getElementById(piechartPrepareData.containerid);
+			var myChart = echarts.init(dom);
+			var option;
+
+			option = {
+				title: {
+					text: piechartPrepareData.title,
+					subtext: piechartPrepareData.subtitle,
+					left: 'center'
+				},
+				tooltip: {
+					trigger: 'item',
+					formatter: '<b>{a}</b> <br/>{b} : {c} ({d}%)'
+				},
+				legend: {
+					orient: 'vertical',
+					left: 'left'
+				},
+				series: [
+					{
+						name: piechartPrepareData.seriestitle,
+						type: 'pie',
+						radius: '50%',
+						data: piechartPrepareData.seriesdata,
+						emphasis: {
+							itemStyle: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						}
+					}
+				]
+			};
+
+
+			if (option && typeof option === 'object') {
+				myChart.setOption(option);
+			}
+
+			window.addEventListener('resize', myChart.resize);
+		}
 
 		function prepareBarChart(barchartPrepareData){
 			if (typeof echarts == 'undefined') {

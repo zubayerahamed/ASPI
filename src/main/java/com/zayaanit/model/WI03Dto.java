@@ -1,5 +1,7 @@
 package com.zayaanit.model;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WI03Dto {
 
-	private String today;
-	private String thisMonth;
-	private String thisYear;
+	private String xdoctype;
+	private BigDecimal quantity;
+	private BigDecimal value;
 }

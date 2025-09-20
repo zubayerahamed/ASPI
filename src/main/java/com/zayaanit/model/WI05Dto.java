@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WI04Dto {
+public class WI05Dto {
 
-	private String duration;
+	private String batch;
 	private BigDecimal quantity;
-	private BigDecimal value;
+	private BigDecimal rate;
 }

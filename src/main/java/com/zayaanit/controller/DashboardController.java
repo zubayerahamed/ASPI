@@ -35,9 +35,13 @@ import com.zayaanit.model.WF04ReqParam;
 import com.zayaanit.model.WF05Dto;
 import com.zayaanit.model.WF05ReqParam;
 import com.zayaanit.model.WI01Dto;
+import com.zayaanit.model.WI02Dto;
 import com.zayaanit.model.WI02ReqParam;
+import com.zayaanit.model.WI03Dto;
 import com.zayaanit.model.WI03ReqParam;
+import com.zayaanit.model.WI04Dto;
 import com.zayaanit.model.WI04ReqParam;
+import com.zayaanit.model.WI05Dto;
 import com.zayaanit.model.WI05ReqParam;
 import com.zayaanit.model.WP01Dto;
 import com.zayaanit.model.WP02Dto;
@@ -70,6 +74,10 @@ import com.zayaanit.service.impl.WF03Service;
 import com.zayaanit.service.impl.WF04Service;
 import com.zayaanit.service.impl.WF05Service;
 import com.zayaanit.service.impl.WI01Service;
+import com.zayaanit.service.impl.WI02Service;
+import com.zayaanit.service.impl.WI03Service;
+import com.zayaanit.service.impl.WI04Service;
+import com.zayaanit.service.impl.WI05Service;
 import com.zayaanit.service.impl.WP01Service;
 import com.zayaanit.service.impl.WP02Service;
 import com.zayaanit.service.impl.WP03Service;
@@ -113,6 +121,10 @@ public class DashboardController extends KitController {
 	@Autowired private WS05Service ws05Service;
 	@Autowired private WS06Service ws06Service;
 	@Autowired private WI01Service wi01Service;
+	@Autowired private WI02Service wi02Service;
+	@Autowired private WI03Service wi03Service;
+	@Autowired private WI04Service wi04Service;
+	@Autowired private WI05Service wi05Service;
 	@Autowired private XuserwidgetsRepo xuserwidgetsRepo;
 	@Autowired private XwidgetsRepo xwidgetsRepo;
 	@Autowired private AcmstRepo acmstRepo;
@@ -271,9 +283,9 @@ public class DashboardController extends KitController {
 
 			List<Xcodes> xcodes = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Group", Boolean.TRUE, sessionManager.getBusinessId());
 			List<String> itemGroups = xcodes.stream().map(Xcodes::getXcode).collect(Collectors.toList());
-			itemGroups.add("Services");
+			itemGroups = itemGroups.stream().filter(f -> !"Services".equalsIgnoreCase(f)).collect(Collectors.toList());
 
-			model.addAttribute("WI02REQPARAM", WI02ReqParam.builder().xcodes(itemGroups).type("Quantity & Value").build());
+			model.addAttribute("WI02REQPARAM", WI02ReqParam.builder().xcodes(itemGroups).type("Quantity_n_Value").build());
 
 			// WI03
 			Optional<Xwidgets> wi03Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WI03"));
@@ -293,14 +305,14 @@ public class DashboardController extends KitController {
 			List<Xcodes> wi04xcodes = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Category", Boolean.TRUE, sessionManager.getBusinessId());
 			List<String> itemCategories = wi04xcodes.stream().map(Xcodes::getXcode).collect(Collectors.toList());
 
-			model.addAttribute("WI04REQPARAM", WI04ReqParam.builder().xcodes(itemCategories).xfdays(1).xtdays(last).type("Quantity & Value").build());
+			model.addAttribute("WI04REQPARAM", WI04ReqParam.builder().xcodes(itemCategories).xfdays(1).xtdays(last).type("Quantity_n_Value").build());
 
 			// WI05
 			Optional<Xwidgets> wi05Op = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), "WI05"));
 			Xwidgets wi05 = wi05Op.isPresent() ? wi05Op.get() : null;
 			last = wi05 != null ? wi05.getXdefault() : 10;
 
-			model.addAttribute("WI05REQPARAM", WI05ReqParam.builder().xfdate(new Date()).xtdate(new Date()).last(last).type("Batches").build());
+			model.addAttribute("WI05REQPARAM", WI05ReqParam.builder().xfdate(new Date()).xtdate(new Date()).last(last).type("BATCHES").build());
 
 		} else {
 			// Check user has access those widgets
@@ -477,9 +489,9 @@ public class DashboardController extends KitController {
 
 				List<Xcodes> xcodes = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Group", Boolean.TRUE, sessionManager.getBusinessId());
 				List<String> itemGroups = xcodes.stream().map(Xcodes::getXcode).collect(Collectors.toList());
-				itemGroups.add("Services");
+				itemGroups = itemGroups.stream().filter(f -> !"Services".equalsIgnoreCase(f)).collect(Collectors.toList());
 
-				model.addAttribute("WI02REQPARAM", WI02ReqParam.builder().xcodes(itemGroups).type("Quantity & Value").build());
+				model.addAttribute("WI02REQPARAM", WI02ReqParam.builder().xcodes(itemGroups).type("Quantity_n_Value").build());
 			}
 
 			// WI03
@@ -507,7 +519,7 @@ public class DashboardController extends KitController {
 				List<Xcodes> wi04xcodes = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Category", Boolean.TRUE, sessionManager.getBusinessId());
 				List<String> itemCategories = wi04xcodes.stream().map(Xcodes::getXcode).collect(Collectors.toList());
 
-				model.addAttribute("WI04REQPARAM", WI04ReqParam.builder().xcodes(itemCategories).xfdays(1).xtdays(last).type("Quantity & Value").build());
+				model.addAttribute("WI04REQPARAM", WI04ReqParam.builder().xcodes(itemCategories).xfdays(1).xtdays(last).type("Quantity_n_Value").build());
 			}
 
 			// WI05
@@ -518,7 +530,7 @@ public class DashboardController extends KitController {
 				Xwidgets wi05 = wi05Op.isPresent() ? wi05Op.get() : null;
 				int last = wi05 != null ? wi05.getXdefault() : 10;
 
-				model.addAttribute("WI05REQPARAM", WI05ReqParam.builder().xfdate(new Date()).xtdate(new Date()).last(last).type("Batches").build());
+				model.addAttribute("WI05REQPARAM", WI05ReqParam.builder().xfdate(new Date()).xtdate(new Date()).last(last).type("BATCHES").build());
 			}
 		}
 
@@ -874,5 +886,109 @@ public class DashboardController extends KitController {
 		model.addAttribute("thisMonth", dto.getThisMonth());
 		model.addAttribute("thisYear", dto.getThisYear());
 		return "pages/DASH/DASH-fragments::WI01WG04";
+	}
+
+	@GetMapping("/WI02/WG01")
+	public @ResponseBody List<WI02Dto> WI02WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) String xgroup, 
+			@RequestParam(required = true) Integer xwh,
+			@RequestParam(required = true) String type, 
+			Model model
+		) {
+
+		List<WI02Dto> datas = wi02Service.currentStockStatus(xbuid, xgroup, xwh, type);
+		return datas;
+	}
+
+	@GetMapping("/WI03/WG01_WG02")
+	public @ResponseBody List<WI03Dto> WG01_WG02(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xwh, 
+			@RequestParam(required = true) Integer xitem,
+			@RequestParam(required = true) String xfdate,
+			@RequestParam(required = true) String xtdate,
+			@RequestParam(required = true) String type,
+			Model model
+		) {
+
+		List<WI03Dto> datas = wi03Service.inwardPieChartWG01_WG02(xbuid, xitem, xwh, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WI03/WG03_WG04")
+	public @ResponseBody List<WI03Dto> WG03_WG04(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xwh, 
+			@RequestParam(required = true) Integer xitem,
+			@RequestParam(required = true) String xfdate,
+			@RequestParam(required = true) String xtdate,
+			@RequestParam(required = true) String type,
+			Model model
+		) {
+
+		List<WI03Dto> datas = wi03Service.outwardPieChartWG03_WG04(xbuid, xitem, xwh, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WI03/WG05")
+	public @ResponseBody List<WI03Dto> WI03WG05(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xwh, 
+			@RequestParam(required = true) Integer xitem,
+			@RequestParam(required = true) String xfdate,
+			@RequestParam(required = true) String xtdate,
+			@RequestParam(required = true) String type,
+			Model model
+		) {
+
+		List<WI03Dto> datas = wi03Service.barChartWG05(xbuid, xitem, xwh, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WI03/WG06")
+	public @ResponseBody List<WI03Dto> WI03WG06(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xwh, 
+			@RequestParam(required = true) Integer xitem,
+			@RequestParam(required = true) String xfdate,
+			@RequestParam(required = true) String xtdate,
+			@RequestParam(required = true) String type,
+			Model model
+		) {
+
+		List<WI03Dto> datas = wi03Service.barChartWG06(xbuid, xitem, xwh, xfdate, xtdate);
+		return datas;
+	}
+
+	@GetMapping("/WI04/WG01")
+	public @ResponseBody List<WI04Dto> WI04WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xwh,
+			@RequestParam(required = true) String xcategory,
+			@RequestParam(required = true) Integer xitem,
+			@RequestParam(required = true) Integer xfdays,
+			@RequestParam(required = true) Integer xtdays,
+			@RequestParam(required = true) String type,
+			Model model
+		) {
+
+		List<WI04Dto> datas = wi04Service.inventoryAgeView(xbuid, xwh, xcategory, xitem, xfdays, xtdays, type);
+		return datas;
+	}
+
+	@GetMapping("/WI05/WG01")
+	public @ResponseBody List<WI05Dto> WI05WG01(
+			@RequestParam(required = true) Integer xbuid,
+			@RequestParam(required = true) Integer xitem, 
+			@RequestParam(required = true) Integer last,
+			@RequestParam(required = true) String type,
+			@RequestParam(required = true) String xfdate, 
+			@RequestParam(required = true) String xtdate, 
+			Model model
+		) {
+
+		List<WI05Dto> datas = wi05Service.productionCostingView(xbuid, xitem, last, type, xfdate, xtdate);
+		return datas;
 	}
 }

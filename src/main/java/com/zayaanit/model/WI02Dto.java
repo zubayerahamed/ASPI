@@ -1,9 +1,9 @@
 package com.zayaanit.model;
 
-import lombok.AllArgsConstructor;
+import java.math.BigDecimal;
+
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Zubayer Ahaned
@@ -14,11 +14,15 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class WI02Dto {
 
-	private String today;
-	private String thisMonth;
-	private String thisYear;
+	private String category;
+	private BigDecimal quantity;
+	private BigDecimal amount;
+	
+	public WI02Dto(String category, BigDecimal quantity, BigDecimal amount) {
+		this.category = category;
+		this.quantity = quantity;
+		this.amount = amount;
+	}
 }
