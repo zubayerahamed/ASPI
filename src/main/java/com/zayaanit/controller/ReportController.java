@@ -80,16 +80,17 @@ public class ReportController extends AbstractReportController{
 		try {
 			rm = ReportMenu.valueOf(rptcode);
 		} catch (Exception e) {
-			log.error(ERROR, e.getMessage(), e);
+			log.error("=======** Report code not in system, Creating virtual Report **========");
 			// Simulate virtual enum
 			try {
 				rm = new VirtualReportMenu(
-					"VIRTUAL", 
-					"Custom Report: " + rptcode, 
-					rptcode.toLowerCase() + ".rpt", 
+					rptcode.toUpperCase(), 
+					pageTitle, 
+					rptcode.toUpperCase() + ".rpt", 
 					new HashMap<>(), // or load custom paramMap from DB
-					"N", 
-					false
+					"Y", 
+					false,
+					"VIRTUAL"
 				);
 			} catch (Exception e2) {
 				log.error(ERROR, e2.getMessage(), e2);
@@ -108,13 +109,23 @@ public class ReportController extends AbstractReportController{
 		if(fieldsList != null && !fieldsList.isEmpty()) {
 			fields = getReportFields(fieldsList);
 		} else {
+			if(rm.getType().equalsIgnoreCase("VIRTUAL")) {
+				if(!isAjaxRequest(request)) {
+					return "redirect:/";
+				}
+
+				model.addAttribute("error", "Page Not found");
+				model.addAttribute("status", "404");
+				return "pages/404";
+			}
+
 			fields = getReportFieldService(rm).getReportFields();
 		}
 
 		model.addAttribute("fieldsList", fields);
 		model.addAttribute("reportFound", true);
 		model.addAttribute("group", rm.getGroup());
-		model.addAttribute("reportName", rm.getDescription());
+		model.addAttribute("reportName", pageTitle);
 		model.addAttribute("reportCode", rm.getGroup());
 
 		return "pages/RP/RP";
@@ -124,8 +135,6 @@ public class ReportController extends AbstractReportController{
 		details.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
 
 		List<FormFieldBuilder> fieldsList = new ArrayList<>();
-
-		//fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
 
 		for(Xscreenrpdt detail : details) {
 			if (FormFieldType.TEXT.name().equalsIgnoreCase(detail.getXtype())) {

@@ -123,29 +123,32 @@ public abstract class AbstractReportController extends KitController {
 	@SuppressWarnings("unchecked")
 	@PostMapping("/validate")
 	public @ResponseBody Map<String, Object> validate(RequestParameters params){
-//		ReportMenuBase rm = ReportMenu.valueOf(params.getReportCode());
-		
 		ReportMenuBase rm = null;
 		try {
 			rm = ReportMenu.valueOf(params.getReportCode());
 		} catch (Exception e) {
 			log.error(ERROR, e.getMessage(), e);
+			log.error("====** This is virtual report, so don't need any validation **====");
+			// For virtual report, there is not validation process
+			responseHelper.setSuccessStatusAndMessage("No validation.");
+			responseHelper.setDisplayMessage(false);
+			return responseHelper.getResponse();
+
 			// Simulate virtual enum
-			try {
-				rm = new VirtualReportMenu(
-					"VIRTUAL", 
-					"Custom Report: " + params.getReportCode(), 
-					params.getReportCode().toLowerCase() + ".rpt", 
-					new HashMap<>(), // or load custom paramMap from DB
-					"N", 
-					false
-				);
-			} catch (Exception e2) {
-				log.error(ERROR, e2.getMessage(), e2);
-			}
+//			try {
+//				rm = new VirtualReportMenu(
+//					params.getReportCode().toUpperCase(), 
+//					"Custom Report: " + params.getReportCode().toUpperCase(), 
+//					params.getReportCode().toUpperCase() + ".rpt", 
+//					new HashMap<>(), // or load custom paramMap from DB
+//					"Y", 
+//					false, 
+//					"VIRTUAL"
+//				);
+//			} catch (Exception e2) {
+//				log.error(ERROR, e2.getMessage(), e2);
+//			}
 		}
-		
-		
 
 		ReportType reportType = ReportType.PDF;
 		Map<String, Object> reportParams = new HashMap<>();
@@ -169,25 +172,59 @@ public abstract class AbstractReportController extends KitController {
 	@SuppressWarnings("unchecked")
 	@PostMapping("/print")
 	public ResponseEntity<Object> print(RequestParameters params) throws IOException {
-		ReportMenu rm = ReportMenu.valueOf(params.getReportCode());
-
+		// Get the xscreen record to execute custom report file
 		Xscreens xscreen = null;
-		//Optional<Xscreens> xscreenOp = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), params.getReportCode()));
-		//if(xscreenOp.isPresent()) xscreen = xscreenOp.get();
+		Optional<Xscreens> xscreenOp = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), params.getReportCode()));
+		if(xscreenOp.isPresent()) xscreen = xscreenOp.get();
 
 		String message = "";
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(new MediaType("text", "html"));
 		headers.add("X-Content-Type-Options", "nosniff");
 
-//		if(rm == null && xscreen == null) {
-//			String error = "Screen not found";
-//			String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
-//			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
-//		}
+		// If there is no xscreen record, then this report is invalid and return error
+		if(xscreen == null) {
+			String error = "Screen not found";
+			String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
+			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
+		}
 
+		ReportMenuBase rm = null;
+		try {
+			rm = ReportMenu.valueOf(params.getReportCode());
+		} catch (Exception e) {
+			log.error(ERROR, e.getMessage(), e);
+			log.error("====** This is virtual report **====");
+			// Simulate virtual enum
+			try {
+				rm = new VirtualReportMenu(
+					params.getReportCode().toUpperCase(), 
+					xscreen.getXtitle(), 
+					params.getReportCode().toUpperCase() + ".rpt", 
+					new HashMap<>(), // or load custom paramMap from DB
+					"Y", 
+					false, 
+					"VIRTUAL"
+				);
+			} catch (Exception e2) {
+				log.error(ERROR, e2.getMessage(), e2);
+			}
+		}
+
+		if(rm == null) {
+			String error = "Cant found any report";
+			String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
+			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
+		}
+
+		// Set the filename from xscreen if xscreen has filename
 		String fileName = rm.getFileName();
-		if(xscreen != null && StringUtils.isNotBlank(xscreen.getXfile())) fileName = xscreen.getXfile().trim();
+		if(StringUtils.isNotBlank(xscreen.getXfile())) {
+			fileName = xscreen.getXfile().trim();
+			if (!fileName.toLowerCase().endsWith(".rpt")) {
+				fileName = fileName + ".rpt";
+			}
+		} 
 
 		Optional<Zbusiness> z = zbusinessRepo.findById(sessionManager.getBusinessId());
 		String reportName = filePath(z.get().getXrptpath()).concat("/").concat(fileName);
@@ -202,14 +239,25 @@ public abstract class AbstractReportController extends KitController {
 			}
 		}
 
-		String reportTitle = StringUtils.isBlank(params.getXtitle()) ? rm.getDescription() : params.getXtitle();
-		if(xscreen != null && StringUtils.isNotBlank(xscreen.getXtitle())) reportTitle = xscreen.getXtitle().trim();
-		boolean attachment = true;
+		// Report Title
+		String reportTitle = xscreen.getXtitle();
+		if(StringUtils.isBlank(reportTitle)) reportTitle = params.getXtitle();
+		if(StringUtils.isBlank(reportTitle)) reportTitle = rm.getDescription();
+		reportTitle = reportTitle.trim();
 
+		boolean attachment = true;
 		ReportType reportType = params.getReportType();
+
 		Map<String, Object> reportParams = new HashMap<>();
 		List<Xscreenrpdt> details = xscreendetailRepo.findAllByZidAndXscreen(sessionManager.getBusinessId(), params.getReportCode());
 		if(details == null || details.isEmpty()) {
+			// if it is virtual report, then return error message
+			if(rm.getType().equalsIgnoreCase("VIRTUAL")) {
+				String error = "Report details not found for this virtual report";
+				String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
+				return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
+			}
+
 			for(Map.Entry<String, String> m : rm.getParamMap().entrySet()) {
 				String reportParamFieldName = m.getKey();
 				String[] arr = m.getValue().split("\\|");
@@ -219,7 +267,7 @@ public abstract class AbstractReportController extends KitController {
 				convertObjectAndPutIntoMap(cristalReportParamName, paramType, method, reportParams);
 			}
 		} else {
-			reportParams.put("zid", sessionManager.getBusinessId());
+			//reportParams.put("zid", sessionManager.getBusinessId());
 			reportParams.put("xtitle", reportTitle);
 			details.sort(Comparator.comparing(Xscreenrpdt::getXseqn));
 			for(Xscreenrpdt detail : details) {
@@ -231,7 +279,7 @@ public abstract class AbstractReportController extends KitController {
 			}
 		}
 
-		String engine = xscreen != null ? xscreen.getXengine() : null;
+		String engine = xscreen.getXengine();
 		if(StringUtils.isBlank(engine)) {
 			if(rm.isEnabledFop()) {
 				engine = "FOP";
@@ -245,7 +293,7 @@ public abstract class AbstractReportController extends KitController {
 			try {
 				reportName = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath())
 								.append(File.separator).append("xsl").append(File.separator)
-								.append(rm.name() + ".xsl").toString();
+								.append(rm.getGroup() + ".xsl").toString();
 			} catch (URISyntaxException e) {
 				log.error(ERROR, e.getMessage(), e);
 			}
@@ -284,7 +332,7 @@ public abstract class AbstractReportController extends KitController {
 			byt = os.toByteArray();
 
 			if(ReportType.EXCEL.equals(reportType) || ReportType.EXCEL_DATA.equals(reportType)) {
-				headers.add("Content-Disposition", "attachment; filename=report.xls");
+				headers.add("Content-Disposition", "attachment; filename="+ reportTitle +".xls");
 				headers.setContentType(new MediaType("application", "excel"));
 			} else {
 				headers.add("URL Filter", ".*");

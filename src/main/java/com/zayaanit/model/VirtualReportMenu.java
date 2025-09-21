@@ -15,14 +15,16 @@ public class VirtualReportMenu implements ReportMenuBase {
 	private Map<String, String> paramMap;
 	private String defaultAccess;
 	private boolean enabledFop;
+	private String type;
 
-	public VirtualReportMenu(String group, String description, String fileName, Map<String, String> paramMap, String defaultAccess, boolean enabledFop) {
+	public VirtualReportMenu(String group, String description, String fileName, Map<String, String> paramMap, String defaultAccess, boolean enabledFop, String type) {
 		this.group = group;
 		this.description = description;
 		this.fileName = fileName;
 		this.paramMap = paramMap;
 		this.defaultAccess = defaultAccess;
 		this.enabledFop = enabledFop;
+		this.type = type;
 	}
 
 	@Override
@@ -53,5 +55,10 @@ public class VirtualReportMenu implements ReportMenuBase {
 	@Override
 	public boolean isEnabledFop() {
 		return enabledFop;
+	}
+
+	@Override
+	public String getType() {
+		return this.type;
 	}
 }

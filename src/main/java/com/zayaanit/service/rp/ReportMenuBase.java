@@ -18,4 +18,6 @@ public interface ReportMenuBase {
 	String getDefaultAccess();
 
 	boolean isEnabledFop();
+
+	String getType();
 }
