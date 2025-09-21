@@ -29,6 +29,6 @@ public interface XscreenrpdtRepo extends JpaRepository<Xscreenrpdt, XscreenrpdtP
 	@Query(value = "select isnull(max(COALESCE(xrow,0)) + 1, 1) from xscreenrpdt where zid=?1 and xscreen=?2", nativeQuery = true)
 	public Integer getNextAvailableRow(Integer zid, String xscreen);
 
-	@Query(value = "select isnull(max(COALESCE(xseqn,1)) + 1, 2) from xscreenrpdt where zid=?1 and xscreen=?2", nativeQuery = true)
+	@Query(value = "select isnull(max(COALESCE(xseqn,0)) + 1, 1) from xscreenrpdt where zid=?1 and xscreen=?2", nativeQuery = true)
 	public Integer getNextAvailableSequence(Integer zid, String xscreen);
 }

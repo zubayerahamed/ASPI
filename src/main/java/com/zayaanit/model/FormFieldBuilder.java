@@ -174,6 +174,14 @@ public class FormFieldBuilder {
 		return ffb;
 	}
 
+	/**
+	 * RADIO
+	 * @param sequence
+	 * @param prompt
+	 * @param options
+	 * @param selectedOption
+	 * @return
+	 */
 	public static FormFieldBuilder generateRadioField(int sequence, String prompt, List<RadioOption> options, String selectedOption) {
 		FormFieldBuilder ffb = new FormFieldBuilder();
 		ffb.setSeqn(sequence);
@@ -246,6 +254,15 @@ public class FormFieldBuilder {
 		return ffb;
 	}
 
+	/**
+	 * Advanced Search Field
+	 * @param sequence
+	 * @param prompt
+	 * @param searchUrl
+	 * @param defaultValue
+	 * @param required
+	 * @return
+	 */
 	public static FormFieldBuilder generateAdvancedSearchField(int sequence, String prompt, String searchUrl, String defaultValue, boolean required) {
 		FormFieldBuilder ffb = new FormFieldBuilder();
 		ffb.setSeqn(sequence);
@@ -259,6 +276,17 @@ public class FormFieldBuilder {
 		return ffb;
 	}
 
+	/**
+	 * Advanced Search Field
+	 * @param sequence
+	 * @param prompt
+	 * @param searchUrl
+	 * @param defaultValue
+	 * @param required
+	 * @param dependentFieldId
+	 * @param resetFieldId
+	 * @return
+	 */
 	public static FormFieldBuilder generateAdvancedSearchField(int sequence, String prompt, String searchUrl, String defaultValue, boolean required, String dependentFieldId, String resetFieldId) {
 		FormFieldBuilder ffb = new FormFieldBuilder();
 		ffb.setSeqn(sequence);

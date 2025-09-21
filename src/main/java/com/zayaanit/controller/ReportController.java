@@ -1,5 +1,6 @@
 package com.zayaanit.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,9 +23,11 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.zayaanit.entity.Xscreenrpdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
+import com.zayaanit.enums.FormFieldType;
 import com.zayaanit.enums.ReportMenu;
 import com.zayaanit.model.DropdownOption;
 import com.zayaanit.model.FormFieldBuilder;
+import com.zayaanit.model.RadioOption;
 import com.zayaanit.model.VirtualReportMenu;
 import com.zayaanit.service.rp.ReportMenuBase;
 
@@ -122,16 +125,50 @@ public class ReportController extends AbstractReportController{
 
 		List<FormFieldBuilder> fieldsList = new ArrayList<>();
 
-		fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
+		//fieldsList.add(FormFieldBuilder.generateHiddenField(1, sessionManager.getBusinessId().toString()));
 
 		for(Xscreenrpdt detail : details) {
-			if("HIDDEN".equalsIgnoreCase(detail.getXtype())) {
+			if (FormFieldType.TEXT.name().equalsIgnoreCase(detail.getXtype())) {
+				String defautlValue = detail.getXdefaultvalue();
+				String parsedValue = "";
+				if("##zid##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getBusinessId().toString();
+				if("##xstaff##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getLoggedInUserDetails().getXstaff().toString();
+				fieldsList.add(FormFieldBuilder.generateTextField(detail.getXseqn(), detail.getXlabel(), parsedValue, detail.getXisrequired()));
+			} else if (FormFieldType.NUMBER.name().equalsIgnoreCase(detail.getXtype())) {
+				BigDecimal defautlValue = BigDecimal.valueOf(Double.valueOf(detail.getXdefaultvalue()));
+				FormFieldBuilder numberField = FormFieldBuilder.generateNumberField(
+					detail.getXseqn(), 
+					detail.getXlabel(), 
+					defautlValue, 
+					detail.getXisrequired()
+				);
+
+				if(detail.getXmin() != null) {
+					numberField.setMin(Integer.valueOf(detail.getXmin().toString()));
+				}
+
+				if(detail.getXmax() != null) {
+					numberField.setMax(Integer.valueOf(detail.getXmax().toString()));
+				}
+
+				if(detail.getXstep() != null) {
+					numberField.setStep(detail.getXstep());
+				}
+
+				fieldsList.add(numberField);
+			} else if(FormFieldType.DISABLED.name().equalsIgnoreCase(detail.getXtype())) {
+				String defautlValue = detail.getXdefaultvalue();
+				String parsedValue = "";
+				if("##zid##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getBusinessId().toString();
+				if("##xstaff##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getLoggedInUserDetails().getXstaff().toString();
+				fieldsList.add(FormFieldBuilder.generateDisabledField(detail.getXseqn(), detail.getXlabel(), parsedValue));
+			} else if(FormFieldType.HIDDEN.name().equalsIgnoreCase(detail.getXtype())) {
 				String defautlValue = detail.getXdefaultvalue();
 				String parsedValue = "";
 				if("##zid##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getBusinessId().toString();
 				if("##xstaff##".equalsIgnoreCase(defautlValue)) parsedValue = sessionManager.getLoggedInUserDetails().getXstaff().toString();
 				fieldsList.add(FormFieldBuilder.generateHiddenField(detail.getXseqn(), parsedValue));
-			} else if("DATE".equalsIgnoreCase(detail.getXtype())) {
+			} else if(FormFieldType.DATE.name().equalsIgnoreCase(detail.getXtype())) {
 				Date defDate = null;
 				String defaultValue = detail.getXdefaultvalue().trim();
 				if("TODAY".equalsIgnoreCase(defaultValue)) {
@@ -141,10 +178,39 @@ public class ReportController extends AbstractReportController{
 					defDate = sdf.parse(defaultValue);
 				}
 
-				fieldsList.add(FormFieldBuilder.generateDateField(detail.getXseqn(), detail.getXisstartdate(), detail.getXlabel(), defDate, detail.getXisrequired()));
-			} else if ("SEARCH_ADVANCED".equalsIgnoreCase(detail.getXtype())) {
-				fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(detail.getXseqn(), detail.getXlabel(), "/search/table/"+ detail.getXsearchcode() +"/"+ detail.getXsearchsuffix() +"?hint=", detail.getXdefaultvalue(), detail.getXisrequired()));
-			} else if ("SELECT2".equalsIgnoreCase(detail.getXtype()) || "DROPDOWN".equalsIgnoreCase(detail.getXtype())) {
+				FormFieldBuilder dateField = FormFieldBuilder.generateDateField(
+					detail.getXseqn(), 
+					detail.getXisstartdate(), 
+					detail.getXlabel(), 
+					defDate, 
+					detail.getXisrequired()
+				);
+
+				fieldsList.add(dateField);
+			} else if(FormFieldType.TIME.name().equalsIgnoreCase(detail.getXtype())) {
+				String defaultValue = detail.getXdefaultvalue().trim();
+
+				FormFieldBuilder timeField = FormFieldBuilder.generateTimeField(
+					detail.getXseqn(), 
+					detail.getXlabel(), 
+					defaultValue,
+					detail.getXisrequired()
+				);
+
+				fieldsList.add(timeField);
+			} else if (FormFieldType.SEARCH_ADVANCED.name().equalsIgnoreCase(detail.getXtype())) {
+				fieldsList.add(
+					FormFieldBuilder.generateAdvancedSearchField(
+						detail.getXseqn(), 
+						detail.getXlabel(), 
+						"/search/table/"+ detail.getXsearchcode() +"/"+ detail.getXsearchsuffix() +"?hint=", 
+						detail.getXdefaultvalue(), 
+						detail.getXisrequired(),
+						detail.getXdependentfieldid(),
+						detail.getXresetfieldid()
+					)
+				);
+			} else if (FormFieldType.SELECT2.name().equalsIgnoreCase(detail.getXtype()) || FormFieldType.DROPDOWN.name().equalsIgnoreCase(detail.getXtype())) {
 				List<DropdownOption> options = new ArrayList<>();
 				options.add(new DropdownOption("", "-- Select --"));
 
@@ -160,6 +226,7 @@ public class ReportController extends AbstractReportController{
 				if(StringUtils.isNotBlank(detail.getXoptionsquery())) {
 					String sql = detail.getXoptionsquery().trim();
 					sql = sql.replaceAll("##zid##", sessionManager.getBusinessId().toString());
+					sql = sql.replaceAll("##xstaff##", sessionManager.getLoggedInUserDetails().getXstaff().toString());
 
 					List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();
 					try {
@@ -177,7 +244,60 @@ public class ReportController extends AbstractReportController{
 					}
 				}
 
-				fieldsList.add(FormFieldBuilder.generateDropdownField(detail.getXseqn(), detail.getXlabel(), options, detail.getXdefaultvalue(), detail.getXisrequired()));
+				if(FormFieldType.SELECT2.name().equalsIgnoreCase(detail.getXtype())) {
+					fieldsList.add(FormFieldBuilder.generateSelect2(detail.getXseqn(), detail.getXlabel(), options, detail.getXdefaultvalue(), detail.getXisrequired()));
+				} else {
+					fieldsList.add(FormFieldBuilder.generateDropdownField(detail.getXseqn(), detail.getXlabel(), options, detail.getXdefaultvalue(), detail.getXisrequired()));
+				}
+			} else if (FormFieldType.RADIO.name().equalsIgnoreCase(detail.getXtype())) {
+				List<RadioOption> options = new ArrayList<>();
+
+				if(StringUtils.isNotBlank(detail.getXoptions())) {
+					String optionsString = detail.getXoptions().trim();
+					String[] optionsArr = optionsString.split("\\|");
+					Arrays.asList(optionsArr).stream().forEach(opt -> {
+						String[] optionArr = opt.split("\\:");
+						options.add(new RadioOption(optionArr[0], optionArr[1]));
+					});
+				}
+
+				if(StringUtils.isNotBlank(detail.getXoptionsquery())) {
+					String sql = detail.getXoptionsquery().trim();
+					sql = sql.replaceAll("##zid##", sessionManager.getBusinessId().toString());
+					sql = sql.replaceAll("##xstaff##", sessionManager.getLoggedInUserDetails().getXstaff().toString());
+
+					List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();
+					try {
+						resultList = jdbcTemplate.queryForList(sql);
+					} catch (Exception e) {
+						throw new Exception(e.getCause().getMessage());
+					}
+
+					if(resultList != null && !resultList.isEmpty()) {
+						for(Map<String, Object> row : resultList) {
+							String value = (String) row.get("DV");
+							String prompt = (String) row.get("DP");
+							options.add(new RadioOption(value, prompt));
+						}
+					}
+				}
+
+				FormFieldBuilder radioField = FormFieldBuilder.generateRadioField(
+					detail.getXseqn(),
+					detail.getXlabel(), 
+					options, 
+					detail.getXdefaultvalue()
+				);
+
+				fieldsList.add(radioField);
+			} else if (FormFieldType.CHECKBOX.name().equalsIgnoreCase(detail.getXtype())) {
+				FormFieldBuilder checkboxField = FormFieldBuilder.generateCheckbox(
+					detail.getXseqn(),
+					detail.getXlabel(), 
+					detail.getXisrequired()
+				);
+
+				fieldsList.add(checkboxField);
 			}
 		}
 

@@ -144,6 +144,12 @@ public class SA12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		if("Report".equalsIgnoreCase(xscreens.getXtype())) {
+			if(StringUtils.isBlank(xscreens.getXengine())) {
+				xscreens.setXengine("CRYSTAL");
+			}
+		}
+
 		// VALIDATE XSCREENS
 		modelValidator.validateXscreens(xscreens, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);

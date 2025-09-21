@@ -31,7 +31,7 @@
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Type</label>
-							<select class="form-control select" th:field="*{xtype}" required="required" data-minimum-results-for-search="Infinity">
+							<select class="form-control select" th:field="*{xtype}" required="required">
 								<option value="Screen">Screen</option>
 								<option value="Report">Report</option>
 								<option value="System">System</option>
@@ -68,7 +68,7 @@
 					<div class="col-md-3 d-none" id="reportEngineSection">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Report Engine</label>
-							<select class="form-control select" th:field="*{xengine}" data-minimum-results-for-search="Infinity">
+							<select class="form-control select" th:field="*{xengine}">
 								<option value="CRYSTAL">Crystal Report</option>
 								<option value="FOP">FOP Report</option>
 								<option value="JASPER">Jasper Report</option>
@@ -79,7 +79,15 @@
 
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<button type="reset" th:attr="data-reloadurl='/SA12?xscreen=RESET', data-reloadid='main-form-container', data-detailid='header-table-container', data-detailurl='/SA12/header-table'" class="btn btn-light btn-sm btn-reset">Clear</button>
+						<button type="reset" 
+							th:attr="
+								data-reloadurl='/SA12?xscreen=RESET', 
+								data-reloadid='main-form-container', 
+								data-detailid='header-table-container', 
+								data-detailurl='/SA12/header-table',
+								data-detailid2='detail-table-container', 
+								data-detailurl2='/SA12/detail-table?xscreen=RESET&xrow=RESET'" 
+							class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
 						<button th:if="${not #strings.isEmpty(xscreens.xscreen)}" th:attr="data-url=@{/SA12?xscreen=} + ${xscreens.xscreen}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
@@ -105,6 +113,11 @@
 				sectionReloadAjaxReq({
 					id : $(this).data('detailid'),
 					url : $(this).data('detailurl')
+				});
+
+				sectionReloadAjaxReq({
+					id : $(this).data('detailid2'),
+					url : $(this).data('detailurl2')
 				});
 			});
 
@@ -134,7 +147,6 @@
 
 			toggleReportFields(); // Run on load
 			$('#xtype').change(toggleReportFields); // Run on change
-	
 		})
 	</script>
 </div>
@@ -157,17 +169,28 @@
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Field Type</label>
-							<select class="form-control select field-xtype" th:field="*{xtype}" data-minimum-results-for-search="Infinity" required="required">
+							<select class="form-control select field-xtype" th:field="*{xtype}" id="xtype2" required="required">
 								<option value="">-- Please Select --</option>
-								<option value="HIDDEN">Hidden</option>
 								<option value="TEXT">Text</option>
 								<option value="NUMBER">Number</option>
 								<option value="DATE">Date</option>
 								<option value="TIME">Time</option>
 								<option value="DROPDOWN">Dropdown</option>
-								<option value="SELECT2">Select dropdown</option>
+								<option value="SELECT2">Dropdown (Searchable)</option>
+								<!-- <option value="SEARCH">Search</option> -->
 								<option value="SEARCH_ADVANCED">Search</option>
+								<option value="CHECKBOX">Checkbox</option>
+								<option value="RADIO">Radio</option>
+								<option value="DISABLED">Disabled</option>
+								<option value="HIDDEN">Hidden</option>
 							</select>
+						</div>
+					</div>
+
+					<div class="col-md-3" id="parameter-id">
+						<div class="mb-3 form-group">
+							<label class="form-label required">Rpt file parameter name</label>
+							<input type="text" class="form-control" th:field="*{xrparam}" required="required">
 						</div>
 					</div>
 
@@ -183,16 +206,11 @@
 						</div>
 					</div>
 
-					<div class="col-md-3" id="parameter-id">
-						<div class="mb-3 form-group">
-							<label class="form-label required">Parameter ID</label>
-							<input type="text" class="form-control" th:field="*{xrparam}" required="required">
-						</div>
-					</div>
+					
 
 					<div class="col-md-3" id="field-title">
 						<div class="mb-3 form-group">
-							<label class="form-label required">Field Title</label>
+							<label class="form-label required">Field Label</label>
 							<input type="text" class="form-control" th:field="*{xlabel}" required="required">
 						</div>
 					</div>
@@ -314,19 +332,19 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th>Field Title</th>
+						<th>Field Label</th>
 						<th>Field Type</th>
 						<th>Parameter Data Type</th>
-						<th>Parameter ID</th>
+						<th>Rpt file parameter name</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
-							<a style="cursor: pointer;" data-bs-popup="tooltip" title="Sequence Up" th:if="${x.xseqn > 2}" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table/seqn/up?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" class="btn-detail-seqn"><i class="ph-arrow-fat-lines-up"></i></a>
-							<a style="cursor: pointer;" data-bs-popup="tooltip" title="Sequence Down" th:if="${x.xseqn < #lists.size(detailList) + 1}" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table/seqn/down?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" class="btn-detail-seqn"><i class="ph-arrow-fat-lines-down"></i></a>
-							<span class="ps-3 pe-3" th:text="${x.xseqn - 1}"></span>
+							<a style="cursor: pointer;" data-bs-popup="tooltip" title="Sequence Up" th:if="${x.xseqn > 1}" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table/seqn/up?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" class="btn-detail-seqn"><i class="ph-arrow-fat-lines-up"></i></a>
+							<a style="cursor: pointer;" data-bs-popup="tooltip" title="Sequence Down" th:if="${x.xseqn < #lists.size(detailList)}" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table/seqn/down?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" class="btn-detail-seqn"><i class="ph-arrow-fat-lines-down"></i></a>
+							<span class="ps-3 pe-3" th:text="${x.xseqn}"></span>
 							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:href="@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:text="${x.xlabel}"></a>
 							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/SA12/detail-table?xscreen=' + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:href="@{/SA12/detail-table?xscreen=} + ${x.xscreen} + '&xrow=' + ${x.xrow}" th:if="${x.xtype eq 'HIDDEN'}">HIDDEN FIELD</a>
 						</td>
