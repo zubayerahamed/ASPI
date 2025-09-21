@@ -545,7 +545,7 @@ function generateOnScreenReport(customurl, data, reportType){
 }
 
 
-function validateAndSubmitReportForm(customurl, customvalidateUrl){
+function validateAndSubmitReportForm(customvalidateUrl){
 	if($('form#reportform').length < 1) return;
 
 	var targettedForm = $('form#reportform');
