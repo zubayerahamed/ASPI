@@ -501,6 +501,7 @@ function actionPostRequest(customurl, data, timeout, callbackFunction, callbackF
 
 function generateOnScreenReport(customurl, data, reportType){
 	if(reportType == undefined || reportType == '') reportType = "PDF";
+	data.onScreenReport = true;
 
 	loadingMask2.show();
 	$.ajax({

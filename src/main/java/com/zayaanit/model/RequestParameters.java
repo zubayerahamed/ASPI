@@ -20,6 +20,7 @@ public class RequestParameters {
 	private String status;
 	private ReportType reportType;
 	private String xtitle;
+	private boolean onScreenReport;
 
 	private Object param1;
 	private Object param2;

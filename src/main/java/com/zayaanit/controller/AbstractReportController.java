@@ -183,7 +183,7 @@ public abstract class AbstractReportController extends KitController {
 		headers.add("X-Content-Type-Options", "nosniff");
 
 		// If there is no xscreen record, then this report is invalid and return error
-		if(xscreen == null) {
+		if(xscreen == null && !params.isOnScreenReport()) {
 			String error = "Screen not found";
 			String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
 			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
@@ -219,7 +219,7 @@ public abstract class AbstractReportController extends KitController {
 
 		// Set the filename from xscreen if xscreen has filename
 		String fileName = rm.getFileName();
-		if(StringUtils.isNotBlank(xscreen.getXfile())) {
+		if(xscreen != null && StringUtils.isNotBlank(xscreen.getXfile())) {
 			fileName = xscreen.getXfile().trim();
 			if (!fileName.toLowerCase().endsWith(".rpt")) {
 				fileName = fileName + ".rpt";
@@ -240,7 +240,7 @@ public abstract class AbstractReportController extends KitController {
 		}
 
 		// Report Title
-		String reportTitle = xscreen.getXtitle();
+		String reportTitle = xscreen != null ? xscreen.getXtitle() : "";
 		if(StringUtils.isBlank(reportTitle)) reportTitle = params.getXtitle();
 		if(StringUtils.isBlank(reportTitle)) reportTitle = rm.getDescription();
 		reportTitle = reportTitle.trim();
@@ -279,7 +279,7 @@ public abstract class AbstractReportController extends KitController {
 			}
 		}
 
-		String engine = xscreen.getXengine();
+		String engine = xscreen != null ? xscreen.getXengine() : "";
 		if(StringUtils.isBlank(engine)) {
 			if(rm.isEnabledFop()) {
 				engine = "FOP";
