@@ -117,8 +117,11 @@ public class PO12 extends KitController {
 					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), poordheader.getXstaff()));
 					if(acsubOp.isPresent()) poordheader.setStaffName(acsubOp.get().getXname());
 				}
+			} else {
+				poordheader = Poordheader.getDefaultInstance();
 			}
-			model.addAttribute("poordheader", poordheader != null ? poordheader : Poordheader.getDefaultInstance());
+
+			model.addAttribute("poordheader", poordheader);
 
 			xlogsdtService.save(new Xlogsdt("PO12", "View", this.pageTitle, poordheader.getXpornum().toString(), poordheader.toString(), false, 0));
 			return "pages/PO12/PO12-fragments::main-form";
