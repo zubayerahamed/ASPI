@@ -450,7 +450,7 @@ public class DashboardController extends KitController {
 				Xwidgets ws04 = ws04Op.isPresent() ? ws04Op.get() : null;
 				int last = ws04 != null ? ws04.getXdefault() : 10;
 
-				model.addAttribute("WS04REQPARAM", WS04ReqParam.builder().xfdate(new Date()).xtdate(new Date()).last(last).type("DAYS").build());
+				model.addAttribute("WS04REQPARAM", WS04ReqParam.builder().topxcus(last).xfdate(new Date()).xtdate(new Date()).last(last).type("DAYS").build());
 			}
 
 			// WS05
