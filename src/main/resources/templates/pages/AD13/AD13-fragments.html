@@ -259,12 +259,16 @@
 				<thead>
 					<tr>
 						<th>Profile</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="x : ${detailList}">
 						<td>
 							<a class="detail-dataindex" th:attr="data-reloadid='detail-table-container', data-reloadurl='/AD13/detail-table?zemail=' + ${x.zemail} + '&xprofile=' + ${x.xprofile}" th:href="@{/AD13/detail-table?zemail=} + ${x.zemail} + '&xprofile=' + ${x.xprofile}" th:text="${x.xprofile}"></a>
+						</td>
+						<td class="text-end">
+							<button th:attr="data-url=@{/AD13/detail-table?zemail=} + ${x.zemail} + '&xprofile=' + ${x.xprofile}" type="button" class="btn btn-danger btn-sm btn-detail-delete"><i class="ph-trash"></i></button>
 						</td>
 					</tr>
 				</tbody>
@@ -383,7 +387,8 @@
 					<tr>
 						<th width="100px">Sequence</th>
 						<th width="200px">Widget</th>
-						<th>Is Default?</th>
+						<th class="text-center">Is Default?</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -394,9 +399,12 @@
 							<a style="cursor: pointer;" data-bs-popup="tooltip" title="Sequence Down" th:if="${x.xsequence < #lists.size(detailList)}" th:attr="data-reloadid='widget-table-container', data-reloadurl='/AD13/widget-table/seqn/down?xsequence=' + ${x.xsequence + 1} + '&zemail=' + ${x.zemail} + '&xwidget=' + ${x.xwidget}" class="btn-detail-seqn"><i class="ph-arrow-fat-lines-down"></i></a>
 						</td>
 						<td>
-							<a class="widget-dataindex" th:attr="data-reloadid='widget-table-container', data-reloadurl='/AD13/widget-table?zemail=' + ${x.zemail} + '&xwidget=' + ${x.xwidget}" th:href="@{/AD13/widget-table?zemail=} + ${x.zemail} + '&xwidget=' + ${x.xwidget}" th:text="${x.xwidget}"></a>
+							<a class="widget-dataindex" th:attr="data-reloadid='widget-table-container', data-reloadurl='/AD13/widget-table?zemail=' + ${x.zemail} + '&xwidget=' + ${x.xwidget}" th:href="@{/AD13/widget-table?zemail=} + ${x.zemail} + '&xwidget=' + ${x.xwidget}" th:text="${x.xwidget + ' - ' + x.widgetTitle}"></a>
 						</td>
-						<td th:text="${x.xdefault ne null and x.xdefault == true ? 'Y' : 'N'}"></td>
+						<td class="text-center" th:text="${x.xdefault ne null and x.xdefault == true ? 'Y' : 'N'}"></td>
+						<td class="text-end">
+							<button th:attr="data-url=@{/AD13/widget-table?zemail=} + ${x.zemail} + '&xwidget=' + ${x.xwidget}" type="button" class="btn btn-danger btn-sm btn-widget-delete"><i class="ph-trash"></i></button>
+						</td>
 					</tr>
 				</tbody>
 			</table>

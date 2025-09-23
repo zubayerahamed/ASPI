@@ -54,6 +54,9 @@ public class Xuserwidgets extends AbstractModel<String> {
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
+	@Transient
+	private String widgetTitle;
+
 	public static Xuserwidgets getDefaultInstance(String zemail) {
 		Xuserwidgets obj = new Xuserwidgets();
 		obj.setSubmitFor(SubmitFor.INSERT);

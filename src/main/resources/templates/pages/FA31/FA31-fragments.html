@@ -190,6 +190,7 @@
 						<th>Debit Account</th>
 						<th>Credit Account</th>
 						<th>Adjustment Account</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -213,6 +214,7 @@
 					{ "name": "xaccdr",  "targets": 3 },
 					{ "name": "xacccr",  "targets": 4 },
 					{ "name": "xaccadj",  "targets": 5 },
+					{ "name": "xtype",  "targets": 6 },
 				],
 				"ajax" : getBasepath() + "/FA31/all",
 				"columns": [
@@ -245,11 +247,20 @@
 						render: function(data, type, row, meta) {
 							return data + ' - ' + row['adjustmentAccount'];
 						}
-					 },
+					},
+					{
+						"data": "xtype",
+						"class": 'text-end',
+						"orderable": false,
+						"searchable": false,
+						render: function(data, type, row, meta){
+							return '<button data-url="/FA31" data-xtype="'+ row['xtype'] +'" data-xgsup="'+ row['xgsup'] +'" data-xgitem="'+ row['xgitem'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+						}
+					}
 				]
 			});
 
-			$('.datatable').off('click').on('click', 'a.dataindex', function(e){
+			$('.datatable').on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				sectionReloadAjaxReq({
@@ -257,8 +268,18 @@
 					url : $(this).attr('href')
 				});
 
+			});
 
-				
+			$('.datatable').on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'), {
+					"xtype" : $(this).data('xtype'),
+					"xgsup" : $(this).data('xgsup'),
+					"xgitem" : $(this).data('xgitem'),
+				});
 			})
 		})
 	</script>

@@ -957,6 +957,7 @@
 						<th>Business Unit</th>
 						<th>Name</th>
 						<th>Address</th>
+						<th th:if="${hasdeletebtn}"></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -983,6 +984,7 @@
 			var searchValue = /*[[${searchValue}]]*/;
 			var tablename = /*[[${tablename}]]*/;
 			var fragmentcode = /*[[${fragmentcode}]]*/;
+			var hasdeletebtn = /*[[${hasdeletebtn}]]*/;
 			var orderarr = [0, 'desc'];
 
 			var columns = [
@@ -1004,6 +1006,20 @@
 				}
 			];
 
+			if(hasdeletebtn){
+				columns.push({
+					suffix : [0],
+					name : 'xbuid',
+					rendername: 'xbuid',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/AD17?xbuid='+ row['xbuid'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
+				});
+			}
+
 			orderarr = [0, 'asc'];
 
 			var columnDefs = [];
@@ -1023,7 +1039,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -1046,6 +1064,14 @@
 
 			//make ajax to call server
 			dt.draw();
+
+			$('.' + tablename).on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
 
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
@@ -1109,6 +1135,7 @@
 						<th>Code</th>
 						<th>Name</th>
 						<th>Location</th>
+						<th th:if="${hasdeletebtn}"></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -1135,6 +1162,7 @@
 			var searchValue = /*[[${searchValue}]]*/;
 			var tablename = /*[[${tablename}]]*/;
 			var fragmentcode = /*[[${fragmentcode}]]*/;
+			var hasdeletebtn = /*[[${hasdeletebtn}]]*/;
 			var orderarr = [0, 'desc'];
 
 			var columns = [
@@ -1156,6 +1184,20 @@
 				}
 			];
 
+			if(hasdeletebtn){
+				columns.push({
+					suffix : [0],
+					name : 'xwh',
+					rendername: 'xwh',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/MD11?xwh='+ row['xwh'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
+				});
+			}
+
 			orderarr = [0, 'asc'];
 
 			var columnDefs = [];
@@ -1175,7 +1217,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -1198,6 +1242,14 @@
 
 			//make ajax to call server
 			dt.draw();
+
+			$('.' + tablename).on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
 
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
@@ -1265,6 +1317,7 @@
 						<th>Group</th>
 						<th>Category</th>
 						<th>Note</th>
+						<th th:if="${hasdeletebtn}"></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -1290,6 +1343,7 @@
 			var searchValue = /*[[${searchValue}]]*/;
 			var tablename = /*[[${tablename}]]*/;
 			var fragmentcode = /*[[${fragmentcode}]]*/;
+			var hasdeletebtn = /*[[${hasdeletebtn}]]*/;
 			var orderarr = [0, 'desc'];
 
 			var columns = [
@@ -1327,6 +1381,20 @@
 				}
 			];
 
+			if(hasdeletebtn){
+				columns.push({
+					suffix : [0,1,2,3,4,5],
+					name : 'xnote',
+					rendername: 'xnote',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/MD12?xitem='+ row['xitem'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
+				});
+			}
+
 			orderarr = [0, 'asc'];
 
 			var columnDefs = [];
@@ -1346,7 +1414,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -1369,6 +1439,14 @@
 
 			//make ajax to call server
 			dt.draw();
+
+			$('.' + tablename).on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
 
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
@@ -1431,6 +1509,7 @@
 						<th>Group Type</th>
 						<th>Level</th>
 						<th>Parent Group</th>
+						<th th:if="${hasdeletebtn}"></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -1457,6 +1536,7 @@
 			var searchValue = /*[[${searchValue}]]*/;
 			var tablename = /*[[${tablename}]]*/;
 			var fragmentcode = /*[[${fragmentcode}]]*/;
+			var hasdeletebtn = /*[[${hasdeletebtn}]]*/;
 			var orderarr = [0, 'desc'];
 
 			var columns = [
@@ -1489,6 +1569,20 @@
 				}
 			];
 
+			if(hasdeletebtn){
+				columns.push({
+					suffix : [0],
+					name : 'xagcode',
+					rendername: 'xagcode',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/FA12?xagcode='+ row['xagcode'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
+				});
+			}
+
 			orderarr = [0, 'asc'];
 
 			var columnDefs = [];
@@ -1508,7 +1602,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -1531,6 +1627,14 @@
 
 			//make ajax to call server
 			dt.draw();
+
+			$('.' + tablename).on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
 
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
@@ -1596,6 +1700,7 @@
 						<th>Account Type</th>
 						<th>Account Group</th>
 						<th>Usage</th>
+						<th th:if="${hasdeletebtn}"></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -1622,6 +1727,7 @@
 			var searchValue = /*[[${searchValue}]]*/;
 			var tablename = /*[[${tablename}]]*/;
 			var fragmentcode = /*[[${fragmentcode}]]*/;
+			var hasdeletebtn = /*[[${hasdeletebtn}]]*/;
 			var orderarr = [0, 'desc'];
 
 			var columns = [
@@ -1654,6 +1760,20 @@
 				}
 			];
 
+			if(hasdeletebtn){
+				columns.push({
+					suffix : [0,1],
+					name : 'xacc',
+					rendername: 'xacc',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/FA13?xacc='+ row['xacc'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
+				});
+			}
+
 			orderarr = [0, 'asc'];
 
 			var columnDefs = [];
@@ -1673,7 +1793,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -1696,6 +1818,14 @@
 
 			//make ajax to call server
 			dt.draw();
+
+			$('.' + tablename).on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
 
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();
@@ -1761,6 +1891,7 @@
 						<th th:if="${suffix eq 0}">Type</th>
 						<th>Description</th>
 						<th th:if="${suffix eq 1 or suffix eq 2}">Group</th>
+						<th th:if="${hasdeletebtn}"></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -1787,6 +1918,7 @@
 			var searchValue = /*[[${searchValue}]]*/;
 			var tablename = /*[[${tablename}]]*/;
 			var fragmentcode = /*[[${fragmentcode}]]*/;
+			var hasdeletebtn = /*[[${hasdeletebtn}]]*/;
 			var orderarr = [0, 'desc'];
 
 			var columns = [
@@ -1820,6 +1952,20 @@
 				},
 			];
 
+			if(hasdeletebtn){
+				columns.push({
+					suffix : [0,1,2,3,4],
+					name : 'xsub',
+					rendername: 'xsub',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/FA14?xsub='+ row['xsub'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
+				});
+			}
+
 			orderarr = [0, 'asc'];
 
 			var columnDefs = [];
@@ -1839,7 +1985,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -1862,6 +2010,14 @@
 
 			//make ajax to call server
 			dt.draw();
+
+			$('.' + tablename).on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
 
 			$('.' + tablename).on('click', 'a.dataindex', function(e){
 				e.preventDefault();

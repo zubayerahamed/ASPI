@@ -121,6 +121,7 @@ public class SearchSuggestController {
 			String detailreloadid,
 			String additionalreloadurl,
 			String additionalreloadid,
+			@RequestParam(required = false) boolean hasdeletebtn,
 			Model model){
 
 		model.addAttribute("suffix", suffix);
@@ -138,6 +139,7 @@ public class SearchSuggestController {
 		model.addAttribute("additionalreloadid", additionalreloadid);
 		model.addAttribute("tablename", System.currentTimeMillis());
 		model.addAttribute("fragmentcode", fragmentcode);
+		model.addAttribute("hasdeletebtn", hasdeletebtn);
 		return "search-fragments::" + fragmentcode + "-table";
 	}
 

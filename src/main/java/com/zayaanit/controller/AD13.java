@@ -170,6 +170,10 @@ public class AD13 extends KitController {
 		model.addAttribute("xusers", userOp.get());
 
 		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
+		detailsList.stream().forEach(d -> {
+			Optional<Xwidgets> xwidgetOp = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), d.getXwidget()));
+			if(xwidgetOp.isPresent()) d.setWidgetTitle(xwidgetOp.get().getXtitle());
+		});
 		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
 		model.addAttribute("detailList", detailsList);
 

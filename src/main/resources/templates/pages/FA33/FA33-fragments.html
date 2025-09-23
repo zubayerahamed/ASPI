@@ -153,6 +153,7 @@
 						<th>Item Group</th>
 						<th>Debit Account</th>
 						<th>Credit Account</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -174,6 +175,7 @@
 					{ "name": "xgitem",  "targets": 1 },
 					{ "name": "xaccdr",  "targets": 2 },
 					{ "name": "xacccr",  "targets": 3 },
+					{ "name": "xtype",  "targets": 4 },
 				],
 				"ajax" : getBasepath() + "/FA33/all",
 				"columns": [
@@ -198,17 +200,36 @@
 							return data + ' - ' + row['creditAccount'];
 						}
 					},
+					{
+						"data": "xtype",
+						"class": 'text-end',
+						"orderable": false,
+						"searchable": false,
+						render: function(data, type, row, meta){
+							return '<button data-url="/FA33" data-xtype="'+ row['xtype'] +'" data-xgitem="'+ row['xgitem'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+						}
+					}
 				]
 			});
 
-			$('.datatable').off('click').on('click', 'a.dataindex', function(e){
+			$('.datatable').on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'), {
+					"xtype" : $(this).data('xtype'),
+					"xgitem" : $(this).data('xgitem'),
+				});
+			})
+
+			$('.datatable').on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				sectionReloadAjaxReq({
 					id : $(this).attr('reloadid'),
 					url : $(this).attr('href')
 				});
-
 
 			})
 		})

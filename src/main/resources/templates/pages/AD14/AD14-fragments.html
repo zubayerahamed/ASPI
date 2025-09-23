@@ -113,6 +113,7 @@
 						<th>Code</th>
 						<th>Description</th>
 						<th>Is Active</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -132,7 +133,8 @@
 					{ "name": "xtype",   "targets": 0 },
 					{ "name": "xcode",  "targets": 1 },
 					{ "name": "xdesc",  "targets": 2 },
-					{ "name": "zactive",  "targets": 3 }
+					{ "name": "zactive",  "targets": 3 },
+					{ "name": "zactive",  "targets": 4 }
 				],
 				"ajax" : getBasepath() + "/AD14/all",
 				"columns": [
@@ -153,16 +155,36 @@
 							return data == true ? 'Y' : 'N';
 						}
 					},
+					{
+						"data": "zactive",
+						"class": 'text-end',
+						"orderable": false,
+						"searchable": false,
+						render: function(data, type, row, meta){
+							return '<button data-url="/AD14" data-xtype="'+ row['xtype'] +'" data-xcode="'+ row['xcode'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+						}
+					}
 				]
 			});
 
-			$('.datatable').off('click').on('click', 'a.dataindex', function(e){
+			$('.datatable').on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				sectionReloadAjaxPostReq({
 					id : $(this).attr('reloadid'),
 					url : $(this).attr('href')
 				}, {
+					"xtype" : $(this).data('xtype'),
+					"xcode" : $(this).data('xcode'),
+				});
+			});
+
+			$('.datatable').on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'), {
 					"xtype" : $(this).data('xtype'),
 					"xcode" : $(this).data('xcode'),
 				});

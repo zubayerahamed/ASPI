@@ -217,6 +217,7 @@
 						<th>Discount Exp Account</th>
 						<th>VAT Account</th>
 						<th>AIT Account</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -241,6 +242,7 @@
 					{ "name": "xaccdisc",  "targets": 4 },
 					{ "name": "xaccvat",  "targets": 5 },
 					{ "name": "xaccait",  "targets": 6 },
+					{ "name": "xtype",  "targets": 7 },
 				],
 				"ajax" : getBasepath() + "/FA32/all",
 				"columns": [
@@ -283,10 +285,30 @@
 							return data + ' - ' + row['aitAccount'];
 						}
 					},
+					{
+						"data": "xtype",
+						"class": 'text-end',
+						"orderable": false,
+						"searchable": false,
+						render: function(data, type, row, meta){
+							return '<button data-url="/FA32" data-xtype="'+ row['xtype'] +'" data-xgcus="'+ row['xgcus'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+						}
+					}
 				]
 			});
 
-			$('.datatable').off('click').on('click', 'a.dataindex', function(e){
+			$('.datatable').on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'), {
+					"xtype" : $(this).data('xtype'),
+					"xgcus" : $(this).data('xgcus'),
+				});
+			})
+
+			$('.datatable').on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				sectionReloadAjaxReq({
@@ -294,8 +316,6 @@
 					url : $(this).attr('href')
 				});
 
-
-				
 			})
 		})
 	</script>
