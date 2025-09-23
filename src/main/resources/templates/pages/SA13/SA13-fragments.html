@@ -128,17 +128,21 @@
 								<th>Screen Title</th>
 								<th class="text-center">Screen Type</th>
 								<th class="text-center">Sequence</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="ms : ${g.value}">
+								<td class="text-center" th:text="${ms.xmenu}"></td>
 								<td class="text-center">
-									<a class="dataindex" href="/SA13?xrow=" reloadid="main-form-container" th:attr="data-value=${ms.xrow}" th:text="${ms.xmenu}"></a>
+									<a class="dataindex" href="/SA13?xrow=" reloadid="main-form-container" th:attr="data-value=${ms.xrow}" th:text="${ms.xscreen}"></a>
 								</td>
-								<td class="text-center" th:text="${ms.xscreen}"></td>
 								<td th:text="${ms.xscreenTitle}"></td>
 								<td class="text-center" th:text="${ms.xscreenType}"></td>
 								<td class="text-center" th:text="${ms.xsequence}"></td>
+								<td class="text-end">
+									<button th:attr="data-url=@{/SA13?xrow=} + ${ms.xrow}" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -151,7 +155,15 @@
 		$(document).ready(function() {
 			kit.ui.init();
 
-			$('.normaltable').off('click').on('click', 'a.dataindex', function(e){
+			$('.normaltable').on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest($(this).data('url'));
+			});
+
+			$('.normaltable').on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				var mainreloadurl = $(this).attr('href');

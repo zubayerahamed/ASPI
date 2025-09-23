@@ -110,6 +110,7 @@
 						<th class="text-center">Parent Menu</th>
 						<th>Image/Icon</th>
 						<th class="text-end">Sequence</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -147,6 +148,16 @@
 					class: 'text-end',
 					name : 'xsequence',
 					rendername: 'xsequence',
+				}, {
+					suffix : [0],
+					name : 'xmenu',
+					rendername: 'xmenu',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/SA11?xmenu='+ row['xmenu'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
 				}
 			];
 
@@ -167,7 +178,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -186,8 +199,16 @@
 			});
 
 			dt.draw();
+			
+			$('.datatable').on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
 
-			$('.datatable').off('click').on('click', 'a.dataindex', function(e){
+			$('.datatable').on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				var mainreloadurl = $(this).attr('href');

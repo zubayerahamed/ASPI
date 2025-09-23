@@ -466,6 +466,7 @@
 						<th>Starting</th>
 						<th>Icon</th>
 						<th>Keyword</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -506,6 +507,16 @@
 					suffix : [0],
 					name : 'xkeywords',
 					rendername: 'xkeywords',
+				}, {
+					suffix : [0],
+					name : 'xscreen',
+					rendername: 'xscreen',
+					orderable: false,
+					searchable: false,
+					class: "text-end",
+					render: function(data, type, row, meta) {
+						return '<button data-url="/SA12?xscreen='+ row['xscreen'] +'" type="button" class="btn btn-danger btn-sm btn-table-delete"><i class="ph-trash"></i></button>';
+					}
 				}
 			];
 
@@ -526,7 +537,9 @@
 					dataRetreiver.push({
 						data : el.rendername,
 						render : el.render,
-						class : el.class
+						class : el.class,
+						orderable: el.orderable == undefined ? true : el.orderable,
+						searchable: el.searchable == undefined ? true : el.searchable,
 					});
 				} 
 			});
@@ -546,7 +559,15 @@
 
 			dt.draw();
 
-			$('.datatable').off('click').on('click', 'a.dataindex', function(e){
+			$('.datatable').on('click', 'button.btn-table-delete', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure, to delete this?")){
+					return;
+				}
+				deleteRequest(getBasepath() + $(this).data('url'));
+			});
+
+			$('.datatable').on('click', 'a.dataindex', function(e){
 				e.preventDefault();
 
 				e.preventDefault();
