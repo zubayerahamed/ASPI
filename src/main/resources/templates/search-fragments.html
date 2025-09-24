@@ -1,6 +1,6 @@
 <div th:fragment="menus-table" xmlns:th="http://www.thymeleaf.org">
 	<p th:if="${#lists.isEmpty(menus)}" class="text-center p-10">No matching items found. Try a different keyword.</p>
-	<table class="table table-stripped search-menu-table" th:if="${not #lists.isEmpty(menus)}">
+	<table class="table table-hover table-stripped search-menu-table" th:if="${not #lists.isEmpty(menus)}">
 		<tbody>
 			<tr th:each="menu : ${menus}">
 				<td>
@@ -23,7 +23,7 @@
 <div th:fragment="LSA11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Menu Code</th>
@@ -187,7 +187,7 @@
 <div th:fragment="LSA12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Screen</th>
@@ -339,7 +339,7 @@
 <div th:fragment="LSA13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th class="text-center">Menu Code</th>
@@ -502,7 +502,7 @@
 <div th:fragment="LSA14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Widget</th>
@@ -646,7 +646,7 @@
 <div th:fragment="LAD12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Profile</th>
@@ -793,7 +793,7 @@
 <div th:fragment="LAD13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>User ID</th>
@@ -951,7 +951,7 @@
 <div th:fragment="LAD17-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Business Unit</th>
@@ -1129,7 +1129,7 @@
 <div th:fragment="LMD11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Code</th>
@@ -1307,7 +1307,7 @@
 <div th:fragment="LMD12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Code</th>
@@ -1434,7 +1434,8 @@
 				"columns": dataRetreiver,
 				"search": {
 					"search": searchValue
-				}
+				},
+				
 			});
 
 			//make ajax to call server
@@ -1501,7 +1502,7 @@
 <div th:fragment="LFA12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Group Code</th>
@@ -1692,7 +1693,7 @@
 <div th:fragment="LFA13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Account Code</th>
@@ -1883,7 +1884,7 @@
 <div th:fragment="LFA14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Code</th>
@@ -2075,7 +2076,7 @@
 <div th:fragment="LFA15-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Voucher</th>
@@ -2238,7 +2239,7 @@
 <div th:fragment="LPO12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Order Number</th>
@@ -2422,7 +2423,7 @@
 <div th:fragment="LPO14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>GRN Number</th>
@@ -2611,7 +2612,7 @@
 <div th:fragment="LPO16-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Return No.</th>
@@ -2787,7 +2788,7 @@
 <div th:fragment="LIM11-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Transfer No</th>
@@ -2974,7 +2975,7 @@
 <div th:fragment="LIM13-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Issue No</th>
@@ -3150,7 +3151,7 @@
 <div th:fragment="LIM14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Batch No</th>
@@ -3329,7 +3330,7 @@
 <div th:fragment="LIM15-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Adjustment No</th>
@@ -3500,7 +3501,7 @@
 <div th:fragment="LIM16-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Opening No</th>
@@ -3671,7 +3672,7 @@
 <div th:fragment="LSO12-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Order No</th>
@@ -3842,7 +3843,7 @@
 <div th:fragment="LSO14-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Invoice Number</th>
@@ -4013,7 +4014,7 @@
 <div th:fragment="LSO16-table" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="table-responsive">
-			<table class="table" th:classappend="${tablename}">
+			<table class="table table-hover" th:classappend="${tablename}">
 				<thead>
 					<tr>
 						<th>Return No.</th>

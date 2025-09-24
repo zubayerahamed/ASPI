@@ -105,7 +105,7 @@
 
 		<div class="table-responsive">
 			<h5 class="text-center m-2" th:if="${not dataFound}">Data Not Found</h5>
-			<table class="table datatable" th:if="${dataFound}">
+			<table class="table datatable table-hover" th:if="${dataFound}">
 				<thead>
 					<tr>
 						<th th:each="col : ${columns}" th:text="${col}">Column Name</th>

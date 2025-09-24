@@ -491,6 +491,31 @@ kit.ui.config.tooltip = function(){
 
 }
 
+kit.ui.config.datatable = function(){
+	// Setting datatable defaults
+	$.extend( $.fn.dataTable.defaults, {
+		autoWidth: false,
+		responsive: true,
+		colReorder: true,
+		stateSave: true,
+		dom: '<"datatable-header justify-content-start"f<"ms-sm-auto"l><"ms-sm-3"B>><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+		buttons: {
+			dom: {
+				button: {
+					className: 'btn btn-light'
+				}
+			},
+			buttons: [
+				{extend: 'copy'},
+				{extend: 'csv'},
+				{extend: 'excel'},
+				{extend: 'pdf'},
+				{extend: 'print'}
+			]
+		},
+	});
+}
+
 kit.ui.init = function(){
 	kit.ui.config.tooltip();
 	kit.ui.config.select2();
@@ -503,6 +528,7 @@ kit.ui.init = function(){
 	kit.ui.config.onscreenPrintBtn();
 	kit.ui.config.advancedSearchBtInit();
 	kit.ui.config.inputFieldsEvents();
+	kit.ui.config.datatable();
 }
 
 $(document).ready(function(){
@@ -634,5 +660,4 @@ $(document).ready(function(){
 	$(".menu-search").off('blur').on('blur', function(){
 		$('.menu-search-container').css('display', 'none');
 	})
-	
 })
