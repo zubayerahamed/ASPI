@@ -496,7 +496,6 @@ kit.ui.config.datatable = function(){
 	$.extend( $.fn.dataTable.defaults, {
 		autoWidth: false,
 		responsive: true,
-		colReorder: true,
 		stateSave: true,
 		dom: '<"datatable-header justify-content-start"f<"ms-sm-auto"l><"ms-sm-3"B>><"datatable-scroll-wrap"t><"datatable-footer"ip>',
 		buttons: {
