@@ -516,7 +516,36 @@ kit.ui.config.datatable = function(){
 	});
 }
 
+kit.ui.theme = function(){
+	var sc = $('.custom-scrollbars').attr('data-color-theme');
+	if(sc == undefined){
+		$('.footer-logo-white').addClass('d-none');
+		$('.footer-logo-black').removeClass('d-none');
+	} else {
+		$('.footer-logo-white').removeClass('d-none');
+		$('.footer-logo-black').addClass('d-none');
+	}
+}
+
+kit.ui.observers = function(){
+	var target = $('.custom-scrollbars')[0];
+	// Create observer
+	var observer = new MutationObserver(function(mutationsList) {
+		mutationsList.forEach(function(mutation) {
+			if (mutation.type === "attributes" && mutation.attributeName === "data-color-theme") {
+				kit.ui.theme();
+			}
+		});
+	});
+	// Start observing
+	observer.observe(target, {
+		attributes: true,
+		attributeFilter: ["data-color-theme"]
+	});
+}
+
 kit.ui.init = function(){
+	kit.ui.theme();
 	kit.ui.config.tooltip();
 	kit.ui.config.select2();
 	kit.ui.config.noty();
@@ -529,6 +558,7 @@ kit.ui.init = function(){
 	kit.ui.config.advancedSearchBtInit();
 	kit.ui.config.inputFieldsEvents();
 	kit.ui.config.datatable();
+	kit.ui.observers();
 }
 
 $(document).ready(function(){
