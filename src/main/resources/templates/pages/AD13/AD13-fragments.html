@@ -35,13 +35,13 @@
 					<div class="col-md-3" th:if="${#strings.isEmpty(xusers.zemail)}">
 						<div class="mb-3 form-group">
 							<label class="form-label required">Password</label>
-							<input type="password" class="form-control" th:field="*{xpassword}" required="required">
+							<input type="text" class="form-control" th:field="*{xpassword}" required="required">
 						</div>
 					</div>
 					<div class="col-md-3" th:if="${not #strings.isEmpty(xusers.zemail)}">
 						<div class="mb-3 form-group">
 							<label class="form-label">Password</label>
-							<input type="password" class="form-control" th:field="*{xpassword}">
+							<input type="text" class="form-control" name="xpassword" id="xpassword">
 						</div>
 					</div>
 					<div class="col-md-3">
