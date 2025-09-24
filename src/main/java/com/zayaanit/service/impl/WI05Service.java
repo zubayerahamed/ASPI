@@ -29,14 +29,14 @@ public class WI05Service extends AbstractGenericService {
 			if(last > 100) last = 100;
 			List<WI05Dto> result = moheaderRepo.batchWI05WG01(sessionManager.getBusinessId(), xbuid, xitem, last)
 					.stream()
-					.map(row -> new WI05Dto((String) row[0], (BigDecimal) row[1], (BigDecimal) row[2]))
+					.map(row -> new WI05Dto(((Integer) row[0]).toString(), (BigDecimal) row[1], (BigDecimal) row[2]))
 					.collect(Collectors.toList());
 			return result;
 		} 
 
 		List<WI05Dto> result = moheaderRepo.dateBetweenWI05WG01(sessionManager.getBusinessId(), xbuid, xitem, xfdate, xtdate)
 				.stream()
-				.map(row -> new WI05Dto((String) row[0], (BigDecimal) row[1], (BigDecimal) row[2]))
+				.map(row -> new WI05Dto(((Integer) row[0]).toString(), (BigDecimal) row[1], (BigDecimal) row[2]))
 				.collect(Collectors.toList());
 		return result;
 	}
