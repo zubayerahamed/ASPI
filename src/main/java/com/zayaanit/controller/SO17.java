@@ -447,8 +447,11 @@ public class SO17 extends KitController {
 
 		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
 
-		BigDecimal xtotamt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opcrndetail.getXcrnnum());
-		opcrnheader.setXtotamt(xtotamt);
+		
+		// Calculate total amount
+		BigDecimal lineAmt = opcrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), existObj.getXcrnnum());
+		opcrnheader.setXlineamt(lineAmt);
+		opcrnheader.setXtotamt(opcrnheader.getXlineamt().subtract(opcrnheader.getXdiscamt()));
 		try {
 			opcrnheaderRepo.save(opcrnheader);
 		} catch (Exception e) {
