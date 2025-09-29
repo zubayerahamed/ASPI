@@ -516,7 +516,7 @@ kit.ui.config.datatable = function(){
 }
 
 kit.ui.theme = function(){
-	var sc = $('.custom-scrollbars').attr('data-color-theme');
+	var sc = $('.html-tag').attr('data-color-theme');
 	if(sc == undefined){
 		$('.footer-logo-white').addClass('d-none');
 		$('.footer-logo-black').removeClass('d-none');
@@ -526,22 +526,29 @@ kit.ui.theme = function(){
 	}
 }
 
-kit.ui.observers = function(){
-	var target = $('.custom-scrollbars')[0];
-	// Create observer
-	var observer = new MutationObserver(function(mutationsList) {
-		mutationsList.forEach(function(mutation) {
-			if (mutation.type === "attributes" && mutation.attributeName === "data-color-theme") {
-				kit.ui.theme();
-			}
-		});
-	});
-	// Start observing
-	observer.observe(target, {
-		attributes: true,
-		attributeFilter: ["data-color-theme"]
-	});
-}
+kit.ui.observers = function () {
+    var target = document.querySelector('.html-tag');
+
+    if (!target) {
+        console.warn("custom-scrollbars element not found.");
+        return;
+    }
+
+    // Create observer
+    var observer = new MutationObserver(function (mutationsList) {
+        mutationsList.forEach(function (mutation) {
+            if (mutation.type === "attributes" && mutation.attributeName === "data-color-theme") {
+                kit.ui.theme();
+            }
+        });
+    });
+
+    // Start observing
+    observer.observe(target, {
+        attributes: true,
+        attributeFilter: ["data-color-theme"]
+    });
+};
 
 kit.ui.init = function(){
 	kit.ui.theme();
