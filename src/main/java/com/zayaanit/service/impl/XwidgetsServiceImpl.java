@@ -52,6 +52,7 @@ public class XwidgetsServiceImpl extends AbstractService implements XwidgetsServ
 		Xwidgets em = new Xwidgets();
 		em.setXwidget((String) row.get("xwidget"));
 		em.setXtitle((String) row.get("xtitle"));
+		em.setXdefault((Integer) row.get("xdefault"));
 		return em;
 	}
 
