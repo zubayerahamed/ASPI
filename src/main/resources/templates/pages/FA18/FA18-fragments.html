@@ -40,18 +40,6 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Year</label>
-							<input type="text" class="form-control" name="xyear" id="xyear" th:value="${searchParam.xyear}">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
-							<label class="form-label">Period</label>
-							<input type="text" class="form-control" name="xper" id="xper" th:value="${searchParam.xper}">
-						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="mb-3 form-group">
 							<label class="form-label">Business Unit</label>
 							<div class="input-group">
 								<input 	type="text" 
@@ -72,12 +60,35 @@
 					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
+							<label class="form-label">Year</label>
+							<input type="text" class="form-control" name="xyear" id="xyear" th:value="${searchParam.xyear}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Period</label>
+							<input type="text" class="form-control" name="xper" id="xper" th:value="${searchParam.xper}">
+						</div>
+					</div>
+					
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
 							<label class="form-label">Type</label>
 							<select class="form-control select" th:field="*{xtype}">
 								<option value="">-- Select --</option>
 								<option value="General">General</option>
 								<option value="Imported">Imported</option>
 								<option value="Integrated">Integrated</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Voucher Type</label>
+							<select class="form-control select" th:field="*{xvtype}">
+								<option value="">-- Select --</option>
+								<option value="Journal Voucher">Journal Voucher</option>
+								<option th:each="x : ${voucherTypes}" th:value="${x.xcode}" th:text="${x.xcode}"></option>
 							</select>
 						</div>
 					</div>
@@ -137,6 +148,7 @@
 					"xper" : $('#xper').val(),
 					"xbuid" : $('input[name="xbuid"]').val(),
 					"xtype" : $('#xtype').val(),
+					"xtype" : $('#xvtype').val(),
 					"xstatusjv" :  $('#xstatusjv').val(),
 				});
 			});
@@ -163,6 +175,7 @@
 		<input type="hidden" id="xper" th:value="${searchParam.xper}"/>
 		<input type="hidden" id="xbuid" th:value="${searchParam.xbuid}"/>
 		<input type="hidden" id="xtype" th:value="${searchParam.xtype}"/>
+		<input type="hidden" id="xvtype" th:value="${searchParam.xvtype}"/>
 		<input type="hidden" id="xstatusjv" th:value="${searchParam.xstatusjv}"/>
 
 		<div class="table-responsive">
@@ -172,11 +185,11 @@
 						<th>
 							<input type="checkbox" id="select-all-rows">
 						</th>
-						<th>Voucher</th>
-						<th>Date, Year, Period</th>
-						<th>Business Unit</th>
-						<th>Voucher Type</th>
-						<th>Type</th>
+						<th>Voucher<br/>Date</th>
+						<th>Year<br/>Period</th>
+						<th>Business Unit<br/>Prepared By</th>
+						<th>Type<br/>Voucher Type</th>
+						<th>Reference<br/>Narration</th>
 						<th>GL Status</th>
 						<th>Action</th>
 					</tr>
@@ -198,6 +211,7 @@
 			var xper = $("#xper").val();
 			var xbuid = $("#xbuid").val();
 			var xtype = $("#xtype").val();
+			var xvtype = $("#xvtype").val();
 			var xstatusjv = $("#xstatusjv").val();
 
 			var dt = $('.datatable').DataTable({
@@ -211,10 +225,10 @@
 				"columnDefs": [
 					{ "name": "xvoucher",   "targets": 0 },
 					{ "name": "xvoucher",   "targets": 1 },
-					{ "name": "xdate",   "targets": 2 },
+					{ "name": "xyear",   "targets": 2 },
 					{ "name": "xbuid",  "targets": 3 },
-					{ "name": "xvtype",  "targets": 4 },
-					{ "name": "xtype",  "targets": 5 },
+					{ "name": "xtype",  "targets": 4 },
+					{ "name": "xref",  "targets": 5 },
 					{ "name": "xstatusjv",  "targets": 6 },
 					{ "name": "xdate",  "targets": 7 }
 				],
@@ -228,21 +242,36 @@
 							return '<input type="checkbox" class="voucher-selection" data-xvoucher="'+ data +'">';
 						},
 					},
-					{ "data": "xvoucher" },
 					{ 
-						"data": "xdate" ,
+						"data": "xvoucher" ,
 						render: function(data, type, row, meta) {
-							return data + ' [Year: ' +  row['xyear'] + ', Period: ' + row['xper'] + ']';
+							return data + '<br/>' + row['xdate'];
+						},
+					},
+					{ 
+						"data": "xyear" ,
+						render: function(data, type, row, meta) {
+							return 'Year: ' +  data + '<br/>Period: ' + row['xper'];
 						},
 					},
 					{ 
 						"data": "xbuid",
 						render: function(data, type, row, meta) {
-							return data + ' - ' +  row['businessUnitName'];
+							return data + ' - ' +  row['businessUnitName'] + '<br/>' + row['xstaff'] + ' - ' + row['staffName'];
 						},
 					},
-					{ "data": "xvtype" },
-					{ "data": "xtype" },
+					{ 
+						"data": "xtype",
+						render: function(data, type, row, meta) {
+							return data + '<br/>' +  row['xvtype'];
+						},
+					},
+					{ 
+						"data": "xref",
+						render: function(data, type, row, meta) {
+							return data + '<br/>' +  row['xnote'];
+						},
+					},
 					{ "data": "xstatusjv" },
 					{ 
 						"data": "xdate" ,

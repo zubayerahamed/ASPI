@@ -74,6 +74,7 @@ public class FA18 extends KitController {
 
 	@GetMapping
 	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) {
+		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 		model.addAttribute("searchParam", FA18SearchParam.getDefaultInstance());
 
 		if(isAjaxRequest(request) && frommenu == null) {
@@ -99,6 +100,7 @@ public class FA18 extends KitController {
 		@RequestParam(required = false) Integer xper,
 		@RequestParam(required = false) Integer xbuid,
 		@RequestParam(required = false) String xtype,
+		@RequestParam(required = false) String xvtype,
 		@RequestParam(required = false) String xstatusjv
 		) {
 
@@ -115,6 +117,7 @@ public class FA18 extends KitController {
 		param.setXper(xper);
 		param.setXbuid(xbuid);
 		param.setXtype(xtype);
+		param.setXtype(xvtype);
 		param.setXstatusjv(xstatusjv);
 
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();

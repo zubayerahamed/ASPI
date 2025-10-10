@@ -135,6 +135,7 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 		if(param.getXper() != null) sql.append(" AND im.xper = '"+ param.getXper() +"' ");
 		if(param.getXbuid() != null) sql.append(" AND im.xbuid = '"+ param.getXbuid() +"' ");
 		if(StringUtils.hasText(param.getXtype())) sql.append(" AND im.xtype = '"+ param.getXtype() +"' ");
+		if(StringUtils.hasText(param.getXvtype())) sql.append(" AND im.xvtype = '"+ param.getXvtype() +"' ");
 		if(StringUtils.hasText(param.getXstatusjv())) sql.append(" AND im.xstatusjv = '"+ param.getXstatusjv() +"' ");
 
 		if (searchText == null || searchText.isEmpty()) return sql;
@@ -144,6 +145,7 @@ public class AcheaderServiceImpl extends AbstractService implements AcheaderServ
 				+ "OR im.xper LIKE '%" + searchText + "%' "
 				+ "OR im.xbuid LIKE '%" + searchText + "%' "
 				+ "OR im.xtype LIKE '%" + searchText + "%' "
+				+ "OR im.xvtype LIKE '%" + searchText + "%' "
 				+ "OR bu.xname LIKE '%" + searchText + "%' "
 				+ "OR im.xstatusjv LIKE '%" + searchText + "%') ");
 	}

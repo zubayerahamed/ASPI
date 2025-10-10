@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -111,7 +112,7 @@ public class SA13 extends KitController {
 			}
 		});
 		list.sort(Comparator.comparing(Xmenuscreens::getXmenuSequence));
-		Map<String, List<Xmenuscreens>> groupedByXmenu = new HashMap<>();
+		Map<String, List<Xmenuscreens>> groupedByXmenu = new TreeMap<>();
 		list.stream().forEach(l -> {
 			if(groupedByXmenu.get(l.getXmenu() + " - " + l.getXmenuTitle()) != null) {
 				groupedByXmenu.get(l.getXmenu() + " - " + l.getXmenuTitle()).add(l);

@@ -33,6 +33,7 @@ public class FA18SearchParam implements Serializable {
 	private Integer xper;
 	private Integer xbuid;
 	private String xtype;
+	private String xvtype;
 	private String xstatusjv;
 
 	private String businessUnitName;
