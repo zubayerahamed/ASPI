@@ -89,7 +89,7 @@ public class OpdoheaderServiceImpl extends AbstractService implements Opdoheader
 		em.setXstatus((String) row.get("xstatus"));
 		em.setXstatusim((String) row.get("xstatusim"));
 		em.setXstatusjv((String) row.get("xstatusjv"));
-
+		em.setXvoucher((Integer) row.get("xvoucher"));
 		em.setBusinessUnitName((String) row.get("businessUnitName"));
 		em.setCustomerName((String) row.get("customerName"));
 		em.setWarehouseName((String) row.get("warehouseName"));

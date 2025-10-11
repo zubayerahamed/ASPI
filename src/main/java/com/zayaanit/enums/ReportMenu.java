@@ -13,6 +13,7 @@ public enum ReportMenu implements ReportMenuBase {
 
 	// ON SCREEN REPORT
 	voucher("voucher", "Voucher", "voucher.rpt", ReportParamMap.voucher, "Y", false, "SYSTEM"),
+	acvouchers("acvouchers", "AC Vouchers", "acvouchers.rpt", ReportParamMap.acvouchers, "Y", false, "SYSTEM"),
 
 	poord("poord", "Print Order", "poord.rpt", ReportParamMap.poord, "Y", false, "SYSTEM"),
 	poordgrn("poordgrn", "Print GRNs", "poordgrn.rpt", ReportParamMap.poordgrn, "Y", false, "SYSTEM"),

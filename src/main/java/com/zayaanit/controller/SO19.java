@@ -29,7 +29,6 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Opdoheader;
-import com.zayaanit.entity.Opordheader;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.CaitemPK;

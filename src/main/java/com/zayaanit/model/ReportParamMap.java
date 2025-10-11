@@ -12,6 +12,7 @@ import com.zayaanit.enums.ReportParamDataType;
 public class ReportParamMap {
 
 	public static final Map<String, String> voucher = new HashMap<>();
+	public static final Map<String, String> acvouchers = new HashMap<>();
 	public static final Map<String, String> poord = new HashMap<>();
 	public static final Map<String, String> poordgrn = new HashMap<>();
 	public static final Map<String, String> pogrn = new HashMap<>();
@@ -119,6 +120,16 @@ public class ReportParamMap {
 
 		voucher.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		voucher.put("param2", "xvoucher|" + ReportParamDataType.INTEGER.name());
+
+		acvouchers.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		acvouchers.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
+		acvouchers.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
+		acvouchers.put("param4", "xbuid|" + ReportParamDataType.INTEGER.name());
+		acvouchers.put("param5", "xyear|" + ReportParamDataType.INTEGER.name());
+		acvouchers.put("param6", "xper|" + ReportParamDataType.INTEGER.name());
+		acvouchers.put("param7", "xtype|" + ReportParamDataType.STRING.name());
+		acvouchers.put("param8", "xvtype|" + ReportParamDataType.STRING.name());
+		acvouchers.put("param9", "xstatusjv|" + ReportParamDataType.STRING.name());
 
 		poord.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		poord.put("param2", "xpornum|" + ReportParamDataType.INTEGER.name());

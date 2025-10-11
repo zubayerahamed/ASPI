@@ -32,6 +32,27 @@
 
 	<!-- Content area -->
 	<div class="content">
+		
+		<!--<div class="gallery mb-5">
+			<div class="gallery-item">
+				<div class="border p-5" style="height: 100px"></div>
+			</div>
+			<div class="gallery-item">
+				<div class="border p-5" style="height: 300px"></div>
+			</div>
+			<div class="gallery-item">
+				<div class="border p-5" style="height: 50px"></div>
+			</div>
+			<div class="gallery-item">
+				<div class="border p-5" style="height: 200px"></div>
+			</div>
+			<div class="gallery-item">
+				<div class="border p-5" style="height: 250px"></div>
+			</div>
+			<div class="gallery-item">
+				<div class="border p-5" style="height: 200px"></div>
+			</div>
+		</div>-->
 
 		<!-- WA01 Widgets Section -->
 		<div class="col-md-12 mb-3" th:if="${WA01 eq 'Y'}">
@@ -78,37 +99,42 @@
 
 		<!-- WF01 Widgets Section -->
 		<div class="row" th:if="${WF01 eq 'Y'}">
-			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
-				<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-					<div class="flex-grow-1">
-						<div class="WF01WG01-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG01"></div>
-						</div>
+				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0 text-center">Procurement Activity</h4>
 					</div>
-					<div class="flex-grow-1">
-						<div class="WF01WG02-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG02"></div>
-						</div>
-					</div>
-					<div class="flex-grow-1">
-						<div class="WF01WG03-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG03"></div>
-						</div>
-					</div>
-					<div class="flex-grow-1">
-						<div class="WF01WG04-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG04"></div>
-						</div>
-					</div>
-					<div class="flex-grow-1">
-						<div class="WF01WG05-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG05"></div>
+					<div class="card-body p-1">
+						<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+							<div class="flex-grow-1">
+								<div class="WF01WG01-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG01"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WF01WG02-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG02"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WF01WG03-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG03"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WF01WG04-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG04"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WF01WG05-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WF01WG05"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-
 		</div>
 
 
@@ -119,6 +145,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WF02 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="m-0 p-0">Account Transaction</h4>
+					</div>
 					<div class="card-body">
 						<form id="WF02WG01-form" class="form-validate-jquery" method="POST">
 
@@ -209,6 +238,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WF03 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="m-0 p-0">Sub Account Transaction</h4>
+					</div>
 					<div class="card-body">
 						<form id="WF03WG01-form" class="form-validate-jquery" method="POST">
 
@@ -304,6 +336,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WF04 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="m-0 p-0">Accounts Current Balance</h4>
+					</div>
 					<div class="card-body">
 						<form id="WF04WG01-form" class="form-validate-jquery" method="POST">
 
@@ -360,12 +395,14 @@
 				</div>
 
 			</div>
-			
-			
+
 			<!-- WF05 -->
 			<div class="col-lg-6 col-xl-6" th:if="${WF05 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="m-0 p-0">Profit & Loss View</h4>
+					</div>
 					<div class="card-body">
 						<form id="WF05WG01-form" class="form-validate-jquery" method="POST">
 
@@ -435,25 +472,36 @@
 
 		<!-- WP01 Widgets Section -->
 		<div class="row" th:if="${WP01 eq 'Y'}">
-			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
-				<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-					<div class="flex-grow-1">
-						<div class="WP01WG01-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG01"></div>
-						</div>
+				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0 text-center">Procurement Activity</h4>
 					</div>
-					<div class="flex-grow-1">
-						<div class="WP01WG02-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG02"></div>
-						</div>
-					</div>
-					<div class="flex-grow-1">
-						<div class="WP01WG03-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG03"></div>
+					<div class="card-body p-1">
+						<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+							<div class="flex-grow-1">
+								<div class="WP01WG01-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG01"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WP01WG02-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG02"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WP01WG03-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WP01WG03"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
+			</div>
+
+			<!-- 1st Column -->
+			<div class="col-lg-12 col-xl-12">
+				
 			</div>
 		</div>
 
@@ -464,6 +512,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WP02 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Supplier Purchase View</h4>
+					</div>
 					<div class="card-body">
 						<form id="WP02WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -588,6 +639,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WP03 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Item Purchase Statement</h4>
+					</div>
 					<div class="card-body">
 						<form id="WP03WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -719,6 +773,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WP04 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Top Suppliers Transaction</h4>
+					</div>
 					<div class="card-body">
 						<form id="WP04WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -828,6 +885,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WP05 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Top Item Purchase (Amount)</h4>
+					</div>
 					<div class="card-body">
 						<form id="WP05WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -941,20 +1001,27 @@
 		<div class="row" th:if="${WS01 eq 'Y'}">
 			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
-				<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-					<div class="flex-grow-1">
-						<div class="WS01WG01-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WS01WG01"></div>
-						</div>
+				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0 text-center">Sales Activity</h4>
 					</div>
-					<div class="flex-grow-1">
-						<div class="WS01WG02-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WS01WG02"></div>
-						</div>
-					</div>
-					<div class="flex-grow-1">
-						<div class="WS01WG03-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WS01WG03"></div>
+					<div class="card-body p-1">
+						<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+							<div class="flex-grow-1">
+								<div class="WS01WG01-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WS01WG01"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WS01WG02-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WS01WG02"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WS01WG03-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WS01WG03"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -969,6 +1036,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WS02 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Customer Sales Statement</h4>
+					</div>
 					<div class="card-body">
 						<form id="WS02WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1093,6 +1163,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WS03 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Item Sales Statement</h4>
+					</div>
 					<div class="card-body">
 						<form id="WS03WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1222,6 +1295,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WS04 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Top Suppliers Transaction</h4>
+					</div>
 					<div class="card-body">
 						<form id="WS04WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1331,6 +1407,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WS05 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Top Item Purchase (Amount)</h4>
+					</div>
 					<div class="card-body">
 						<form id="WS05WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1445,6 +1524,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WS06 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Top Profitable Items</h4>
+					</div>
 					<div class="card-body">
 						<form id="WS06WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1555,27 +1637,33 @@
 
 		<!-- WI01 -->
 		<div class="row" th:if="${WI01 eq 'Y'}">
-			<!-- 1st Column -->
 			<div class="col-lg-12 col-xl-12">
-				<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-					<div class="flex-grow-1">
-						<div class="WI01WG01-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG01"></div>
-						</div>
+				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0 text-center">Inventory Activity</h4>
 					</div>
-					<div class="flex-grow-1">
-						<div class="WI01WG02-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG02"></div>
-						</div>
-					</div>
-					<div class="flex-grow-1">
-						<div class="WI01WG03-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG03"></div>
-						</div>
-					</div>
-					<div class="flex-grow-1">
-						<div class="WI01WG04-container">
-							<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG04"></div>
+					<div class="card-body p-1">
+						<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+							<div class="flex-grow-1">
+								<div class="WI01WG01-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG01"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WI01WG02-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG02"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WI01WG03-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG03"></div>
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<div class="WI01WG04-container">
+									<div th:remove="tag" th:include="pages/DASH/DASH-fragments :: WI01WG04"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1589,6 +1677,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WI02 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Current Stock Status</h4>
+					</div>
 					<div class="card-body">
 						<form id="WI02WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1681,6 +1772,9 @@
 			<div class="col-lg-6 col-xl-6" th:if="${WI05 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Production Costing View</h4>
+					</div>
 					<div class="card-body">
 						<form id="WI05WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1810,6 +1904,9 @@
 			<div class="col-lg-12 col-xl-12" th:if="${WI03 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Item Movement Frequency</h4>
+					</div>
 					<div class="card-body">
 						<form id="WI03WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -1965,6 +2062,9 @@
 			<div class="col-lg-12 col-xl-12" th:if="${WI04 eq 'Y'}">
 
 				<div class="card">
+					<div class="card-header">
+						<h4 class="p-0 m-0">Inventory Age View</h4>
+					</div>
 					<div class="card-body">
 						<form id="WI04WG01-form" class="form-validate-jquery" method="POST" th:with="df=${'yyyy-MM-dd'}">
 
@@ -2517,7 +2617,7 @@
 				type: "GET",
 				success: function (data) {
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Account Transaction';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WF02WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -2599,7 +2699,7 @@
 				type: "GET",
 				success: function (data) {
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Sub Account Transaction';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WF03WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -2656,7 +2756,7 @@
 				type: "GET",
 				success: function (data) {
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Accounts Current Balance';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WF04WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -2717,7 +2817,7 @@
 				type: "GET",
 				success: function (data) {
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Profit & Loss View';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WF05WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -2820,7 +2920,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Supplier Purchase View';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WP02WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -2911,7 +3011,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Item Purchase Statement';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WP03WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3010,7 +3110,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Top Suppliers Transcation';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WP04WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3105,7 +3205,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Top Item Purchase (Amount)';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WP05WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3195,7 +3295,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Customer Sales Statement';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WS02WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3286,7 +3386,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Item Sales Statement';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WS03WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3386,7 +3486,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Top Suppliers Transcation';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WS04WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3481,7 +3581,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Top Item Purchase (Amount)';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WS05WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3580,7 +3680,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Top Profitable Items';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WS06WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3629,7 +3729,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Current Stock Status';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WI02WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3717,7 +3817,7 @@
 					success: function (data) {
 	
 						piechartPrepareData = {};
-						piechartPrepareData.title = 'Item Movement Frequency (Inward)';
+						piechartPrepareData.title = 'Inward';
 						piechartPrepareData.subtitle = 'Quantity Chart';
 						piechartPrepareData.containerid = 'WI03WG01-chart';
 						piechartPrepareData.seriestitle = 'Quantity';
@@ -3734,7 +3834,7 @@
 	
 	
 						piechartPrepareData = {};
-						piechartPrepareData.title = 'Item Movement Frequency (Inward)';
+						piechartPrepareData.title = 'Inward';
 						piechartPrepareData.subtitle = 'Value Chart';
 						piechartPrepareData.containerid = 'WI03WG02-chart';
 						piechartPrepareData.seriestitle = 'Value';
@@ -3766,7 +3866,7 @@
 					success: function (data) {
 	
 						piechartPrepareData = {};
-						piechartPrepareData.title = 'Item Movement Frequency (Outward)';
+						piechartPrepareData.title = 'Outward';
 						piechartPrepareData.subtitle = 'Quantity Chart';
 						piechartPrepareData.containerid = 'WI03WG03-chart';
 						piechartPrepareData.seriestitle = 'Quantity';
@@ -3783,7 +3883,7 @@
 	
 	
 						piechartPrepareData = {};
-						piechartPrepareData.title = 'Item Movement Frequency (Outward)';
+						piechartPrepareData.title = 'Outward';
 						piechartPrepareData.subtitle = 'Value Chart';
 						piechartPrepareData.containerid = 'WI03WG04-chart';
 						piechartPrepareData.seriestitle = 'Value';
@@ -3815,7 +3915,7 @@
 					success: function (data) {
 	
 						barchartPrepareData = {};
-						barchartPrepareData.title = 'Item Movement Frequency (Quantity)';
+						barchartPrepareData.title = 'Quantity';
 						barchartPrepareData.containerid = 'WI03WG05-chart';
 						barchartPrepareData.type = type;
 						barchartPrepareData.xdata = [];
@@ -3852,7 +3952,7 @@
 					success: function (data) {
 	
 						barchartPrepareData = {};
-						barchartPrepareData.title = 'Item Movement Frequency (Value)';
+						barchartPrepareData.title = 'Value';
 						barchartPrepareData.containerid = 'WI03WG06-chart';
 						barchartPrepareData.type = type;
 						barchartPrepareData.xdata = [];
@@ -3907,7 +4007,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Inventory Age View';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WI04WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];
@@ -3999,7 +4099,7 @@
 				success: function (data) {
 
 					barchartPrepareData = {};
-					barchartPrepareData.title = 'Production Costing View';
+					barchartPrepareData.title = '';
 					barchartPrepareData.containerid = 'WI05WG01-chart';
 					barchartPrepareData.type = type;
 					barchartPrepareData.xdata = [];

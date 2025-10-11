@@ -110,6 +110,7 @@
 						<button type="reset" th:attr="data-reloadurl='/FA18', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
+						<button th:attr="data-url='/report/print', data-rptcode='acvouchers'" class="btn btn-light btn-sm btn-print-with-search-param ms-1"><i class="ph-printer me-2"></i> Print</button>
 						<button type="submit" class="btn btn-primary btn-sm btn-search-vouchers ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
 					</div>
 				</div>
@@ -133,7 +134,6 @@
 
 			$('.btn-search-vouchers').off('click').on('click', function(e){
 				e.preventDefault();
-				console.log("here");
 
 				var targettedForm = $('form#mainform');
 				if(!targettedForm.smkValidate()) return;
@@ -148,9 +148,30 @@
 					"xper" : $('#xper').val(),
 					"xbuid" : $('input[name="xbuid"]').val(),
 					"xtype" : $('#xtype').val(),
-					"xtype" : $('#xvtype').val(),
+					"xvtype" : $('#xvtype').val(),
 					"xstatusjv" :  $('#xstatusjv').val(),
 				});
+			});
+
+			$('.btn-print-with-search-param').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var url = getBasepath() + $(this).data('url');
+
+				var params = {};
+				params.reportCode = $(this).data('rptcode');
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+				params.param2 = $('#xfdate').val();
+				params.param3 = $('#xtdate').val();
+				params.param4 = $('input[name="xbuid"]').val();
+				params.param5 = $('#xyear').val();
+				params.param6 = $('#xper').val();
+				params.param7 = $('#xtype').val();
+				params.param8 = $('#xvtype').val();
+				params.param9 = $('#xstatusjv').val();
+
+				generateOnScreenReport(url, params);
 			});
 		})
 	</script>

@@ -44,9 +44,10 @@
 							<label class="form-label">Business Unit</label>
 							<div class="input-group">
 								<input 	type="text" 
-										class="form-control searchsuggest2"
-										id="xbuid">
-								<input 	type="hidden" class="search-val" name="xbuid" th:value="${searchParam.xbuid ne null ? searchParam.xbuid + ' - ' + searchParam.businessUnitName : ''}"/>
+										class="form-control  searchsuggest2"
+										id="xbuid"
+										th:value="${searchParam.xbuid != null ? searchParam.xbuid + ' - ' + searchParam.businessUnitName : ''}">
+								<input 	type="hidden" class="search-val" name="xbuid" th:value="${searchParam.xbuid}"/>
 								<span 	class="input-group-text btn-search" 
 										th:attr="
 										data-reloadurl='/search/table/LAD17/0?hint=', 
@@ -121,7 +122,6 @@
 
 			$('.btn-search-vouchers').off('click').on('click', function(e){
 				e.preventDefault();
-				console.log("here");
 
 				var targettedForm = $('form#mainform');
 				if(!targettedForm.smkValidate()) return;
@@ -152,11 +152,11 @@
 			<button class="btn btn-danger btn-sm btn-delete-all ms-1 mb-1"><i class="ph-trash me-2"></i> Delete All Selected</button>
 		</div>
 
-		<input type="hidden" id="xfdate" th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xfdate, df)}"/>
-		<input type="hidden" id="xtdate"  th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xtdate, df)}"/>
-		<input type="hidden" id="xbuid" th:value="${searchParam.xbuid}"/>
-		<input type="hidden" id="xwh" th:value="${searchParam.xwh}"/>
-		<input type="hidden" id="xstatusim" th:value="${searchParam.xstatusim}"/>
+		<input type="hidden" id="xfdateSP" th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xfdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xfdate, df)}"/>
+		<input type="hidden" id="xtdateSP"  th:with="df=${'yyyy-MM-dd'}" th:value="${searchParam.xtdate == null ? #dates.format(#dates.createNow(), df) : #dates.format(searchParam.xtdate, df)}"/>
+		<input type="hidden" id="xbuidSP" th:value="${searchParam.xbuid}"/>
+		<input type="hidden" id="xwhSP" th:value="${searchParam.xwh}"/>
+		<input type="hidden" id="xstatusimSP" th:value="${searchParam.xstatusim}"/>
 
 		<div class="table-responsive">
 			<table class="table datatable table-hover" style="white-space: nowrap;">
@@ -186,11 +186,11 @@
 			kit.ui.init();
 
 			var selectedInvoices = [];
-			var xfdate = $("#xfdate").val();
-			var xtdate = $("#xtdate").val();
-			var xbuid = $("#xbuid").val();
-			var xwh = $("#xwh").val();
-			var xstatusim = $("#xstatusim").val();
+			var xfdate = $("#xfdateSP").val();
+			var xtdate = $("#xtdateSP").val();
+			var xbuid = $("#xbuidSP").val();
+			var xwh = $("#xwhSP").val();
+			var xstatusim = $("#xstatusimSP").val();
 
 			var dt = $('.datatable').DataTable({
 				"deferLoading": true,
@@ -242,7 +242,12 @@
 					},
 					{ "data": "xtotamt" },
 					{ "data": "xstatusim" },
-					{ "data": "xvoucher" },
+					{ 
+						"data": "xvoucher",
+						render: function(data, type, row, meta) {
+							return '<a 	href="#" data-screen="FA17?xvoucher='+ data +'" class="screen-item">'+ data +'</a>';
+						},
+					},
 					{ 
 						"data": "xdate" ,
 						"width": '550px',
