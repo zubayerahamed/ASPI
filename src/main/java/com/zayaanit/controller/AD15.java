@@ -1,6 +1,7 @@
 package com.zayaanit.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,14 +25,20 @@ import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xfavourites;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
+import com.zayaanit.entity.Xuserwidgets;
+import com.zayaanit.entity.Xwidgets;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.XfavouritesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XusersPK;
+import com.zayaanit.entity.pk.XuserwidgetsPK;
+import com.zayaanit.entity.pk.XwidgetsPK;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.repository.XfavouritesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
+import com.zayaanit.repository.XuserwidgetsRepo;
+import com.zayaanit.repository.XwidgetsRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,6 +57,8 @@ public class AD15 extends KitController {
 	@Autowired private XusersRepo xusersRepo;
 	@Autowired private XfavouritesRepo xfavouritesRepo;
 	@Autowired private XscreensRepo xscreenRepo;
+	@Autowired private XuserwidgetsRepo xuserwidgetRepo;
+	@Autowired private XwidgetsRepo xwidgetsRepo;
 
 	private String pageTitle = null;
 
@@ -86,10 +96,19 @@ public class AD15 extends KitController {
 
 		model.addAttribute("user", user);
 
+		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername());
+		detailsList.stream().forEach(d -> {
+			Optional<Xwidgets> xwidgetOp = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), d.getXwidget()));
+			if(xwidgetOp.isPresent()) d.setWidgetTitle(xwidgetOp.get().getXtitle());
+		});
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+		model.addAttribute("detailList", detailsList);
+
 		if(isAjaxRequest(request) && frommenu == null) return "pages/AD15/AD15-fragments::cp-form";
 		if(frommenu == null) return "redirect:/";
 		return "pages/AD15/AD15";
 	}
+
 
 	@Transactional
 	@PostMapping("/cp/store")
@@ -358,5 +377,99 @@ public class AD15 extends KitController {
 
 		model.addAttribute("favouriteMenus", favouriteMenus());
 		return "commons::favorite-links";
+	}
+
+	@Transactional
+	@PostMapping("/widget-table/seqn/{direction}")
+	public String updateSequence(@PathVariable String direction, @RequestParam Integer xsequence, @RequestParam String zemail, @RequestParam String xwidget, Model model){
+		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
+		detailsList.stream().forEach(d -> {
+			Optional<Xwidgets> xwidgetOp = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), d.getXwidget()));
+			if(xwidgetOp.isPresent()) d.setWidgetTitle(xwidgetOp.get().getXtitle());
+		});
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+
+		// Check the table has only one row, then return without do nothing
+		if(detailsList.isEmpty() || detailsList.size() == 1) {
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD15/AD15-fragments::widget-table";
+		}
+
+		Optional<Xuserwidgets> existOp = xuserwidgetRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), zemail, xwidget));
+		// Is current object is not present then do nothing
+		if(!existOp.isPresent()) {
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD15/AD15-fragments::widget-table";
+		}
+
+		Integer min = detailsList.stream().mapToInt(m -> m.getXsequence()).min().orElse(0);
+		Integer max = detailsList.stream().mapToInt(m -> m.getXsequence()).max().orElse(0);
+
+		Xuserwidgets currentRow = existOp.get();
+
+		// If first row the do nothing
+		if(currentRow.getXsequence() == min && "UP".equalsIgnoreCase(direction)) {
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD15/AD15-fragments::widget-table";
+		}
+
+		// if last row, then do nothing
+		if(currentRow.getXsequence() == max && "DOWN".equalsIgnoreCase(direction)) {
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD15/AD15-fragments::widget-table";
+		}
+
+		Xuserwidgets sibling = detailsList.stream().filter(f -> f.getXsequence() == xsequence).findFirst().orElse(null);
+		sibling.setXsequence(currentRow.getXsequence());
+		xuserwidgetRepo.save(sibling);
+
+		currentRow.setXsequence(xsequence);
+		xuserwidgetRepo.save(currentRow);
+
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+		model.addAttribute("detailList", detailsList);
+		return "pages/AD15/AD15-fragments::widget-table";
+	}
+
+	@Transactional
+	@PostMapping("/widget-table/defaulttoggle")
+	public String defaultToggle(@RequestParam String isdefault, @RequestParam String zemail, @RequestParam String xwidget, Model model){
+		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
+		detailsList.stream().forEach(d -> {
+			Optional<Xwidgets> xwidgetOp = xwidgetsRepo.findById(new XwidgetsPK(sessionManager.getBusinessId(), d.getXwidget()));
+			if(xwidgetOp.isPresent()) d.setWidgetTitle(xwidgetOp.get().getXtitle());
+		});
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+
+		// Check the table has only one row, then return without do nothing
+		if(detailsList.isEmpty() || detailsList.size() == 1) {
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD15/AD15-fragments::widget-table";
+		}
+
+		Optional<Xuserwidgets> existOp = xuserwidgetRepo.findById(new XuserwidgetsPK(sessionManager.getBusinessId(), zemail, xwidget));
+		// Is current object is not present then do nothing
+		if(!existOp.isPresent()) {
+			model.addAttribute("detailList", detailsList);
+			return "pages/AD15/AD15-fragments::widget-table";
+		}
+
+		if("Y".equalsIgnoreCase(isdefault)) {
+			// Remove xdefault from others
+			Optional<Xuserwidgets> currentDefaultOp =  xuserwidgetRepo.findByZidAndZemailAndXisdefaultTrue(sessionManager.getBusinessId(), zemail);
+			if(currentDefaultOp.isPresent() && !currentDefaultOp.get().getXwidget().equalsIgnoreCase(existOp.get().getXwidget())) {
+				Xuserwidgets currentDefault = currentDefaultOp.get();
+				currentDefault.setXisdefault(false);
+				xuserwidgetRepo.save(currentDefault);
+			}
+		}
+
+		Xuserwidgets currentRow = existOp.get();
+		currentRow.setXisdefault("Y".equalsIgnoreCase(isdefault));
+		xuserwidgetRepo.save(currentRow);
+
+		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
+		model.addAttribute("detailList", detailsList);
+		return "pages/AD15/AD15-fragments::widget-table";
 	}
 }
