@@ -73,6 +73,8 @@ public class AD15 extends KitController {
 
 	@GetMapping
 	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) {
+		sessionManager.addToMap("lastVisitedUrl", "AD15");
+
 		Optional<Xusers> usersOp = xusersRepo.findById(new XusersPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername()));
 		if(!usersOp.isPresent()) return "redirect:/";
 

@@ -55,7 +55,6 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	@SuppressWarnings("null")
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
 //		System.out.println("====> session id : " + request.getSession().getId());
 		//System.out.println("===> from auth context " + SecurityContextHolder.getContext().getAuthentication().getDetails().toString());
 
@@ -183,11 +182,19 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	}
 
 	private boolean hasAccess(String modulePath) {
-		if(modulePath.equals("/") || modulePath.equals("/home") || modulePath.startsWith("/home")) return true;	// For default path, it always true
+		if(modulePath.equals("/") || modulePath.equals("/home") || modulePath.startsWith("/home")) {
+			return true;	// For default path, it always true
+		}
 
 		// Filter menus, if uesr dont have access
 		if(sessionManager.getLoggedInUserDetails() == null) return false;
-		if(sessionManager.getLoggedInUserDetails().isAdmin()) return true;
+
+		final String SCREENCODE = modulePath.substring(1, 5);
+
+		if(sessionManager.getLoggedInUserDetails().isAdmin()) {
+			sessionManager.addToMap("lastVisitedUrl", SCREENCODE);
+			return true;
+		}
 
 		Xprofiles profile = sessionManager.getLoggedInUserDetails().getXprofile();
 		if(profile == null) return false;
@@ -196,21 +203,11 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		Optional<Xprofiles> profilesOp = xprofilesRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), profile.getXprofile()));
 		if(!profilesOp.isPresent()) return false;
 
-		final String SCREENCODE = modulePath.substring(1, 5);
 		List<Xprofilesdt> profileDetails = xprofiledtRepo.findAllByXprofileAndXscreenAndZid(profile.getXprofile(), SCREENCODE, sessionManager.getBusinessId());
 		if(profileDetails == null || profileDetails.isEmpty()) return false;
 
+		sessionManager.addToMap("lastVisitedUrl", SCREENCODE);
 		return true;
-
-//		boolean matchFound = false;
-//		for(Xprofilesdt dt : profileDetails) {
-//			if(matchFound) continue;
-//			if(modulePath.startsWith("/" + dt.getXscreen())) {
-//				matchFound = true;
-//			}
-//		}
-//
-//		return matchFound;
 	}
 
 	private boolean isAjaxRequest(HttpServletRequest request) {

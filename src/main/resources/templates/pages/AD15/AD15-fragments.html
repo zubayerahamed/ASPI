@@ -1,16 +1,26 @@
 <div th:fragment="info-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-flex align-items-center">
-			<h5 class="mb-0">Account Information</h5>
+			<h5 class="mb-0">Profile Details</h5>
 		</div>
 
 		<div class="card-body">
 			<table class="table table-bordered">
 				<tbody>
-					<tr>
-						<th>Employee</th>
+					<tr th:if="${user.xstaff ne null}">
+						<th>Username</th>
 						<td width="5px" class="text-center">:</td>
-						<td th:text="${user.xstaff ne null ? user.xstaff + ' - ' + user.employeeName : user.zemail}"></td>
+						<td th:text="${user.zemail}"></td>
+					</tr>
+					<tr th:if="${user.xstaff ne null}">
+						<th>ID</th>
+						<td width="5px" class="text-center">:</td>
+						<td th:text="${user.xstaff}"></td>
+					</tr>
+					<tr th:if="${user.xstaff ne null}">
+						<th>Name</th>
+						<td width="5px" class="text-center">:</td>
+						<td th:text="${user.employeeName}"></td>
 					</tr>
 				</tbody>
 			</table>

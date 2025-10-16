@@ -48,8 +48,8 @@ public class Xuserwidgets extends AbstractModel<String> {
 	@Column(name = "xsequence")
 	private Integer xsequence;
 
-	@Column(name = "xdefault", length = 1)
-	private Boolean xdefault = Boolean.FALSE;
+	@Column(name = "xisdefault", length = 1)
+	private Boolean xisdefault = Boolean.FALSE;
 
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
@@ -61,7 +61,7 @@ public class Xuserwidgets extends AbstractModel<String> {
 		Xuserwidgets obj = new Xuserwidgets();
 		obj.setSubmitFor(SubmitFor.INSERT);
 		obj.setZemail(zemail);
-		obj.setXdefault(false);
+		obj.setXisdefault(false);
 		obj.setXsequence(0);
 		return obj;
 	}

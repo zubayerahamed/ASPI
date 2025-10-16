@@ -99,6 +99,8 @@ public class HomeController extends KitController {
 
 	@GetMapping
 	public String loadDefaultPage(HttpServletRequest request, @RequestParam(required = false) String frommenu, @RequestParam(required = false) String menucode, Model model) {
+		model.addAttribute("lastVisitedUrl", sessionManager.getFromMap("lastVisitedUrl"));
+
 		Xfavourites fav = null;
 		if(!loggedInUser().isAdmin()) {
 			List<Xfavourites> favList = xfavouritesRepo.findAllByZidAndZemailAndXprofileAndXisdefault(loggedInZbusiness().getZid(), loggedInUser().getUsername(), loggedInUser().getXprofile().getXprofile(), true);
@@ -108,11 +110,14 @@ public class HomeController extends KitController {
 
 		model.addAttribute("masterMenus", menuTreeService.getMenuTree(null));
 
+		sessionManager.removeFromMap("lastVisitedUrl");
 		return "index";
 	}
 
 	@GetMapping("/home")
 	public String loadHomePage(HttpServletRequest request, @RequestParam(required = false) String frommenu, @RequestParam(required = false) String menucode, Model model) {
+		sessionManager.addToMap("lastVisitedUrl", "HOME");
+		model.addAttribute("lastVisitedUrl", sessionManager.getFromMap("lastVisitedUrl"));
 
 		if(!isAjaxRequest(request)) {
 			return "redirect:/";

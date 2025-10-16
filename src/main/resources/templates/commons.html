@@ -83,7 +83,7 @@
 			</div>
 
 			<div class="navbar-brand flex-1 flex-lg-0">
-				<a th:href="@{/home}" class="d-inline-flex align-items-center side-nav-link" data-screen="home" th:classappend="${#lists.isEmpty(masterMenus) ? '' : 'screen-item'}">
+				<a th:href="@{/home}" class="d-inline-flex align-items-center side-nav-link" data-screen="home" id="HOME" th:classappend="${#lists.isEmpty(masterMenus) ? '' : 'screen-item'}">
 					<!-- <input type="hidden" id="logoBase64" th:value="${loggedInZbusiness.imageBase64}" readonly></input>
 					<img id="logoPreview" th:src="@{/assets/images/aspi_white.jpg}" alt="" style="height: 35px;" class="me-3"> -->
 					<h3 class="m-0 p-0 text-white" th:text="${loggedInZbusiness.zorg}">ASPI</h3>
@@ -162,7 +162,7 @@
 					</a>
 
 					<div class="dropdown-menu dropdown-menu-end">
-						<a th:href="@{/AD15}" data-screen="AD15" class="dropdown-item screen-item" th:if="${not #lists.isEmpty(masterMenus)}">
+						<a th:href="@{/AD15}" id="AD15" data-screen="AD15" class="dropdown-item screen-item" th:if="${not #lists.isEmpty(masterMenus)}">
 							<i class="ph-user me-2"></i>
 							My Account
 						</a>

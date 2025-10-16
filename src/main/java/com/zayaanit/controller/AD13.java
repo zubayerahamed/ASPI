@@ -348,7 +348,7 @@ public class AD13 extends KitController {
 				return responseHelper.getResponse();
 			}
 
-			if(Boolean.TRUE.equals(xuserwidgets.getXdefault())) {
+			if(Boolean.TRUE.equals(xuserwidgets.getXisdefault())) {
 				// Remove xdefault from others
 				xuserwidgetRepo.resetAllDefaults(sessionManager.getBusinessId());
 			}
@@ -375,18 +375,18 @@ public class AD13 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(Boolean.TRUE.equals(xuserwidgets.getXdefault())) {
+		if(Boolean.TRUE.equals(xuserwidgets.getXisdefault())) {
 			// Remove xdefault from others
-			Optional<Xuserwidgets> currentDefaultOp =  xuserwidgetRepo.findByZidAndZemailAndXdefaultTrue(sessionManager.getBusinessId(), xuserwidgets.getZemail());
+			Optional<Xuserwidgets> currentDefaultOp =  xuserwidgetRepo.findByZidAndZemailAndXisdefaultTrue(sessionManager.getBusinessId(), xuserwidgets.getZemail());
 			if(currentDefaultOp.isPresent() && !currentDefaultOp.get().getXwidget().equalsIgnoreCase(existOp.get().getXwidget())) {
 				Xuserwidgets currentDefault = currentDefaultOp.get();
-				currentDefault.setXdefault(false);
+				currentDefault.setXisdefault(false);
 				xuserwidgetRepo.save(currentDefault);
 			}
 		}
 
 		Xuserwidgets existObj = existOp.get();
-		existObj.setXdefault(xuserwidgets.getXdefault());
+		existObj.setXisdefault(xuserwidgets.getXisdefault());
 		existObj = xuserwidgetRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();

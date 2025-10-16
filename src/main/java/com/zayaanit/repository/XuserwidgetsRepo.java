@@ -31,8 +31,8 @@ public interface XuserwidgetsRepo extends JpaRepository<Xuserwidgets, Xuserwidge
 	// Update all xdefault = false where zid=?
 	@Modifying
 	@Transactional
-	@Query(value = "update xuserwidgets set xdefault = 0 where zid = ?1", nativeQuery = true)
+	@Query(value = "update xuserwidgets set xisdefault = 0 where zid = ?1", nativeQuery = true)
 	int resetAllDefaults(Integer zid);
 
-	public Optional<Xuserwidgets> findByZidAndZemailAndXdefaultTrue(Integer zid, String zemail);
+	public Optional<Xuserwidgets> findByZidAndZemailAndXisdefaultTrue(Integer zid, String zemail);
 }

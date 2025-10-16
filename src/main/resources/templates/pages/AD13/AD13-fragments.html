@@ -362,8 +362,8 @@
 
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label d-block" for="xdefault">Is Default?</label>
-							<input type="checkbox" id="xdefault" th:field="*{xdefault}">
+							<label class="form-label d-block" for="xisdefault">Is Default?</label>
+							<input type="checkbox" id="xisdefault" th:field="*{xisdefault}">
 						</div>
 					</div>
 				</div>
@@ -401,7 +401,7 @@
 						<td>
 							<a class="widget-dataindex" th:attr="data-reloadid='widget-table-container', data-reloadurl='/AD13/widget-table?zemail=' + ${x.zemail} + '&xwidget=' + ${x.xwidget}" th:href="@{/AD13/widget-table?zemail=} + ${x.zemail} + '&xwidget=' + ${x.xwidget}" th:text="${x.xwidget + ' - ' + x.widgetTitle}"></a>
 						</td>
-						<td class="text-center" th:text="${x.xdefault ne null and x.xdefault == true ? 'Y' : 'N'}"></td>
+						<td class="text-center" th:text="${x.xisdefault ne null and x.xisdefault == true ? 'Y' : 'N'}"></td>
 						<td class="text-end">
 							<button th:attr="data-url=@{/AD13/widget-table?zemail=} + ${x.zemail} + '&xwidget=' + ${x.xwidget}" type="button" class="btn btn-danger btn-sm btn-widget-delete"><i class="ph-trash"></i></button>
 						</td>
