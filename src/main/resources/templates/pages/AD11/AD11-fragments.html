@@ -158,7 +158,7 @@
 			<form id="logoform" class="form-validate-jquery" th:action="@{/AD11/logo}" th:object="${business}" method="POST" enctype="multipart/form-data">
 				<div class="col-md-12 bg-dark" style="overflow: hidden;">
 					<input th:if="${business.xlogo ne null}" type="hidden" id="imageBase64" th:value="${business.imageBase64}" readonly></input>
-					<img th:if="${business.xlogo ne null}" class="m-auto p-3" id="imagePreview" src="#" alt="Report logo" style="width: 100%; height: auto;"/>
+					<img th:if="${business.xlogo ne null}" class="m-auto p-3" id="imagePreview" th:src="@{/assets/images/placeholder_image.jpg}" alt="Report logo" style="width: 100%; height: auto;"/>
 				</div>
 
 				<div class="col-md-12 mt-2">

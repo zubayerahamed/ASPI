@@ -58,6 +58,7 @@ public class SwitchBusinessController extends BaseController {
 		sessionManager.getLoggedInUserDetails().setZbusiness(zbOp.get());
 		sessionManager.getLoggedInUserDetails().setXprofile(null);
 		sessionManager.getLoggedInUserDetails().setLoginTime(new Date());
+		sessionManager.removeFromMap("lastVisitedUrl");
 		return "redirect:/";
 	}
 
