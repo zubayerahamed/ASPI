@@ -89,9 +89,11 @@ public class SO14 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xdornum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xdornum)) {
-				model.addAttribute("opdoheader", Opdoheader.getDefaultInstance());
+				model.addAttribute("opdoheader", Opdoheader.getDefaultInstance(cabunits));
 				xlogsdtService.save(new Xlogsdt("SO14", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/SO14/SO14-fragments::main-form";
 			}
@@ -127,14 +129,14 @@ public class SO14 extends KitController {
 				}
 
 			}
-			model.addAttribute("opdoheader", opdoheader != null ? opdoheader : Opdoheader.getDefaultInstance());
+			model.addAttribute("opdoheader", opdoheader != null ? opdoheader : Opdoheader.getDefaultInstance(cabunits));
 			xlogsdtService.save(new Xlogsdt("SO14", "View", this.pageTitle, opdoheader.getXdornum().toString(), opdoheader.toString(), false, 0));
 			return "pages/SO14/SO14-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("opdoheader", Opdoheader.getDefaultInstance());
+		model.addAttribute("opdoheader", Opdoheader.getDefaultInstance(cabunits));
 		return "pages/SO14/SO14";
 	}
 

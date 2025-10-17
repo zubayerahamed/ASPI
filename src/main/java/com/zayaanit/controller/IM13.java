@@ -86,11 +86,12 @@ public class IM13 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xissuenum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
 		model.addAttribute("issueTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("IM Issue Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xissuenum)) {
-				model.addAttribute("imissueheader", Imissueheader.getDefaultInstance());
+				model.addAttribute("imissueheader", Imissueheader.getDefaultInstance(cabunits));
 				return "pages/IM13/IM13-fragments::main-form";
 			}
 
@@ -119,14 +120,14 @@ public class IM13 extends KitController {
 					if(acsubOp.isPresent()) imissueheader.setSubmitStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("imissueheader", imissueheader != null ? imissueheader : Imissueheader.getDefaultInstance());
+			model.addAttribute("imissueheader", imissueheader != null ? imissueheader : Imissueheader.getDefaultInstance(cabunits));
 
 			return "pages/IM13/IM13-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("imissueheader", Imissueheader.getDefaultInstance());
+		model.addAttribute("imissueheader", Imissueheader.getDefaultInstance(cabunits));
 		return "pages/IM13/IM13";
 	}
 

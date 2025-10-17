@@ -62,8 +62,8 @@ public class Zbusiness extends AbstractModel<String> {
 	@Column(name = "zactive")
 	private Boolean zactive;
 
-	@Column(name = "xisaudit")
-	private Boolean xisaudit;
+	@Column(name = "xlogtype", length = 10)
+	private String xlogtype;
 
 	@Column(name = "xsessiontime")
 	private Integer xsessiontime;
@@ -78,13 +78,6 @@ public class Zbusiness extends AbstractModel<String> {
 	@Column(name = "xlogo")
 	private byte[] xlogo;
 
-//	@Lob
-//	@Column(name = "xlogodark")
-//	private byte[] xlogodark;
-//
-//	@Column(name = "xdisplaylogo")
-//	private Boolean xdisplaylogo;
-
 	@Column(name = "xrptdefautl", length = 100)
 	private String xrptdefautl;
 
@@ -94,18 +87,10 @@ public class Zbusiness extends AbstractModel<String> {
 	@Transient
 	private String imageBase64;
 
-//	@Transient
-//	private String imageBase64Dark;
-
 	public String getImageBase64() {
 		if(this.xlogo == null || this.xlogo.length <= 0) return "";
 		return Base64.getEncoder().encodeToString(this.xlogo);
 	}
-
-//	public String getImageBase64Dark() {
-//		if(this.xlogodark == null || this.xlogodark.length <= 0) return "";
-//		return Base64.getEncoder().encodeToString(this.xlogodark);
-//	}
 
 	@Transient
 	private String customerName;

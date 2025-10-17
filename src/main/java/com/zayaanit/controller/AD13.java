@@ -92,14 +92,16 @@ public class AD13 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String zemail, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(zemail)) {
-				model.addAttribute("xusers", Xusers.getDefaultInstance());
+				model.addAttribute("xusers", Xusers.getDefaultInstance(cabunits));
 				return "pages/AD13/AD13-fragments::main-form";
 			}
 
 			Optional<Xusers> op = xuserRepo.findById(new XusersPK(sessionManager.getBusinessId(), zemail));
-			Xusers user = op.isPresent() ? op.get() : Xusers.getDefaultInstance();
+			Xusers user = op.isPresent() ? op.get() : Xusers.getDefaultInstance(cabunits);
 			if(user.getXstaff() != null) {
 				Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), user.getXstaff()));
 				if(acsubOp.isPresent()) user.setEmployeeName(acsubOp.get().getXname());
@@ -120,7 +122,7 @@ public class AD13 extends KitController {
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("xusers", Xusers.getDefaultInstance());
+		model.addAttribute("xusers", Xusers.getDefaultInstance(cabunits));
 		return "pages/AD13/AD13";
 	}
 

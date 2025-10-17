@@ -23,6 +23,7 @@ public class XlogsServiceImpl extends AbstractGenericService implements XlogsSer
 	@Override
 	public Xlogs login() {
 		if(!appConfig.isAuditEnable()) return new Xlogs();
+		if(!"Moderate".equals(sessionManager.getZbusiness().getXlogtype())) return new Xlogs();
 
 		Xlogs xlogs = new Xlogs();
 		xlogs.setZid(sessionManager.getBusinessId());
@@ -43,6 +44,7 @@ public class XlogsServiceImpl extends AbstractGenericService implements XlogsSer
 	@Override
 	public Xlogs logout() {
 		if(!appConfig.isAuditEnable()) return new Xlogs();
+		if(!"Moderate".equals(sessionManager.getZbusiness().getXlogtype())) return new Xlogs();
 
 		Xlogs xlogs = new Xlogs();
 		xlogs.setZid(sessionManager.getBusinessId());

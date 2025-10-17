@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.Basic;
@@ -160,6 +161,15 @@ public class Opdoheader extends AbstractModel<String> {
 		return obj;
 	}
 
+	public static Opdoheader getDefaultInstance(List<Cabunit> cabunits) {
+		Opdoheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
+		return obj;
+	}
+
 	public static Opdoheader getPOSInstance(KitSessionManager sessionManager) {
 		Opdoheader obj = new Opdoheader();
 		obj.setSubmitFor(SubmitFor.INSERT);
@@ -178,6 +188,15 @@ public class Opdoheader extends AbstractModel<String> {
 		obj.setXbuid(sessionManager.getLoggedInUserDetails().getPosunit());
 		obj.setXwh(sessionManager.getLoggedInUserDetails().getPosoutlet());
 		obj.setXislock(sessionManager.getLoggedInUserDetails().isXislock());
+		return obj;
+	}
+
+	public static Opdoheader getPOSInstance(KitSessionManager sessionManager, List<Cabunit> cabunits) {
+		Opdoheader obj = getPOSInstance(sessionManager);
+		if(obj.getXbuid() == null && cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 

@@ -108,7 +108,7 @@ public enum ReportMenu implements ReportMenuBase {
 
 	R501("R501", "Purchase Order Detail", "R501.rpt", ReportParamMap.R501, "Y", false, "SYSTEM"),
 	R502("R502", "Purchase Order Summary", "R502.rpt", ReportParamMap.R502, "Y", false, "SYSTEM"),
-	R503("R501", "Pending Item Detail", "R503.rpt", ReportParamMap.R503, "Y", false, "SYSTEM"),
+	R503("R503", "Pending Item Detail", "R503.rpt", ReportParamMap.R503, "Y", false, "SYSTEM"),
 	R504("R504", "Pending Item Summary", "R504.rpt", ReportParamMap.R504, "Y", false, "SYSTEM"),
 	R505("R505", "Party Pending Statement", "R505.rpt", ReportParamMap.R505, "Y", false, "SYSTEM"),
 	R506("R506", "Purchase Detail", "R506.rpt", ReportParamMap.R506, "Y", false, "SYSTEM"),

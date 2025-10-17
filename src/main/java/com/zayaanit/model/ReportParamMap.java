@@ -188,16 +188,13 @@ public class ReportParamMap {
 
 		R101.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R101.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R101.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R102.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R102.put("param2", "xprofile|" + ReportParamDataType.STRING.name());
 		R102.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R102.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R103.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R103.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
-		R103.put("reportType", "reportViewType|" + ReportParamDataType.STRING.name());
 
 		R104.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R104.put("param2", "xgitem|" + ReportParamDataType.STRING.name());

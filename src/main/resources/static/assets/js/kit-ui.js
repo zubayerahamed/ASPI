@@ -527,27 +527,27 @@ kit.ui.theme = function(){
 }
 
 kit.ui.observers = function () {
-    var target = document.querySelector('.html-tag');
+	var target = document.querySelector('.html-tag');
 
-    if (!target) {
-        console.warn("custom-scrollbars element not found.");
-        return;
-    }
+	if (!target) {
+		console.warn("custom-scrollbars element not found.");
+		return;
+	}
 
-    // Create observer
-    var observer = new MutationObserver(function (mutationsList) {
-        mutationsList.forEach(function (mutation) {
-            if (mutation.type === "attributes" && mutation.attributeName === "data-color-theme") {
-                kit.ui.theme();
-            }
-        });
-    });
+	// Create observer
+	var observer = new MutationObserver(function (mutationsList) {
+		mutationsList.forEach(function (mutation) {
+			if (mutation.type === "attributes" && mutation.attributeName === "data-color-theme") {
+				kit.ui.theme();
+			}
+		});
+	});
 
-    // Start observing
-    observer.observe(target, {
-        attributes: true,
-        attributeFilter: ["data-color-theme"]
-    });
+	// Start observing
+	observer.observe(target, {
+		attributes: true,
+		attributeFilter: ["data-color-theme"]
+	});
 };
 
 kit.ui.init = function(){

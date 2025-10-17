@@ -85,11 +85,12 @@ public class FA15 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xvoucher, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xvoucher)) {
-				model.addAttribute("acheader", Acheader.getDefaultInstance());
+				model.addAttribute("acheader", Acheader.getDefaultInstance(cabunits));
 				return "pages/FA15/FA15-fragments::main-form";
 			}
 
@@ -108,7 +109,7 @@ public class FA15 extends KitController {
 					if(acsubOp.isPresent()) acheader.setStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("acheader", acheader != null ? acheader : Acheader.getDefaultInstance());
+			model.addAttribute("acheader", acheader != null ? acheader : Acheader.getDefaultInstance(cabunits));
 
 			List<Cadoc> cdocList = cadocRepo.findAllByZidAndXscreenAndXtrnnum(sessionManager.getBusinessId(), "FA15", Integer.valueOf(xvoucher));
 			model.addAttribute("documents", cdocList);
@@ -118,7 +119,7 @@ public class FA15 extends KitController {
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("acheader", Acheader.getDefaultInstance());
+		model.addAttribute("acheader", Acheader.getDefaultInstance(cabunits));
 		return "pages/FA15/FA15";
 	}
 

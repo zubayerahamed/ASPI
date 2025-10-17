@@ -1,5 +1,7 @@
 package com.zayaanit.entity;
 
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -106,6 +108,17 @@ public class Xusers extends AbstractModel<String> {
 		Xusers obj = new Xusers();
 		obj.setSubmitFor(SubmitFor.INSERT);
 		obj.setZactive(Boolean.TRUE);
+		return obj;
+	}
+
+	public static Xusers getDefaultInstance(List<Cabunit> cabunits) {
+		Xusers obj = getDefaultInstance();
+
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
+
 		return obj;
 	}
 }

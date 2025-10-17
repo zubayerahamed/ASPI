@@ -28,8 +28,6 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Oporddetail;
 import com.zayaanit.entity.Opordheader;
-import com.zayaanit.entity.Poorddetail;
-import com.zayaanit.entity.Poordheader;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
@@ -87,9 +85,11 @@ public class SO12 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xordernum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xordernum)) {
-				model.addAttribute("opordheader", Opordheader.getDefaultInstance());
+				model.addAttribute("opordheader", Opordheader.getDefaultInstance(cabunits));
 				xlogsdtService.save(new Xlogsdt("SO12", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/SO12/SO12-fragments::main-form";
 			}
@@ -129,7 +129,7 @@ public class SO12 extends KitController {
 					if(acsubOp.isPresent()) opordheader.setApprStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("opordheader", opordheader != null ? opordheader : Opordheader.getDefaultInstance());
+			model.addAttribute("opordheader", opordheader != null ? opordheader : Opordheader.getDefaultInstance(cabunits));
 
 			xlogsdtService.save(new Xlogsdt("SO12", "View", this.pageTitle, opordheader.getXordernum().toString(), opordheader.toString(), false, 0));
 			return "pages/SO12/SO12-fragments::main-form";
@@ -137,7 +137,7 @@ public class SO12 extends KitController {
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("opordheader", Opordheader.getDefaultInstance());
+		model.addAttribute("opordheader", Opordheader.getDefaultInstance(cabunits));
 		return "pages/SO12/SO12";
 	}
 

@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
-import com.zayaanit.entity.Opcrndetail;
-import com.zayaanit.entity.Opcrnheader;
 import com.zayaanit.entity.Pocrndetail;
 import com.zayaanit.entity.Pocrnheader;
 import com.zayaanit.entity.Xlogsdt;
@@ -92,9 +90,11 @@ public class PO16 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xcrnnum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xcrnnum)) {
-				model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance());
+				model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance(cabunits));
 				xlogsdtService.save(new Xlogsdt("PO16", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO16/PO16-fragments::main-form";
 			}
@@ -124,14 +124,14 @@ public class PO16 extends KitController {
 					if(acsubOp.isPresent()) pocrnheader.setStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("pocrnheader", pocrnheader != null ? pocrnheader : Pocrnheader.getDefaultInstance());
+			model.addAttribute("pocrnheader", pocrnheader != null ? pocrnheader : Pocrnheader.getDefaultInstance(cabunits));
 			xlogsdtService.save(new Xlogsdt("PO16", "View", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
 			return "pages/PO16/PO16-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance());
+		model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance(cabunits));
 		return "pages/PO16/PO16";
 	}
 

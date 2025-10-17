@@ -85,9 +85,10 @@ public class IM15 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xadjnum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xadjnum)) {
-				model.addAttribute("imadjheader", Imadjheader.getDefaultInstance());
+				model.addAttribute("imadjheader", Imadjheader.getDefaultInstance(cabunits));
 				return "pages/IM15/IM15-fragments::main-form";
 			}
 
@@ -116,14 +117,14 @@ public class IM15 extends KitController {
 					if(acsubOp.isPresent()) imadjheader.setSubmitStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("imadjheader", imadjheader != null ? imadjheader : Imadjheader.getDefaultInstance());
+			model.addAttribute("imadjheader", imadjheader != null ? imadjheader : Imadjheader.getDefaultInstance(cabunits));
 
 			return "pages/IM15/IM15-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("imadjheader", Imadjheader.getDefaultInstance());
+		model.addAttribute("imadjheader", Imadjheader.getDefaultInstance(cabunits));
 		return "pages/IM15/IM15";
 	}
 

@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -139,6 +140,15 @@ public class Opordheader extends AbstractModel<String> {
 		obj.setXdate(new Date());
 		obj.setXtotamt(BigDecimal.ZERO);
 		obj.setXdiscamt(BigDecimal.ZERO);
+		return obj;
+	}
+	
+	public static Opordheader getDefaultInstance(List<Cabunit> cabunits) {
+		Opordheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 }

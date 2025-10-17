@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -135,6 +136,15 @@ public class Poordheader extends AbstractModel<String> {
 		obj.setSubmitFor(SubmitFor.INSERT);
 		obj.setXdate(new Date());
 		obj.setXtotamt(BigDecimal.ZERO);
+		return obj;
+	}
+
+	public static Poordheader getDefaultInstance(List<Cabunit> cabunits) {
+		Poordheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 }

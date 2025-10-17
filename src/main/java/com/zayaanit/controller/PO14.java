@@ -87,11 +87,12 @@ public class PO14 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xgrnnum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
 		model.addAttribute("voucherTypes", xcodesRepo.findAllByXtypeAndZactiveAndZid("Voucher Type", Boolean.TRUE, sessionManager.getBusinessId()));
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xgrnnum)) {
-				model.addAttribute("pogrnheader", Pogrnheader.getDefaultInstance());
+				model.addAttribute("pogrnheader", Pogrnheader.getDefaultInstance(cabunits));
 
 				xlogsdtService.save(new Xlogsdt("PO14", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO14/PO14-fragments::main-form";
@@ -122,7 +123,7 @@ public class PO14 extends KitController {
 					if(acsubOp.isPresent()) pogrnheader.setStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("pogrnheader", pogrnheader != null ? pogrnheader : Pogrnheader.getDefaultInstance());
+			model.addAttribute("pogrnheader", pogrnheader != null ? pogrnheader : Pogrnheader.getDefaultInstance(cabunits));
 
 			xlogsdtService.save(new Xlogsdt("PO14", "View", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0));
 			return "pages/PO14/PO14-fragments::main-form";
@@ -130,7 +131,7 @@ public class PO14 extends KitController {
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("pogrnheader", Pogrnheader.getDefaultInstance());
+		model.addAttribute("pogrnheader", Pogrnheader.getDefaultInstance(cabunits));
 		return "pages/PO14/PO14";
 	}
 

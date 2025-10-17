@@ -85,9 +85,11 @@ public class PO12 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xpornum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xpornum)) {
-				model.addAttribute("poordheader", Poordheader.getDefaultInstance());
+				model.addAttribute("poordheader", Poordheader.getDefaultInstance(cabunits));
 
 				xlogsdtService.save(new Xlogsdt("PO12", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO12/PO12-fragments::main-form";
@@ -118,7 +120,7 @@ public class PO12 extends KitController {
 					if(acsubOp.isPresent()) poordheader.setStaffName(acsubOp.get().getXname());
 				}
 			} else {
-				poordheader = Poordheader.getDefaultInstance();
+				poordheader = Poordheader.getDefaultInstance(cabunits);
 			}
 
 			model.addAttribute("poordheader", poordheader);
@@ -129,7 +131,7 @@ public class PO12 extends KitController {
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("poordheader", Poordheader.getDefaultInstance());
+		model.addAttribute("poordheader", Poordheader.getDefaultInstance(cabunits));
 		return "pages/PO12/PO12";
 	}
 

@@ -99,7 +99,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 
 		// XLOGS Log
-		if(appConfig.isAuditEnable()) {
+		if(appConfig.isAuditEnable() && "Moderate".equals(sessionManager.getZbusiness().getXlogtype())) {
 			// Log login info
 			if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
 				Xlogs xlogs = xlogsService.login();
@@ -155,7 +155,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		}
 
 		// XLOGSDT Log
-		if(appConfig.isAuditEnable() && Boolean.TRUE.equals(sessionManager.getZbusiness().getXisaudit())) {
+		if(appConfig.isAuditEnable() && "Advance".equals(sessionManager.getZbusiness().getXlogtype())) {
 			if(isAjaxRequest(request)) {
 				if(request.getQueryString() != null && request.getQueryString().contains("frommenu=")) {  // Menu clicked
 					String xsource = "Menu";

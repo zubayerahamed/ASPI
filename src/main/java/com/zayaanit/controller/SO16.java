@@ -29,7 +29,6 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Opcrndetail;
 import com.zayaanit.entity.Opcrnheader;
-import com.zayaanit.entity.Pogrndetail;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
@@ -90,9 +89,11 @@ public class SO16 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xcrnnum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
+
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xcrnnum)) {
-				model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance());
+				model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance(cabunits));
 				xlogsdtService.save(new Xlogsdt("SO16", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/SO16/SO16-fragments::main-form";
 			}
@@ -122,14 +123,14 @@ public class SO16 extends KitController {
 					if(acsubOp.isPresent()) opcrnheader.setStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("opcrnheader", opcrnheader != null ? opcrnheader : Opcrnheader.getDefaultInstance());
+			model.addAttribute("opcrnheader", opcrnheader != null ? opcrnheader : Opcrnheader.getDefaultInstance(cabunits));
 			xlogsdtService.save(new Xlogsdt("SO16", "View", this.pageTitle, opcrnheader.getXcrnnum().toString(), opcrnheader.toString(), false, 0));
 			return "pages/SO16/SO16-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance());
+		model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance(cabunits));
 		return "pages/SO16/SO16";
 	}
 

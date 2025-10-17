@@ -82,9 +82,10 @@ public class IM16 extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam (required = false) String xopennum, @RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xopennum)) {
-				model.addAttribute("imopenheader", Imopenheader.getDefaultInstance());
+				model.addAttribute("imopenheader", Imopenheader.getDefaultInstance(cabunits));
 				return "pages/IM16/IM16-fragments::main-form";
 			}
 
@@ -113,14 +114,14 @@ public class IM16 extends KitController {
 					if(acsubOp.isPresent()) imopenheader.setSubmitStaffName(acsubOp.get().getXname());
 				}
 			}
-			model.addAttribute("imopenheader", imopenheader != null ? imopenheader : Imopenheader.getDefaultInstance());
+			model.addAttribute("imopenheader", imopenheader != null ? imopenheader : Imopenheader.getDefaultInstance(cabunits));
 
 			return "pages/IM16/IM16-fragments::main-form";
 		}
 
 		if(frommenu == null) return "redirect:/";
 
-		model.addAttribute("imopenheader", Imopenheader.getDefaultInstance());
+		model.addAttribute("imopenheader", Imopenheader.getDefaultInstance(cabunits));
 		return "pages/IM16/IM16";
 	}
 

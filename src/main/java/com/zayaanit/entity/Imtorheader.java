@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -142,6 +143,17 @@ public class Imtorheader extends AbstractModel<String> {
 		obj.setXstatus("Open");
 		obj.setXstatusim("Open");
 		obj.setXtype("Direct Transfer");
+		return obj;
+	}
+
+	public static Imtorheader getDefaultInstance(List<Cabunit> cabunits) {
+		Imtorheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXfbuid(cabunits.get(0).getXbuid());
+			obj.setXtbuid(cabunits.get(0).getXbuid());
+			obj.setFromBusinessUnitName(cabunits.get(0).getXname());
+			obj.setToBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 

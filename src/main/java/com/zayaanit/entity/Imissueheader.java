@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -125,6 +126,15 @@ public class Imissueheader extends AbstractModel<String> {
 		obj.setXstatus("Open");
 		obj.setXstatusim("Open");
 		obj.setXstatusjv("Open");
+		return obj;
+	}
+
+	public static Imissueheader getDefaultInstance(List<Cabunit> cabunits) {
+		Imissueheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 }

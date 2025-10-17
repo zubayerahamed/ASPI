@@ -22,6 +22,7 @@ import com.zayaanit.enums.SubmitFor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -121,6 +122,15 @@ public class Imadjheader extends AbstractModel<String> {
 		obj.setXstatus("Open");
 		obj.setXstatusim("Open");
 		obj.setXstatusjv("Open");
+		return obj;
+	}
+
+	public static Imadjheader getDefaultInstance(List<Cabunit> cabunits) {
+		Imadjheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 }

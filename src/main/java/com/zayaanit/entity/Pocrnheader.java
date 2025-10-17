@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -142,6 +143,15 @@ public class Pocrnheader extends AbstractModel<String> {
 		obj.setXstatusim("Open");
 		obj.setXstatusjv("Open");
 		obj.setXtype("Direct Return");
+		return obj;
+	}
+
+	public static Pocrnheader getDefaultInstance(List<Cabunit> cabunits) {
+		Pocrnheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 

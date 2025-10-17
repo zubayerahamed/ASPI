@@ -1,6 +1,7 @@
 package com.zayaanit.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -99,6 +100,15 @@ public class Acheader extends AbstractModel<String> {
 	public static Acheader getDefaultInstance() {
 		Acheader obj = new Acheader();
 		obj.setSubmitFor(SubmitFor.INSERT);
+		return obj;
+	}
+
+	public static Acheader getDefaultInstance(List<Cabunit> cabunits) {
+		Acheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 }

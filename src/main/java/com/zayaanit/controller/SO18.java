@@ -94,6 +94,8 @@ public class SO18 extends KitController {
 	@SuppressWarnings("unchecked")
 	@GetMapping
 	public String index(@RequestParam (required = false) String xdornum, @RequestParam(required = false) String frommenu, @RequestParam (required = false) Integer xbuid, @RequestParam (required = false) Integer xwh, HttpServletRequest request, Model model) {
+		List<Cabunit> cabunits = cabunitRepo.findAllByZid(sessionManager.getBusinessId());
+
 		LocalDateTime serverTime = LocalDateTime.now(); // Get server time
 		String formattedTime = serverTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm:ss a"));
 		model.addAttribute("serverTime", formattedTime);
@@ -104,7 +106,7 @@ public class SO18 extends KitController {
 					sessionManager.removeFromMap("SO18-DETAILS");
 				}
 
-				Opdoheader header = Opdoheader.getPOSInstance(sessionManager);
+				Opdoheader header = Opdoheader.getPOSInstance(sessionManager, cabunits);
 				if(xbuid != null) header.setXbuid(xbuid);
 				if(xwh != null) header.setXwh(xwh);
 				header = header.build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
@@ -115,7 +117,7 @@ public class SO18 extends KitController {
 			}
 
 			if("RELOAD".equalsIgnoreCase(xdornum)) {   // trigger by adding or deleting product
-				Opdoheader header = Opdoheader.getPOSInstance(sessionManager);
+				Opdoheader header = Opdoheader.getPOSInstance(sessionManager, cabunits);
 				if(xbuid != null) header.setXbuid(xbuid);
 				if(xwh != null) header.setXwh(xwh);
 				header = header.build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
@@ -130,7 +132,7 @@ public class SO18 extends KitController {
 			}
 
 			Optional<Opdoheader> opdoheaderOp = opdoheaderRepo.findById(new OpdoheaderPK(sessionManager.getBusinessId(), Integer.valueOf(xdornum)));
-			Opdoheader header = opdoheaderOp.isPresent() ? opdoheaderOp.get().build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo) : Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
+			Opdoheader header = opdoheaderOp.isPresent() ? opdoheaderOp.get().build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo) : Opdoheader.getPOSInstance(sessionManager, cabunits).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo);
 			model.addAttribute("opdoheader", header);
 
 			if(header.getXdornum() != null) {
@@ -170,7 +172,7 @@ public class SO18 extends KitController {
 			sessionManager.removeFromMap("SO18-DETAILS");
 		}
 
-		model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
+		model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager, cabunits).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
 		model.addAttribute("opdodetail", Opdodetail.getPOSInstance(null));
 		model.addAttribute("detailList", Collections.emptyList());
 		return "pages/SO18/SO18";

@@ -2,6 +2,7 @@ package com.zayaanit.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -144,6 +145,15 @@ public class Moheader extends AbstractModel<String> {
 		obj.setXstatus("Open");
 		obj.setXstatusjv("Open");
 		obj.setXstatusim("Open");
+		return obj;
+	}
+
+	public static Moheader getDefaultInstance(List<Cabunit> cabunits) {
+		Moheader obj = getDefaultInstance();
+		if(cabunits != null && cabunits.size() == 1) {
+			obj.setXbuid(cabunits.get(0).getXbuid());
+			obj.setBusinessUnitName(cabunits.get(0).getXname());
+		}
 		return obj;
 	}
 }

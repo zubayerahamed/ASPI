@@ -103,8 +103,12 @@
 					</div>
 					<div class="col-md-4" th:if="${loggedInUser.admin}">
 						<div class="mb-3 form-group">
-							<label class="form-label d-block" for="xisaudit">Enable Audit?</label>
-							<input type="checkbox" id="xisaudit" th:field="*{xisaudit}">
+							<label class="form-label">Log Type</label>
+							<select class="form-control select" th:field="*{xlogtype}">
+								<option value="Basic">Basic</option>
+								<option value="Moderate">Moderate</option>
+								<option value="Advance">Advance</option>
+							</select>
 						</div>
 					</div>
 					<div class="col-md-4">
