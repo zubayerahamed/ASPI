@@ -174,7 +174,7 @@ public interface AcbalRepo extends JpaRepository<Acbal, AcbalPK> {
 			+ "    FROM DateSeries "
 			+ "    WHERE xdate > DATEADD(DAY, -:days+1, GETDATE()) "
 			+ ") "
-			+ "SELECT d.xdate, COALESCE(SUM(a.xprime), 0) AS amount "
+			+ "SELECT d.xdate, COALESCE(SUM(CASE WHEN m.xacctype IN ('Income', 'Expenditure') THEN a.xprime ELSE 0 END), 0) AS Amount "
 			+ "FROM DateSeries d "
 			+ "LEFT JOIN acbal a "
 			+ "    ON d.xdate = a.xdate "

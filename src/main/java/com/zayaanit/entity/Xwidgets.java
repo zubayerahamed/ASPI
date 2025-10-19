@@ -47,6 +47,15 @@ public class Xwidgets extends AbstractModel<String> {
 	private Integer xdefault;
 
 	@Transient
+	private Integer xseqn;
+
+	@Transient
+	private Integer widgetSize;
+
+	@Transient
+	private boolean loaddefault;
+
+	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
 	public static Xwidgets getDefaultInstance() {

@@ -1,5 +1,7 @@
 package com.zayaanit.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +18,5 @@ import com.zayaanit.entity.pk.XwidgetsPK;
 @Repository
 public interface XwidgetsRepo extends JpaRepository<Xwidgets, XwidgetsPK> {
 
+	List<Xwidgets> findAllByZid(Integer zid);
 }
