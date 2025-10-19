@@ -224,7 +224,7 @@ public class DashboardController extends KitController {
 				List<Xcodes> wi04xcodes = xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Category", Boolean.TRUE, sessionManager.getBusinessId());
 				List<String> itemCategories = wi04xcodes.stream().map(Xcodes::getXcode).collect(Collectors.toList());
 				model.addAttribute("WI04REQPARAM", WI04ReqParam.builder().xcodes(itemCategories).xfdays(1).xtdays(last).type("Quantity_n_Value").build());
-			} else if ("WI04".equalsIgnoreCase(widget.getXwidget())) {
+			} else if ("WI05".equalsIgnoreCase(widget.getXwidget())) {
 				model.addAttribute("WI05REQPARAM", WI05ReqParam.builder().xfdate(new Date()).xtdate(new Date()).last(last).type("BATCHES").build());
 			}
 		}
