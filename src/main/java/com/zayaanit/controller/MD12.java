@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Caitem;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.XscreensPK;
@@ -160,6 +161,10 @@ public class MD12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+//		Xlogsdt logdt = new Xlogsdt();
+//		logdt.setXscreen("MD12");
+//		eventPublisher.publishEvent(logdt);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD12?xitem=" + existObj.getXitem()));

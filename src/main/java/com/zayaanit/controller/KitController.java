@@ -16,6 +16,7 @@ import javax.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,6 +66,7 @@ import com.zayaanit.service.PrintingService;
  */
 public abstract class KitController extends BaseController {
 
+	@Autowired protected ApplicationEventPublisher eventPublisher;
 	@Autowired protected MenuTreeService menuTreeService;
 	@Autowired protected XmenuscreensRepo xmenuscreensRepo;
 	@Autowired protected XmenusRepo xmenusRepo;
