@@ -526,7 +526,7 @@ kit.ui.observers = function () {
 	var target = document.querySelector('.html-tag');
 
 	if (!target) {
-		console.warn("custom-scrollbars element not found.");
+		//console.warn("custom-scrollbars element not found.");
 		return;
 	}
 

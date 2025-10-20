@@ -72,7 +72,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 			paths.add("/SA11/**");
 			paths.add("/SA12/**");
 			paths.add("/SA13/**");
-			paths.add("/M01/**");
+			paths.add("/SA14/**");
+			paths.add("/SA15/**");
+			paths.add("/SA16/**");
+			paths.add("/SA17/**");
 		}
 
 		return paths.toArray(new String[paths.size()]);

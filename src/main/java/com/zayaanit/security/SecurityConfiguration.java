@@ -74,6 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/SA14/**").hasRole("ZADMIN")
 				.antMatchers("/SA15/**").hasRole("ZADMIN")
 				.antMatchers("/SA16/**").hasRole("ZADMIN")
+				.antMatchers("/SA17/**").hasRole("ZADMIN")
 				.anyRequest().authenticated()
 			.and()
 				.formLogin()
