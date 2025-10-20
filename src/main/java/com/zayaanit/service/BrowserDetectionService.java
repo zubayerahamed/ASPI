@@ -36,35 +36,33 @@ public class BrowserDetectionService {
 	 * Get client IP address considering proxies (X-Forwarded-For header)
 	 */
 	public String getClientIpAddress(HttpServletRequest request) {
-		// Check X-Forwarded-For header first (for proxies, load balancers)
+		// Check X-Forwarded-For header first
 		String xForwardedFor = request.getHeader("X-Forwarded-For");
-		if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-			// X-Forwarded-For can contain multiple IPs, the first one is the original
-			// client
-			String[] ips = xForwardedFor.split(",");
-			return ips[0].trim();
+		if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+			// Return first IP from the list
+			return xForwardedFor.split(",")[0].trim();
 		}
 
-		// Check X-Real-IP header
+		// Check other headers
 		String xRealIp = request.getHeader("X-Real-IP");
-		if (xRealIp != null && !xRealIp.isEmpty()) {
-			return xRealIp.trim();
+		if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
+			return xRealIp;
 		}
 
-		// Check CF-Connecting-IP (Cloudflare)
 		String cfConnectingIp = request.getHeader("CF-Connecting-IP");
-		if (cfConnectingIp != null && !cfConnectingIp.isEmpty()) {
-			return cfConnectingIp.trim();
+		if (cfConnectingIp != null && !cfConnectingIp.isEmpty() && !"unknown".equalsIgnoreCase(cfConnectingIp)) {
+			return cfConnectingIp;
 		}
 
-		// Check True-Client-IP (Akamai)
-		String trueClientIp = request.getHeader("True-Client-IP");
-		if (trueClientIp != null && !trueClientIp.isEmpty()) {
-			return trueClientIp.trim();
+		// Fallback to remote address (this will be 0:0:0:0:0:0:0:1 for localhost IPv6)
+		String remoteAddr = request.getRemoteAddr();
+
+		// Convert IPv6 localhost to readable format
+		if ("0:0:0:0:0:0:0:1".equals(remoteAddr) || "::1".equals(remoteAddr)) {
+			return "127.0.0.1 (localhost)";
 		}
 
-		// Fallback to remote address
-		return request.getRemoteAddr();
+		return remoteAddr;
 	}
 
 	private String detectBrowserName(String userAgent) {
@@ -257,7 +255,8 @@ public class BrowserDetectionService {
 
 		@Override
 		public String toString() {
-			return String.format("Browser: %s %s, OS: %s, Device: %s", browserName, browserVersion, operatingSystem, deviceType);
+			return String.format("Browser: %s %s, OS: %s, Device: %s", browserName, browserVersion, operatingSystem,
+					deviceType);
 		}
 	}
 }
