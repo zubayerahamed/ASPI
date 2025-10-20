@@ -48,7 +48,7 @@ public class SwitchBusinessController extends BaseController {
 
 		// XLOGS If already logged in and want to switch business only, just add a logout log from previous business
 		if(sessionManager.getFromMap("LOGIN_DONE") != null) {
-			xlogsService.logout();
+			//xlogsService.logout();
 			renewSession();
 		}
 		sessionManager.addToMap("LOGIN_FLAG", "Y");

@@ -22,4 +22,5 @@ public class XlogsPK implements Serializable {
 
 	private Integer zid;
 	private String xsession;
+	private String xaction;
 }

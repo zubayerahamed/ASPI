@@ -22,7 +22,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		if(sessionManager.getBusinessId() == null) return;
-		xlogsService.logout();
+		xlogsService.logout(request);
 	}
 
 }

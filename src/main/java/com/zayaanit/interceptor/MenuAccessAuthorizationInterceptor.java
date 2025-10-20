@@ -108,11 +108,10 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
 				Xlogs xlogs = null;
 				if("Y".equals(sessionManager.getFromMap("SWITCH_BUSINESS"))) {
-//					xlogs = xlogsService.switchBusiness();
-					xlogs = xlogsService.login();
+					xlogs = xlogsService.switchBusiness(request);
 					sessionManager.removeFromMap("SWITCH_BUSINESS");
 				} else {
-					xlogs = xlogsService.login();
+					xlogs = xlogsService.login(request);
 				}
 
 				sessionManager.removeFromMap("LOGIN_FLAG");
@@ -121,7 +120,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.SECOND, sessionManager.getLoggedInUserDetails().getXsessiontime());
 				sessionManager.addToMap("SESSION_EXPIRY", cal.getTime());
-				sessionManager.addToMap("LOGIN_TIME", xlogs.getXlogintime());
+				sessionManager.addToMap("LOGIN_TIME", xlogs.getZtime());
 			}
 
 			// Session Validation
@@ -141,7 +140,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 				} else {
 					// Do Logout
 					log.debug("Logout from menuaccess interceptor");
-					xlogsService.logout();
+					xlogsService.logout(request);
 					request.getRequestDispatcher("/login").forward(request, response);
 					request.getSession().invalidate();
 					return false;
@@ -149,7 +148,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			} else {
 				// Do Logout
 				log.debug("Logout from menuaccess interceptor");
-				xlogsService.logout();
+				xlogsService.logout(request);
 				request.getRequestDispatcher("/login").forward(request, response);
 				request.getSession().invalidate();
 				return false;

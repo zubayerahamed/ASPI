@@ -210,20 +210,22 @@ public class PO12 extends KitController {
 
 		model.addAttribute("poorddetail", poorddetail);
 
-		eventPublisher.publishEvent(
-			new XlogsdtEvent(
-				Xlogsdt.builder()
-				.xscreen("PO12")
-				.xfunc("View")
-				.xsource("PO12")
-				.xtable(null)
-				.xdata(xpornum.toString() + "/" + poorddetail.getXrow().toString())
-				.xstatement(poorddetail.toString())
-				.xresult("Success")
-				.build(), 
-				sessionManager
-			)
-		);
+		if(poorddetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("PO12")
+					.xfunc("View")
+					.xsource("PO12")
+					.xtable(null)
+					.xdata(xpornum.toString() + "/" + poorddetail.getXrow().toString())
+					.xstatement(poorddetail.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+		}
 
 		return "pages/PO12/PO12-fragments::detail-table";
 	}

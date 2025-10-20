@@ -2,6 +2,8 @@ package com.zayaanit.controller;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,7 @@ public class SwitchProfileController extends BaseController {
 	@Autowired private XprofilesdtRepo xprofilesdtRepo;
 
 	@GetMapping
-	public String loadProfile(@RequestParam String xprofile, @RequestParam(required = false) String switchprofile) {
+	public String loadProfile(@RequestParam String xprofile, @RequestParam(required = false) String switchprofile, HttpServletRequest request) {
 		Optional<Xprofiles> profileOp = xprofileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
 		if(!profileOp.isPresent()) return "redirect:/profiles";
 
@@ -35,7 +37,7 @@ public class SwitchProfileController extends BaseController {
 		sessionManager.getLoggedInUserDetails().setXprofile(profile);
 
 		if("Y".equalsIgnoreCase(switchprofile)) {
-//			xlogsService.switchProfile();
+			xlogsService.switchProfile(request);
 		}
 
 		return "redirect:/";

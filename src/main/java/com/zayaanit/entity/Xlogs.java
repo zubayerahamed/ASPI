@@ -3,16 +3,14 @@ package com.zayaanit.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.zayaanit.entity.pk.XlogsPK;
 
 import lombok.Data;
 
@@ -26,18 +24,18 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "xlogs")
-@IdClass(XlogsPK.class)
 public class Xlogs implements Serializable {
 
 	private static final long serialVersionUID = -1624354019825186611L;
 
 	@Id
-	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "xid")
+	private Long xid;
+
 	@Column(name = "zid")
 	private Integer zid;
 
-	@Id
-	@Basic(optional = false)
 	@Column(name = "xsession", length = 50)
 	private String xsession;
 
@@ -56,13 +54,13 @@ public class Xlogs implements Serializable {
 	@Column(name = "xaction", length = 25)
 	private String xaction;
 
-	@Column(name = "xlogintime")
+	@Column(name = "ztime")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date xlogintime;
+	private Date ztime;
 
-	@Column(name = "xlogouttime")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date xlogouttime;
+	@Column(name = "xdate")
+	@Temporal(TemporalType.DATE)
+	private Date xdate;
 
 	@Column(name = "xuseragent", length = 255)
 	private String xuseragent;

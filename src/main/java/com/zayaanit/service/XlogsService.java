@@ -1,5 +1,7 @@
 package com.zayaanit.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.zayaanit.entity.Xlogs;
 
 /**
@@ -8,11 +10,11 @@ import com.zayaanit.entity.Xlogs;
  */
 public interface XlogsService {
 
-	public Xlogs login();
+	public Xlogs login(HttpServletRequest request);
 
-	public Xlogs logout();
+	public Xlogs logout(HttpServletRequest request);
 
-	public Xlogs switchBusiness();
+	public Xlogs switchBusiness(HttpServletRequest request);
 
-	public Xlogs switchProfile();
+	public Xlogs switchProfile(HttpServletRequest request);
 }
