@@ -124,7 +124,7 @@
 					</a>
 
 					<div th:if="${not #lists.isEmpty(otherBusinesses)}" class="dropdown-menu dropdown-menu-end">
-						<a th:each="user : ${otherBusinesses}" th:href="@{/switchbusiness/} + ${user.zid}" class="dropdown-item">
+						<a th:each="user : ${otherBusinesses}" th:href="@{/switchbusiness/} + ${user.zid} + '?switchbusiness=Y'" class="dropdown-item">
 							<i class="ph-briefcase me-2" style="font-size: 25px;"></i><span th:text="${user.businessName}"></span>
 						</a>
 					</div>
@@ -140,7 +140,7 @@
 					</a>
 
 					<div th:if="${not #lists.isEmpty(otherProfiles)}" class="dropdown-menu dropdown-menu-end">
-						<a th:each="profile : ${otherProfiles}" th:href="@{/switchprofile?xprofile=} + ${profile.xprofile}" class="dropdown-item">
+						<a th:each="profile : ${otherProfiles}" th:href="@{/switchprofile?xprofile=} + ${profile.xprofile} + '&switchprofile=Y'" class="dropdown-item">
 							<i class="ph-user-square me-2" style="font-size: 25px;"></i><span th:text="${profile.xprofile}"></span>
 						</a>
 					</div>

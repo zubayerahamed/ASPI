@@ -11,4 +11,8 @@ public interface XlogsService {
 	public Xlogs login();
 
 	public Xlogs logout();
+
+	public Xlogs switchBusiness();
+
+	public Xlogs switchProfile();
 }

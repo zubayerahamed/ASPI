@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -36,7 +37,7 @@ public class SwitchBusinessController extends BaseController {
 	private XusersRepo xusersRepo;
 
 	@GetMapping("/{businessId}")
-	public String loadBusiness(@PathVariable Integer businessId) {
+	public String loadBusiness(@PathVariable Integer businessId, @RequestParam(required = false) String switchbusiness) {
 		// Find business and check business is active or not
 		Optional<Zbusiness> zbOp = zbusinessRepo.findByZidAndZactive(businessId, Boolean.TRUE);
 		if (!zbOp.isPresent()) return "redirect:/";
@@ -46,19 +47,23 @@ public class SwitchBusinessController extends BaseController {
 		if(!usersOp.isPresent()) return "redirect:/";
 
 		// XLOGS If already logged in and want to switch business only, just add a logout log from previous business
-		if(appConfig.isAuditEnable()) {
-			if(sessionManager.getFromMap("LOGIN_DONE") != null) {
-				xlogsService.logout();
-				renewSession();
-			}
-			sessionManager.addToMap("LOGIN_FLAG", "Y");
+		if(sessionManager.getFromMap("LOGIN_DONE") != null) {
+			xlogsService.logout();
+			renewSession();
 		}
+		sessionManager.addToMap("LOGIN_FLAG", "Y");
 
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 		sessionManager.getLoggedInUserDetails().setZbusiness(zbOp.get());
 		sessionManager.getLoggedInUserDetails().setXprofile(null);
 		sessionManager.getLoggedInUserDetails().setLoginTime(new Date());
 		sessionManager.removeFromMap("lastVisitedUrl");
+
+		// Now add switch business info after renewing session
+		if("Y".equalsIgnoreCase(switchbusiness)) {
+			sessionManager.addToMap("SWITCH_BUSINESS", "Y");
+		}
+
 		return "redirect:/";
 	}
 

@@ -25,7 +25,7 @@ public class SwitchProfileController extends BaseController {
 	@Autowired private XprofilesdtRepo xprofilesdtRepo;
 
 	@GetMapping
-	public String loadProfile(@RequestParam String xprofile) {
+	public String loadProfile(@RequestParam String xprofile, @RequestParam(required = false) String switchprofile) {
 		Optional<Xprofiles> profileOp = xprofileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
 		if(!profileOp.isPresent()) return "redirect:/profiles";
 
@@ -33,6 +33,11 @@ public class SwitchProfileController extends BaseController {
 		profile.setDetails(xprofilesdtRepo.findAllByXprofileAndZid(xprofile, sessionManager.getBusinessId()));
 
 		sessionManager.getLoggedInUserDetails().setXprofile(profile);
+
+		if("Y".equalsIgnoreCase(switchprofile)) {
+//			xlogsService.switchProfile();
+		}
+
 		return "redirect:/";
 	}
 

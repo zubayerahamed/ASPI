@@ -41,9 +41,6 @@ public class Xlogs implements Serializable {
 	@Column(name = "xsession", length = 50)
 	private String xsession;
 
-	@Column(name = "xsip", length = 50)
-	private String xsip;
-
 	@Column(name = "xcip", length = 50)
 	private String xcip;
 
@@ -54,13 +51,10 @@ public class Xlogs implements Serializable {
 	private String xprofile;
 
 	@Column(name = "xstaff", length = 25)
-	private String xstaff;
+	private Integer xstaff;
 
-	@Column(name = "xuseragent", length = 255)
-	private String xuseragent;
-
-	@Column(name = "xexptype", length = 25)
-	private String xexptype;
+	@Column(name = "xaction", length = 25)
+	private String xaction;
 
 	@Column(name = "xlogintime")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -69,4 +63,7 @@ public class Xlogs implements Serializable {
 	@Column(name = "xlogouttime")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date xlogouttime;
+
+	@Column(name = "xuseragent", length = 255)
+	private String xuseragent;
 }

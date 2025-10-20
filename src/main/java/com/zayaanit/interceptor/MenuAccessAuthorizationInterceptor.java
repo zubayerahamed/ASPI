@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
-import com.zayaanit.config.AppConfig;
 import com.zayaanit.entity.Xlogs;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xprofiles;
@@ -32,7 +31,6 @@ import com.zayaanit.repository.XuserprofilesRepo;
 import com.zayaanit.repository.XusersRepo;
 import com.zayaanit.service.KitSessionManager;
 import com.zayaanit.service.XlogsService;
-import com.zayaanit.service.XlogsdtService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,8 +50,6 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 	@Autowired private XusersRepo usersRepo;
 	@Autowired private XuserprofilesRepo xuserprofileRepo;
 	@Autowired private XlogsService xlogsService;
-	@Autowired private XlogsdtService xlogsdtService;
-	@Autowired private AppConfig appConfig;
 
 	@SuppressWarnings("null")
 	@Override
@@ -102,10 +98,23 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 
 		// XLOGS Log
-		if(!sessionManager.getLoggedInUserDetails().isAdmin() && appConfig.isAuditEnable() && "Moderate".equals(sessionManager.getZbusiness().getXlogtype())) {
+		if(
+			!sessionManager.getLoggedInUserDetails().isAdmin() // not system admin
+			&& sessionManager.getZbusiness() != null // zbusiness not null
+			&& sessionManager.getZbusiness().getXlogtype() != null // logtype not null
+			&& !"Basic".equals(sessionManager.getZbusiness().getXlogtype()) // logtype is not Basic
+		) {
 			// Log login info
 			if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
-				Xlogs xlogs = xlogsService.login();
+				Xlogs xlogs = null;
+				if("Y".equals(sessionManager.getFromMap("SWITCH_BUSINESS"))) {
+//					xlogs = xlogsService.switchBusiness();
+					xlogs = xlogsService.login();
+					sessionManager.removeFromMap("SWITCH_BUSINESS");
+				} else {
+					xlogs = xlogsService.login();
+				}
+
 				sessionManager.removeFromMap("LOGIN_FLAG");
 				sessionManager.addToMap("LOGIN_DONE", "Y");
 
@@ -158,7 +167,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		}
 
 		// XLOGSDT Log
-		if(appConfig.isAuditEnable() && "Advance".equals(sessionManager.getZbusiness().getXlogtype())) {
+		if("Advance".equals(sessionManager.getZbusiness().getXlogtype())) {
 			if(isAjaxRequest(request)) {
 				if(request.getQueryString() != null && request.getQueryString().contains("frommenu=")) {  // Menu clicked
 					String xsource = "Menu";

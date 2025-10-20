@@ -1,6 +1,5 @@
 package com.zayaanit.service;
 
-import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.model.XlogsdtEvent;
 
 /**
@@ -9,5 +8,5 @@ import com.zayaanit.model.XlogsdtEvent;
  */
 public interface XlogsdtService {
 
-	public Xlogsdt save(XlogsdtEvent event);
+	public void save(XlogsdtEvent event);
 }
