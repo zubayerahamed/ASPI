@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +27,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Entity
+@Builder
 @Table(name = "xlogsdt")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,14 +43,24 @@ public class Xlogsdt implements Serializable {
 	@Column(name = "zid", nullable = false)
 	private Integer zid;
 
-	@Column(name = "xsession", nullable = false, length = 150)
+	@Column(name = "xsession", nullable = false, length = 50)
 	private String xsession;
 
-	@Column(name = "xdatetime", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date xdatetime;
+	@Column(name = "zemail", nullable = false, length = 25)
+	private String zemail;
 
-	@Column(name = "xscreen", length = 25)
+	@Column(name = "xstaff")
+	private Integer xstaff;
+
+	@Column(name = "ztime", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date ztime;
+
+	@Column(name = "xdate", nullable = false)
+	@Temporal(TemporalType.DATE)
+	private Date xdate;
+
+	@Column(name = "xscreen", length = 10)
 	private String xscreen;
 
 	@Column(name = "xfunc", length = 25)
@@ -57,61 +69,43 @@ public class Xlogsdt implements Serializable {
 	@Column(name = "xsource", length = 25)
 	private String xsource;
 
-	@Column(name = "xfuncdt", length = 25)
-	private String xfuncdt;
+	@Column(name = "xtable", length = 25)
+	private String xtable;
 
-	@Column(name = "xdata")
+	@Column(name = "xdata", length = 50)
 	private String xdata;
 
 	@Lob
 	@Column(name = "xstatement")
 	private String xstatement;
 
-	@Column(name = "xmessage", length = 50)
-	private String xmessage;
-
 	@Column(name = "xresult", length = 25)
 	private String xresult;
 
-	public Xlogsdt(String xscreen, String xfunc, String xsource, String xfuncdt, String xdata, String xstatement, String xmessage, String xresult) {
+	/**
+	 * 
+	 * @param xscreen
+	 * @param xfunc
+	 * @param xsource
+	 * @param xtable
+	 * @param xdata
+	 * @param xstatement
+	 * @param xresult
+	 */
+	public Xlogsdt(String xscreen, String xfunc, String xsource, String xtable, String xdata, String xstatement, String xresult) {
 		this.xscreen = xscreen;
 		this.xfunc = xfunc;
 		this.xsource = xsource;
-		this.xfuncdt = xfuncdt;
+		this.xtable = xtable;
 		this.xdata = xdata;
 		this.xstatement = xstatement;
-		this.xmessage = xmessage;
 		this.xresult = xresult;
 	}
 
-	/**
-	 * @param screenCode
-	 * @param operation
-	 * @param title
-	 * @param reference
-	 * @param data
-	 * @param detail
-	 * @param index
-	 */
-	public Xlogsdt(String screenCode, String operation, String title, String reference, String data, boolean detail, int index) {
-		this.xscreen = screenCode;
-		this.xfunc = operation;
-		this.xsource = screenCode;
-		this.xfuncdt = operation + " " + title;
-		if(detail) this.xfuncdt += " detail " + index;
-		this.xdata = reference;
-		this.xstatement = data;
-		this.xmessage = null;
-		this.xresult = "Success";
-	}
+
 
 	public Xlogsdt setSource(String source) {
 		this.xsource = source;
-		return this;
-	}
-
-	public Xlogsdt setMessage(String message) {
-		this.xmessage = message;
 		return this;
 	}
 }

@@ -75,7 +75,6 @@ public class PO13 extends KitController {
 		model.addAttribute("searchParam", PO13SearchParam.getDefaultInstance());
 
 		if(isAjaxRequest(request) && frommenu == null) {
-			xlogsdtService.save(new Xlogsdt("PO13", "Clear", this.pageTitle, null, null, false, 0));
 			return "pages/PO13/PO13-fragments::main-form";
 		}
 
@@ -119,7 +118,7 @@ public class PO13 extends KitController {
 		List<Poordheader> list = poordheaderService.LPO13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 		int	totalRows = poordheaderService.LPO13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 
-		xlogsdtService.save(new Xlogsdt("PO13", "Search", this.pageTitle, param.toString(), null , false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO13", "Search", this.pageTitle, param.toString(), null , false, 0));
 
 		DatatableResponseHelper<Poordheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -184,7 +183,7 @@ public class PO13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO13", "Create GRN", this.pageTitle, param.toString(), "PO_CreateGRNfromOrder(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xpornum + ")" , false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO13", "Create GRN", this.pageTitle, param.toString(), "PO_CreateGRNfromOrder(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xpornum + ")" , false, 0));
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -278,7 +277,7 @@ public class PO13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO13", "Dismiss Order", this.pageTitle, param.toString(), poordheader.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO13", "Dismiss Order", this.pageTitle, param.toString(), poordheader.toString(), false, 0));
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));

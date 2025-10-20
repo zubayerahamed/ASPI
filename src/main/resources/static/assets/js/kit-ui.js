@@ -12,10 +12,6 @@ kit.ui.config = kit.ui.config || {};
 
 kit.ui.config.select2 = function(){
 	$('.select').select2();
-	//$('.select').each(function () {
-	//	var id = $(this).attr('id');
-	//	$('#' + id).select2();
-	//});
 }
 
 kit.ui.config.noty = function(){
@@ -563,7 +559,7 @@ kit.ui.init = function(){
 	kit.ui.config.onscreenPrintBtn();
 	kit.ui.config.advancedSearchBtInit();
 	kit.ui.config.inputFieldsEvents();
-	kit.ui.config.datatable();
+	//kit.ui.config.datatable();
 	kit.ui.observers();
 }
 
@@ -618,13 +614,21 @@ $(document).ready(function(){
 		var url = '/' + screenCode;
 		const questionCount = url.split("?").length - 1;
 		if (questionCount === 1) {
-			url = url + '&frommenu=';
-			if(fromfav) url = url + '&fromfav=&frommenu=';
-			if(fromdef) url = url + '&fromdef=&frommenu=';
+			if(fromfav){
+				url = url + '&fromfav=&frommenu=';
+			} else if(fromdef) {
+				url = url + '&fromdef=&frommenu=';
+			} else {
+				url = url + '&frommenu=';
+			}
 		} else {
-			url = url + '?frommenu=';
-			if(fromfav) url = url + '?fromfav=&frommenu=';
-			if(fromdef) url = url + '?fromdef=&frommenu=';
+			if(fromfav) {
+				url = url + '?fromfav=&frommenu=';
+			} else if(fromdef) {
+				url = url + '?fromdef=&frommenu=';
+			} else {
+				url = url + '?frommenu=';
+			}
 		}
 
 		$('.customize-aspi-offcanvas').click();

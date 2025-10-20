@@ -95,7 +95,6 @@ public class PO16 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xcrnnum)) {
 				model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance(cabunits));
-				xlogsdtService.save(new Xlogsdt("PO16", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/PO16/PO16-fragments::main-form";
 			}
 
@@ -125,7 +124,7 @@ public class PO16 extends KitController {
 				}
 			}
 			model.addAttribute("pocrnheader", pocrnheader != null ? pocrnheader : Pocrnheader.getDefaultInstance(cabunits));
-			xlogsdtService.save(new Xlogsdt("PO16", "View", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
+//			xlogsdtService.save(new Xlogsdt("PO16", "View", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
 			return "pages/PO16/PO16-fragments::main-form";
 		}
 
@@ -139,7 +138,6 @@ public class PO16 extends KitController {
 	public String detailFormFragment(@RequestParam String xcrnnum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xcrnnum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("pocrnheader", Pocrnheader.getDefaultInstance());
-			xlogsdtService.save(new Xlogsdt("PO16", "Clear", this.pageTitle, null, null, true, 0));
 			return "pages/PO16/PO16-fragments::detail-table";
 		}
 
@@ -178,7 +176,6 @@ public class PO16 extends KitController {
 			}
 
 			model.addAttribute("pocrndetail", pocrndetail);
-			xlogsdtService.save(new Xlogsdt("PO16", "Clear", this.pageTitle, pocrndetail.getXrow().toString(), pocrndetail.toString(), true, 0));
 			return "pages/PO16/PO16-fragments::detail-table";
 		}
 
@@ -200,7 +197,7 @@ public class PO16 extends KitController {
 		}
 
 		model.addAttribute("pocrndetail", pocrndetail);
-		xlogsdtService.save(new Xlogsdt("PO16", "View", this.pageTitle, pocrndetail.getXrow().toString(), pocrndetail.toString(), true, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "View", this.pageTitle, pocrndetail.getXrow().toString(), pocrndetail.toString(), true, 0));
 		return "pages/PO16/PO16-fragments::detail-table";
 	}
 
@@ -254,7 +251,7 @@ public class PO16 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			xlogsdtService.save(new Xlogsdt("PO16", "Add", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
+//			xlogsdtService.save(new Xlogsdt("PO16", "Add", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + pocrnheader.getXcrnnum()));
@@ -303,7 +300,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, existObj.getXcrnnum().toString(), existObj.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, existObj.getXcrnnum().toString(), existObj.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + existObj.getXcrnnum()));
@@ -369,7 +366,7 @@ public class PO16 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			xlogsdtService.save(new Xlogsdt("PO16", "Add", this.pageTitle, pocrndetail.getXrow().toString(), pocrndetail.toString(), true, 0));
+//			xlogsdtService.save(new Xlogsdt("PO16", "Add", this.pageTitle, pocrndetail.getXrow().toString(), pocrndetail.toString(), true, 0));
 
 			BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrndetail.getXcrnnum());
 			pocrnheader.setXtotamt(xtotamt);
@@ -379,7 +376,7 @@ public class PO16 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
+//			xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + pocrndetail.getXcrnnum()));
@@ -406,7 +403,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
 
 		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrndetail.getXcrnnum());
 		pocrnheader.setXtotamt(xtotamt);
@@ -416,7 +413,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + pocrndetail.getXcrnnum()));
@@ -446,7 +443,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Delete", this.pageTitle, xcrnnum.toString(), null, true, 0).setMessage("Delete all details"));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Delete", this.pageTitle, xcrnnum.toString(), null, true, 0).setMessage("Delete all details"));
 
 		Pocrnheader obj = op.get();
 		Pocrnheader copy = SerializationUtils.clone(obj);
@@ -456,7 +453,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Delete", this.pageTitle, copy.getXcrnnum().toString(), copy.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Delete", this.pageTitle, copy.getXcrnnum().toString(), copy.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=RESET"));
@@ -496,7 +493,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
 
 		// Update line amount and total amount of header
 		BigDecimal xtotamt = pocrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pocrnheader.getXcrnnum());
@@ -507,7 +504,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Update", this.pageTitle, pocrnheader.getXcrnnum().toString(), pocrnheader.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + xcrnnum));
@@ -622,7 +619,7 @@ public class PO16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("PO16", "Confirm", this.pageTitle, xcrnnum.toString(), "PO_ConfirmReturn("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xcrnnum +")" , false, 0));
+//		xlogsdtService.save(new Xlogsdt("PO16", "Confirm", this.pageTitle, xcrnnum.toString(), "PO_ConfirmReturn("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xcrnnum +")" , false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO16?xcrnnum=" + xcrnnum));

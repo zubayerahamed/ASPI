@@ -1,6 +1,7 @@
 package com.zayaanit.service;
 
 import com.zayaanit.entity.Xlogsdt;
+import com.zayaanit.model.XlogsdtEvent;
 
 /**
  * @author Zubayer Ahamed
@@ -8,5 +9,5 @@ import com.zayaanit.entity.Xlogsdt;
  */
 public interface XlogsdtService {
 
-	public Xlogsdt save(Xlogsdt xlogsdt);
+	public Xlogsdt save(XlogsdtEvent event);
 }

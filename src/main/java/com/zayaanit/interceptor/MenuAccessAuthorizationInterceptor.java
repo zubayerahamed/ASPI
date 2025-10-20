@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
@@ -24,6 +25,7 @@ import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XuserprofilesPK;
 import com.zayaanit.entity.pk.XusersPK;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.XprofilesRepo;
 import com.zayaanit.repository.XprofilesdtRepo;
 import com.zayaanit.repository.XuserprofilesRepo;
@@ -43,6 +45,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 
 	private static final String OUTSIDE_USERS_NAME = "anonymousUser";
 
+	@Autowired private ApplicationEventPublisher eventPublisher;
 	@Autowired private KitSessionManager sessionManager;
 	@Autowired private XprofilesRepo xprofilesRepo;
 	@Autowired private XprofilesdtRepo xprofiledtRepo;
@@ -99,7 +102,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		sessionManager.getLoggedInUserDetails().setUserDetails(usersOp.get());
 
 		// XLOGS Log
-		if(appConfig.isAuditEnable() && "Moderate".equals(sessionManager.getZbusiness().getXlogtype())) {
+		if(!sessionManager.getLoggedInUserDetails().isAdmin() && appConfig.isAuditEnable() && "Moderate".equals(sessionManager.getZbusiness().getXlogtype())) {
 			// Log login info
 			if(sessionManager.getFromMap("LOGIN_FLAG") != null) {
 				Xlogs xlogs = xlogsService.login();
@@ -118,7 +121,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 			Date currentDateTime = new Date();
 			//System.out.println("Current date time : " + currentDateTime);
 			//System.out.println("Expiry date time : " + xsessionexpiry);
-			if(currentDateTime != null && xsessionexpiry != null && currentDateTime.before(xsessionexpiry)) {
+			if(currentDateTime != null && xsessionexpiry != null && xlogintime != null && currentDateTime.before(xsessionexpiry)) {
 				long diffInMillies = Math.abs(currentDateTime.getTime() - xlogintime.getTime());
 				long oneDayInMillis = 24 * 60 * 60 * 1000;
 				if (diffInMillies < oneDayInMillis) {
@@ -161,10 +164,37 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 					String xsource = "Menu";
 					if(request.getQueryString().contains("fromfav=")) xsource = "Favourite";
 					if(request.getQueryString().contains("fromdef=")) xsource = "Default";
-					xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, xsource, "View Screen", null, null, null, "Success"));
+
+					eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen(getXscreen(request.getServletPath()))
+							.xfunc(null)
+							.xsource(xsource)
+							.xtable(null)
+							.xdata(null)
+							.xstatement(null)
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
 				}
 			} else {
-				xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, "URL", "View Screen", null, null, null, "Success"));
+				eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen(getXscreen(request.getServletPath()))
+						.xfunc(null)
+						.xsource("URL")
+						.xtable(null)
+						.xdata(null)
+						.xstatement(null)
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 			}
 		}
 

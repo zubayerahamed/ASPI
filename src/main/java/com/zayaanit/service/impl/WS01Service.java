@@ -25,9 +25,9 @@ public class WS01Service extends AbstractGenericService {
 		String thisYear = opordheaderRepo.yearSalesOrder(sessionManager.getBusinessId(), LocalDate.now());
 
 		return WS01Dto.builder()
-				.today(today)
-				.thisMonth(thisMonth)
-				.thisYear(thisYear)
+				.today(formatValueOfDashboard(today))
+				.thisMonth(formatValueOfDashboard(thisMonth))
+				.thisYear(formatValueOfDashboard(thisYear))
 				.build();
 	}
 
@@ -37,9 +37,9 @@ public class WS01Service extends AbstractGenericService {
 		String thisYear = opordheaderRepo.yearSalesInvoice(sessionManager.getBusinessId(), LocalDate.now());
 
 		return WS01Dto.builder()
-				.today(today)
-				.thisMonth(thisMonth)
-				.thisYear(thisYear)
+				.today(formatValueOfDashboard(today))
+				.thisMonth(formatValueOfDashboard(thisMonth))
+				.thisYear(formatValueOfDashboard(thisYear))
 				.build();
 	}
 
@@ -49,9 +49,9 @@ public class WS01Service extends AbstractGenericService {
 		String thisYear = opordheaderRepo.yearSalesReturn(sessionManager.getBusinessId(), LocalDate.now());
 
 		return WS01Dto.builder()
-				.today(today)
-				.thisMonth(thisMonth)
-				.thisYear(thisYear)
+				.today(formatValueOfDashboard(today))
+				.thisMonth(formatValueOfDashboard(thisMonth))
+				.thisYear(formatValueOfDashboard(thisYear))
 				.build();
 	}
 }

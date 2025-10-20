@@ -2,11 +2,14 @@ package com.zayaanit.service.impl;
 
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zayaanit.config.AppConfig;
 import com.zayaanit.entity.Xlogsdt;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.XlogsdtRepo;
 import com.zayaanit.service.XlogsdtService;
 
@@ -18,20 +21,30 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class XlogsdtServiceImpl extends AbstractGenericService implements XlogsdtService {
+public class XlogsdtServiceImpl implements XlogsdtService {
 
 	@Autowired private XlogsdtRepo xlogsdtRepo;
 	@Autowired private AppConfig appConfig;
 
+	@Transactional
 	@Override
-	public Xlogsdt save(Xlogsdt xlogsdt) {
-		if(!appConfig.isAuditEnable()) return xlogsdt;
-		if(!"Advance".equals(sessionManager.getZbusiness().getXlogtype())) return xlogsdt;
+	public Xlogsdt save(XlogsdtEvent event) {
+		if(event.isAdmin()) return event.getXlogsdt();
+		if(!appConfig.isAuditEnable()) return event.getXlogsdt();
+		if(!"Advance".equals(event.getXlogtype())) return event.getXlogsdt();
 
-		xlogsdt.setZid(sessionManager.getBusinessId());
-		xlogsdt.setXsession(sessionManager.sessionId());
-		xlogsdt.setXdatetime(new Date());
+		Date date = new Date();
+
+		Xlogsdt xlogsdt = event.getXlogsdt();
+		xlogsdt.setZid(event.getZid());
+		xlogsdt.setXsession(event.getXsession());
+		xlogsdt.setZemail(event.getZemail());
+		xlogsdt.setXstaff(event.getXstaff());
+		xlogsdt.setZtime(date);
+		xlogsdt.setXdate(date);
+
 		xlogsdt = xlogsdtRepo.save(xlogsdt);
+
 		log.debug("Logs Details Saved : " + xlogsdt.toString());
 		return xlogsdt;
 	}

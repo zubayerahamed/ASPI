@@ -25,9 +25,9 @@ public class WI01Service extends AbstractGenericService {
 		String thisYear = imtorheaderRepo.yearWG01(sessionManager.getBusinessId(), LocalDate.now());
 
 		return WI01Dto.builder()
-				.today(today)
-				.thisMonth(thisMonth)
-				.thisYear(thisYear)
+				.today(formatValueOfDashboard(today))
+				.thisMonth(formatValueOfDashboard(thisMonth))
+				.thisYear(formatValueOfDashboard(thisYear))
 				.build();
 	}
 
@@ -37,9 +37,9 @@ public class WI01Service extends AbstractGenericService {
 		String thisYear = imtorheaderRepo.yearWG02(sessionManager.getBusinessId(), LocalDate.now());
 
 		return WI01Dto.builder()
-				.today(today)
-				.thisMonth(thisMonth)
-				.thisYear(thisYear)
+				.today(formatValueOfDashboard(today))
+				.thisMonth(formatValueOfDashboard(thisMonth))
+				.thisYear(formatValueOfDashboard(thisYear))
 				.build();
 	}
 
@@ -49,9 +49,9 @@ public class WI01Service extends AbstractGenericService {
 		String thisYear = imtorheaderRepo.yearWG03(sessionManager.getBusinessId(), LocalDate.now());
 
 		return WI01Dto.builder()
-				.today(today)
-				.thisMonth(thisMonth)
-				.thisYear(thisYear)
+				.today(formatValueOfDashboard(today))
+				.thisMonth(formatValueOfDashboard(thisMonth))
+				.thisYear(formatValueOfDashboard(thisYear))
 				.build();
 	}
 
@@ -61,9 +61,9 @@ public class WI01Service extends AbstractGenericService {
 		String thisYear = imtorheaderRepo.yearWG04(sessionManager.getBusinessId(), LocalDate.now());
 
 		return WI01Dto.builder()
-				.today(today)
-				.thisMonth(thisMonth)
-				.thisYear(thisYear)
+				.today(formatValueOfDashboard(today))
+				.thisMonth(formatValueOfDashboard(thisMonth))
+				.thisYear(formatValueOfDashboard(thisYear))
 				.build();
 	}
 }

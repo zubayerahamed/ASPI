@@ -22,6 +22,7 @@ public class XlogsServiceImpl extends AbstractGenericService implements XlogsSer
 
 	@Override
 	public Xlogs login() {
+		if(sessionManager.getLoggedInUserDetails().isAdmin()) return new Xlogs();
 		if(!appConfig.isAuditEnable()) return new Xlogs();
 		if(!"Moderate".equals(sessionManager.getZbusiness().getXlogtype())) return new Xlogs();
 

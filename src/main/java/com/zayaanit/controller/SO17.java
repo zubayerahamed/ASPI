@@ -99,7 +99,6 @@ public class SO17 extends KitController {
 		if(isAjaxRequest(request) && frommenu == null) {
 			if("RESET".equalsIgnoreCase(xcrnnum)) {
 				model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance());
-				xlogsdtService.save(new Xlogsdt("SO17", "Clear", this.pageTitle, null, null, false, 0));
 				return "pages/SO17/SO17-fragments::main-form";
 			}
 
@@ -129,7 +128,7 @@ public class SO17 extends KitController {
 				}
 			}
 			model.addAttribute("opcrnheader", opcrnheader != null ? opcrnheader : Opcrnheader.getDefaultInstance());
-			xlogsdtService.save(new Xlogsdt("SO17", "View", this.pageTitle, opcrnheader.getXcrnnum().toString(), opcrnheader.toString(), false, 0));
+//			xlogsdtService.save(new Xlogsdt("SO17", "View", this.pageTitle, opcrnheader.getXcrnnum().toString(), opcrnheader.toString(), false, 0));
 			return "pages/SO17/SO17-fragments::main-form";
 		}
 
@@ -143,7 +142,6 @@ public class SO17 extends KitController {
 	public String detailFormFragment(@RequestParam String xcrnnum, @RequestParam String xrow, @RequestParam(required = false) Integer xitem, Model model) {
 		if("RESET".equalsIgnoreCase(xcrnnum) && "RESET".equalsIgnoreCase(xrow)) {
 			model.addAttribute("opcrnheader", Opcrnheader.getDefaultInstance());
-			xlogsdtService.save(new Xlogsdt("SO17", "Clear", this.pageTitle, null, null, true, 0));
 			return "pages/SO17/SO17-fragments::detail-table";
 		}
 
@@ -182,7 +180,6 @@ public class SO17 extends KitController {
 			}
 
 			model.addAttribute("opcrndetail", opcrndetail);
-			xlogsdtService.save(new Xlogsdt("SO17", "Clear", this.pageTitle, opcrndetail.getXrow().toString(), opcrndetail.toString(), true, 0));
 			return "pages/SO17/SO17-fragments::detail-table";
 		}
 
@@ -204,7 +201,7 @@ public class SO17 extends KitController {
 		}
 
 		model.addAttribute("opcrndetail", opcrndetail);
-		xlogsdtService.save(new Xlogsdt("SO17", "View", this.pageTitle, opcrndetail.getXrow().toString(), opcrndetail.toString(), true, 0));
+//		xlogsdtService.save(new Xlogsdt("SO17", "View", this.pageTitle, opcrndetail.getXrow().toString(), opcrndetail.toString(), true, 0));
 		return "pages/SO17/SO17-fragments::detail-table";
 	}
 
@@ -263,7 +260,7 @@ public class SO17 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			xlogsdtService.save(new Xlogsdt("SO17", "Add", this.pageTitle, xcrnnum.toString(), "SO_CreateReturnfromInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + xcrnnum + "," + opdoheader.getXdornum() + ")", false, 0));
+//			xlogsdtService.save(new Xlogsdt("SO17", "Add", this.pageTitle, xcrnnum.toString(), "SO_CreateReturnfromInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + xcrnnum + "," + opdoheader.getXdornum() + ")", false, 0));
 
 			Optional<Opcrnheader> opcrnheaderOp = opcrnheaderRepo.findById(new OpcrnheaderPK(sessionManager.getBusinessId(), xcrnnum));
 			if(!opcrnheaderOp.isPresent()) {
@@ -340,7 +337,7 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, existObj.getXcrnnum().toString(), existObj.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, existObj.getXcrnnum().toString(), existObj.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + existObj.getXcrnnum()));
@@ -445,7 +442,7 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
+//		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, existObj.getXrow().toString(), existObj.toString(), true, 0));
 
 		
 		// Calculate total amount
@@ -458,7 +455,7 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, opcrnheader.getXcrnnum().toString(), opcrnheader.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("SO17", "Update", this.pageTitle, opcrnheader.getXcrnnum().toString(), opcrnheader.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + opcrndetail.getXcrnnum()));
@@ -493,7 +490,7 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO17", "Delete", this.pageTitle, xcrnnum.toString(), null, true, 0).setMessage("Delete all details"));
+//		xlogsdtService.save(new Xlogsdt("SO17", "Delete", this.pageTitle, xcrnnum.toString(), null, true, 0).setMessage("Delete all details"));
 
 		Opcrnheader obj = op.get();
 		Opcrnheader copy = SerializationUtils.clone(obj);
@@ -503,7 +500,7 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO17", "Delete", this.pageTitle, copy.getXcrnnum().toString(), copy.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("SO17", "Delete", this.pageTitle, copy.getXcrnnum().toString(), copy.toString(), false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=RESET"));
@@ -616,7 +613,7 @@ public class SO17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO17", "Confirm", this.pageTitle, xcrnnum.toString(), "SO_ConfirmReturn("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xcrnnum +")" , false, 0));
+//		xlogsdtService.save(new Xlogsdt("SO17", "Confirm", this.pageTitle, xcrnnum.toString(), "SO_ConfirmReturn("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xcrnnum +")" , false, 0));
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO17?xcrnnum=" + xcrnnum));

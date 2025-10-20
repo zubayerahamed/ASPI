@@ -38,7 +38,7 @@ public class Xlogs implements Serializable {
 
 	@Id
 	@Basic(optional = false)
-	@Column(name = "xsession", length = 100)
+	@Column(name = "xsession", length = 50)
 	private String xsession;
 
 	@Column(name = "xsip", length = 50)

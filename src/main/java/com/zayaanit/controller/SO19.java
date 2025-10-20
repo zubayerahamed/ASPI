@@ -89,7 +89,6 @@ public class SO19 extends KitController {
 		model.addAttribute("searchParam", SO19SearchParam.getDefaultInstance());
 
 		if(isAjaxRequest(request) && frommenu == null) {
-			xlogsdtService.save(new Xlogsdt("SO19", "Clear", this.pageTitle, null, null, false, 0));
 			return "pages/SO19/SO19-fragments::main-form";
 		}
 
@@ -131,7 +130,7 @@ public class SO19 extends KitController {
 		List<Opdoheader> list = opdoheaderService.LSO19(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 		int	totalRows = opdoheaderService.LSO19(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 
-		xlogsdtService.save(new Xlogsdt("SO19", "Search", this.pageTitle, param.toString(), null, false, 0));
+//		xlogsdtService.save(new Xlogsdt("SO19", "Search", this.pageTitle, param.toString(), null, false, 0));
 
 		DatatableResponseHelper<Opdoheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -252,7 +251,7 @@ public class SO19 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO19", "Confirmed Invoice", this.pageTitle, param.toString(), "SO_ConfirmInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + opdoheader.getXdornum() + ")", false, 0));
+//		xlogsdtService.save(new Xlogsdt("SO19", "Confirmed Invoice", this.pageTitle, param.toString(), "SO_ConfirmInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + opdoheader.getXdornum() + ")", false, 0));
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -391,7 +390,7 @@ public class SO19 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			xlogsdtService.save(new Xlogsdt("SO19", "Confirmed Invoice", this.pageTitle, param.toString(), "SO_ConfirmInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + opdoheader.getXdornum() + ")", false, 0));
+//			xlogsdtService.save(new Xlogsdt("SO19", "Confirmed Invoice", this.pageTitle, param.toString(), "SO_ConfirmInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + opdoheader.getXdornum() + ")", false, 0));
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
@@ -458,8 +457,8 @@ public class SO19 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-		xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), xdornum.toString(), true, 0).setMessage("Delete all details"));
-		xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), copy.toString(), false, 0));
+//		xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), xdornum.toString(), true, 0).setMessage("Delete all details"));
+//		xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), copy.toString(), false, 0));
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -537,8 +536,8 @@ public class SO19 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-			xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), opdoheader.getXdornum().toString(), true, 0).setMessage("Delete all details"));
-			xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), copy.toString(), false, 0));
+//			xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), opdoheader.getXdornum().toString(), true, 0).setMessage("Delete all details"));
+//			xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), copy.toString(), false, 0));
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();

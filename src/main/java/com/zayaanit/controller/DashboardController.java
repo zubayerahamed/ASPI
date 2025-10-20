@@ -21,6 +21,7 @@ import com.ibm.icu.util.Calendar;
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xcodes;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserwidgets;
 import com.zayaanit.entity.Xwidgets;
@@ -152,6 +153,11 @@ public class DashboardController extends KitController {
 
 	@GetMapping
 	public String index(@RequestParam(required = false) String frommenu, HttpServletRequest request, Model model) {
+		//xlogsdtService.save(new Xlogsdt(getXscreen(request.getServletPath()), null, xsource, "View Screen", null, null, null, "Success"));
+		//xlogsdtService.save(new Xlogsdt("DASH", null, this.pageTitle, opordheader.getXordernum().toString(), opordheader.toString(), false, 0));
+		
+		
+		
 		List<Xwidgets> displayableWidgets = new ArrayList<>();
 
 		// First get all the widgets from the system

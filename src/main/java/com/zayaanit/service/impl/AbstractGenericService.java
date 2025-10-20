@@ -25,4 +25,18 @@ public abstract class AbstractGenericService {
 	@Autowired protected XscreensRepo xscreenRepo;
 	@Autowired protected Environment env;
 
+	protected String formatValueOfDashboard(String value) {
+		if (value == null || !value.contains("/"))
+			return value;
+
+		String[] parts = value.split("/");
+		try {
+			double num = Double.parseDouble(parts[0]);
+			long rounded = Math.round(num);
+			return rounded + "/" + parts[1];
+		} catch (NumberFormatException e) {
+			// if parsing fails, return original
+			return value;
+		}
+	}
 }
