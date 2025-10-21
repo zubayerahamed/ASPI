@@ -100,7 +100,10 @@
 						<button type="reset" th:attr="data-reloadurl='/SA17', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button type="submit" class="btn btn-primary btn-sm btn-search-purchase-order ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-print-logs ms-1"><i class="ph ph-printer me-2"></i> Print</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-delete-logs ms-1"><i class="ph ph-trash me-2"></i> Delete</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-count-logs ms-1"><i class="ph ph-magic-wand me-2"></i> Count</button>
+						<button type="submit" class="btn btn-primary btn-sm btn-search-logs ms-1"><i class="ph-magnifying-glass me-2"></i> View</button>
 					</div>
 				</div>
 			</form>
@@ -121,7 +124,7 @@
 				});
 			});
 
-			$('.btn-search-purchase-order').off('click').on('click', function(e){
+			$('.btn-search-logs').off('click').on('click', function(e){
 				e.preventDefault();
 				console.log("here");
 
@@ -208,7 +211,7 @@
 			var moderateColumnDefs = [
 				{ "name": "xid",   "targets": 0 },
 				{ "name": "zid",   "targets": 1 },
-				{ "name": "xesssion",   "targets": 2 },
+				{ "name": "xsession",   "targets": 2 },
 				{ "name": "xcip",  "targets": 3 },
 				{ "name": "zemail",  "targets": 4 },
 				{ "name": "xprofile",  "targets": 5 },
@@ -222,7 +225,7 @@
 			var advanceColumnDefs = [
 				{ "name": "xid",   "targets": 0 },
 				{ "name": "zid",   "targets": 1 },
-				{ "name": "xesssion",   "targets": 2 },
+				{ "name": "xsession",   "targets": 2 },
 				{ "name": "zemail",  "targets": 3 },
 				{ "name": "xstaff",  "targets": 4 },
 				{ "name": "ztime",  "targets": 5 },
@@ -239,7 +242,7 @@
 			var moderateCol = [
 				{ "data": "xid" },
 				{ "data": "zid" },
-				{ "data": "xesssion" },
+				{ "data": "xsession" },
 				{ "data": "xcip" },
 				{ "data": "zemail" },
 				{ "data": "xprofile"},
@@ -253,7 +256,7 @@
 			var advanceCol = [
 				{ "data": "xid" },
 				{ "data": "zid" },
-				{ "data": "xesssion" },
+				{ "data": "xsession" },
 				{ "data": "zemail" },
 				{ "data": "xstaff" },
 				{ "data": "ztime" },

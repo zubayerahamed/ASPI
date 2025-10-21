@@ -2,24 +2,15 @@ package com.zayaanit.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,20 +19,16 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ibm.icu.text.SimpleDateFormat;
-import com.zayaanit.entity.Poordheader;
-import com.zayaanit.entity.Xscreenrpdt;
+import com.zayaanit.entity.Xlogs;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
-import com.zayaanit.entity.pk.XscreenrpdtPK;
 import com.zayaanit.entity.pk.XscreensPK;
-import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
-import com.zayaanit.model.PO13SearchParam;
-import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.SA17SearchParam;
-import com.zayaanit.repository.XmenuscreensRepo;
-import com.zayaanit.repository.XprofilesdtRepo;
-import com.zayaanit.repository.XscreenrpdtRepo;
+import com.zayaanit.model.SA17SearchTable;
+import com.zayaanit.service.XlogsService;
+import com.zayaanit.service.XlogsdtService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,9 +43,8 @@ public class SA17 extends KitController {
 
 	private String pageTitle = null;
 
-	@Autowired private XmenuscreensRepo xmenuscreensRepo;
-	@Autowired private XprofilesdtRepo xprofilesdtRepo;
-	@Autowired private XscreenrpdtRepo xscreenrpdtRepo;
+	@Autowired private XlogsService xlogsService;
+	@Autowired private XlogsdtService xlogsdtService;
 
 	@Override
 	protected String screenCode() {
@@ -97,7 +83,7 @@ public class SA17 extends KitController {
 	}
 
 	@PostMapping("/all")
-	public @ResponseBody DatatableResponseHelper<Poordheader> getAll(
+	public @ResponseBody DatatableResponseHelper<SA17SearchTable> getAll(
 		@RequestParam String xfdate,	
 		@RequestParam String xtdate,
 		@RequestParam(required = false) String zemail,
@@ -120,16 +106,64 @@ public class SA17 extends KitController {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
-//		List<Poordheader> list = poordheaderService.LPO13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
-//		int	totalRows = poordheaderService.LPO13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
+		List<SA17SearchTable> list = new ArrayList<>();
+		int	totalRows = 0;
+		if("Moderate".equals(xtype)){
+			List<Xlogs> resultList = xlogsService.SA17(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
+
+			resultList.stream().forEach(r -> {
+				list.add(
+					SA17SearchTable.builder()
+					.xid(r.getXid())
+					.zid(r.getZid())
+					.xsession(r.getXsession())
+					.xcip(r.getXcip())
+					.zemail(r.getZemail())
+					.xprofile(r.getXprofile())
+					.xstaff(r.getXstaff())
+					.xaction(r.getXaction())
+					.ztime(r.getZtime())
+					.xdate(r.getXdate())
+					.xuseragent(r.getXuseragent())
+					.build()
+				);
+			});
+
+			totalRows = xlogsService.SA17(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
+		} else {
+			List<Xlogsdt> resultList = xlogsdtService.SA17(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
+
+			resultList.stream().forEach(r -> {
+				list.add(
+					SA17SearchTable.builder()
+					.xid(r.getXid())
+					.zid(r.getZid())
+					.xsession(r.getXsession())
+					.zemail(r.getZemail())
+					.xstaff(r.getXstaff())
+					.ztime(r.getZtime())
+					.xdate(r.getXdate())
+					.xscreen(r.getXscreen())
+					.xfunc(r.getXfunc())
+					.xsource(r.getXsource())
+					.xtable(r.getXtable())
+					.xdata(r.getXdata())
+					.xstatement(r.getXstatement())
+					.xresult(r.getXresult())
+					.build()
+				);
+			});
+
+			totalRows = xlogsdtService.SA17(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
+		}
 
 //		xlogsdtService.save(new Xlogsdt("PO13", "Search", this.pageTitle, param.toString(), null , false, 0));
 
-		DatatableResponseHelper<Poordheader> response = new DatatableResponseHelper<>();
+		DatatableResponseHelper<SA17SearchTable> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
-//		response.setRecordsTotal(totalRows);
-//		response.setRecordsFiltered(totalRows);
-//		response.setData(list);
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
 		return response;
 	}
 }
