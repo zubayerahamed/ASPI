@@ -13,6 +13,8 @@ import com.zayaanit.model.XlogsdtEvent;
  */
 public interface XlogsdtService {
 
+	public void SA17delete(SA17SearchParam param);
+
 	public void save(XlogsdtEvent event);
 
 	public List<Xlogsdt> SA17(int limit, int offset, String orderBy, DatatableSortOrderType orderType, String searchText, int suffix, String dependentParam, SA17SearchParam param);

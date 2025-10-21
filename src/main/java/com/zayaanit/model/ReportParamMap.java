@@ -31,7 +31,8 @@ public class ReportParamMap {
 	public static final Map<String, String> imopen = new HashMap<>();
 	public static final Map<String, String> oppos = new HashMap<>();
 	public static final Map<String, String> opposd = new HashMap<>();
-	
+	public static final Map<String, String> xlogssm = new HashMap<>();
+	public static final Map<String, String> xlogsdt = new HashMap<>();
 
 	public static final Map<String, String> R101 = new HashMap<>();
 	public static final Map<String, String> R102 = new HashMap<>();
@@ -185,6 +186,20 @@ public class ReportParamMap {
 
 		opposd.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		opposd.put("param2", "xdornum|" + ReportParamDataType.INTEGER.name());
+
+		xlogssm.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		xlogssm.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
+		xlogssm.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
+		xlogssm.put("param4", "zemail|" + ReportParamDataType.STRING.name());
+		xlogssm.put("param5", "xstaff|" + ReportParamDataType.INTEGER.name());
+		xlogssm.put("param6", "xtype|" + ReportParamDataType.STRING.name());
+
+		xlogsdt.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		xlogsdt.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
+		xlogsdt.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
+		xlogsdt.put("param4", "zemail|" + ReportParamDataType.STRING.name());
+		xlogsdt.put("param5", "xstaff|" + ReportParamDataType.INTEGER.name());
+		xlogsdt.put("param6", "xtype|" + ReportParamDataType.STRING.name());
 
 		R101.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R101.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());

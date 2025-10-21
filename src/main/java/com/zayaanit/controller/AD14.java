@@ -24,6 +24,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Xcodes;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XcodesPK;
 import com.zayaanit.entity.pk.XscreensPK;
@@ -32,6 +33,7 @@ import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.service.XcodesService;
 
 /**
@@ -77,6 +79,24 @@ public class AD14 extends KitController {
 			Optional<Xcodes> op = xcodesRepo.findById(new XcodesPK(sessionManager.getBusinessId(), xtype, xcode));
 			model.addAttribute("xcodes", op.isPresent() ? op.get() : Xcodes.getDefaultInstance());
 			model.addAttribute("codeTypes", xcodesRepo.findAllByXtypeAndZid("Code Type", sessionManager.getBusinessId()));
+
+			if(op.isPresent() && StringUtils.isNotBlank(op.get().getXcode())) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("AD14")
+							.xfunc("View")
+							.xsource("AD14")
+							.xtable(null)
+							.xdata(op.get().getXcode())
+							.xstatement(op.get().toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/AD14/AD14-fragments::main-form";
 		}
 
@@ -143,6 +163,21 @@ public class AD14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("AD14")
+						.xfunc("Add")
+						.xsource("AD14")
+						.xtable(null)
+						.xdata(xcodes.getXcode())
+						.xstatement(xcodes.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSectionParams> postData = new ArrayList<>();
 			postData.add(new ReloadSectionParams("xtype", xcodes.getXtype()));
 			postData.add(new ReloadSectionParams("xcode", xcodes.getXcode()));
@@ -170,6 +205,20 @@ public class AD14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD14")
+					.xfunc("Update")
+					.xsource("AD14")
+					.xtable(null)
+					.xdata(existObj.getXcode())
+					.xstatement(existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xtype", existObj.getXtype()));
@@ -198,6 +247,21 @@ public class AD14 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD14")
+					.xfunc("Delete")
+					.xsource("AD14")
+					.xtable(null)
+					.xdata(obj.getXcode())
+					.xstatement(obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD14?xtype=REST&xcode=RESET"));

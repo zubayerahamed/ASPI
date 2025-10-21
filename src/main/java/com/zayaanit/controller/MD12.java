@@ -29,6 +29,7 @@ import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.CaitemRepo;
 
 /**
@@ -79,6 +80,24 @@ public class MD12 extends KitController {
 
 			Optional<Caitem> op = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), Integer.parseInt(xitem)));
 			model.addAttribute("caitem", op.isPresent() ? op.get() : Caitem.getDefaultInstance());
+
+			if(op.isPresent() && op.get().getXitem() != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("MD12")
+							.xfunc("View")
+							.xsource("MD12")
+							.xtable(null)
+							.xdata(op.get().getXitem().toString())
+							.xstatement(op.get().toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/MD12/MD12-fragments::main-form";
 		}
 
@@ -136,7 +155,26 @@ public class MD12 extends KitController {
 		if (SubmitFor.INSERT.equals(caitem.getSubmitFor())) {
 			caitem.setXitem(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "MD12"));
 			caitem.setZid(sessionManager.getBusinessId());
-			caitem = caitemRepo.save(caitem);
+			try {
+				caitem = caitemRepo.save(caitem);
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getCause().getMessage());
+			}
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("MD12")
+						.xfunc("View")
+						.xsource("MD12")
+						.xtable(null)
+						.xdata(caitem.getXitem().toString())
+						.xstatement(caitem.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/MD12?xitem=RESET"));
@@ -162,9 +200,20 @@ public class MD12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		Xlogsdt logdt = new Xlogsdt();
-//		logdt.setXscreen("MD12");
-//		eventPublisher.publishEvent(logdt);
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("MD12")
+					.xfunc("Update")
+					.xsource("MD12")
+					.xtable(null)
+					.xdata(existObj.getXitem().toString())
+					.xstatement(existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD12?xitem=" + existObj.getXitem()));
@@ -189,6 +238,21 @@ public class MD12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("MD12")
+					.xfunc("Delete")
+					.xsource("MD12")
+					.xtable(null)
+					.xdata(obj.getXitem().toString())
+					.xstatement(obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD12?xitem=RESET"));

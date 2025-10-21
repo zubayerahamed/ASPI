@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xprofiles;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserprofiles;
@@ -43,6 +44,7 @@ import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.entity.pk.XwidgetsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.XprofilesRepo;
@@ -117,6 +119,24 @@ public class AD13 extends KitController {
 				}
 			}
 			model.addAttribute("xusers", user);
+
+			if(StringUtils.isNotBlank(user.getZemail())) {
+				eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("AD13")
+						.xfunc("View")
+						.xsource("AD13")
+						.xtable(null)
+						.xdata(user.getZemail())
+						.xstatement(user.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+			}
+
 			return "pages/AD13/AD13-fragments::main-form";
 		}
 
@@ -155,6 +175,22 @@ public class AD13 extends KitController {
 			}
 		} else {
 			userProfile = xuserwhOp.get();
+
+			eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("View")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(userProfile.getZemail() + "/" + userProfile.getXprofile())
+					.xstatement(userProfile.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		}
 		
 		model.addAttribute("xuserprofiles", userProfile);
@@ -194,6 +230,22 @@ public class AD13 extends KitController {
 			}
 		} else {
 			xuserwidgets = xuserwidgetOp.get();
+
+			eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("View")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(xuserwidgets.getZemail() + "/" + xuserwidgets.getXwidget())
+					.xstatement(xuserwidgets.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		}
 		
 		model.addAttribute("xuserwidgets", xuserwidgets);
@@ -258,6 +310,22 @@ public class AD13 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("AD13")
+						.xfunc("Add")
+						.xsource("AD13")
+						.xtable(null)
+						.xdata(xusers.getZemail())
+						.xstatement(xusers.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + xusers.getZemail()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + xusers.getZemail() + "&xprofile=RESET"));
@@ -287,6 +355,22 @@ public class AD13 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Update")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(existObj.getZemail())
+					.xstatement(existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + existObj.getZemail()));
@@ -320,6 +404,22 @@ public class AD13 extends KitController {
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("AD13")
+						.xfunc("Add")
+						.xsource("AD13")
+						.xtable(null)
+						.xdata(xuserprofiles.getZemail() + "/" + xuserprofiles.getXprofile())
+						.xstatement(xuserprofiles.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + xuserprofiles.getZemail()));
@@ -363,6 +463,22 @@ public class AD13 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("AD13")
+						.xfunc("Add")
+						.xsource("AD13")
+						.xtable(null)
+						.xdata(xuserwidgets.getZemail() + "/" + xuserwidgets.getZemail())
+						.xstatement(xuserwidgets.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + xuserwidgets.getZemail()));
 			reloadSections.add(new ReloadSection("widget-table-container", "/AD13/widget-table?zemail=" + xuserwidgets.getZemail() + "&xwidget=RESET"));
@@ -389,7 +505,27 @@ public class AD13 extends KitController {
 
 		Xuserwidgets existObj = existOp.get();
 		existObj.setXisdefault(xuserwidgets.getXisdefault());
-		existObj = xuserwidgetRepo.save(existObj);
+		try {
+			existObj = xuserwidgetRepo.save(existObj);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Update")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(existObj.getZemail() + "/" + existObj.getXwidget())
+					.xstatement(existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + existObj.getZemail()));
@@ -417,12 +553,42 @@ public class AD13 extends KitController {
 			}
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Delete")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(op.get().getZemail())
+					.xstatement("Delete all details")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		Xusers obj = op.get();
 		try {
 			xuserRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Delete")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(op.get().getZemail())
+					.xstatement(op.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=RESET"));
@@ -449,6 +615,21 @@ public class AD13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Delete")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(obj.getZemail() + "/" + obj.getXprofile())
+					.xstatement(obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD13?zemail=" + zemail));
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD13/detail-table?zemail=" + zemail + "&xprofile=RESET"));
@@ -472,6 +653,21 @@ public class AD13 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Delete")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(obj.getZemail() + "/" + obj.getXwidget())
+					.xstatement(obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		// Resequence every rows
 		List<Xuserwidgets> detailsList = xuserwidgetRepo.findAllByZidAndZemail(sessionManager.getBusinessId(), zemail);
@@ -533,10 +729,48 @@ public class AD13 extends KitController {
 
 		Xuserwidgets sibling = detailsList.stream().filter(f -> f.getXsequence() == xsequence).findFirst().orElse(null);
 		sibling.setXsequence(currentRow.getXsequence());
-		xuserwidgetRepo.save(sibling);
+		try {
+			xuserwidgetRepo.save(sibling);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Update")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(sibling.getZemail() + "/" + sibling.getXwidget())
+					.xstatement(sibling.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		currentRow.setXsequence(xsequence);
-		xuserwidgetRepo.save(currentRow);
+		try {
+			xuserwidgetRepo.save(currentRow);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD13")
+					.xfunc("Update")
+					.xsource("AD13")
+					.xtable(null)
+					.xdata(currentRow.getZemail() + "/" + currentRow.getXwidget())
+					.xstatement(currentRow.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
 		model.addAttribute("xuserwidgets", Xuserwidgets.getDefaultInstance(zemail));

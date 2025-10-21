@@ -40,6 +40,9 @@ public enum ReportMenu implements ReportMenuBase {
 	oppos("oppos", "Print Invoice", "oppos.rpt", ReportParamMap.oppos, "Y", false, "SYSTEM"),
 	opposd("opposd", "Print Invoice Duplicate", "opposd.rpt", ReportParamMap.opposd, "Y", false, "SYSTEM"),
 
+	xlogssm("xlogssm", "Xlogs Report", "xlogssm.rpt", ReportParamMap.xlogssm, "Y", false, "SYSTEM"),
+	xlogsdt("xlogsdt", "Xlogsdt Report", "xlogsdt.rpt", ReportParamMap.xlogsdt, "Y", false, "SYSTEM"),
+
 	// REPORT MODULES REPORT
 	R101("R101", "User Listing Report", "R101.rpt", ReportParamMap.R101, "Y", false, "SYSTEM"),
 	R102("R102", "Profile Wise Access Report", "R102.rpt", ReportParamMap.R102, "Y", false, "SYSTEM"),

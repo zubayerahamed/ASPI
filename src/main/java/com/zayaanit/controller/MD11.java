@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.XwhsRepo;
 
 /**
@@ -70,6 +72,24 @@ public class MD11 extends KitController {
 
 			Optional<Xwhs> op = xwhsRepo.findById(new XwhsPK(sessionManager.getBusinessId(), Integer.parseInt(xwh)));
 			model.addAttribute("xwhs", op.isPresent() ? op.get() : Xwhs.getDefaultInstance());
+			
+			if(op.isPresent() && op.get().getXwh() != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("MD11")
+							.xfunc("View")
+							.xsource("MD11")
+							.xtable(null)
+							.xdata(op.get().getXwh().toString())
+							.xstatement(op.get().toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+			
 			return "pages/MD11/MD11-fragments::main-form";
 		}
 
@@ -116,6 +136,21 @@ public class MD11 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("MD11")
+						.xfunc("Add")
+						.xsource("MD11")
+						.xtable(null)
+						.xdata(xwhs.getXwh().toString())
+						.xstatement(xwhs.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/MD11?xwh=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/MD11/list-table"));
@@ -140,6 +175,21 @@ public class MD11 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("MD11")
+					.xfunc("Update")
+					.xsource("MD11")
+					.xtable(null)
+					.xdata(existObj.getXwh().toString())
+					.xstatement(existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD11?xwh=" + existObj.getXwh()));
 		reloadSections.add(new ReloadSection("list-table-container", "/MD11/list-table"));
@@ -163,6 +213,21 @@ public class MD11 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("MD11")
+					.xfunc("Delete")
+					.xsource("MD11")
+					.xtable(null)
+					.xdata(obj.getXwh().toString())
+					.xstatement(obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/MD11?xwh=RESET"));

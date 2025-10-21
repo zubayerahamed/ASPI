@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xmenuscreens;
 import com.zayaanit.entity.Xprofiles;
@@ -40,6 +41,7 @@ import com.zayaanit.entity.pk.XprofilesPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.XmenusRepo;
 import com.zayaanit.repository.XmenuscreensRepo;
 import com.zayaanit.repository.XprofilesRepo;
@@ -95,6 +97,24 @@ public class AD12 extends KitController {
 
 			Optional<Xprofiles> op = profileRepo.findById(new XprofilesPK(sessionManager.getBusinessId(), xprofile));
 			model.addAttribute("profile", op.isPresent() ? op.get() : Xprofiles.getDefaultInstance());
+
+			if(op.isPresent()) {
+				eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("AD12")
+						.xfunc("View")
+						.xsource("AD12")
+						.xtable(null)
+						.xdata(op.get().getXprofile().toString())
+						.xstatement(op.get().toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+			}
+
 			return "pages/AD12/AD12-fragments::main-form";
 		}
 
@@ -192,6 +212,21 @@ public class AD12 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD12")
+					.xfunc("Add")
+					.xsource("AD12")
+					.xtable(null)
+					.xdata(xprofiles.getXprofile().toString())
+					.xstatement(xprofiles.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + xprofiles.getXprofile()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=" + xprofiles.getXprofile()));
@@ -214,6 +249,21 @@ public class AD12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD12")
+				.xfunc("Update")
+				.xsource("AD12")
+				.xtable(null)
+				.xdata(existObj.getXprofile().toString())
+				.xstatement(existObj.toString())
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=" + existObj.getXprofile()));
@@ -261,6 +311,21 @@ public class AD12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD12")
+				.xfunc("Update")
+				.xsource("AD12")
+				.xtable(null)
+				.xdata(dd.getProfileName())
+				.xstatement(list.stream().map(Xprofilesdt::toString).collect(Collectors.joining(", ")))
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("detail-table-container", "/AD12/detail-table?xprofile=" + dd.getProfileName()));
 		responseHelper.setReloadSections(reloadSections);
@@ -292,6 +357,21 @@ public class AD12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD12")
+				.xfunc("Delete")
+				.xsource("AD12")
+				.xtable(null)
+				.xdata(obj.getXprofile().toString())
+				.xstatement(obj.toString())
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD12?xprofile=RESET"));

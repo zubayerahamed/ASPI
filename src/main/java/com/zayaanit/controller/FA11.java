@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acdef;
 import com.zayaanit.entity.Acmst;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcdefPK;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcdefRepo;
 import com.zayaanit.repository.AcmstRepo;
 
@@ -76,6 +78,22 @@ public class FA11 extends KitController {
 			if(acmstOp.isPresent()) acdef.setCostAccountName(acmstOp.get().getXdesc());
 		}
 		model.addAttribute("acdef", acdef);
+		
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA11")
+					.xfunc("View")
+					.xsource("FA11")
+					.xtable(null)
+					.xdata(acdef.getZid().toString())
+					.xstatement(acdef.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+		
 		if(isAjaxRequest(request) && frommenu == null) return "pages/FA11/FA11-fragments::main-form";
 		if(frommenu == null) return "redirect:/";
 		return "pages/FA11/FA11";
@@ -115,6 +133,21 @@ public class FA11 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA11")
+						.xfunc("Add")
+						.xsource("FA11")
+						.xtable(null)
+						.xdata(acdef.getZid().toString())
+						.xstatement(acdef.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA11"));
 			responseHelper.setReloadSections(reloadSections);
@@ -137,6 +170,21 @@ public class FA11 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA11")
+					.xfunc("Update")
+					.xsource("FA11")
+					.xtable(null)
+					.xdata(existObj.getZid().toString())
+					.xstatement(existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA11"));

@@ -22,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Cabunit;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.CabunitRepo;
 
 /**
@@ -70,6 +72,24 @@ public class AD17 extends KitController {
 
 			Optional<Cabunit> op = cabunitRepo.findById(new CabunitPK(sessionManager.getBusinessId(), Integer.parseInt(xbuid)));
 			model.addAttribute("cabunit", op.isPresent() ? op.get() : Cabunit.getDefaultInstance());
+			
+			if(op.isPresent() && op.get().getXbuid() != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("AD17")
+							.xfunc("View")
+							.xsource("AD17")
+							.xtable(null)
+							.xdata(op.get().getXbuid().toString())
+							.xstatement(op.get().toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+			
 			return "pages/AD17/AD17-fragments::main-form";
 		}
 
@@ -111,6 +131,21 @@ public class AD17 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("AD17")
+						.xfunc("Add")
+						.xsource("AD17")
+						.xtable(null)
+						.xdata(cabunit.getXbuid().toString())
+						.xstatement(cabunit.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/AD17/list-table"));
@@ -135,6 +170,21 @@ public class AD17 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD17")
+					.xfunc("Update")
+					.xsource("AD17")
+					.xtable(null)
+					.xdata(existObj.getXbuid().toString())
+					.xstatement(existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=" + existObj.getXbuid()));
 		reloadSections.add(new ReloadSection("list-table-container", "/AD17/list-table"));
@@ -158,6 +208,21 @@ public class AD17 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD17")
+					.xfunc("Delete")
+					.xsource("AD17")
+					.xtable(null)
+					.xdata(obj.getXbuid().toString())
+					.xstatement(obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD17?xbuid=RESET"));

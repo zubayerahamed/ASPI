@@ -33,6 +33,32 @@ public class XlogsServiceImpl extends AbstractGenericService implements XlogsSer
 	@Autowired private BrowserDetectionService bdService;
 
 	@Override
+	public void SA17delete(SA17SearchParam param) {
+		StringBuilder sql = new StringBuilder("DELETE FROM xlogs WHERE zid = ?");
+		List<Object> params = new ArrayList<>();
+		params.add(sessionManager.getBusinessId());
+
+		// xdate range
+		sql.append(" AND xdate BETWEEN ? AND ?");
+		params.add(new java.sql.Date(param.getXfdate().getTime()));
+		params.add(new java.sql.Date(param.getXtdate().getTime()));
+
+		// zemail condition
+		if (StringUtils.isNotBlank(param.getZemail())) {
+			sql.append(" AND zemail = ?");
+			params.add(param.getZemail());
+		}
+
+		// xstaff condition
+		if (param.getXstaff() != null) {
+			sql.append(" AND xstaff = ?");
+			params.add(param.getXstaff());
+		}
+
+		jdbcTemplate.update(sql.toString(), params.toArray());
+	}
+
+	@Override
 	public Xlogs switchBusiness(HttpServletRequest request) {
 		if(sessionManager.getLoggedInUserDetails().isAdmin()) return new Xlogs();
 		if(sessionManager.getZbusiness().getXlogtype() == null || "Basic".equals(sessionManager.getZbusiness().getXlogtype())) return new Xlogs();

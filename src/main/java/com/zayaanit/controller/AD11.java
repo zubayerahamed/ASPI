@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Zbusiness;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -32,6 +33,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.MyUserDetails;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.ZbusinessRepo;
 
 /**
@@ -75,9 +77,7 @@ public class AD11 extends KitController{
 		if(StringUtils.isBlank(zb.getXdocpath())) zb.setXdocpath("C:\\Contents\\");
 		if(StringUtils.isBlank(zb.getXdoctypes())) zb.setXdoctypes(".jpg,.jpeg,.png,.pdf");
 		if(StringUtils.isBlank(zb.getXrptpath())) zb.setXrptpath("C:\\Reports");
-//		if(zb.getXlogo() != null && zb.getXlogo().length > 0) {
-//			zb.setImageBase64(Base64.getEncoder().encodeToString(zb.getXlogo()));
-//		}
+
 		if(zb.getXposcus() != null) {
 			Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), zb.getXposcus()));
 			if(acsubOp.isPresent()) zb.setCustomerName(acsubOp.get().getXname());
@@ -85,6 +85,21 @@ public class AD11 extends KitController{
 
 		model.addAttribute("doctypesList", Arrays.asList(zb.getXdoctypes().split(",")));
 		model.addAttribute("business", zb);
+
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD11")
+				.xfunc("View")
+				.xsource("AD11")
+				.xtable(null)
+				.xdata(zb.getZid().toString())
+				.xstatement(zb.toString())
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
 
 		if(isAjaxRequest(request) && frommenu == null) {
 			return "pages/AD11/AD11-fragments::main-form";
@@ -153,7 +168,11 @@ public class AD11 extends KitController{
 		zbusiness.setXdoctypes(zbusiness.getXdoctypes().trim());
 
 		Zbusiness existObj = op.get();
-		BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl");
+		BeanUtils.copyProperties(zbusiness, existObj, "zid", "zactive", "xlogo", "zuserid", "ztime", "xrptdefautl", "xlogtype");
+
+		if(sessionManager.getLoggedInUserDetails().isAdmin()) {
+			existObj.setXlogtype(zbusiness.getXlogtype());
+		}
 
 		try {
 			existObj = businessRepo.save(existObj);
@@ -164,6 +183,21 @@ public class AD11 extends KitController{
 		// Load newly updated zbusiness into session manager object
 		MyUserDetails my = sessionManager.getLoggedInUserDetails();
 		my.setZbusiness(existObj);
+
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD11")
+				.xfunc("Update")
+				.xsource("AD11")
+				.xtable(null)
+				.xdata(existObj.getZid().toString())
+				.xstatement(existObj.toString())
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD11"));
@@ -213,6 +247,21 @@ public class AD11 extends KitController{
 		MyUserDetails my = sessionManager.getLoggedInUserDetails();
 		my.setZbusiness(existObj);
 
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD11")
+				.xfunc("Update")
+				.xsource("AD11")
+				.xtable(null)
+				.xdata(existObj.getZid().toString())
+				.xstatement(existObj.toString())
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD11"));
 		reloadSections.add(new ReloadSection("logo-form-container", "/AD11/logo"));
@@ -243,6 +292,21 @@ public class AD11 extends KitController{
 		// Load newly updated zbusiness into session manager object
 		MyUserDetails my = sessionManager.getLoggedInUserDetails();
 		my.setZbusiness(existObj);
+
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD11")
+				.xfunc("Update")
+				.xsource("AD11")
+				.xtable(null)
+				.xdata(existObj.getZid().toString())
+				.xstatement(existObj.toString())
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/AD11"));

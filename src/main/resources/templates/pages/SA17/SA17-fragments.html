@@ -85,9 +85,8 @@
 
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
-							<label class="form-label">Data Type</label>
+							<label class="form-label required">Data Type</label>
 							<select class="form-control select" th:field="*{xtype}" required="required">
-								<option value="">-- Select --</option>
 								<option value="Moderate">Moderate</option>
 								<option value="Advance">Advance</option>
 							</select>
@@ -100,9 +99,8 @@
 						<button type="reset" th:attr="data-reloadurl='/SA17', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button type="submit" class="btn btn-primary btn-sm btn-print-logs ms-1"><i class="ph ph-printer me-2"></i> Print</button>
-						<button type="submit" class="btn btn-primary btn-sm btn-delete-logs ms-1"><i class="ph ph-trash me-2"></i> Delete</button>
-						<button type="submit" class="btn btn-primary btn-sm btn-count-logs ms-1"><i class="ph ph-magic-wand me-2"></i> Count</button>
+						<button th:attr="data-url='/report/print'" class="btn btn-light btn-sm btn-print-logs ms-1"><i class="ph ph-printer me-2"></i> Print</button>
+						<button type="submit" class="btn btn-danger btn-sm btn-delete-logs ms-1"><i class="ph ph-trash me-2"></i> Delete</button>
 						<button type="submit" class="btn btn-primary btn-sm btn-search-logs ms-1"><i class="ph-magnifying-glass me-2"></i> View</button>
 					</div>
 				</div>
@@ -140,6 +138,43 @@
 					"zemail" : $('input[name="zemail"]').val(),
 					"xstaff" : $('input[name="xstaff"]').val(),
 					"xtype" :  $('#xtype').val(),
+				});
+			});
+
+			$('.btn-print-logs').off('click').on('click', function(e){
+				e.preventDefault();
+
+				var xtype = $('#xtype').val();
+				var rptcode = 'xlogssm';
+				if(xtype === 'Advance') rptcode = 'xlogsdt';
+
+				var url = getBasepath() + $(this).data('url');
+
+				var params = {};
+				params.reportCode = rptcode;
+				params.reportType = "PDF";
+				params.param1 = $("#businessZid").val();
+				params.param2 = $('#xfdate').val();
+				params.param3 = $('#xtdate').val();
+				params.param4 = $('input[name="zemail"]').val();
+				params.param5 = $('input[name="xstaff"]').val();
+				params.param6 = $('#xtype').val();
+
+				generateOnScreenReport(url, params);
+			});
+
+			$('.btn-delete-logs').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure?")){
+					return;
+				}
+
+				actionPostRequest(getBasepath() + '/SA17/delete', {
+					"xfdate" : $('#xfdate').val(),
+					"xtdate" : $('#xtdate').val(),
+					"zemail" : $('input[name="zemail"]').val(),
+					"xstaff" : $('input[name="xstaff"]').val(),
+					"xtype" : $('#xtype').val()
 				});
 			});
 		})

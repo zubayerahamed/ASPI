@@ -3,9 +3,11 @@ package com.zayaanit.controller;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,8 @@ import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
+import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.ReloadSectionParams;
 import com.zayaanit.model.SA17SearchParam;
 import com.zayaanit.model.SA17SearchTable;
 import com.zayaanit.service.XlogsService;
@@ -165,5 +169,50 @@ public class SA17 extends KitController {
 		response.setRecordsFiltered(totalRows);
 		response.setData(list);
 		return response;
+	}
+
+	@Transactional
+	@PostMapping("/delete")
+	public @ResponseBody Map<String, Object> voucherDelete(
+		@RequestParam String xfdate,	
+		@RequestParam String xtdate,
+		@RequestParam(required = false) String zemail,
+		@RequestParam(required = false) Integer xstaff,
+		@RequestParam String xtype
+	) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SA17SearchParam param = new SA17SearchParam();
+		try {
+			param.setXfdate(sdf.parse(xfdate));
+			param.setXtdate(sdf.parse(xtdate));
+		} catch (ParseException e) {
+			log.error(ERROR, e.getMessage(), e);
+		}
+		param.setZemail(zemail);
+		param.setXstaff(xstaff);
+		param.setXtype(xtype);
+
+		try {
+			if("Moderate".equals(xtype)){
+				xlogsService.SA17delete(param);
+			} else {
+				xlogsdtService.SA17delete(param);
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		List<ReloadSectionParams> postData = new ArrayList<>();
+		postData.add(new ReloadSectionParams("xfdate", xfdate));
+		postData.add(new ReloadSectionParams("xtdate", xtdate));
+		postData.add(new ReloadSectionParams("zemail", zemail != null ? zemail.toString() : ""));
+		postData.add(new ReloadSectionParams("xstaff", xstaff != null ? xstaff.toString(): ""));
+		postData.add(new ReloadSectionParams("xtype", xtype));
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("header-table-container", "/SA17/header-table", postData));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Data deleted successfully");
+		return responseHelper.getResponse();
 	}
 }
