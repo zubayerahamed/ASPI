@@ -245,6 +245,7 @@
 					{ 
 						"data": "xvoucher",
 						render: function(data, type, row, meta) {
+							if(data == null || data == '') return '';
 							return '<a 	href="#" data-screen="FA17?xvoucher='+ data +'" class="screen-item">'+ data +'</a>';
 						},
 					},
@@ -256,7 +257,7 @@
 						"class": "text-center",
 						render: function(data, type, row, meta) {
 
-							var actions = '<button data-url="/report/print", data-param2="'+row['xdornum']+'", data-rptcode="oppos" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i>Print</button>';
+							var actions = '<button data-url="/report/print", data-param2="'+row['xdornum']+'", data-rptcode="oppos" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i>POS</button>';
 
 							if(row['xstatus'] == 'Confirmed' && row['xstatusim'] == 'Open'){
 								actions += '<a class="btn btn-sm btn-primary mx-1 btn-invoice-confirm" data-xdornum="'+ row['xdornum'] +'" href="#">Confirm</a>';

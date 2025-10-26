@@ -215,7 +215,7 @@ public class MenuAccessAuthorizationInterceptor implements AsyncHandlerIntercept
 		} else {
 			// Remove the "/" and return the first 4 characters
 			String result = path.replace("/", "");
-			return result.length() > 4 ? result.substring(0, 4) : result;
+			return result.length() > 4 ? result.substring(0, 4).toUpperCase() : result.toUpperCase();
 		}
 	}
 

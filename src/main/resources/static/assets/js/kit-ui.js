@@ -640,7 +640,7 @@ $(document).ready(function(){
 			id : 'screen-container',
 			url : url
 		}, () => {
-			localStorage.setItem('lastVisitedUrl', url);
+			// localStorage.setItem('lastVisitedUrl', url);
 			// if left sidebar menu is collapsed, then forcefully expand it
 			//if($('.sidebar-main-resized').length > 0){
 			//	$('.sidebar-main-resize').click();

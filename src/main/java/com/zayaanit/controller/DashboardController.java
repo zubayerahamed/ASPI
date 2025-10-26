@@ -21,7 +21,6 @@ import com.ibm.icu.util.Calendar;
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xcodes;
-import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xuserwidgets;
 import com.zayaanit.entity.Xwidgets;

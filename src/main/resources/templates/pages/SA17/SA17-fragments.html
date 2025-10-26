@@ -158,7 +158,6 @@
 				params.param3 = $('#xtdate').val();
 				params.param4 = $('input[name="zemail"]').val();
 				params.param5 = $('input[name="xstaff"]').val();
-				params.param6 = $('#xtype').val();
 
 				generateOnScreenReport(url, params);
 			});
@@ -205,7 +204,6 @@
 						<th>Staff ID</th>
 						<th>Action Type</th>
 						<th>Time</th>
-						<th>Date</th>
 						<th>User Agent</th>
 					</tr>
 				</thead>
@@ -217,7 +215,6 @@
 						<th>User ID</th>
 						<th>Staff ID</th>
 						<th>Activity</th>
-						<th>Date</th>
 						<th>Screen</th>
 						<th>Function</th>
 						<th>Source</th>
@@ -253,8 +250,7 @@
 				{ "name": "xstaff",  "targets": 6 },
 				{ "name": "xaction",  "targets": 7 },
 				{ "name": "ztime",  "targets": 8 },
-				{ "name": "xdate",  "targets": 9 },
-				{ "name": "xuseragent",  "targets": 10 },
+				{ "name": "xuseragent",  "targets": 9 },
 			];
 
 			var advanceColumnDefs = [
@@ -264,14 +260,13 @@
 				{ "name": "zemail",  "targets": 3 },
 				{ "name": "xstaff",  "targets": 4 },
 				{ "name": "ztime",  "targets": 5 },
-				{ "name": "xdate",  "targets": 6 },
-				{ "name": "xscreen",  "targets": 7 },
-				{ "name": "xfunc",  "targets": 8 },
-				{ "name": "xsource",  "targets": 9 },
-				{ "name": "xtable",  "targets": 10 },
-				{ "name": "xdata",  "targets": 11 },
-				{ "name": "xstatement",  "targets": 12 },
-				{ "name": "xresult",  "targets": 13 },
+				{ "name": "xscreen",  "targets": 6 },
+				{ "name": "xfunc",  "targets": 7 },
+				{ "name": "xsource",  "targets": 8 },
+				{ "name": "xtable",  "targets": 9 },
+				{ "name": "xdata",  "targets": 10 },
+				{ "name": "xstatement",  "targets": 11 },
+				{ "name": "xresult",  "targets": 12 },
 			];
 
 			var moderateCol = [
@@ -283,8 +278,12 @@
 				{ "data": "xprofile"},
 				{ "data": "xstaff" },
 				{ "data": "xaction" },
-				{ "data": "ztime" },
-				{ "data": "xdate" },
+				{ 
+					"data": "ztime",
+					render: function(data, type, row, meta) {
+						return moment(data).format("DD MMM YYYY, hh:mm A");
+					},
+				},
 				{ "data": "xuseragent" },
 			];
 
@@ -294,8 +293,12 @@
 				{ "data": "xsession" },
 				{ "data": "zemail" },
 				{ "data": "xstaff" },
-				{ "data": "ztime" },
-				{ "data": "xdate" },
+				{
+					"data": "ztime",
+					render: function(data, type, row, meta) {
+						return moment(data).format("DD MMM YYYY, hh:mm A");
+					},
+				},
 				{ "data": "xscreen" },
 				{ "data": "xfunc" },
 				{ "data": "xsource" },

@@ -192,14 +192,12 @@ public class ReportParamMap {
 		xlogssm.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
 		xlogssm.put("param4", "zemail|" + ReportParamDataType.STRING.name());
 		xlogssm.put("param5", "xstaff|" + ReportParamDataType.INTEGER.name());
-		xlogssm.put("param6", "xtype|" + ReportParamDataType.STRING.name());
 
 		xlogsdt.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		xlogsdt.put("param2", "xfdate|" + ReportParamDataType.DATE.name());
 		xlogsdt.put("param3", "xtdate|" + ReportParamDataType.DATE.name());
 		xlogsdt.put("param4", "zemail|" + ReportParamDataType.STRING.name());
 		xlogsdt.put("param5", "xstaff|" + ReportParamDataType.INTEGER.name());
-		xlogsdt.put("param6", "xtype|" + ReportParamDataType.STRING.name());
 
 		R101.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R101.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
