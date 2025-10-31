@@ -58,6 +58,7 @@ import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Cadoc;
 import com.zayaanit.entity.Tempvoucher;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcdetailPK;
 import com.zayaanit.entity.pk.AcheaderPK;
@@ -70,6 +71,7 @@ import com.zayaanit.enums.ExcelCellType;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.AsyncCSVResult;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.model.YearPeriodResult;
 import com.zayaanit.repository.AcdetailRepo;
 import com.zayaanit.repository.AcheaderRepo;
@@ -206,6 +208,23 @@ public class FA16 extends KitController {
 			}
 			model.addAttribute("acheader", acheader != null ? acheader : Acheader.getDefaultInstance());
 
+			if(acheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA16")
+							.xfunc("View Data")
+							.xsource("FA16")
+							.xtable(null)
+							.xdata(acheader.getXvoucher().toString())
+							.xstatement("View data " + acheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			List<Cadoc> cdocList = cadocRepo.findAllByZidAndXscreenAndXtrnnum(sessionManager.getBusinessId(), "FA16", Integer.valueOf(xvoucher));
 			model.addAttribute("documents", cdocList);
 
@@ -273,6 +292,23 @@ public class FA16 extends KitController {
 			acdetail.setXacc(account.getXacc());
 			acdetail.setAccountName(account.getXdesc());
 			acdetail.setAccountUsage(account.getXaccusage());
+		}
+
+		if(acdetail != null && acdetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA16")
+						.xfunc("View Detail")
+						.xsource("FA16")
+						.xtable(null)
+						.xdata(acdetail.getXvoucher().toString() + "/" + acdetail.getXrow())
+						.xstatement("View detail data " + acdetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 		}
 
 		model.addAttribute("acdetail", acdetail);
@@ -388,6 +424,21 @@ public class FA16 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA16")
+						.xfunc("Add Data")
+						.xsource("FA16")
+						.xtable(null)
+						.xdata(acheader.getXvoucher().toString())
+						.xstatement("Add data " + acheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acheader.getXvoucher()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/FA16/detail-table?xvoucher="+ acheader.getXvoucher() +"&xrow=RESET"));
@@ -417,6 +468,21 @@ public class FA16 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA16")
+					.xfunc("Update Data")
+					.xsource("FA16")
+					.xtable(null)
+					.xdata(existObj.getXvoucher().toString())
+					.xstatement("Update data " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + existObj.getXvoucher()));
@@ -490,6 +556,21 @@ public class FA16 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA16")
+						.xfunc("Update Detail")
+						.xsource("FA16")
+						.xtable(null)
+						.xdata(acdetail.getXvoucher().toString() + "/" + acdetail.getXrow())
+						.xstatement("Add detail data " + acdetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			BigDecimal total = acdetailRepo.getTotalPrimeAmount(sessionManager.getBusinessId(), acdetail.getXvoucher());
 			acheader.setXstatusjv(total.compareTo(BigDecimal.ZERO) == 0 ? "Balanced" : "Suspended");
 			try {
@@ -497,6 +578,21 @@ public class FA16 extends KitController {
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA16")
+						.xfunc("Update Data")
+						.xsource("FA16")
+						.xtable(null)
+						.xdata(acheader.getXvoucher().toString())
+						.xstatement("Update data " + acheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acdetail.getXvoucher()));
@@ -515,15 +611,49 @@ public class FA16 extends KitController {
 
 		Acdetail exist = existOp.get();
 		BeanUtils.copyProperties(acdetail, exist, "zid", "zuserid", "ztime", "xvoucher", "xrow", "xacc");
-		exist = acdetailRepo.save(exist);
-		if(exist == null) {
-			responseHelper.setErrorStatusAndMessage("Update failed");
-			return responseHelper.getResponse();
+		try {
+			acdetailRepo.save(exist);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA16")
+					.xfunc("Update Detail")
+					.xsource("FA16")
+					.xtable(null)
+					.xdata(exist.getXvoucher().toString() + "/" + exist.getXrow())
+					.xstatement("Update detail data " + exist.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		BigDecimal total = acdetailRepo.getTotalPrimeAmount(sessionManager.getBusinessId(), exist.getXvoucher());
 		acheader.setXstatusjv(total.compareTo(BigDecimal.ZERO) == 0 ? "Balanced" : "Suspended");
-		acheaderRepo.save(acheader);
+		try {
+			acheaderRepo.save(acheader);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA16")
+					.xfunc("Update Data")
+					.xsource("FA16")
+					.xtable(null)
+					.xdata(acheader.getXvoucher().toString())
+					.xstatement("Update data " + acheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + acdetail.getXvoucher()));
@@ -554,12 +684,42 @@ public class FA16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA16")
+					.xfunc("Delete All Detail")
+					.xsource("FA16")
+					.xtable(null)
+					.xdata(op.get().getXvoucher().toString())
+					.xstatement("Delete all detail data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		Acheader obj = op.get();
 		try {
 			acheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA16")
+					.xfunc("Delete Data")
+					.xsource("FA16")
+					.xtable(null)
+					.xdata(obj.getXvoucher().toString())
+					.xstatement("Delete data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=RESET"));
@@ -599,6 +759,21 @@ public class FA16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA16")
+					.xfunc("Delete Detail")
+					.xsource("FA16")
+					.xtable(null)
+					.xdata(obj.getXvoucher().toString() + "/" + obj.getXrow())
+					.xstatement("Delete detail data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		// Update line amount and total amount of header
 		BigDecimal total = acdetailRepo.getTotalPrimeAmount(sessionManager.getBusinessId(), xvoucher);
 		acheader.setXstatusjv(total.compareTo(BigDecimal.ZERO) == 0 ? "Balanced" : "Suspended");
@@ -607,6 +782,21 @@ public class FA16 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA16")
+					.xfunc("Update Data")
+					.xsource("FA16")
+					.xtable(null)
+					.xdata(acheader.getXvoucher().toString())
+					.xstatement("Update data : " + acheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA16?xvoucher=" + xvoucher));

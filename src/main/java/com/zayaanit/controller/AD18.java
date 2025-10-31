@@ -35,10 +35,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zayaanit.entity.Cadoc;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.CadocPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.CadocRepo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -92,6 +94,21 @@ public class AD18 extends KitController {
 			return ResponseEntity.notFound().build();
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD18")
+					.xfunc("Document Download")
+					.xsource(null)
+					.xtable(null)
+					.xdata(xdocid.toString())
+					.xstatement("Downloading document : " + cadoc.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + cadoc.getXnameold());
 
@@ -133,6 +150,21 @@ public class AD18 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD18")
+					.xfunc("Document Delete")
+					.xsource(null)
+					.xtable(null)
+					.xdata(xdocid.toString())
+					.xstatement("Document deleted : " + cadoc.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection(mainreloadid, mainreloadurl + cadoc.getXtrnnum()));
@@ -244,6 +276,21 @@ public class AD18 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD18")
+					.xfunc("Document Upload")
+					.xsource(null)
+					.xtable(null)
+					.xdata(cadoc.getXdocid().toString())
+					.xstatement("Document uploaded : " + cadoc.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection(mainreloadid, mainreloadurl + transactionId));
 		responseHelper.setReloadSections(reloadSections);
@@ -266,8 +313,8 @@ public class AD18 extends KitController {
 	}
 
 	private String getFileExtention(MultipartFile csvFile) {
-		if (csvFile == null || StringUtils.isBlank(csvFile.getOriginalFilename()))
-			return null;
+		if (csvFile == null) return null;
+		if (StringUtils.isBlank(csvFile.getOriginalFilename())) return null;
 		int indx =  csvFile.getOriginalFilename().lastIndexOf(".");
 		return csvFile.getOriginalFilename().substring(indx);
 	}

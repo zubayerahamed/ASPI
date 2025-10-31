@@ -25,6 +25,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Optogli;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.OptogliPK;
@@ -33,6 +34,7 @@ import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.OptogliRepo;
 import com.zayaanit.service.OptogliService;
@@ -133,6 +135,22 @@ public class FA32 extends KitController {
 			}
 
 			model.addAttribute("optogli", optogli);
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA32")
+						.xfunc("View Data")
+						.xsource("FA32")
+						.xtable(null)
+						.xdata(optogli.getXtype() + "/" + optogli.getXgcus())
+						.xstatement("View Data : " + optogli.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			return "pages/FA32/FA32-fragments::main-form";
 		}
 
@@ -215,6 +233,21 @@ public class FA32 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA32")
+						.xfunc("Add Data")
+						.xsource("FA32")
+						.xtable(null)
+						.xdata(optogli.getXtype() + "/" + optogli.getXgcus())
+						.xstatement("Add Data : " + optogli.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA32"));
 			reloadSections.add(new ReloadSection("header-table-container", "/FA32/header-table"));
@@ -237,6 +270,21 @@ public class FA32 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA32")
+					.xfunc("Update Data")
+					.xsource("FA32")
+					.xtable(null)
+					.xdata(existObj.getXtype() + "/" + existObj.getXgcus())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA32?xtype=" + existObj.getXtype() + "&xgcus=" + existObj.getXgcus()));
@@ -261,6 +309,21 @@ public class FA32 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA32")
+					.xfunc("Delete Data")
+					.xsource("FA32")
+					.xtable(null)
+					.xdata(existObj.getXtype() + "/" + existObj.getXgcus())
+					.xstatement("Delete Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA32?xtype=REST&xgcus=RESET"));

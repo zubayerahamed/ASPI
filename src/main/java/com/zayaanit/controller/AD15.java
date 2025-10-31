@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Xfavourites;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xusers;
 import com.zayaanit.entity.Xuserwidgets;
@@ -34,6 +35,7 @@ import com.zayaanit.entity.pk.XusersPK;
 import com.zayaanit.entity.pk.XuserwidgetsPK;
 import com.zayaanit.entity.pk.XwidgetsPK;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.XfavouritesRepo;
 import com.zayaanit.repository.XscreensRepo;
 import com.zayaanit.repository.XusersRepo;
@@ -82,7 +84,26 @@ public class AD15 extends KitController {
 	}
 
 	@GetMapping
-	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, Model model) {
+	public String index(HttpServletRequest request, @RequestParam(required = false) String frommenu, @RequestParam(required = false) String fromdef, Model model) {
+		String xsource = "Menu";
+		if(request.getQueryString().contains("fromfav=")) xsource = "Favourite";
+		if(request.getQueryString().contains("fromdef=")) xsource = "Default";
+
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD15")
+				.xfunc(null)
+				.xsource(xsource)
+				.xtable(null)
+				.xdata(null)
+				.xstatement(null)
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
+
 		sessionManager.addToMap("lastVisitedUrl", "AD15");
 
 		Optional<Xusers> usersOp = xusersRepo.findById(new XusersPK(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername()));
@@ -168,6 +189,21 @@ public class AD15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+			new XlogsdtEvent(
+				Xlogsdt.builder()
+				.xscreen("AD15")
+				.xfunc("Update")
+				.xsource("AD15")
+				.xtable(null)
+				.xdata(user.getZemail())
+				.xstatement(user.toString())
+				.xresult("Success")
+				.build(), 
+				sessionManager
+			)
+		);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("cp-form-container", "/AD15"));
 		responseHelper.setReloadSections(reloadSections);
@@ -223,6 +259,21 @@ public class AD15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD15")
+					.xfunc("Update")
+					.xsource("AD15")
+					.xtable(null)
+					.xdata(loggedInUser().getUsername() + "/" + fav.getXprofile() + "/" + fav.getXscreen())
+					.xstatement("Add to favourite: " + fav.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("page-header-container", "/AD15/page-header?screen=" + screen + "&pagetitle=" + pagetitle + "&favorite=YES"));
 		reloadSections.add(new ReloadSection("favorite-links-container", "/AD15/favorite-links"));
@@ -251,6 +302,21 @@ public class AD15 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD15")
+					.xfunc("Update")
+					.xsource("AD15")
+					.xtable(null)
+					.xdata(loggedInUser().getUsername() + "/" + favOp.get().getXprofile() + "/" + favOp.get().getXscreen())
+					.xstatement("Remove from favourite: " + favOp.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("page-header-container", "/AD15/page-header?screen=" + screen + "&pagetitle=" + pagetitle + "&favorite=NO"));
@@ -308,6 +374,21 @@ public class AD15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD15")
+					.xfunc("Update")
+					.xsource("AD15")
+					.xtable(null)
+					.xdata(loggedInUser().getUsername() + "/" + favOp.get().getXprofile() + "/" + favOp.get().getXscreen())
+					.xstatement("Set to default screen : " + favOp.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		responseHelper.setDisplayMessage(false);
 		responseHelper.setSuccessStatusAndMessage("Success");
 		return responseHelper.getResponse();
@@ -330,6 +411,21 @@ public class AD15 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD15")
+					.xfunc("Update")
+					.xsource("AD15")
+					.xtable(null)
+					.xdata(user.getZemail())
+					.xstatement("Update theme color : " + user.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		responseHelper.setDisplayMessage(false);
 		responseHelper.setSuccessStatusAndMessage("Color mode changed successfully");
@@ -374,6 +470,21 @@ public class AD15 extends KitController {
 			model.addAttribute("favouriteMenus", favouriteMenus());
 			return "commons::favorite-links";
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD15")
+					.xfunc("Update")
+					.xsource("AD15")
+					.xtable(null)
+					.xdata(loggedInUser().getUsername())
+					.xstatement("Re-ordering favourite screen : " + screenDatas)
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		model.addAttribute("favouriteMenus", favouriteMenus());
 		return "commons::favorite-links";
@@ -424,7 +535,26 @@ public class AD15 extends KitController {
 		xuserwidgetRepo.save(sibling);
 
 		currentRow.setXsequence(xsequence);
-		xuserwidgetRepo.save(currentRow);
+		try {
+			xuserwidgetRepo.save(currentRow);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD15")
+					.xfunc("Update")
+					.xsource("AD15")
+					.xtable(null)
+					.xdata(loggedInUser().getUsername() + "/" + currentRow.getXwidget())
+					.xstatement("Update widget sequence : " + currentRow.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
 		model.addAttribute("detailList", detailsList);
@@ -466,7 +596,26 @@ public class AD15 extends KitController {
 
 		Xuserwidgets currentRow = existOp.get();
 		currentRow.setXisdefault("Y".equalsIgnoreCase(isdefault));
-		xuserwidgetRepo.save(currentRow);
+		try {
+			xuserwidgetRepo.save(currentRow);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("AD15")
+					.xfunc("Update")
+					.xsource("AD15")
+					.xtable(null)
+					.xdata(loggedInUser().getUsername() + "/" + currentRow.getXwidget())
+					.xstatement("Update default widget : " + currentRow.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		detailsList.sort(Comparator.comparing(Xuserwidgets::getXsequence));
 		model.addAttribute("detailList", detailsList);

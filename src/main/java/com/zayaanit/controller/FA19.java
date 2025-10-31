@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcbalRepo;
 
 import lombok.Data;
@@ -91,6 +93,21 @@ public class FA19 extends KitController{
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA19")
+					.xfunc("Year End Process")
+					.xsource("FA19")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Year End Process : FA_YearEnd(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername()+","+ yep.getXyear() +","+ yep.getXdate() +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA19"));

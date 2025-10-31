@@ -30,6 +30,7 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imissuedetail;
 import com.zayaanit.entity.Imissueheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -41,6 +42,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -122,6 +124,23 @@ public class IM13 extends KitController {
 			}
 			model.addAttribute("imissueheader", imissueheader != null ? imissueheader : Imissueheader.getDefaultInstance(cabunits));
 
+			if(imissueheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("IM13")
+							.xfunc("View Data")
+							.xsource("IM13")
+							.xtable(null)
+							.xdata(imissueheader.getXissuenum().toString())
+							.xstatement("View Data : " + imissueheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+			
 			return "pages/IM13/IM13-fragments::main-form";
 		}
 
@@ -174,18 +193,35 @@ public class IM13 extends KitController {
 		}
 
 		Optional<Imissuedetail> imtrodetailOp = imissuedetailRepo.findById(new ImissuedetailPK(sessionManager.getBusinessId(), Integer.parseInt(xissuenum), Integer.parseInt(xrow)));
-		Imissuedetail imtrodetail = imtrodetailOp.isPresent() ? imtrodetailOp.get() : Imissuedetail.getDefaultInstance(Integer.parseInt(xissuenum));
-		if(imtrodetail != null && imtrodetail.getXitem() != null) {
-			Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtrodetail.getXitem()));
+		Imissuedetail imissuedetail = imtrodetailOp.isPresent() ? imtrodetailOp.get() : Imissuedetail.getDefaultInstance(Integer.parseInt(xissuenum));
+		if(imissuedetail != null && imissuedetail.getXitem() != null) {
+			Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imissuedetail.getXitem()));
 			caitem = caitemOp.isPresent() ? caitemOp.get() : null;
 		}
-		if(caitem != null && imtrodetail != null) {
-			imtrodetail.setXitem(caitem.getXitem());
-			imtrodetail.setItemName(caitem.getXdesc());
-			imtrodetail.setXunit(caitem.getXunit());
+		if(caitem != null && imissuedetail != null) {
+			imissuedetail.setXitem(caitem.getXitem());
+			imissuedetail.setItemName(caitem.getXdesc());
+			imissuedetail.setXunit(caitem.getXunit());
 		}
 
-		model.addAttribute("imissuedetail", imtrodetail);
+		if(imissuedetail != null && imissuedetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM13")
+						.xfunc("View Detail")
+						.xsource("IM13")
+						.xtable(null)
+						.xdata(imissuedetail.getXissuenum().toString() + "/" + imissuedetail.getXrow())
+						.xstatement("View Detail Data : " + imissuedetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+		}
+
+		model.addAttribute("imissuedetail", imissuedetail);
 		return "pages/IM13/IM13-fragments::detail-table";
 	}
 
@@ -243,6 +279,21 @@ public class IM13 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM13")
+						.xfunc("Add Data")
+						.xsource("IM13")
+						.xtable(null)
+						.xdata(imissueheader.getXissuenum().toString())
+						.xstatement("Add Data : " + imissueheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + imissueheader.getXissuenum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM13/detail-table?xissuenum="+ imissueheader.getXissuenum() +"&xrow=RESET"));
@@ -283,6 +334,21 @@ public class IM13 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM13")
+					.xfunc("Update Data")
+					.xsource("IM13")
+					.xtable(null)
+					.xdata(existObj.getXissuenum().toString())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + existObj.getXissuenum()));
@@ -341,6 +407,21 @@ public class IM13 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM13")
+						.xfunc("Add Detail")
+						.xsource("IM13")
+						.xtable(null)
+						.xdata(imtrodetail.getXissuenum().toString() + "/" + imtrodetail.getXrow())
+						.xstatement("Add detail data : " + imtrodetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + imtrodetail.getXissuenum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM13/detail-table?xissuenum=" + imtrodetail.getXissuenum() + "&xrow=RESET"));
@@ -374,12 +455,42 @@ public class IM13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM13")
+					.xfunc("Delete All Detail")
+					.xsource("IM13")
+					.xtable(null)
+					.xdata(xissuenum.toString())
+					.xstatement("Delete all detail data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		Imissueheader obj = op.get();
 		try {
 			imissueheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM13")
+					.xfunc("Delete Data")
+					.xsource("IM13")
+					.xtable(null)
+					.xdata(xissuenum.toString())
+					.xstatement("Delete data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=RESET"));
@@ -418,6 +529,21 @@ public class IM13 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM13")
+					.xfunc("Delete Detail")
+					.xsource("IM13")
+					.xtable(null)
+					.xdata(xissuenum.toString() + "/" + obj.getXrow())
+					.xstatement("Delete detail data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + xissuenum));
@@ -504,6 +630,21 @@ public class IM13 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM13")
+					.xfunc("Confirm Issue")
+					.xsource("IM13")
+					.xtable(null)
+					.xdata(xissuenum.toString())
+					.xstatement("Confirm Issue Data : IM_ConfirmIssue(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xissuenum +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM13?xissuenum=" + xissuenum));

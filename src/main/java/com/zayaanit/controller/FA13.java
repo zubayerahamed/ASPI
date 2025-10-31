@@ -24,12 +24,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zayaanit.entity.Acgroup;
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcgroupRepo;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.AcsubRepo;
@@ -92,6 +94,24 @@ public class FA13 extends KitController {
 				}
 			}
 			model.addAttribute("acmst", acmst != null ? acmst : Acmst.getDefaultInstance());
+
+			if(acmst != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA13")
+							.xfunc("View Data")
+							.xsource("FA13")
+							.xtable(null)
+							.xdata(acmst.getXacc().toString())
+							.xstatement("View data : " + acmst.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/FA13/FA13-fragments::main-form";
 		}
 
@@ -144,8 +164,6 @@ public class FA13 extends KitController {
 		modelValidator.validateAcmst(acmst, bindingResult, validator);
 		if(bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);
 
-		
-
 		if(StringUtils.isBlank(acmst.getXdesc())) {
 			responseHelper.setErrorStatusAndMessage("Account name required");
 			return responseHelper.getResponse();
@@ -174,6 +192,21 @@ public class FA13 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA13")
+						.xfunc("Add Data")
+						.xsource("FA13")
+						.xtable(null)
+						.xdata(acmst.getXacc().toString())
+						.xstatement("Add data : " + acmst.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/FA13/list-table"));
@@ -198,6 +231,21 @@ public class FA13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA13")
+					.xfunc("Update Data")
+					.xsource("FA13")
+					.xtable(null)
+					.xdata(existObj.getXacc().toString())
+					.xstatement("Update data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=" + existObj.getXacc()));
 		reloadSections.add(new ReloadSection("list-table-container", "/FA13/list-table"));
@@ -221,6 +269,21 @@ public class FA13 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA13")
+					.xfunc("Delete Data")
+					.xsource("FA13")
+					.xtable(null)
+					.xdata(obj.getXacc().toString())
+					.xstatement("Delete data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA13?xacc=RESET"));

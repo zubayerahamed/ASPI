@@ -22,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acgroup;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcgroupPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcgroupRepo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +98,24 @@ public class FA12 extends KitController {
 				}
 			}
 			model.addAttribute("acgroup", op.isPresent() ? op.get() : Acgroup.getDefaultInstance());
+
+			if(op.isPresent()) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA12")
+							.xfunc("View Data")
+							.xsource("FA12")
+							.xtable(null)
+							.xdata(op.get().getXagcode().toString())
+							.xstatement("View data : " + op.get().toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/FA12/FA12-fragments::main-form";
 		}
 
@@ -116,7 +136,6 @@ public class FA12 extends KitController {
 		} catch (Exception e) {
 			log.error(ERROR, e.getMessage());
 		}
-		
 
 		model.addAttribute("acgroup", acgroup);
 		return "pages/FA12/FA12-fragments::list-table";
@@ -156,11 +175,27 @@ public class FA12 extends KitController {
 				acgroup.setXaglevel(parentOp.get().getXaglevel() + 1);
 				acgroup.setXagtype(parentOp.get().getXagtype());
 			}
+
 			try {
 				acgroup = acgroupRepo.save(acgroup);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA12")
+						.xfunc("Add Data")
+						.xsource("FA12")
+						.xtable(null)
+						.xdata(acgroup.getXagcode().toString())
+						.xstatement("Add data : " + acgroup.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (acgroup.getXagparent() == null ? "RESET" : acgroup.getXagparent())));
@@ -185,6 +220,21 @@ public class FA12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA12")
+					.xfunc("Update Data")
+					.xsource("FA12")
+					.xtable(null)
+					.xdata(existObj.getXagcode().toString())
+					.xstatement("Update data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=" + existObj.getXagcode() + "&xagparent=" + (existObj.getXagparent() == null ? "RESET" : existObj.getXagparent())));
@@ -215,6 +265,21 @@ public class FA12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA12")
+					.xfunc("Delete Data")
+					.xsource("FA12")
+					.xtable(null)
+					.xdata(obj.getXagcode().toString())
+					.xstatement("Delete data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA12?xagcode=RESET&xagparent=" + (obj.getXagparent() == null ? "RESET" : obj.getXagparent())));

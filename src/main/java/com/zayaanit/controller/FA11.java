@@ -78,16 +78,16 @@ public class FA11 extends KitController {
 			if(acmstOp.isPresent()) acdef.setCostAccountName(acmstOp.get().getXdesc());
 		}
 		model.addAttribute("acdef", acdef);
-		
+
 		eventPublisher.publishEvent(
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("FA11")
-					.xfunc("View")
+					.xfunc("View Data")
 					.xsource("FA11")
 					.xtable(null)
 					.xdata(acdef.getZid().toString())
-					.xstatement(acdef.toString())
+					.xstatement("View data : " + acdef.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -137,11 +137,11 @@ public class FA11 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("FA11")
-						.xfunc("Add")
+						.xfunc("Add Data")
 						.xsource("FA11")
 						.xtable(null)
 						.xdata(acdef.getZid().toString())
-						.xstatement(acdef.toString())
+						.xstatement("Add data : " + acdef.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -175,11 +175,11 @@ public class FA11 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("FA11")
-					.xfunc("Update")
+					.xfunc("Update Data")
 					.xsource("FA11")
 					.xtable(null)
 					.xdata(existObj.getZid().toString())
-					.xstatement(existObj.toString())
+					.xstatement("Update data : " + existObj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager

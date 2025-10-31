@@ -24,12 +24,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.AcsubRepo;
 
@@ -87,6 +89,24 @@ public class FA14 extends KitController {
 				}
 			}
 			model.addAttribute("acsub", acsub != null ? acsub : Acsub.getDefaultInstance());
+			
+			if(acsub != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA14")
+							.xfunc("View Data")
+							.xsource("FA14")
+							.xtable(null)
+							.xdata(acsub.getXsub().toString())
+							.xstatement("View data : " + acsub.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+			
 			return "pages/FA14/FA14-fragments::main-form";
 		}
 
@@ -154,6 +174,21 @@ public class FA14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA14")
+						.xfunc("Add Data")
+						.xsource("FA14")
+						.xtable(null)
+						.xdata(acsub.getXsub().toString())
+						.xstatement("Add data : " + acsub.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/FA14/list-table"));
@@ -178,6 +213,21 @@ public class FA14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA14")
+					.xfunc("Update Data")
+					.xsource("FA14")
+					.xtable(null)
+					.xdata(existObj.getXsub().toString())
+					.xstatement("Update data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=" + existObj.getXsub()));
 		reloadSections.add(new ReloadSection("list-table-container", "/FA14/list-table"));
@@ -201,6 +251,21 @@ public class FA14 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA14")
+					.xfunc("Delete Data")
+					.xsource("FA14")
+					.xtable(null)
+					.xdata(obj.getXsub().toString())
+					.xstatement("Delete data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA14?xsub=RESET"));

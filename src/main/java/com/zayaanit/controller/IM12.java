@@ -29,6 +29,7 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imtordetail;
 import com.zayaanit.entity.Imtorheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -40,6 +41,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -128,6 +130,23 @@ public class IM12 extends KitController {
 			}
 			model.addAttribute("imtorheader", imtorheader != null ? imtorheader : Imtorheader.getIM12DefaultInstance());
 
+			if(imtorheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("IM12")
+							.xfunc("View Data")
+							.xsource("IM12")
+							.xtable(null)
+							.xdata(imtorheader.getXtornum().toString())
+							.xstatement("View Data : " + imtorheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/IM12/IM12-fragments::main-form";
 		}
 
@@ -180,18 +199,35 @@ public class IM12 extends KitController {
 		}
 
 		Optional<Imtordetail> imtrodetailOp = imtordetailRepo.findById(new ImtordetailPK(sessionManager.getBusinessId(), Integer.parseInt(xtornum), Integer.parseInt(xrow)));
-		Imtordetail imtrodetail = imtrodetailOp.isPresent() ? imtrodetailOp.get() : Imtordetail.getIM12DefaultInstance(Integer.parseInt(xtornum));
-		if(imtrodetail != null && imtrodetail.getXitem() != null) {
-			Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtrodetail.getXitem()));
+		Imtordetail imtordetail = imtrodetailOp.isPresent() ? imtrodetailOp.get() : Imtordetail.getIM12DefaultInstance(Integer.parseInt(xtornum));
+		if(imtordetail != null && imtordetail.getXitem() != null) {
+			Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtordetail.getXitem()));
 			caitem = caitemOp.isPresent() ? caitemOp.get() : null;
 		}
-		if(caitem != null && imtrodetail != null) {
-			imtrodetail.setXitem(caitem.getXitem());
-			imtrodetail.setItemName(caitem.getXdesc());
-			imtrodetail.setXunit(caitem.getXunit());
+		if(caitem != null && imtordetail != null) {
+			imtordetail.setXitem(caitem.getXitem());
+			imtordetail.setItemName(caitem.getXdesc());
+			imtordetail.setXunit(caitem.getXunit());
 		}
 
-		model.addAttribute("imtordetail", imtrodetail);
+		if(imtordetail != null && imtordetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM12")
+						.xfunc("View Detail")
+						.xsource("IM12")
+						.xtable(null)
+						.xdata(imtordetail.getXtornum().toString() + "/" + imtordetail.getXrow())
+						.xstatement("View Detail Data : " + imtordetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+		}
+
+		model.addAttribute("imtordetail", imtordetail);
 		return "pages/IM12/IM12-fragments::detail-table";
 	}
 
@@ -260,6 +296,21 @@ public class IM12 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM12")
+						.xfunc("Add Data")
+						.xsource("IM12")
+						.xtable(null)
+						.xdata(imtorheader.getXtornum().toString())
+						.xstatement("Add Data : " + imtorheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + imtorheader.getXtornum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum="+ imtorheader.getXtornum() +"&xrow=RESET"));
@@ -309,6 +360,21 @@ public class IM12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM12")
+					.xfunc("Update Data")
+					.xsource("IM12")
+					.xtable(null)
+					.xdata(existObj.getXtornum().toString())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + existObj.getXtornum()));
 		reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum="+ imtorheader.getXtornum() +"&xrow=RESET"));
@@ -320,13 +386,13 @@ public class IM12 extends KitController {
 
 	@Transactional
 	@PostMapping("/detail/store")
-	public @ResponseBody Map<String, Object> storeDetail(Imtordetail imtrodetail, BindingResult bindingResult){
-		if(imtrodetail.getXtornum() == null) {
+	public @ResponseBody Map<String, Object> storeDetail(Imtordetail imtordetail, BindingResult bindingResult){
+		if(imtordetail.getXtornum() == null) {
 			responseHelper.setErrorStatusAndMessage("Transfer not found");
 			return responseHelper.getResponse();
 		}
 
-		Optional<Imtorheader> oph = imtorheaderRepo.findById(new ImtorheaderPK(sessionManager.getBusinessId(), imtrodetail.getXtornum()));
+		Optional<Imtorheader> oph = imtorheaderRepo.findById(new ImtorheaderPK(sessionManager.getBusinessId(), imtordetail.getXtornum()));
 		if(!oph.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Transfer not found");
 			return responseHelper.getResponse();
@@ -338,37 +404,52 @@ public class IM12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		if(imtrodetail.getXitem() == null) {
+		if(imtordetail.getXitem() == null) {
 			responseHelper.setErrorStatusAndMessage("Item requried");
 			return responseHelper.getResponse();
 		}
 
-		Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtrodetail.getXitem()));
+		Optional<Caitem> caitemOp =  caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), imtordetail.getXitem()));
 		if(!caitemOp.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Invalid item");
 			return responseHelper.getResponse();
 		}
 
-		if(imtrodetail.getXqty() == null || imtrodetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
+		if(imtordetail.getXqty() == null || imtordetail.getXqty().compareTo(BigDecimal.ZERO) != 1) {
 			responseHelper.setErrorStatusAndMessage("Invalid quantity");
 			return responseHelper.getResponse();
 		}
 
 		// Create new
-		if(SubmitFor.INSERT.equals(imtrodetail.getSubmitFor())) {
-			imtrodetail.setXrow(imtordetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), imtrodetail.getXtornum()));
-			imtrodetail.setZid(sessionManager.getBusinessId());
-			imtrodetail.setXrate(BigDecimal.ZERO);
-			imtrodetail.setXlineamt(BigDecimal.ZERO);
+		if(SubmitFor.INSERT.equals(imtordetail.getSubmitFor())) {
+			imtordetail.setXrow(imtordetailRepo.getNextAvailableRow(sessionManager.getBusinessId(), imtordetail.getXtornum()));
+			imtordetail.setZid(sessionManager.getBusinessId());
+			imtordetail.setXrate(BigDecimal.ZERO);
+			imtordetail.setXlineamt(BigDecimal.ZERO);
 			try {
-				imtrodetail = imtordetailRepo.save(imtrodetail);
+				imtordetail = imtordetailRepo.save(imtordetail);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM12")
+						.xfunc("Add Detail")
+						.xsource("IM12")
+						.xtable(null)
+						.xdata(imtordetail.getXtornum().toString() + "/" + imtordetail.getXrow())
+						.xstatement("Add Detail Data : " + imtordetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + imtrodetail.getXtornum()));
-			reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum=" + imtrodetail.getXtornum() + "&xrow=RESET"));
+			reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + imtordetail.getXtornum()));
+			reloadSections.add(new ReloadSection("detail-table-container", "/IM12/detail-table?xtornum=" + imtordetail.getXtornum() + "&xrow=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/IM12/list-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Transfer detail added successfully");
@@ -404,12 +485,42 @@ public class IM12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM12")
+					.xfunc("Delete All Detail")
+					.xsource("IM12")
+					.xtable(null)
+					.xdata(xtornum.toString())
+					.xstatement("Delete All Detail Data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		Imtorheader obj = op.get();
 		try {
 			imtorheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM12")
+					.xfunc("Delete Data")
+					.xsource("IM12")
+					.xtable(null)
+					.xdata(xtornum.toString())
+					.xstatement("Delete Data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=RESET"));
@@ -448,6 +559,21 @@ public class IM12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM12")
+					.xfunc("Delete Detail")
+					.xsource("IM12")
+					.xtable(null)
+					.xdata(xtornum.toString() + "/" + obj.getXrow())
+					.xstatement("Delete Detail Data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + xtornum));
@@ -565,6 +691,21 @@ public class IM12 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM12")
+					.xfunc("Confirm Transfer")
+					.xsource("IM12")
+					.xtable(null)
+					.xdata(xtornum.toString())
+					.xstatement("Confirm Transfer Data : IM_ConfirmBusinessTO(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xtornum +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM12?xtornum=" + xtornum));

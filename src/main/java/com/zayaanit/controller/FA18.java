@@ -24,6 +24,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zayaanit.entity.Acheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcheaderPK;
 import com.zayaanit.entity.pk.XscreensPK;
@@ -32,6 +33,7 @@ import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.FA18SearchParam;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcdetailRepo;
 import com.zayaanit.repository.AcheaderRepo;
 import com.zayaanit.service.AcheaderService;
@@ -120,6 +122,21 @@ public class FA18 extends KitController {
 		param.setXtype(xvtype);
 		param.setXstatusjv(xstatusjv);
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA18")
+					.xfunc("Search")
+					.xsource("FA18")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Search data : " + param.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
@@ -180,6 +197,21 @@ public class FA18 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA18")
+					.xfunc("Post Voucher")
+					.xsource("FA18")
+					.xtable(null)
+					.xdata(acheader.getXvoucher().toString())
+					.xstatement("Post voucher : FA_VoucherPost(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername()+","+ acheader.getXvoucher() +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -257,6 +289,21 @@ public class FA18 extends KitController {
 		try {
 			for(Acheader acheader : allBalancedAcheader) {
 				acheaderRepo.FA_VoucherPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA18")
+							.xfunc("Post Voucher")
+							.xsource("FA18")
+							.xtable(null)
+							.xdata(acheader.getXvoucher().toString())
+							.xstatement("Post voucher : FA_VoucherPost(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername()+","+ acheader.getXvoucher() +")")
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
@@ -324,6 +371,21 @@ public class FA18 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA18")
+					.xfunc("Un-Post Voucher")
+					.xsource("FA18")
+					.xtable(null)
+					.xdata(acheader.getXvoucher().toString())
+					.xstatement("Un-Post voucher : FA_VoucherUnPost(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername()+","+ acheader.getXvoucher() +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -401,6 +463,21 @@ public class FA18 extends KitController {
 		try {
 			for(Acheader acheader : allPostedAcheader) {
 				acheaderRepo.FA_VoucherUnPost(sessionManager.getBusinessId(), sessionManager.getLoggedInUserDetails().getUsername(), acheader.getXvoucher());
+
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA18")
+							.xfunc("Un-Post Voucher")
+							.xsource("FA18")
+							.xtable(null)
+							.xdata(acheader.getXvoucher().toString())
+							.xstatement("Un-Post voucher : FA_VoucherUnPost(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername()+","+ acheader.getXvoucher() +")")
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
@@ -469,6 +546,36 @@ public class FA18 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA18")
+					.xfunc("Delete All Detail")
+					.xsource("FA18")
+					.xtable(null)
+					.xdata(acheader.getXvoucher().toString())
+					.xstatement("Delete all detail data : " + acheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA18")
+					.xfunc("Delete Data")
+					.xsource("FA18")
+					.xtable(null)
+					.xdata(acheader.getXvoucher().toString())
+					.xstatement("Delete data : " + acheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -547,6 +654,36 @@ public class FA18 extends KitController {
 			for(Acheader v : allUnpostedVouchers) {
 				acdetailRepo.deleteAllByZidAndXvoucher(sessionManager.getBusinessId(), v.getXvoucher());
 				acheaderRepo.delete(v);
+				
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA18")
+							.xfunc("Delete All Detail")
+							.xsource("FA18")
+							.xtable(null)
+							.xdata(v.getXvoucher().toString())
+							.xstatement("Delete all detail data : " + v.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA18")
+							.xfunc("Delete Data")
+							.xsource("FA18")
+							.xtable(null)
+							.xdata(v.getXvoucher().toString())
+							.xstatement("Delete data : " + v.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());

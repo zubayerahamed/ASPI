@@ -19,6 +19,7 @@ import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Cadoc;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcdetailPK;
 import com.zayaanit.entity.pk.AcheaderPK;
@@ -26,6 +27,7 @@ import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.AcsubPK;
 import com.zayaanit.entity.pk.CabunitPK;
 import com.zayaanit.entity.pk.XscreensPK;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcdetailRepo;
 import com.zayaanit.repository.AcheaderRepo;
 import com.zayaanit.repository.AcmstRepo;
@@ -94,6 +96,23 @@ public class FA17 extends KitController {
 			}
 			model.addAttribute("acheader", acheader != null ? acheader : Acheader.getDefaultInstance());
 
+			if(acheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA17")
+							.xfunc("View Data")
+							.xsource("FA17")
+							.xtable(null)
+							.xdata(acheader.getXvoucher().toString())
+							.xstatement("View data : " + acheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			List<Cadoc> cdocList = cadocRepo.findAllByZidAndXscreenAndXtrnnum(sessionManager.getBusinessId(), "FA17", Integer.valueOf(xvoucher));
 			model.addAttribute("documents", cdocList);
 
@@ -120,6 +139,23 @@ public class FA17 extends KitController {
 				}
 			}
 			model.addAttribute("acheader", acheader != null ? acheader : Acheader.getDefaultInstance());
+
+			if(acheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("FA17")
+							.xfunc("View Data")
+							.xsource("FA17")
+							.xtable(null)
+							.xdata(acheader.getXvoucher().toString())
+							.xstatement("View data : " + acheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
 
 			List<Cadoc> cdocList = cadocRepo.findAllByZidAndXscreenAndXtrnnum(sessionManager.getBusinessId(), "FA17", Integer.valueOf(xvoucher));
 			model.addAttribute("documents", cdocList);
@@ -202,6 +238,23 @@ public class FA17 extends KitController {
 			acdetail.setXacc(account.getXacc());
 			acdetail.setAccountName(account.getXdesc());
 			acdetail.setAccountUsage(account.getXaccusage());
+		}
+
+		if(acdetail != null && acdetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA16")
+						.xfunc("View Detail")
+						.xsource("FA16")
+						.xtable(null)
+						.xdata(acdetail.getXvoucher().toString() + "/" + acdetail.getXrow())
+						.xstatement("View detail data " + acdetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 		}
 
 		model.addAttribute("acdetail", acdetail);

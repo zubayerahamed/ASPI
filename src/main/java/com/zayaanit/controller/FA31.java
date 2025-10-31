@@ -25,6 +25,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Acmst;
 import com.zayaanit.entity.Potogli;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.AcmstPK;
 import com.zayaanit.entity.pk.PotogliPK;
@@ -33,6 +34,7 @@ import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcmstRepo;
 import com.zayaanit.repository.PotogliRepo;
 import com.zayaanit.service.PotogliService;
@@ -118,6 +120,22 @@ public class FA31 extends KitController {
 			}
 
 			model.addAttribute("potogli", potogli);
+			
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA31")
+						.xfunc("View Data")
+						.xsource("FA31")
+						.xtable(null)
+						.xdata(potogli.getXtype() + "/" + potogli.getXgsup() + "/" + potogli.getXgitem())
+						.xstatement("View Data : " + potogli.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+			
 			return "pages/FA31/FA31-fragments::main-form";
 		}
 
@@ -195,6 +213,21 @@ public class FA31 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("FA31")
+						.xfunc("Add Data")
+						.xsource("FA31")
+						.xtable(null)
+						.xdata(potogli.getXtype() + "/" + potogli.getXgsup() + "/" + potogli.getXgitem())
+						.xstatement("Add Data : " + potogli.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/FA31"));
 			reloadSections.add(new ReloadSection("header-table-container", "/FA31/header-table"));
@@ -217,6 +250,21 @@ public class FA31 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA31")
+					.xfunc("Update Data")
+					.xsource("FA31")
+					.xtable(null)
+					.xdata(existObj.getXtype() + "/" + existObj.getXgsup() + "/" + existObj.getXgitem())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA31?xtype=" + existObj.getXtype() + "&xgsup=" + existObj.getXgsup() + "&xgitem=" + existObj.getXgitem()));
@@ -241,6 +289,21 @@ public class FA31 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("FA31")
+					.xfunc("Delete Data")
+					.xsource("FA31")
+					.xtable(null)
+					.xdata(existObj.getXtype() + "/" + existObj.getXgsup() + "/" + existObj.getXgitem())
+					.xstatement("Delete Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/FA31?xtype=REST&xgsup=RESET&xgitem=RESET"));
