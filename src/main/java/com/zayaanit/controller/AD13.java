@@ -125,11 +125,11 @@ public class AD13 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("AD13")
-						.xfunc("View")
+						.xfunc("View Data")
 						.xsource("AD13")
 						.xtable(null)
 						.xdata(user.getZemail())
-						.xstatement(user.toString())
+						.xstatement("View Data : " + user.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -180,11 +180,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("View")
+					.xfunc("View Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(userProfile.getZemail() + "/" + userProfile.getXprofile())
-					.xstatement(userProfile.toString())
+					.xstatement("View Deetail Data : " + userProfile.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -235,11 +235,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("View")
+					.xfunc("View Widget Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(xuserwidgets.getZemail() + "/" + xuserwidgets.getXwidget())
-					.xstatement(xuserwidgets.toString())
+					.xstatement("View Widget Detail Data : " + xuserwidgets.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -314,11 +314,11 @@ public class AD13 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("AD13")
-						.xfunc("Add")
+						.xfunc("Add Data")
 						.xsource("AD13")
 						.xtable(null)
 						.xdata(xusers.getZemail())
-						.xstatement(xusers.toString())
+						.xstatement("Add Data : " + xusers.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -360,11 +360,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Update")
+					.xfunc("Update Data")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(existObj.getZemail())
-					.xstatement(existObj.toString())
+					.xstatement("Update Data : " + existObj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -409,11 +409,11 @@ public class AD13 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("AD13")
-						.xfunc("Add")
+						.xfunc("Add Detail")
 						.xsource("AD13")
 						.xtable(null)
 						.xdata(xuserprofiles.getZemail() + "/" + xuserprofiles.getXprofile())
-						.xstatement(xuserprofiles.toString())
+						.xstatement("Add Detail Data : " + xuserprofiles.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -467,11 +467,11 @@ public class AD13 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("AD13")
-						.xfunc("Add")
+						.xfunc("Add Widget Detail")
 						.xsource("AD13")
 						.xtable(null)
 						.xdata(xuserwidgets.getZemail() + "/" + xuserwidgets.getZemail())
-						.xstatement(xuserwidgets.toString())
+						.xstatement("Add Widget Detail Data : " + xuserwidgets.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -515,11 +515,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Update")
+					.xfunc("Update Widget Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(existObj.getZemail() + "/" + existObj.getXwidget())
-					.xstatement(existObj.toString())
+					.xstatement("Update Widget Detail Data : " + existObj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -557,7 +557,7 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Delete")
+					.xfunc("Delete All Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(op.get().getZemail())
@@ -579,11 +579,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Delete")
+					.xfunc("Delete Data")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(op.get().getZemail())
-					.xstatement(op.toString())
+					.xstatement("Delete Data : " + op.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -619,11 +619,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Delete")
+					.xfunc("Delete Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(obj.getZemail() + "/" + obj.getXprofile())
-					.xstatement(obj.toString())
+					.xstatement("Delete Detail Data : " + obj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -658,11 +658,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Delete")
+					.xfunc("Delete Widget Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(obj.getZemail() + "/" + obj.getXwidget())
-					.xstatement(obj.toString())
+					.xstatement("Delete Widget Detail Data : " + obj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -739,11 +739,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Update")
+					.xfunc("Update Widget Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(sibling.getZemail() + "/" + sibling.getXwidget())
-					.xstatement(sibling.toString())
+					.xstatement("Update Widget Sequence Detail Data : " + sibling.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -761,11 +761,11 @@ public class AD13 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD13")
-					.xfunc("Update")
+					.xfunc("Update Widget Detail")
 					.xsource("AD13")
 					.xtable(null)
 					.xdata(currentRow.getZemail() + "/" + currentRow.getXwidget())
-					.xstatement(currentRow.toString())
+					.xstatement("Update Widget Sequence Detail Data : " + currentRow.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager

@@ -103,11 +103,11 @@ public class AD12 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("AD12")
-						.xfunc("View")
+						.xfunc("View Data")
 						.xsource("AD12")
 						.xtable(null)
 						.xdata(op.get().getXprofile().toString())
-						.xstatement(op.get().toString())
+						.xstatement("View Data : " + op.get().toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -216,11 +216,11 @@ public class AD12 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD12")
-					.xfunc("Add")
+					.xfunc("Add Data")
 					.xsource("AD12")
 					.xtable(null)
 					.xdata(xprofiles.getXprofile().toString())
-					.xstatement(xprofiles.toString())
+					.xstatement("Add Data : " + xprofiles.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -254,11 +254,11 @@ public class AD12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD12")
-				.xfunc("Update")
+				.xfunc("Update Data")
 				.xsource("AD12")
 				.xtable(null)
 				.xdata(existObj.getXprofile().toString())
-				.xstatement(existObj.toString())
+				.xstatement("Update Data : " + existObj.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -315,11 +315,11 @@ public class AD12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD12")
-				.xfunc("Update")
+				.xfunc("Update Detail")
 				.xsource("AD12")
 				.xtable(null)
 				.xdata(dd.getProfileName())
-				.xstatement(list.stream().map(Xprofilesdt::toString).collect(Collectors.joining(", ")))
+				.xstatement("Update Profile Detail Data : " + list.stream().map(Xprofilesdt::toString).collect(Collectors.joining(", ")))
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -362,11 +362,11 @@ public class AD12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD12")
-				.xfunc("Delete")
+				.xfunc("Delete Data")
 				.xsource("AD12")
 				.xtable(null)
 				.xdata(obj.getXprofile().toString())
-				.xstatement(obj.toString())
+				.xstatement("Delete Data : " + obj.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager

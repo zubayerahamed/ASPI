@@ -30,6 +30,7 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Modetail;
 import com.zayaanit.entity.Moheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -41,6 +42,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -130,6 +132,23 @@ public class IM14 extends KitController {
 			}
 			model.addAttribute("moheader", moheader != null ? moheader : Moheader.getDefaultInstance(cabunits));
 
+			if(moheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("IM14")
+							.xfunc("View Data")
+							.xsource("IM14")
+							.xtable(null)
+							.xdata(moheader.getXbatch().toString())
+							.xstatement("View Data : " + moheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/IM14/IM14-fragments::main-form";
 		}
 
@@ -191,6 +210,23 @@ public class IM14 extends KitController {
 			modetail.setXitem(caitem.getXitem());
 			modetail.setItemName(caitem.getXdesc());
 			modetail.setXunit(caitem.getXunit());
+		}
+
+		if(modetail != null && modetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM14")
+						.xfunc("View Detail")
+						.xsource("IM14")
+						.xtable(null)
+						.xdata(modetail.getXbatch().toString() + "/" + modetail.getXrow())
+						.xstatement("View Detail Data : " + modetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 		}
 
 		model.addAttribute("modetail", modetail);
@@ -255,6 +291,23 @@ public class IM14 extends KitController {
 			if(modetail.getXrow() == 0) {
 				modetail.setXrate(caitem.getXcost());
 			}
+		}
+
+		if(modetail != null && modetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM14")
+						.xfunc("View Additional Detail")
+						.xsource("IM14")
+						.xtable(null)
+						.xdata(modetail.getXbatch().toString() + "/" + modetail.getXrow())
+						.xstatement("View Additional Detail Data : " + modetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 		}
 
 		model.addAttribute("modetail", modetail);
@@ -331,6 +384,21 @@ public class IM14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM14")
+						.xfunc("Add Data")
+						.xsource("IM14")
+						.xtable(null)
+						.xdata(moheader.getXbatch().toString())
+						.xstatement("Add Data : " + moheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + moheader.getXbatch()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM14/detail-table?xbatch="+ moheader.getXbatch() +"&xrow=RESET"));
@@ -373,6 +441,21 @@ public class IM14 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Update Data")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(existObj.getXbatch().toString())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + existObj.getXbatch()));
@@ -438,6 +521,21 @@ public class IM14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM14")
+						.xfunc("Add Detail")
+						.xsource("IM14")
+						.xtable(null)
+						.xdata(modetail.getXbatch().toString() + "/" + modetail.getXrow())
+						.xstatement("Add Detail Data : " + modetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + modetail.getXbatch()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM14/detail-table?xbatch=" + modetail.getXbatch() + "&xrow=RESET"));
@@ -469,6 +567,21 @@ public class IM14 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Update Detail")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(exist.getXbatch().toString() + "/" + exist.getXrow())
+					.xstatement("Update Detail Data : " + exist.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + exist.getXbatch()));
@@ -538,6 +651,21 @@ public class IM14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM14")
+						.xfunc("Add Additional Detail")
+						.xsource("IM14")
+						.xtable(null)
+						.xdata(modetail.getXbatch().toString() + "/" + modetail.getXrow())
+						.xstatement("Add Additional Detail Data : " + modetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + modetail.getXbatch()));
 			reloadSections.add(new ReloadSection("additional-table-container", "/IM14/additional-table?xbatch=" + modetail.getXbatch() + "&xrow=RESET"));
@@ -567,6 +695,21 @@ public class IM14 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Update Additional Detail")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(exist.getXbatch().toString() + "/" + exist.getXrow())
+					.xstatement("Update Additional Detail Data : " + exist.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + exist.getXbatch()));
@@ -598,12 +741,42 @@ public class IM14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Delete All Detail")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(op.get().getXbatch().toString())
+					.xstatement("Delete All Detail Data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		Moheader obj = op.get();
 		try {
 			moheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Delete Data")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(obj.getXbatch().toString())
+					.xstatement("Delete Data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=RESET"));
@@ -644,6 +817,21 @@ public class IM14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Delete Detail")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(obj.getXbatch().toString() + "/" + obj.getXrow())
+					.xstatement("Delete Detail : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + xbatch));
 		reloadSections.add(new ReloadSection("detail-table-container", "/IM14/detail-table?xbatch="+xbatch+"&xrow=RESET"));
@@ -681,6 +869,21 @@ public class IM14 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Delete Additional Detail")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(obj.getXbatch().toString() + "/" + obj.getXrow())
+					.xstatement("Delete Additional Detail : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + xbatch));
@@ -768,6 +971,21 @@ public class IM14 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM14")
+					.xfunc("Confirm")
+					.xsource("IM14")
+					.xtable(null)
+					.xdata(xbatch.toString())
+					.xstatement("Confirm Batch : IM_ConfirmBatch(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xbatch +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM14?xbatch=" + xbatch));

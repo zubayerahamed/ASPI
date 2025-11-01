@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
 
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreenrpdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Zbusiness;
@@ -46,6 +48,7 @@ import com.zayaanit.exceptions.ResourceNotFoundException;
 import com.zayaanit.model.Report;
 import com.zayaanit.model.RequestParameters;
 import com.zayaanit.model.VirtualReportMenu;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.XscreenrpdtRepo;
 import com.zayaanit.service.rp.ReportFieldService;
 import com.zayaanit.service.rp.ReportMenuBase;
@@ -133,24 +136,8 @@ public abstract class AbstractReportController extends KitController {
 			responseHelper.setSuccessStatusAndMessage("No validation.");
 			responseHelper.setDisplayMessage(false);
 			return responseHelper.getResponse();
-
-			// Simulate virtual enum
-//			try {
-//				rm = new VirtualReportMenu(
-//					params.getReportCode().toUpperCase(), 
-//					"Custom Report: " + params.getReportCode().toUpperCase(), 
-//					params.getReportCode().toUpperCase() + ".rpt", 
-//					new HashMap<>(), // or load custom paramMap from DB
-//					"Y", 
-//					false, 
-//					"VIRTUAL"
-//				);
-//			} catch (Exception e2) {
-//				log.error(ERROR, e2.getMessage(), e2);
-//			}
 		}
 
-		ReportType reportType = ReportType.PDF;
 		Map<String, Object> reportParams = new HashMap<>();
 		for(Map.Entry<String, String> m : rm.getParamMap().entrySet()) {
 			String reportParamFieldName = m.getKey();
@@ -159,7 +146,6 @@ public abstract class AbstractReportController extends KitController {
 			ReportParamDataType paramType = ReportParamDataType.valueOf(arr[1]);
 			Object method = RequestParameters.invokeGetter(params, reportParamFieldName);
 			if("reportViewType".equalsIgnoreCase(cristalReportParamName)) {
-				reportType = (ReportType) method;
 				continue;
 			}
 			convertObjectAndPutIntoMap(cristalReportParamName, paramType, method, reportParams);
@@ -169,7 +155,7 @@ public abstract class AbstractReportController extends KitController {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "null" })
 	@PostMapping("/print")
 	public ResponseEntity<Object> print(RequestParameters params) throws IOException {
 		// Get the xscreen record to execute custom report file
@@ -315,6 +301,23 @@ public abstract class AbstractReportController extends KitController {
 			String encodedString = Base64.getEncoder().encodeToString(byt);
 			return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
 		}
+
+		String result = reportParams.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(", "));
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen(params.getReportCode())
+					.xfunc("Report View")
+					.xsource(params.getReportCode())
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Report Data : " + result)
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		// CRISTAL
 		byte[] byt = null;

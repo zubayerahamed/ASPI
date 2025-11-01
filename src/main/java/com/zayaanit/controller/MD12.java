@@ -86,11 +86,11 @@ public class MD12 extends KitController {
 						new XlogsdtEvent(
 							Xlogsdt.builder()
 							.xscreen("MD12")
-							.xfunc("View")
+							.xfunc("View Data")
 							.xsource("MD12")
 							.xtable(null)
 							.xdata(op.get().getXitem().toString())
-							.xstatement(op.get().toString())
+							.xstatement("View Data : " + op.get().toString())
 							.xresult("Success")
 							.build(), 
 							sessionManager
@@ -165,11 +165,11 @@ public class MD12 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("MD12")
-						.xfunc("View")
+						.xfunc("Add Data")
 						.xsource("MD12")
 						.xtable(null)
 						.xdata(caitem.getXitem().toString())
-						.xstatement(caitem.toString())
+						.xstatement("Add Data : " + caitem.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -204,11 +204,11 @@ public class MD12 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("MD12")
-					.xfunc("Update")
+					.xfunc("Update Data")
 					.xsource("MD12")
 					.xtable(null)
 					.xdata(existObj.getXitem().toString())
-					.xstatement(existObj.toString())
+					.xstatement("Update Data : " + existObj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -243,11 +243,11 @@ public class MD12 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("MD12")
-					.xfunc("Delete")
+					.xfunc("Delete Data")
 					.xsource("MD12")
 					.xtable(null)
 					.xdata(obj.getXitem().toString())
-					.xstatement(obj.toString())
+					.xstatement("Delete Data : " + obj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager

@@ -12,7 +12,6 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,8 +29,6 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Opdoheader;
-import com.zayaanit.entity.Pogrndetail;
-import com.zayaanit.entity.Pogrnheader;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
@@ -44,6 +41,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -126,10 +124,26 @@ public class SO14 extends KitController {
 					Optional<Acsub> acsubOp = acsubRepo.findById(new AcsubPK(sessionManager.getBusinessId(), opdoheader.getXstaffsubmit()));
 					if(acsubOp.isPresent()) opdoheader.setSubmitStaffName(acsubOp.get().getXname());
 				}
-
 			}
+
+			if(opdoheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("SO14")
+							.xfunc("View Data")
+							.xsource("SO14")
+							.xtable(null)
+							.xdata(opdoheader.getXdornum().toString())
+							.xstatement("View Data : " + opdoheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			model.addAttribute("opdoheader", opdoheader != null ? opdoheader : Opdoheader.getDefaultInstance(cabunits));
-//			xlogsdtService.save(new Xlogsdt("SO14", "View", this.pageTitle, opdoheader.getXdornum().toString(), opdoheader.toString(), false, 0));
 			return "pages/SO14/SO14-fragments::main-form";
 		}
 
@@ -199,8 +213,24 @@ public class SO14 extends KitController {
 			}
 		}
 
+		if(opdodetail != null && opdodetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO14")
+						.xfunc("View Detail")
+						.xsource("SO14")
+						.xtable(null)
+						.xdata(opdodetail.getXdornum().toString() + "/" + opdodetail.getXrow())
+						.xstatement("View Detail Data : " + opdodetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+		}
+
 		model.addAttribute("opdodetail", opdodetail);
-//		xlogsdtService.save(new Xlogsdt("SO14", "View", this.pageTitle, opdodetail.getXrow().toString(), opdodetail.toString(), true, 0));
 		return "pages/SO14/SO14-fragments::detail-table";
 	}
 
@@ -257,7 +287,20 @@ public class SO14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("SO14", "Add", this.pageTitle, opdoheader.getXdornum().toString(), opdoheader.toString(), false, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO14")
+						.xfunc("Add Data")
+						.xsource("SO14")
+						.xtable(null)
+						.xdata(opdoheader.getXdornum().toString())
+						.xstatement("Add Data : " + opdoheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + opdoheader.getXdornum()));
@@ -320,7 +363,20 @@ public class SO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO14", "Update", this.pageTitle, existObj.getXdornum().toString(), existObj.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO14")
+					.xfunc("Update Data")
+					.xsource("SO14")
+					.xtable(null)
+					.xdata(existObj.getXdornum().toString())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + existObj.getXdornum()));
@@ -387,7 +443,20 @@ public class SO14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("SO14", "Add", this.pageTitle, opdodetail.getXrow().toString(), opdodetail.toString(), true, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO14")
+						.xfunc("Add Detail")
+						.xsource("SO14")
+						.xtable(null)
+						.xdata(opdodetail.getXdornum().toString() + "/" + opdodetail.getXrow())
+						.xstatement("Add Detail Data : " + opdodetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opdodetail.getXdornum());
 			opdoheader.setXlineamt(lineAmt);
@@ -398,7 +467,20 @@ public class SO14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("SO14", "Clear", this.pageTitle, opdoheader.getXdornum().toString(), opdoheader.toString(), false, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO14")
+						.xfunc("Update Data")
+						.xsource("SO14")
+						.xtable(null)
+						.xdata(opdoheader.getXdornum().toString())
+						.xstatement("Update Data : " + opdoheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + opdodetail.getXdornum()));
@@ -432,17 +514,42 @@ public class SO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO14", "Delete", this.pageTitle, xdornum.toString(), null, true, 0).setMessage("Delete all details"));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO14")
+					.xfunc("Delete All Detail")
+					.xsource("SO14")
+					.xtable(null)
+					.xdata(xdornum.toString())
+					.xstatement("Delete All Detail Data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		Opdoheader obj = op.get();
-		Opdoheader copy = SerializationUtils.clone(obj);
 		try {
 			opdoheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO14", "Delete", this.pageTitle, copy.getXdornum().toString(), copy.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO14")
+					.xfunc("Delete Data")
+					.xsource("SO14")
+					.xtable(null)
+					.xdata(xdornum.toString())
+					.xstatement("Delete Data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=RESET"));
@@ -475,14 +582,26 @@ public class SO14 extends KitController {
 		}
 
 		Opdodetail obj = op.get();
-		Opdodetail copy = SerializationUtils.clone(obj);
 		try {
 			opdodetailRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO14", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO14")
+					.xfunc("Delete Detail")
+					.xsource("SO14")
+					.xtable(null)
+					.xdata(xdornum.toString() + "/" + obj.getXrow())
+					.xstatement("Delete Detail Data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		// Update line amount and total amount of header
 		BigDecimal lineAmt = opdodetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), opdoheader.getXdornum());
@@ -497,7 +616,20 @@ public class SO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO14", "Update", this.pageTitle, opdoheader.getXdornum().toString(), opdoheader.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO14")
+					.xfunc("Update Data")
+					.xsource("SO14")
+					.xtable(null)
+					.xdata(xdornum.toString())
+					.xstatement("Update Data : " + opdoheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + xdornum));
@@ -610,7 +742,20 @@ public class SO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO14", "Confirm", this.pageTitle, xdornum.toString(), "SO_ConfirmInvoice("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xdornum +")" , false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO14")
+					.xfunc("Confirm")
+					.xsource("SO14")
+					.xtable(null)
+					.xdata(xdornum.toString())
+					.xstatement("Confirm Data : SO_ConfirmInvoice(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xdornum +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/SO14?xdornum=" + xdornum));

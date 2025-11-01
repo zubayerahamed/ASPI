@@ -12,7 +12,6 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +28,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Opdoheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.entity.pk.OpdoheaderPK;
@@ -38,6 +38,7 @@ import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
 import com.zayaanit.model.SO19SearchParam;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.CaitemRepo;
 import com.zayaanit.repository.OpdodetailRepo;
 import com.zayaanit.repository.OpdoheaderRepo;
@@ -123,13 +124,26 @@ public class SO19 extends KitController {
 		param.setXwh(xwh);
 		param.setXstatusim(xstatusim);
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO19")
+					.xfunc("Search")
+					.xsource("SO19")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Search : " + param.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
 		List<Opdoheader> list = opdoheaderService.LSO19(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 		int	totalRows = opdoheaderService.LSO19(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
-
-//		xlogsdtService.save(new Xlogsdt("SO19", "Search", this.pageTitle, param.toString(), null, false, 0));
 
 		DatatableResponseHelper<Opdoheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -250,7 +264,20 @@ public class SO19 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO19", "Confirmed Invoice", this.pageTitle, param.toString(), "SO_ConfirmInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + opdoheader.getXdornum() + ")", false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO19")
+					.xfunc("Confirm Invoice")
+					.xsource("SO19")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Confirm Invoice : SO_ConfirmInvoice(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ opdoheader.getXdornum() +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -389,7 +416,20 @@ public class SO19 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("SO19", "Confirmed Invoice", this.pageTitle, param.toString(), "SO_ConfirmInvoice(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + opdoheader.getXdornum() + ")", false, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO19")
+						.xfunc("Confirm Invoice")
+						.xsource("SO19")
+						.xtable(null)
+						.xdata(null)
+						.xstatement("Confirm Invoice : SO_ConfirmInvoice(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ opdoheader.getXdornum() +")")
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
@@ -438,7 +478,6 @@ public class SO19 extends KitController {
 		}
 
 		Opdoheader opdoheader = opdoheaderOp.get();
-		Opdoheader copy = SerializationUtils.clone(opdoheader);
 		if(!"Confirmed".equals(opdoheader.getXstatus())) {
 			responseHelper.setErrorStatusAndMessage("Invoice status not confirmed");
 			return responseHelper.getResponse();
@@ -451,13 +490,41 @@ public class SO19 extends KitController {
 
 		try {
 			opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), xdornum);
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO19")
+						.xfunc("Delete All Detail")
+						.xsource("SO19")
+						.xtable(null)
+						.xdata(xdornum.toString())
+						.xstatement("Delete All Detail Data : " + opdoheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			opdoheaderRepo.delete(opdoheader);
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO19")
+						.xfunc("Delete Data")
+						.xsource("SO19")
+						.xtable(null)
+						.xdata(xdornum.toString())
+						.xstatement("Delete Data : " + opdoheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
-
-//		xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), xdornum.toString(), true, 0).setMessage("Delete all details"));
-//		xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), copy.toString(), false, 0));
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -527,16 +594,44 @@ public class SO19 extends KitController {
 		}
 
 		for(Opdoheader opdoheader : allValidInvoices) {
-			Opdoheader copy = SerializationUtils.clone(opdoheader);
 			try {
 				opdodetailRepo.deleteAllByZidAndXdornum(sessionManager.getBusinessId(), opdoheader.getXdornum());
+				
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("SO19")
+							.xfunc("Delete All Detail")
+							.xsource("SO19")
+							.xtable(null)
+							.xdata(opdoheader.getXdornum().toString())
+							.xstatement("Delete All Detail Data : " + opdoheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+
 				opdoheaderRepo.delete(opdoheader);
+
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("SO19")
+							.xfunc("Delete Data")
+							.xsource("SO19")
+							.xtable(null)
+							.xdata(opdoheader.getXdornum().toString())
+							.xstatement("Delete Data : " + opdoheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), opdoheader.getXdornum().toString(), true, 0).setMessage("Delete all details"));
-//			xlogsdtService.save(new Xlogsdt("SO19", "Delete", this.pageTitle, param.toString(), copy.toString(), false, 0));
 		}
 
 		List<ReloadSectionParams> postData = new ArrayList<>();

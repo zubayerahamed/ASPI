@@ -29,6 +29,7 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imadjdetail;
 import com.zayaanit.entity.Imadjheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -40,6 +41,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -119,6 +121,23 @@ public class IM15 extends KitController {
 			}
 			model.addAttribute("imadjheader", imadjheader != null ? imadjheader : Imadjheader.getDefaultInstance(cabunits));
 
+			if(imadjheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("IM15")
+							.xfunc("View Data")
+							.xsource("IM15")
+							.xtable(null)
+							.xdata(imadjheader.getXadjnum().toString())
+							.xstatement("View Data : " + imadjheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/IM15/IM15-fragments::main-form";
 		}
 
@@ -182,6 +201,23 @@ public class IM15 extends KitController {
 			imadjdetail.setXunit(caitem.getXunit());
 		}
 
+		if(imadjdetail != null && imadjdetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM15")
+						.xfunc("View Detail")
+						.xsource("IM15")
+						.xtable(null)
+						.xdata(imadjdetail.getXadjnum().toString() + "/" + imadjdetail.getXrow())
+						.xstatement("View Detail : " + imadjdetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+		}
+
 		model.addAttribute("imadjdetail", imadjdetail);
 		return "pages/IM15/IM15-fragments::detail-table";
 	}
@@ -235,6 +271,21 @@ public class IM15 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM15")
+						.xfunc("Add Data")
+						.xsource("IM15")
+						.xtable(null)
+						.xdata(imadjheader.getXadjnum().toString())
+						.xstatement("Add Data : " + imadjheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + imadjheader.getXadjnum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM15/detail-table?xadjnum="+ imadjheader.getXadjnum() +"&xrow=RESET"));
@@ -275,6 +326,21 @@ public class IM15 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM15")
+					.xfunc("Update Data")
+					.xsource("IM15")
+					.xtable(null)
+					.xdata(existObj.getXadjnum().toString())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + existObj.getXadjnum()));
@@ -343,6 +409,21 @@ public class IM15 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM15")
+						.xfunc("Add Detail")
+						.xsource("IM15")
+						.xtable(null)
+						.xdata(imadjdetail.getXadjnum().toString() + "/" + imadjdetail.getXrow())
+						.xstatement("Add Detail Data : " + imadjdetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + imadjdetail.getXadjnum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM15/detail-table?xadjnum=" + imadjdetail.getXadjnum() + "&xrow=RESET"));
@@ -376,12 +457,42 @@ public class IM15 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM15")
+					.xfunc("Delete All Detail")
+					.xsource("IM15")
+					.xtable(null)
+					.xdata(op.get().getXadjnum().toString())
+					.xstatement("Delete All Detail Data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		Imadjheader obj = op.get();
 		try {
 			imadjheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM15")
+					.xfunc("Delete Data")
+					.xsource("IM15")
+					.xtable(null)
+					.xdata(op.get().getXadjnum().toString())
+					.xstatement("Delete Data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=RESET"));
@@ -420,6 +531,21 @@ public class IM15 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM15")
+					.xfunc("Delete Detail")
+					.xsource("IM15")
+					.xtable(null)
+					.xdata(obj.getXadjnum().toString() + "/" + obj.getXrow())
+					.xstatement("Delete Detail Data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + xadjnum));
@@ -507,6 +633,21 @@ public class IM15 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM15")
+					.xfunc("Confirm Adjustment")
+					.xsource("IM15")
+					.xtable(null)
+					.xdata(xadjnum.toString())
+					.xstatement("Confirm Adjustment : IM_ConfirmAdjustment(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xadjnum +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM15?xadjnum=" + xadjnum));

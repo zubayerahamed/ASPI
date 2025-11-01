@@ -90,11 +90,11 @@ public class AD11 extends KitController{
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD11")
-				.xfunc("View")
+				.xfunc("View Data")
 				.xsource("AD11")
 				.xtable(null)
 				.xdata(zb.getZid().toString())
-				.xstatement(zb.toString())
+				.xstatement("View Data : " + zb.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -188,11 +188,11 @@ public class AD11 extends KitController{
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD11")
-				.xfunc("Update")
+				.xfunc("Update Data")
 				.xsource("AD11")
 				.xtable(null)
 				.xdata(existObj.getZid().toString())
-				.xstatement(existObj.toString())
+				.xstatement("Update Data : " + existObj.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -251,11 +251,11 @@ public class AD11 extends KitController{
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD11")
-				.xfunc("Update")
+				.xfunc("Update Data")
 				.xsource("AD11")
 				.xtable(null)
 				.xdata(existObj.getZid().toString())
-				.xstatement(existObj.toString())
+				.xstatement("Update Logo Data : " + existObj.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -297,11 +297,11 @@ public class AD11 extends KitController{
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD11")
-				.xfunc("Update")
+				.xfunc("Update Data")
 				.xsource("AD11")
 				.xtable(null)
 				.xdata(existObj.getZid().toString())
-				.xstatement(existObj.toString())
+				.xstatement("Delete Logo Data : " + existObj.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager

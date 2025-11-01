@@ -85,11 +85,11 @@ public class AD14 extends KitController {
 						new XlogsdtEvent(
 							Xlogsdt.builder()
 							.xscreen("AD14")
-							.xfunc("View")
+							.xfunc("View Data")
 							.xsource("AD14")
 							.xtable(null)
 							.xdata(op.get().getXcode())
-							.xstatement(op.get().toString())
+							.xstatement("View Data : " + op.get().toString())
 							.xresult("Success")
 							.build(), 
 							sessionManager
@@ -167,11 +167,11 @@ public class AD14 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("AD14")
-						.xfunc("Add")
+						.xfunc("Add Data")
 						.xsource("AD14")
 						.xtable(null)
 						.xdata(xcodes.getXcode())
-						.xstatement(xcodes.toString())
+						.xstatement("Add Data : " + xcodes.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -209,11 +209,11 @@ public class AD14 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD14")
-					.xfunc("Update")
+					.xfunc("Update Data")
 					.xsource("AD14")
 					.xtable(null)
 					.xdata(existObj.getXcode())
-					.xstatement(existObj.toString())
+					.xstatement("Update Data : " + existObj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -252,11 +252,11 @@ public class AD14 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD14")
-					.xfunc("Delete")
+					.xfunc("Delete Data")
 					.xsource("AD14")
 					.xtable(null)
 					.xdata(obj.getXcode())
-					.xstatement(obj.toString())
+					.xstatement("Delete Data : " + obj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager

@@ -32,6 +32,7 @@ import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
 import com.zayaanit.model.SO13SearchParam;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.OpordheaderRepo;
 import com.zayaanit.service.OpordheaderService;
 
@@ -116,13 +117,26 @@ public class SO13 extends KitController {
 		param.setXcus(xcus);
 		param.setXstatusord(xstatusord);
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO13")
+					.xfunc("Search Data")
+					.xsource("SO13")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Search Data : " + param.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
 		List<Opordheader> list = opordheaderService.LSO13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 		int	totalRows = opordheaderService.LSO13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
-
-//		xlogsdtService.save(new Xlogsdt("SO13", "Search", this.pageTitle, param.toString(), null, false, 0));
 
 		DatatableResponseHelper<Opordheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -187,7 +201,20 @@ public class SO13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO13", "Create Invoice", this.pageTitle, param.toString(), "SO_CreateDOfromOrder(" + sessionManager.getBusinessId() + "," + sessionManager.getLoggedInUserDetails().getUsername() + "," + xordernum + ")", false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO13")
+					.xfunc("Create Invoice")
+					.xsource("SO13")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Create Invoice : SO_CreateDOfromOrder(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xordernum +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -280,7 +307,20 @@ public class SO13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO13", "Dismiss Order", this.pageTitle, param.toString(), opordheader.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO13")
+					.xfunc("Dismiss Order")
+					.xsource("SO13")
+					.xtable(null)
+					.xdata(opordheader.getXordernum().toString())
+					.xstatement("Dismiss Order : " + opordheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));

@@ -32,6 +32,7 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Opdodetail;
 import com.zayaanit.entity.Opdoheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -44,6 +45,7 @@ import com.zayaanit.enums.ReportType;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.RequestParameters;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -125,7 +127,6 @@ public class SO18 extends KitController {
 				header.setXtotamt(totalXlineamt);
 
 				model.addAttribute("opdoheader", header);
-//				xlogsdtService.save(new Xlogsdt("SO18", "Reload", this.pageTitle, null, null, false, 0));
 				return "pages/SO18/SO18-fragments::main-form";
 			}
 
@@ -159,8 +160,24 @@ public class SO18 extends KitController {
 					if(acsubOp.isPresent()) header.setSubmitStaffName(acsubOp.get().getXname());
 				}
 			}
+			
+			if(header.getXdornum() != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("SO18")
+							.xfunc("View Data")
+							.xsource("SO18")
+							.xtable(null)
+							.xdata(header.getXdornum().toString())
+							.xstatement("View Data : " + header.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
 
-//			xlogsdtService.save(new Xlogsdt("SO18", "View", this.pageTitle, header.getXdornum().toString(), header.toString(), false, 0));
 			return "pages/SO18/SO18-fragments::main-form";
 		}
 
@@ -238,7 +255,6 @@ public class SO18 extends KitController {
 			List<Opdodetail> itemList = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
 			model.addAttribute("detailList", itemList == null ? Collections.emptyList() : itemList);
 
-//			xlogsdtService.save(new Xlogsdt("SO18", "Clear", this.pageTitle, null, null, false, 0));
 			return "pages/SO18/SO18-fragments::detail-table";
 		}
 
@@ -247,7 +263,6 @@ public class SO18 extends KitController {
 
 			List<Opdodetail> itemList = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
 			model.addAttribute("detailList", itemList == null ? Collections.emptyList() : itemList);
-//			xlogsdtService.save(new Xlogsdt("SO18", "Reload", this.pageTitle, null, null, true, 0));
 			return "pages/SO18/SO18-fragments::detail-table";
 		}
 
@@ -327,8 +342,6 @@ public class SO18 extends KitController {
 
 				List<Opdodetail> itemList = (List<Opdodetail>) sessionManager.getFromMap("SO18-DETAILS");
 				model.addAttribute("detailList", itemList == null ? Collections.emptyList() : itemList);
-
-//				xlogsdtService.save(new Xlogsdt("SO18", "View", this.pageTitle, null, null, true, 0));
 			}
 		} else {
 			model.addAttribute("opdoheader", Opdoheader.getPOSInstance(sessionManager).build(sessionManager, acsubRepo, cabunitRepo, xwhsRepo));
@@ -408,7 +421,20 @@ public class SO18 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("SO18", "Save", this.pageTitle, opdoheader.getXdornum().toString(), opdoheader.toString(), false, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO18")
+						.xfunc("Add Data")
+						.xsource("SO18")
+						.xtable(null)
+						.xdata(opdoheader.getXdornum().toString())
+						.xstatement("Add Data : " + opdoheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			// Salve all details
 			for(Opdodetail d : details) {
@@ -433,7 +459,20 @@ public class SO18 extends KitController {
 					throw new IllegalStateException(e.getCause().getMessage());
 				}
 
-//				xlogsdtService.save(new Xlogsdt("SO18", "Add", this.pageTitle, d.getXrow().toString(), d.toString(), true, 0));
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("SO18")
+							.xfunc("Add Detail")
+							.xsource("SO18")
+							.xtable(null)
+							.xdata(d.getXdornum().toString() + "/" + d.getXrow())
+							.xstatement("Add Detail Data : " + d.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
 			}
 
 			if("Confirmed".equals(opdoheader.getXstatus())) {
@@ -501,7 +540,20 @@ public class SO18 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO18", "Update", this.pageTitle, existObj.getXdornum().toString(), existObj.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO18")
+					.xfunc("Update Data")
+					.xsource("SO18")
+					.xtable(null)
+					.xdata(existObj.getXdornum().toString())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		// Remove all db details first
 		try {
@@ -510,7 +562,20 @@ public class SO18 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("SO18", "Delete", this.pageTitle, existObj.getXdornum().toString(), null, true, 0).setMessage("Delete all details"));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("SO18")
+					.xfunc("Delete All Detail")
+					.xsource("SO18")
+					.xtable(null)
+					.xdata(existObj.getXdornum().toString())
+					.xstatement("Delete All Detail Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		// Salve all details
 		for(Opdodetail d : details) {
@@ -535,7 +600,20 @@ public class SO18 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("SO18", "Add", this.pageTitle, d.getXrow().toString(), d.toString(), true, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("SO18")
+						.xfunc("Add Detail")
+						.xsource("SO18")
+						.xtable(null)
+						.xdata(d.getXdornum().toString() + "/" + d.getXrow())
+						.xstatement("Add Detail Data : " + d.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 		}
 
 		if("Confirmed".equals(existObj.getXstatus())) {

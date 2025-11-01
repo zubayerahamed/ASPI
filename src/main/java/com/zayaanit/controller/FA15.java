@@ -193,7 +193,7 @@ public class FA15 extends KitController {
 			Optional<Acmst> accountOp =  acmstRepo.findById(new AcmstPK(sessionManager.getBusinessId(), acdetail.getXacc()));
 			account = accountOp.isPresent() ? accountOp.get() : null;
 		}
-		if(account != null) {
+		if(acdetail != null && account != null) {
 			acdetail.setXacc(account.getXacc());
 			acdetail.setAccountName(account.getXdesc());
 			acdetail.setAccountUsage(account.getXaccusage());

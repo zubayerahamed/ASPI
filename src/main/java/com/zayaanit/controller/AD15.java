@@ -193,11 +193,11 @@ public class AD15 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("AD15")
-				.xfunc("Update")
+				.xfunc("Update Data")
 				.xsource("AD15")
 				.xtable(null)
 				.xdata(user.getZemail())
-				.xstatement(user.toString())
+				.xstatement("Update Data : " + user.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -263,7 +263,7 @@ public class AD15 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD15")
-					.xfunc("Update")
+					.xfunc("Add To Favourite")
 					.xsource("AD15")
 					.xtable(null)
 					.xdata(loggedInUser().getUsername() + "/" + fav.getXprofile() + "/" + fav.getXscreen())
@@ -307,7 +307,7 @@ public class AD15 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD15")
-					.xfunc("Update")
+					.xfunc("Remove From Favourite")
 					.xsource("AD15")
 					.xtable(null)
 					.xdata(loggedInUser().getUsername() + "/" + favOp.get().getXprofile() + "/" + favOp.get().getXscreen())
@@ -378,7 +378,7 @@ public class AD15 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD15")
-					.xfunc("Update")
+					.xfunc("Make Default Screen")
 					.xsource("AD15")
 					.xtable(null)
 					.xdata(loggedInUser().getUsername() + "/" + favOp.get().getXprofile() + "/" + favOp.get().getXscreen())
@@ -416,7 +416,7 @@ public class AD15 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD15")
-					.xfunc("Update")
+					.xfunc("Update Theme")
 					.xsource("AD15")
 					.xtable(null)
 					.xdata(user.getZemail())
@@ -475,7 +475,7 @@ public class AD15 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD15")
-					.xfunc("Update")
+					.xfunc("Update Favourite Seqn")
 					.xsource("AD15")
 					.xtable(null)
 					.xdata(loggedInUser().getUsername())
@@ -545,7 +545,7 @@ public class AD15 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD15")
-					.xfunc("Update")
+					.xfunc("Update Widget Seqn")
 					.xsource("AD15")
 					.xtable(null)
 					.xdata(loggedInUser().getUsername() + "/" + currentRow.getXwidget())
@@ -606,7 +606,7 @@ public class AD15 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD15")
-					.xfunc("Update")
+					.xfunc("Update Default Widget")
 					.xsource("AD15")
 					.xtable(null)
 					.xdata(loggedInUser().getUsername() + "/" + currentRow.getXwidget())

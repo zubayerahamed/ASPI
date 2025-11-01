@@ -42,6 +42,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -123,7 +124,23 @@ public class PO14 extends KitController {
 			}
 			model.addAttribute("pogrnheader", pogrnheader != null ? pogrnheader : Pogrnheader.getDefaultInstance(cabunits));
 
-//			xlogsdtService.save(new Xlogsdt("PO14", "View", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0));
+			if(pogrnheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("PO14")
+							.xfunc("View Data")
+							.xsource("PO14")
+							.xtable(null)
+							.xdata(pogrnheader.getXgrnnum().toString())
+							.xstatement("View Data : " + pogrnheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/PO14/PO14-fragments::main-form";
 		}
 
@@ -193,8 +210,24 @@ public class PO14 extends KitController {
 			}
 		}
 
+		if(pogrndetail != null && pogrndetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("View Detail")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(pogrndetail.getXgrnnum().toString() + "/" + pogrndetail.getXrow())
+						.xstatement("View Detail Data : " + pogrndetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+		}
+
 		model.addAttribute("pogrndetail", pogrndetail);
-//		xlogsdtService.save(new Xlogsdt("PO14", "View", this.pageTitle, pogrndetail.getXrow().toString(), pogrndetail.toString(), true, 0));
 		return "pages/PO14/PO14-fragments::detail-table";
 	}
 
@@ -254,7 +287,20 @@ public class PO14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("PO14", "Add", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0));
+			eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Add Data")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(pogrnheader.getXgrnnum().toString())
+						.xstatement("Add Data : " + pogrnheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=" + pogrnheader.getXgrnnum()));
@@ -302,7 +348,20 @@ public class PO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Update", this.pageTitle, existObj.getXgrnnum().toString(), existObj.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Update Data")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(existObj.getXgrnnum().toString())
+						.xstatement("Update Data : " + existObj.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=" + existObj.getXgrnnum()));
@@ -368,7 +427,20 @@ public class PO14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("PO14", "Add", this.pageTitle, pogrndetail.getXrow().toString(), pogrndetail.toString(), true, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("PO14")
+							.xfunc("Add Detail")
+							.xsource("PO14")
+							.xtable(null)
+							.xdata(pogrndetail.getXgrnnum().toString() + "/" + pogrndetail.getXrow())
+							.xstatement("Add Detail Data : " + pogrndetail.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+				);
 
 			BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pogrndetail.getXgrnnum());
 			pogrnheader.setXtotamt(xtotamt);
@@ -378,7 +450,20 @@ public class PO14 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
-//			xlogsdtService.save(new Xlogsdt("PO14", "Update", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0));
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("PO14")
+							.xfunc("Update Data")
+							.xsource("PO14")
+							.xtable(null)
+							.xdata(pogrnheader.getXgrnnum().toString())
+							.xstatement("Update Data : " + pogrnheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+				);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=" + pogrndetail.getXgrnnum()));
@@ -405,7 +490,20 @@ public class PO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Update", this.pageTitle, exist.getXrow().toString(), exist.toString(), true, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Update Detail")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(exist.getXgrnnum().toString() + "/" + exist.getXrow())
+						.xstatement("Update Detail Data : " + exist.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), exist.getXgrnnum());
 		pogrnheader.setXtotamt(xtotamt);
@@ -415,7 +513,20 @@ public class PO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Update", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Update Data")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(pogrnheader.getXgrnnum().toString())
+						.xstatement("Update Data : " + pogrnheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=" + exist.getXgrnnum()));
@@ -445,7 +556,20 @@ public class PO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Delete", this.pageTitle, xgrnnum.toString(), null, true, 0).setMessage("Delete all details"));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Delete All Detail")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(op.get().getXgrnnum().toString())
+						.xstatement("Delete All Details")
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		Pogrnheader obj = op.get();
 		Pogrnheader copy = SerializationUtils.clone(obj);
@@ -455,7 +579,20 @@ public class PO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Delete", this.pageTitle, copy.getXgrnnum().toString(), copy.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Delete Data")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(copy.getXgrnnum().toString())
+						.xstatement("Delete Data : " + copy.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=RESET"));
@@ -488,14 +625,26 @@ public class PO14 extends KitController {
 		}
 
 		Pogrndetail obj = op.get();
-		Pogrndetail copy = SerializationUtils.clone(obj);
 		try {
 			pogrndetailRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Delete", this.pageTitle, copy.getXrow().toString(), copy.toString(), true, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Delete Detail")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(obj.getXgrnnum().toString() + "/" + obj.getXrow())
+						.xstatement("Delete Detail Data : " + obj.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		// Update line amount and total amount of header
 		BigDecimal xtotamt = pogrndetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), pogrnheader.getXgrnnum());
@@ -506,7 +655,20 @@ public class PO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Update", this.pageTitle, pogrnheader.getXgrnnum().toString(), pogrnheader.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Update Data")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(pogrnheader.getXgrnnum().toString())
+						.xstatement("Update Data : " + pogrnheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=" + xgrnnum));
@@ -590,7 +752,20 @@ public class PO14 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO14", "Confirm", this.pageTitle, xgrnnum.toString(), "PO_ConfirmGRN("+ sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xgrnnum +")" , false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO14")
+						.xfunc("Confirm GRN")
+						.xsource("PO14")
+						.xtable(null)
+						.xdata(xgrnnum.toString())
+						.xstatement("Confirm GRN : PO_ConfirmGRN(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xgrnnum +")")
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/PO14?xgrnnum=" + xgrnnum));

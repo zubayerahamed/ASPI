@@ -124,20 +124,22 @@ public class PO12 extends KitController {
 
 			model.addAttribute("poordheader", poordheader);
 
-			eventPublisher.publishEvent(
-				new XlogsdtEvent(
-					Xlogsdt.builder()
-					.xscreen("PO12")
-					.xfunc("View")
-					.xsource("PO12")
-					.xtable(null)
-					.xdata(poordheader.getXpornum().toString())
-					.xstatement(poordheader.toString())
-					.xresult("Success")
-					.build(), 
-					sessionManager
-				)
-			);
+			if(op.isPresent()) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("PO12")
+							.xfunc("View Data")
+							.xsource("PO12")
+							.xtable(null)
+							.xdata(poordheader.getXpornum().toString())
+							.xstatement("View Data : " + poordheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
 
 			return "pages/PO12/PO12-fragments::main-form";
 		}
@@ -210,16 +212,16 @@ public class PO12 extends KitController {
 
 		model.addAttribute("poorddetail", poorddetail);
 
-		if(poorddetail.getXrow() != 0) {
+		if(poorddetail != null && poorddetail.getXrow() != 0) {
 			eventPublisher.publishEvent(
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("PO12")
-					.xfunc("View")
+					.xfunc("View Detail")
 					.xsource("PO12")
 					.xtable(null)
 					.xdata(xpornum.toString() + "/" + poorddetail.getXrow().toString())
-					.xstatement(poorddetail.toString())
+					.xstatement("View Detail Data : " + poorddetail.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -282,11 +284,11 @@ public class PO12 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("PO12")
-					.xfunc("Add")
+					.xfunc("Add Data")
 					.xsource("PO12")
 					.xtable(null)
 					.xdata(poordheader.getXpornum().toString())
-					.xstatement(poordheader.toString())
+					.xstatement("Add Data : " + poordheader.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -330,11 +332,11 @@ public class PO12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("PO12")
-				.xfunc("Update")
+				.xfunc("Update Data")
 				.xsource("PO12")
 				.xtable(null)
 				.xdata(existObj.getXpornum().toString())
-				.xstatement(existObj.toString())
+				.xstatement("Update Data : " + existObj.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -403,6 +405,21 @@ public class PO12 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("PO12")
+						.xfunc("Add Detail")
+						.xsource("PO12")
+						.xtable(null)
+						.xdata(poordheader.getXpornum().toString() + "/" + poorddetail.getXrow().toString())
+						.xstatement("Add Detail Data : " + poorddetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), poorddetail.getXpornum());
 			poordheader.setXtotamt(xtotamt);
 			try {
@@ -415,26 +432,11 @@ public class PO12 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("PO12")
-					.xfunc("Add")
-					.xsource("PO12")
-					.xtable(null)
-					.xdata(poordheader.getXpornum().toString() + "/" + poorddetail.getXrow().toString())
-					.xstatement(poorddetail.toString())
-					.xresult("Success")
-					.build(), 
-					sessionManager
-				)
-			);
-
-			eventPublisher.publishEvent(
-				new XlogsdtEvent(
-					Xlogsdt.builder()
-					.xscreen("PO12")
-					.xfunc("Update")
+					.xfunc("Update Data")
 					.xsource("PO12")
 					.xtable(null)
 					.xdata(poordheader.getXpornum().toString())
-					.xstatement(poordheader.toString())
+					.xstatement("Update Data : " + poordheader.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -463,6 +465,21 @@ public class PO12 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("PO12")
+					.xfunc("Update Detail")
+					.xsource("PO12")
+					.xtable(null)
+					.xdata(poordheader.getXpornum().toString() + "/" + exist.getXrow().toString())
+					.xstatement("Update Detail Data : " + exist.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		BigDecimal xtotamt = poorddetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), exist.getXpornum());
 		poordheader.setXtotamt(xtotamt);
 		try {
@@ -475,26 +492,11 @@ public class PO12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("PO12")
-				.xfunc("Update")
-				.xsource("PO12")
-				.xtable(null)
-				.xdata(poordheader.getXpornum().toString() + "/" + exist.getXrow().toString())
-				.xstatement(exist.toString())
-				.xresult("Success")
-				.build(), 
-				sessionManager
-			)
-		);
-
-		eventPublisher.publishEvent(
-			new XlogsdtEvent(
-				Xlogsdt.builder()
-				.xscreen("PO12")
-				.xfunc("Update")
+				.xfunc("Update Data")
 				.xsource("PO12")
 				.xtable(null)
 				.xdata(poordheader.getXpornum().toString())
-				.xstatement(poordheader.toString())
+				.xstatement("Update Data : " + poordheader.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -533,7 +535,7 @@ public class PO12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("PO12")
-				.xfunc("Delete")
+				.xfunc("Delete All Detail")
 				.xsource("PO12")
 				.xtable(null)
 				.xdata(xpornum.toString())
@@ -556,11 +558,11 @@ public class PO12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("PO12")
-				.xfunc("Delete")
+				.xfunc("Delete Data")
 				.xsource("PO12")
 				.xtable(null)
 				.xdata(copy.getXpornum().toString())
-				.xstatement(copy.toString())
+				.xstatement("Delete Data : " + copy.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -609,11 +611,11 @@ public class PO12 extends KitController {
 			new XlogsdtEvent(
 				Xlogsdt.builder()
 				.xscreen("PO12")
-				.xfunc("Delete")
+				.xfunc("Delete Detail")
 				.xsource("PO12")
 				.xtable(null)
 				.xdata(poordheader.getXpornum().toString() + "/" + copy.getXrow().toString())
-				.xstatement(copy.toString())
+				.xstatement("Delete Detail Data : " + copy.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager
@@ -723,7 +725,7 @@ public class PO12 extends KitController {
 				.xsource("PO12")
 				.xtable(null)
 				.xdata(poordheader.getXpornum().toString())
-				.xstatement(poordheader.toString())
+				.xstatement("Confirm Data : " + poordheader.toString())
 				.xresult("Success")
 				.build(), 
 				sessionManager

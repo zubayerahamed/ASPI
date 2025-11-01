@@ -78,11 +78,11 @@ public class MD11 extends KitController {
 						new XlogsdtEvent(
 							Xlogsdt.builder()
 							.xscreen("MD11")
-							.xfunc("View")
+							.xfunc("View Data")
 							.xsource("MD11")
 							.xtable(null)
 							.xdata(op.get().getXwh().toString())
-							.xstatement(op.get().toString())
+							.xstatement("View Data : " + op.get().toString())
 							.xresult("Success")
 							.build(), 
 							sessionManager
@@ -140,11 +140,11 @@ public class MD11 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("MD11")
-						.xfunc("Add")
+						.xfunc("Add Data")
 						.xsource("MD11")
 						.xtable(null)
 						.xdata(xwhs.getXwh().toString())
-						.xstatement(xwhs.toString())
+						.xstatement("Add Data : " + xwhs.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -179,11 +179,11 @@ public class MD11 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("MD11")
-					.xfunc("Update")
+					.xfunc("Update Data")
 					.xsource("MD11")
 					.xtable(null)
 					.xdata(existObj.getXwh().toString())
-					.xstatement(existObj.toString())
+					.xstatement("Update Data : " + existObj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -218,11 +218,11 @@ public class MD11 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("MD11")
-					.xfunc("Delete")
+					.xfunc("Delete Data")
 					.xsource("MD11")
 					.xtable(null)
 					.xdata(obj.getXwh().toString())
-					.xstatement(obj.toString())
+					.xstatement("Delete Data : " + obj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager

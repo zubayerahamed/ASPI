@@ -64,6 +64,7 @@ public class ReportController extends AbstractReportController{
 		return this.pageTitle;
 	}
 
+	@SuppressWarnings("unchecked")
 	@GetMapping
 	public String index(@PathVariable String rptcode, HttpServletRequest request, Model model) throws Exception {
 		this.screenCode = rptcode;

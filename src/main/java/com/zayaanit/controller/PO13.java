@@ -32,6 +32,7 @@ import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.PO13SearchParam;
 import com.zayaanit.model.ReloadSection;
 import com.zayaanit.model.ReloadSectionParams;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.PoordheaderRepo;
 import com.zayaanit.service.PoordheaderService;
 
@@ -112,13 +113,26 @@ public class PO13 extends KitController {
 		param.setXcus(xcus);
 		param.setXstatusord(xstatusord);
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("PO13")
+					.xfunc("Search Data")
+					.xsource("PO13")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Search Data : " + param.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		DatatableRequestHelper helper = new DatatableRequestHelper(request);
 
 		List<Poordheader> list = poordheaderService.LPO13(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
 		int	totalRows = poordheaderService.LPO13(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0, null, param);
-
-//		xlogsdtService.save(new Xlogsdt("PO13", "Search", this.pageTitle, param.toString(), null , false, 0));
 
 		DatatableResponseHelper<Poordheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
@@ -183,7 +197,20 @@ public class PO13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO13", "Create GRN", this.pageTitle, param.toString(), "PO_CreateGRNfromOrder(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xpornum + ")" , false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("PO13")
+					.xfunc("Create GRN")
+					.xsource("PO13")
+					.xtable(null)
+					.xdata(null)
+					.xstatement("Create GRN : PO_CreateGRNfromOrder(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xpornum +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));
@@ -277,7 +304,20 @@ public class PO13 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
-//		xlogsdtService.save(new Xlogsdt("PO13", "Dismiss Order", this.pageTitle, param.toString(), poordheader.toString(), false, 0));
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("PO13")
+					.xfunc("Dismiss Order")
+					.xsource("PO13")
+					.xtable(null)
+					.xdata(poordheader.getXpornum().toString())
+					.xstatement("Dismiss Order : " + poordheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSectionParams> postData = new ArrayList<>();
 		postData.add(new ReloadSectionParams("xfdate", xfdate));

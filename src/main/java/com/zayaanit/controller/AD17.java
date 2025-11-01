@@ -78,11 +78,11 @@ public class AD17 extends KitController {
 						new XlogsdtEvent(
 							Xlogsdt.builder()
 							.xscreen("AD17")
-							.xfunc("View")
+							.xfunc("View Data")
 							.xsource("AD17")
 							.xtable(null)
 							.xdata(op.get().getXbuid().toString())
-							.xstatement(op.get().toString())
+							.xstatement("View Data : " + op.get().toString())
 							.xresult("Success")
 							.build(), 
 							sessionManager
@@ -135,11 +135,11 @@ public class AD17 extends KitController {
 					new XlogsdtEvent(
 						Xlogsdt.builder()
 						.xscreen("AD17")
-						.xfunc("Add")
+						.xfunc("Add Data")
 						.xsource("AD17")
 						.xtable(null)
 						.xdata(cabunit.getXbuid().toString())
-						.xstatement(cabunit.toString())
+						.xstatement("Add Data : " + cabunit.toString())
 						.xresult("Success")
 						.build(), 
 						sessionManager
@@ -174,11 +174,11 @@ public class AD17 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD17")
-					.xfunc("Update")
+					.xfunc("Update Data")
 					.xsource("AD17")
 					.xtable(null)
 					.xdata(existObj.getXbuid().toString())
-					.xstatement(existObj.toString())
+					.xstatement("Update Data : " + existObj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager
@@ -213,11 +213,11 @@ public class AD17 extends KitController {
 				new XlogsdtEvent(
 					Xlogsdt.builder()
 					.xscreen("AD17")
-					.xfunc("Delete")
+					.xfunc("Delete Data")
 					.xsource("AD17")
 					.xtable(null)
 					.xdata(obj.getXbuid().toString())
-					.xstatement(obj.toString())
+					.xstatement("Delete Data : "+ obj.toString())
 					.xresult("Success")
 					.build(), 
 					sessionManager

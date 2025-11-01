@@ -312,6 +312,7 @@ public class AD18 extends KitController {
 		Files.write(targetPath, chunk, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 	}
 
+	@SuppressWarnings("null")
 	private String getFileExtention(MultipartFile csvFile) {
 		if (csvFile == null) return null;
 		if (StringUtils.isBlank(csvFile.getOriginalFilename())) return null;

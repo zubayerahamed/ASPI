@@ -26,6 +26,7 @@ import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imopendetail;
 import com.zayaanit.entity.Imopenheader;
+import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.Xwhs;
 import com.zayaanit.entity.pk.AcsubPK;
@@ -37,6 +38,7 @@ import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.entity.pk.XwhsPK;
 import com.zayaanit.enums.SubmitFor;
 import com.zayaanit.model.ReloadSection;
+import com.zayaanit.model.XlogsdtEvent;
 import com.zayaanit.repository.AcsubRepo;
 import com.zayaanit.repository.CabunitRepo;
 import com.zayaanit.repository.CaitemRepo;
@@ -116,6 +118,23 @@ public class IM16 extends KitController {
 			}
 			model.addAttribute("imopenheader", imopenheader != null ? imopenheader : Imopenheader.getDefaultInstance(cabunits));
 
+			if(imopenheader != null) {
+				eventPublisher.publishEvent(
+						new XlogsdtEvent(
+							Xlogsdt.builder()
+							.xscreen("IM16")
+							.xfunc("View Data")
+							.xsource("IM16")
+							.xtable(null)
+							.xdata(imopenheader.getXopennum().toString())
+							.xstatement("View Data : " + imopenheader.toString())
+							.xresult("Success")
+							.build(), 
+							sessionManager
+						)
+					);
+			}
+
 			return "pages/IM16/IM16-fragments::main-form";
 		}
 
@@ -179,6 +198,23 @@ public class IM16 extends KitController {
 			imopendetail.setXunit(caitem.getXunit());
 		}
 
+		if(imopendetail != null && imopendetail.getXrow() != 0) {
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM16")
+						.xfunc("View Detail")
+						.xsource("IM16")
+						.xtable(null)
+						.xdata(imopendetail.getXopennum().toString())
+						.xstatement("View Detail Data : " + imopendetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+		}
+
 		model.addAttribute("imopendetail", imopendetail);
 		return "pages/IM16/IM16-fragments::detail-table";
 	}
@@ -231,6 +267,21 @@ public class IM16 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM16")
+						.xfunc("Add Data")
+						.xsource("IM16")
+						.xtable(null)
+						.xdata(imopenheader.getXopennum().toString())
+						.xstatement("Add Data : " + imopenheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + imopenheader.getXopennum()));
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM16/detail-table?xopennum="+ imopenheader.getXopennum() +"&xrow=RESET"));
@@ -276,6 +327,21 @@ public class IM16 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Update Data")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(existObj.getXopennum().toString())
+					.xstatement("Update Data : " + existObj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + existObj.getXopennum()));
@@ -339,6 +405,21 @@ public class IM16 extends KitController {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
 
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM16")
+						.xfunc("Add Detail")
+						.xsource("IM16")
+						.xtable(null)
+						.xdata(imopendetail.getXopennum().toString() + "/" + imopendetail.getXrow())
+						.xstatement("Add Detail Data : " + imopendetail.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
+
 			// update header xtotal
 			BigDecimal totalAmount = imopendetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), imopendetail.getXopennum());
 			imopenheader.setXtotamt(totalAmount);
@@ -347,6 +428,21 @@ public class IM16 extends KitController {
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getCause().getMessage());
 			}
+
+			eventPublisher.publishEvent(
+					new XlogsdtEvent(
+						Xlogsdt.builder()
+						.xscreen("IM16")
+						.xfunc("Update Data")
+						.xsource("IM16")
+						.xtable(null)
+						.xdata(imopenheader.getXopennum().toString())
+						.xstatement("Update Data : " + imopenheader.toString())
+						.xresult("Success")
+						.build(), 
+						sessionManager
+					)
+				);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
 			reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + imopendetail.getXopennum()));
@@ -377,6 +473,21 @@ public class IM16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Update Detail")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(exist.getXopennum().toString() + "/" + exist.getXrow())
+					.xstatement("Update Detail Data : " + exist.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		// update header xtotal
 		BigDecimal totalAmount = imopendetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), imopendetail.getXopennum());
 		imopenheader.setXtotamt(totalAmount);
@@ -385,6 +496,21 @@ public class IM16 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Update Data")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(imopenheader.getXopennum().toString())
+					.xstatement("Update Data : " + imopenheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + imopendetail.getXopennum()));
@@ -415,12 +541,42 @@ public class IM16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Detail All Detail")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(xopennum.toString())
+					.xstatement("Delete All Detail Data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		Imopenheader obj = op.get();
 		try {
 			imopenheaderRepo.delete(obj);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Detail Data")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(xopennum.toString())
+					.xstatement("Delete Data : " + op.get().toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=RESET"));
@@ -460,6 +616,21 @@ public class IM16 extends KitController {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
 
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Detail Detail")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(xopennum.toString() + "/" + obj.getXrow())
+					.xstatement("Delete Detail Data : " + obj.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
 		// update header xtotal
 		BigDecimal totalAmount = imopendetailRepo.getTotalLineAmount(sessionManager.getBusinessId(), obj.getXopennum());
 		imopenheader.setXtotamt(totalAmount);
@@ -468,6 +639,21 @@ public class IM16 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Update Data")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(xopennum.toString())
+					.xstatement("Update Data : " + imopenheader.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + xopennum));
@@ -526,6 +712,21 @@ public class IM16 extends KitController {
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getCause().getMessage());
 		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("IM16")
+					.xfunc("Confirm Opening")
+					.xsource("IM16")
+					.xtable(null)
+					.xdata(xopennum.toString())
+					.xstatement("Confirm Opening : IM_ConfirmOpening(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xopennum +")")
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
 		reloadSections.add(new ReloadSection("main-form-container", "/IM16?xopennum=" + xopennum));
