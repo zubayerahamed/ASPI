@@ -36,6 +36,7 @@ public enum ReportMenu implements ReportMenuBase {
 	mobatch("mobatch", "Print Batch", "mobatch.rpt", ReportParamMap.mobatch, "Y", false, "SYSTEM"),
 	imadj("imadj", "Print Adjustment", "imadj.rpt", ReportParamMap.imadj, "Y", false, "SYSTEM"),
 	imopen("imopen", "Print", "imopen.rpt", ReportParamMap.imopen, "Y", false, "SYSTEM"),
+	imconv("imconv", "Print", "imconv.rpt", ReportParamMap.imconv, "Y", false, "SYSTEM"),
 
 	oppos("oppos", "Print Invoice", "oppos.rpt", ReportParamMap.oppos, "Y", false, "SYSTEM"),
 	opposd("opposd", "Print Invoice Duplicate", "opposd.rpt", ReportParamMap.opposd, "Y", false, "SYSTEM"),

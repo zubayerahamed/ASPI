@@ -100,6 +100,24 @@
 							<input type="text" class="form-control" th:field="*{xbarcode}">
 						</div>
 					</div>
+					
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Expiry Date</label>
+							<div class="input-group">
+								<input 	type="text" 
+										name="xdateexp" 
+										id="xdateexp" 
+										class="form-control datepicker-date-format" 
+										th:value="${caitem.xdateexp == null ? '' : #dates.format(caitem.xdateexp, df)}">
+								<span class="input-group-text">
+									<i class="ph-calendar"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					
+					
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label d-block" for="xispo">Is Purchase?</label>

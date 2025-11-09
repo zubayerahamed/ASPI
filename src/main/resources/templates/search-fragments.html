@@ -1314,8 +1314,8 @@
 						<th>Name</th>
 						<th>Unit</th>
 						<th>Rate</th>
-						<th>Group</th>
 						<th>Category</th>
+						<th>Expiry Date</th>
 						<th>Note</th>
 						<th th:if="${hasdeletebtn}"></th>
 					</tr>
@@ -1368,12 +1368,15 @@
 					rendername: 'xrate',
 				}, {
 					suffix : [0,1,2,3,4,5],
-					name : 'xgitem',
-					rendername: 'xgitem',
-				}, {
-					suffix : [0,1,2,3,4,5],
 					name : 'xcatitem',
 					rendername: 'xcatitem',
+				}, {
+					suffix : [0,1,2,3,4,5],
+					name : 'xdateexp',
+					rendername: 'xdateexp',
+					render: function(data, type, row, meta) {
+						return data == null ? '' : data;
+					}
 				}, {
 					suffix : [0,1,2,3,4,5],
 					name : 'xnote',

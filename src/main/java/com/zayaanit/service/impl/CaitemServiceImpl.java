@@ -2,6 +2,7 @@ package com.zayaanit.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ public class CaitemServiceImpl extends AbstractService implements CaitemService 
 		em.setXgitem((String) row.get("xgitem"));
 		em.setXcatitem((String) row.get("xcatitem"));
 		em.setXnote((String) row.get("xnote"));
+		em.setXdateexp(row.get("xdateexp") == null ? null : (Date) row.get("xdateexp"));
 		return em;
 	}
 

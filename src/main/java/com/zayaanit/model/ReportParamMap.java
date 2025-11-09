@@ -29,6 +29,7 @@ public class ReportParamMap {
 	public static final Map<String, String> mobatch = new HashMap<>();
 	public static final Map<String, String> imadj = new HashMap<>();
 	public static final Map<String, String> imopen = new HashMap<>();
+	public static final Map<String, String> imconv = new HashMap<>();
 	public static final Map<String, String> oppos = new HashMap<>();
 	public static final Map<String, String> opposd = new HashMap<>();
 	public static final Map<String, String> xlogssm = new HashMap<>();
@@ -180,6 +181,9 @@ public class ReportParamMap {
 
 		imopen.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		imopen.put("param2", "xopennum|" + ReportParamDataType.INTEGER.name());
+
+		imconv.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		imconv.put("param2", "xconvnum|" + ReportParamDataType.INTEGER.name());
 
 		oppos.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		oppos.put("param2", "xdornum|" + ReportParamDataType.INTEGER.name());

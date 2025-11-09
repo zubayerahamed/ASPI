@@ -1,6 +1,7 @@
 package com.zayaanit.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -8,7 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.zayaanit.entity.pk.CaitemPK;
 import com.zayaanit.enums.SubmitFor;
@@ -73,6 +79,11 @@ public class Caitem extends AbstractModel<String> {
 	@Column(name = "xbarcode", length = 50)
 	private String xbarcode;
 
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE, pattern = "yyyy-MM-dd")
+	@Column(name = "xdateexp")
+	private Date xdateexp;
+
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
@@ -84,6 +95,7 @@ public class Caitem extends AbstractModel<String> {
 		obj.setXrate(BigDecimal.ZERO);
 		obj.setXispo(Boolean.TRUE);
 		obj.setXisop(Boolean.TRUE);
+		obj.setXdateexp(null);
 		return obj;
 	}
 }
