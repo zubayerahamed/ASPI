@@ -16,6 +16,7 @@ import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imadjheader;
+import com.zayaanit.entity.Imconvheader;
 import com.zayaanit.entity.Imissueheader;
 import com.zayaanit.entity.Imopenheader;
 import com.zayaanit.entity.Imtogli;
@@ -363,6 +364,13 @@ public class ModelValidator extends ConstraintValidator {
 		if(moheader == null) return;
 
 		super.validate(moheader, errors, validator);
+		if (errors.hasErrors()) return;
+	}
+
+	public void validateImconvheader(Imconvheader imconvheader, Errors errors, Validator validator) {
+		if(imconvheader == null) return;
+
+		super.validate(imconvheader, errors, validator);
 		if (errors.hasErrors()) return;
 	}
 

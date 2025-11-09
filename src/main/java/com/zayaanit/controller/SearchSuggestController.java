@@ -25,6 +25,7 @@ import com.zayaanit.entity.Acsub;
 import com.zayaanit.entity.Cabunit;
 import com.zayaanit.entity.Caitem;
 import com.zayaanit.entity.Imadjheader;
+import com.zayaanit.entity.Imconvheader;
 import com.zayaanit.entity.Imissueheader;
 import com.zayaanit.entity.Imopenheader;
 import com.zayaanit.entity.Imtorheader;
@@ -50,6 +51,7 @@ import com.zayaanit.service.AcsubService;
 import com.zayaanit.service.CabunitService;
 import com.zayaanit.service.CaitemService;
 import com.zayaanit.service.ImadjheaderService;
+import com.zayaanit.service.ImconvheaderService;
 import com.zayaanit.service.ImissueheaderService;
 import com.zayaanit.service.ImopenheaderService;
 import com.zayaanit.service.ImtorheaderService;
@@ -96,6 +98,7 @@ public class SearchSuggestController {
 	@Autowired private ImadjheaderService imadjheaderService;
 	@Autowired private ImopenheaderService imopenheaderService;
 	@Autowired private MoheaderService moheaderService;
+	@Autowired private ImconvheaderService imconvheaderService;
 	@Autowired private OpcrnheaderService opcrnheaderService;
 	@Autowired private XwidgetsService xwidgetsService;
 
@@ -457,6 +460,22 @@ public class SearchSuggestController {
 		int totalRows = imopenheaderService.LIM16(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
 
 		DatatableResponseHelper<Imopenheader> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@PostMapping("/LIM17/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Imconvheader> LIM17(@PathVariable int suffix, @RequestParam(required = false) String dependentParam) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Imconvheader> list = imconvheaderService.LIM17(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+		int totalRows = imconvheaderService.LIM17(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix, dependentParam);
+
+		DatatableResponseHelper<Imconvheader> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);
