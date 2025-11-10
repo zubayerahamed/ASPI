@@ -261,7 +261,7 @@ public class IM17 extends KitController {
 		}
 
 		if(imconvheader.getXitem() == null) {
-			responseHelper.setErrorStatusAndMessage("Item required");
+			responseHelper.setErrorStatusAndMessage("Received item required");
 			return responseHelper.getResponse();
 		}
 
@@ -312,7 +312,7 @@ public class IM17 extends KitController {
 			reloadSections.add(new ReloadSection("detail-table-container", "/IM17/detail-table?xconvnum="+ imconvheader.getXconvnum() +"&xrow=RESET"));
 			reloadSections.add(new ReloadSection("list-table-container", "/IM17/list-table"));
 			responseHelper.setReloadSections(reloadSections);
-			responseHelper.setSuccessStatusAndMessage("Batch process created successfully");
+			responseHelper.setSuccessStatusAndMessage("Inventort conversion created successfully");
 			return responseHelper.getResponse();
 		}
 
@@ -369,7 +369,7 @@ public class IM17 extends KitController {
 		reloadSections.add(new ReloadSection("detail-table-container", "/IM17/detail-table?xconvnum="+ imconvheader.getXconvnum() +"&xrow=RESET"));
 		reloadSections.add(new ReloadSection("list-table-container", "/IM17/list-table"));
 		responseHelper.setReloadSections(reloadSections);
-		responseHelper.setSuccessStatusAndMessage("Batch process updated successfully");
+		responseHelper.setSuccessStatusAndMessage("Inventory conversion updated successfully");
 		return responseHelper.getResponse();
 	}
 
