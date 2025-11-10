@@ -126,7 +126,8 @@ public enum ReportMenu implements ReportMenuBase {
 	R514("R514", "Purchase  Return Item Summary", "R514.rpt", ReportParamMap.R514, "Y", false, "SYSTEM"),
 	R515("R515", "Purchase  Return Item Summary", "R515.rpt", ReportParamMap.R515, "Y", false, "SYSTEM"),
 	R516("R516", "Purchase  Return Item Summary", "R516.rpt", ReportParamMap.R516, "Y", false, "SYSTEM"),
-	R517("R517", "Purchase  Return Item Summary", "R517.rpt", ReportParamMap.R517, "Y", false, "SYSTEM");
+	R517("R517", "Purchase  Return Item Summary", "R517.rpt", ReportParamMap.R517, "Y", false, "SYSTEM"),
+	R518("R518", "Stock Low Status", "R518.rpt", ReportParamMap.R518, "Y", false, "SYSTEM");
 
 	private String group;
 	private String description;

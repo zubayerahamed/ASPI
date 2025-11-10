@@ -117,6 +117,7 @@ public class ReportParamMap {
 	public static final Map<String, String> R515 = new HashMap<>();
 	public static final Map<String, String> R516 = new HashMap<>();
 	public static final Map<String, String> R517 = new HashMap<>();
+	public static final Map<String, String> R518 = new HashMap<>();
 
 	static {
 
@@ -921,5 +922,12 @@ public class ReportParamMap {
 		R517.put("param7", "xcatitem|" + ReportParamDataType.STRING.name());
 		R517.put("param8", "xitem|" + ReportParamDataType.INTEGER.name());
 		R517.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
+
+		R518.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
+		R518.put("param2", "xbuid|" + ReportParamDataType.INTEGER.name());
+		R518.put("param3", "xwh|" + ReportParamDataType.INTEGER.name());
+		R518.put("param4", "xgitem|" + ReportParamDataType.STRING.name());
+		R518.put("param5", "xcatitem|" + ReportParamDataType.STRING.name());
+		R518.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
 	}
 }

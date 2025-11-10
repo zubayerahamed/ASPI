@@ -147,6 +147,10 @@ public class MD12 extends KitController {
 			return responseHelper.getResponse();
 		}
 
+		if(caitem.getXminqty() == null || caitem.getXminqty().compareTo(BigDecimal.ZERO) == -1) {
+			caitem.setXminqty(BigDecimal.ZERO);
+		}
+
 		// VALIDATE XSCREENS
 		modelValidator.validateCaitem(caitem, bindingResult, validator);
 		if (bindingResult.hasErrors()) return modelValidator.getValidationMessage(bindingResult);

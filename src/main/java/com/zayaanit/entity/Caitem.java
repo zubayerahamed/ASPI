@@ -84,6 +84,9 @@ public class Caitem extends AbstractModel<String> {
 	@Column(name = "xdateexp")
 	private Date xdateexp;
 
+	@Column(name = "xminqty")
+	private BigDecimal xminqty;
+
 	@Transient
 	private SubmitFor submitFor = SubmitFor.UPDATE;
 
@@ -96,6 +99,7 @@ public class Caitem extends AbstractModel<String> {
 		obj.setXispo(Boolean.TRUE);
 		obj.setXisop(Boolean.TRUE);
 		obj.setXdateexp(null);
+		obj.setXminqty(BigDecimal.ZERO);
 		return obj;
 	}
 }

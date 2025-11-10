@@ -100,7 +100,12 @@
 							<input type="text" class="form-control" th:field="*{xbarcode}">
 						</div>
 					</div>
-					
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Safety Stock</label>
+							<input type="number" class="form-control numeric-only" th:field="*{xminqty}" required="required">
+						</div>
+					</div>
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label">Expiry Date</label>
