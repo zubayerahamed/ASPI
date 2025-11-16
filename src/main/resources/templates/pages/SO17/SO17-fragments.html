@@ -1,7 +1,7 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${opcrnheader.xcrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opcrnheader.xcrnnum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
+			<button th:if="${opcrnheader.xcrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opcrnheader.xcrnnum}, data-rptcode='opcrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Return</button>
 			<button th:if="${opcrnheader.xcrnnum ne null and opcrnheader.xstatus eq 'Open' and opcrnheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO17/confirm?xcrnnum=} + ${opcrnheader.xcrnnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 

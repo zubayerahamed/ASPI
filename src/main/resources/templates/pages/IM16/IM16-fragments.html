@@ -1,8 +1,8 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${imopenheader.xopennum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imopenheader.xopennum}, data-rptcode='imopen'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print</button>
-			<button th:if="${imopenheader.xopennum ne null and imopenheader.xstatus eq 'Open' and imopenheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM16/confirm?xopennum=} + ${imopenheader.xopennum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Issue</button>
+			<button th:if="${imopenheader.xopennum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imopenheader.xopennum}, data-rptcode='imopen'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Opening</button>
+			<button th:if="${imopenheader.xopennum ne null and imopenheader.xstatus eq 'Open' and imopenheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM16/confirm?xopennum=} + ${imopenheader.xopennum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 
 		<div class="card-body">

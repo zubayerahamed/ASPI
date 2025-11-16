@@ -1,8 +1,8 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${pogrnheader.xgrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pogrnheader.xgrnnum}, data-rptcode='pogrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print GRN</button>
-			<button th:if="${pogrnheader.xgrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pogrnheader.xcus}, data-param3=${pogrnheader.xinvnum}, data-rptcode='pogrnbill'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Bill</button>
+			<button th:if="${pogrnheader.xgrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pogrnheader.xgrnnum}, data-rptcode='pogrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> GRN</button>
+			<button th:if="${pogrnheader.xgrnnum ne null}" th:attr="data-url=@{/report/print}, data-param2=${pogrnheader.xcus}, data-param3=${pogrnheader.xinvnum}, data-rptcode='pogrnbill'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Bill</button>
 			<button th:if="${pogrnheader.xgrnnum ne null and pogrnheader.xstatus eq 'Open' and pogrnheader.xstatusim eq 'Open'}" th:attr="data-url=@{/PO14/confirm?xgrnnum=} + ${pogrnheader.xgrnnum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 

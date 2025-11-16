@@ -1,8 +1,8 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${poordheader.xpornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${poordheader.xpornum}, data-rptcode='poord'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Order</button>
-			<button th:if="${poordheader.xpornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${poordheader.xpornum}, data-rptcode='poordgrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print GRNs</button>
+			<button th:if="${poordheader.xpornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${poordheader.xpornum}, data-rptcode='poord'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Order</button>
+			<button th:if="${poordheader.xpornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${poordheader.xpornum}, data-rptcode='poordgrn'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> GRN's</button>
 			<button th:if="${poordheader.xpornum ne null and poordheader.xstatus eq 'Open' and poordheader.xstatusord eq 'Open'}" th:attr="data-url=@{/PO12/confirm?xpornum=} + ${poordheader.xpornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 

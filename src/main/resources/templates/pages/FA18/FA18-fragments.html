@@ -110,7 +110,7 @@
 						<button type="reset" th:attr="data-reloadurl='/FA18', data-reloadid='main-form-container'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:attr="data-url='/report/print', data-rptcode='acvouchers'" class="btn btn-light btn-sm btn-print-with-search-param ms-1"><i class="ph-printer me-2"></i> Print</button>
+						<button th:attr="data-url='/report/print', data-rptcode='acvouchers'" class="btn btn-light btn-sm btn-print-with-search-param ms-1"><i class="ph-printer me-2"></i> Vouchers</button>
 						<button type="submit" class="btn btn-primary btn-sm btn-search-vouchers ms-1"><i class="ph-magnifying-glass me-2"></i> Search</button>
 					</div>
 				</div>
@@ -302,7 +302,7 @@
 						"class": "text-center",
 						render: function(data, type, row, meta) {
 
-							var actions = '<button data-url="/report/print", data-param2="'+row['xvoucher']+'", data-rptcode="voucher" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i>Print</button>';
+							var actions = '<button data-url="/report/print", data-param2="'+row['xvoucher']+'", data-rptcode="voucher" type="button" class="btn btn-light btn-sm btn-print mx-1"><i class="ph-printer me-2"></i>Voucher</button>';
 
 							if(row['xstatusjv'] == 'Balanced'){
 								actions += '<a class="btn btn-sm btn-primary mx-1 btn-voucher-post" data-xvoucher="'+ row['xvoucher'] +'" href="#">Post</a>';

@@ -1,9 +1,9 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opdoinv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Invoice</button>
-			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opdocln'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Challan</button>
-			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO15/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Invoice</button>
+			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opdoinv'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Invoice</button>
+			<button th:if="${opdoheader.xdornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${opdoheader.xdornum}, data-rptcode='opdocln'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Challan</button>
+			<button th:if="${opdoheader.xdornum ne null and opdoheader.xstatus eq 'Open' and opdoheader.xstatusim eq 'Open'}" th:attr="data-url=@{/SO15/confirm?xdornum=} + ${opdoheader.xdornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 
 		<div class="card-body">

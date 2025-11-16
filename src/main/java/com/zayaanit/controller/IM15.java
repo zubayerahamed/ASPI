@@ -609,6 +609,7 @@ public class IM15 extends KitController {
 		// check inventory
 		Map<Integer, BigDecimal> qtyMap = new HashMap<>();
 		for(Imadjdetail item : details) {
+			if(item.getXsign() == 1) continue;  // Exclude debit amount
 			if(qtyMap.get(item.getXitem()) != null) {
 				BigDecimal prevQty = qtyMap.get(item.getXitem());
 				BigDecimal newQty = prevQty.add(item.getXqty() == null ? BigDecimal.ZERO : item.getXqty());

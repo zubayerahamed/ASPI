@@ -1,9 +1,9 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${imtorheader.xtornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imtorheader.xtornum}, data-rptcode='imtor'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Transfer</button>
-			<button th:if="${imtorheader.xtornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imtorheader.xtornum}, data-rptcode='imtorc'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Challan</button>
-			<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open' and imtorheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM12/confirm?xtornum=} + ${imtorheader.xtornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm Transfer</button>
+			<button th:if="${imtorheader.xtornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imtorheader.xtornum}, data-rptcode='imtor'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Transfer</button>
+			<button th:if="${imtorheader.xtornum ne null}" th:attr="data-url=@{/report/print}, data-param2=${imtorheader.xtornum}, data-rptcode='imtorc'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Challan</button>
+			<button th:if="${imtorheader.xtornum ne null and imtorheader.xstatus eq 'Open' and imtorheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM12/confirm?xtornum=} + ${imtorheader.xtornum}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 
 		<div class="card-body">

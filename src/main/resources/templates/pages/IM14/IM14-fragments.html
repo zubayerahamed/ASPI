@@ -1,7 +1,7 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div class="card-header d-sm-flex align-items-sm-center p-0">
-			<button th:if="${moheader.xbatch ne null}" th:attr="data-url=@{/report/print}, data-param2=${moheader.xbatch}, data-rptcode='mobatch'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Print Batch</button>
+			<button th:if="${moheader.xbatch ne null}" th:attr="data-url=@{/report/print}, data-param2=${moheader.xbatch}, data-rptcode='mobatch'" type="button" class="btn btn-light btn-sm btn-print my-2 ms-3"><i class="ph-printer me-2"></i> Batch</button>
 			<button th:if="${moheader.xbatch ne null and moheader.xstatus eq 'Open' and moheader.xstatusim eq 'Open'}" th:attr="data-url=@{/IM14/confirm?xbatch=} + ${moheader.xbatch}" type="button" class="btn btn-primary btn-sm btn-confirm my-2 ms-3"><i class="ph-check me-2"></i> Confirm</button>
 		</div>
 

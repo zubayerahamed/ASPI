@@ -316,7 +316,7 @@ public class PO17 extends KitController {
 						.xfunc("Add Data")
 						.xsource("PO17")
 						.xtable(null)
-						.xdata(pocrnheader.getXcrnnum().toString())
+						.xdata(xcrnnum.toString())
 						.xstatement("Add Data : PO_CreateReturnfromGRN(" + sessionManager.getBusinessId() +","+ sessionManager.getLoggedInUserDetails().getUsername() +","+ xcrnnum +","+ pogrnheader.getXgrnnum()+")")
 						.xresult("Success")
 						.build(), 
