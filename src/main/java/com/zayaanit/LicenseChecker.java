@@ -61,6 +61,12 @@ public class LicenseChecker implements ApplicationRunner {
 		System.out.println("Status: " + validation.get("STATUS"));
 		System.out.println("Expiry: " + validation.get("EXPIRY_DATE"));
 
+		if(validation.get("STATUS").equalsIgnoreCase("EXPIRED")) {
+			System.out.println("====================> ******* Invalid license key ******* <==============");
+			int exitCode = SpringApplication.exit(applicationContext, () -> 1);
+			System.exit(exitCode);
+		}
+
 		System.out.println("\nAll Properties:");
 		for (Map.Entry<String, String> entry : validation.entrySet()) {
 			if (!entry.getKey().equals("STATUS") && !entry.getKey().equals("EXPIRY_DATE")) {
