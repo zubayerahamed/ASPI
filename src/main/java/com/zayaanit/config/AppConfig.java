@@ -15,6 +15,9 @@ import lombok.Data;
 @Service
 public class AppConfig {
 
+	@Value("${app.license-key}")
+	private String licenseKey;
+
 	@Value("${app.template-path}")
 	private String reportTemplatepath;
 

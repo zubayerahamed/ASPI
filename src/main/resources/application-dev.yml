@@ -11,10 +11,11 @@ logging:
 app: 
   audit-enable: true
   tomcat-service: Tomcat9
-  logging-path: D:/aspi/logs
-  template-path: D:/cr_live_reports
+  logging-path: C:/aspi/logs
+  template-path: C:/cr_live_reports
   backup-location: C:/aspi/backup
-  import-export: D:/aspi/import-export
+  import-export: C:/aspi/import-export
+  license-key: Q1VTVE9NRVI9U2FkbWFufExJQ0VOU0UtVFlQRT1QUkVNSVVNfFBST0RVQ1Q9QVNQSXxVU0VSUz01MHxWRVJTSU9OPTIuMHxFWFBJUlk9MjAyNjAyMTJ8U0lHPTk5OEJEMDcxN0QxREU2QjU
   database-name: aspi
   version: "@project.version@"
 

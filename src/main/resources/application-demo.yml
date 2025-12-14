@@ -15,6 +15,7 @@ app:
   template-path: C:/cr_live_reports
   backup-location: C:/KIT/ASPI/backup
   import-export: C:/KIT/ASPI/import-export
+  license-key: Q1VTVE9NRVI9U2FkbWFufExJQ0VOU0UtVFlQRT1QUkVNSVVNfFBST0RVQ1Q9QVNQSXxVU0VSUz01MHxWRVJTSU9OPTIuMHxFWFBJUlk9MjAyNjAyMTJ8U0lHPTk5OEJEMDcxN0QxREU2QjU
   database-name: aspi
   version: "@project.version@"
 

@@ -25,12 +25,12 @@ public class ASPIErpApplication {
 	}
 
 	@Bean
-	public AuditorAware<String> auditorAware() {
+	AuditorAware<String> auditorAware() {
 		return new SpringSecurityAuditorAware();
 	}
 
 	@Bean
-	public LocaleResolver localeResolver() {
+	LocaleResolver localeResolver() {
 		SessionLocaleResolver slr = new SessionLocaleResolver();
 		slr.setDefaultLocale(Locale.US);
 		return slr;
