@@ -1,7 +1,7 @@
 <div th:fragment="main-form" xmlns:th="http://www.thymeleaf.org">
 	<div class="card">
 		<div th:if="${caitem.xitem ne null}" class="card-header d-sm-flex align-items-sm-center p-0">
-
+			<button th:attr="data-url=@{/MD12/copy?xitem=} + ${caitem.xitem}" type="button" class="btn btn-primary btn-sm btn-copy my-2 ms-3"><i class="ph-copy me-2"></i> Copy Item</button>
 		</div>
 
 		<div class="card-body">
@@ -35,6 +35,15 @@
 						<div class="mb-3 form-group">
 							<label class="form-label required">Item Name</label>
 							<input type="text" class="form-control" th:field="*{xdesc}" required="required">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3 form-group">
+							<label class="form-label">Lot Number</label>
+							<select class="form-control select" th:field="*{xlot}">
+								<option value="">-- Select --</option>
+								<option th:each="lot : ${lots}" th:value="${lot.xcode}" th:text="${lot.xcode}"></option>
+							</select>
 						</div>
 					</div>
 					<div class="col-md-3">
@@ -121,8 +130,6 @@
 							</div>
 						</div>
 					</div>
-					
-					
 					<div class="col-md-3">
 						<div class="mb-3 form-group">
 							<label class="form-label d-block" for="xispo">Is Purchase?</label>
@@ -176,6 +183,14 @@
 				deleteRequest($(this).data('url'));
 			});
 
+			$('.btn-copy').off('click').on('click', function(e){
+				e.preventDefault();
+				if(!confirm("Are you sure to copy this item?")){
+					return;
+				}
+				actionPostRequest($(this).data('url'));
+			});
+
 		})
 	</script>
 </div>
@@ -192,7 +207,7 @@
 				mainscreen: true, 
 				mainreloadurl: '/MD12?xitem=',
 				mainreloadid: 'main-form-container',
-				hasdeletebtn: true
+				hasdeletebtn: false
 			});
 		})
 	</script>

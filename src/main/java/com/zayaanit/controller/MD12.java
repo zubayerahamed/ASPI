@@ -71,6 +71,7 @@ public class MD12 extends KitController {
 		model.addAttribute("groups", xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Group", Boolean.TRUE, sessionManager.getBusinessId()));
 		model.addAttribute("categories", xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Category", Boolean.TRUE, sessionManager.getBusinessId()));
 		model.addAttribute("uoms", xcodesRepo.findAllByXtypeAndZactiveAndZid("Unit of Measurement", Boolean.TRUE, sessionManager.getBusinessId()));
+		model.addAttribute("lots", xcodesRepo.findAllByXtypeAndZactiveAndZid("Item Lot", Boolean.TRUE, sessionManager.getBusinessId()));
 
 		if (isAjaxRequest(request) && frommenu == null) {
 			if ("RESET".equalsIgnoreCase(xitem)) {
@@ -224,6 +225,50 @@ public class MD12 extends KitController {
 		reloadSections.add(new ReloadSection("list-table-container", "/MD12/list-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
+		return responseHelper.getResponse();
+	}
+
+	@Transactional
+	@PostMapping("/copy")
+	public @ResponseBody Map<String, Object> copy(@RequestParam Integer xitem) {
+		Optional<Caitem> op = caitemRepo.findById(new CaitemPK(sessionManager.getBusinessId(), xitem));
+		if (!op.isPresent()) {
+			responseHelper.setErrorStatusAndMessage("Item not found in this system to do copy");
+			return responseHelper.getResponse();
+		}
+
+		Caitem exist = op.get();
+
+		Caitem caitem = new Caitem();
+		caitem.setXitem(xscreenRepo.Fn_getTrn(sessionManager.getBusinessId(), "MD12"));
+		BeanUtils.copyProperties(exist, caitem, "xitem");
+
+		try {
+			caitem = caitemRepo.save(caitem);
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getCause().getMessage());
+		}
+
+		eventPublisher.publishEvent(
+				new XlogsdtEvent(
+					Xlogsdt.builder()
+					.xscreen("MD12")
+					.xfunc("Copy Data")
+					.xsource("MD12")
+					.xtable(null)
+					.xdata(caitem.getXitem().toString())
+					.xstatement("Copy Data : " + caitem.toString())
+					.xresult("Success")
+					.build(), 
+					sessionManager
+				)
+			);
+
+		List<ReloadSection> reloadSections = new ArrayList<>();
+		reloadSections.add(new ReloadSection("main-form-container", "/MD12?xitem=" + caitem.getXitem()));
+		reloadSections.add(new ReloadSection("list-table-container", "/MD12/list-table"));
+		responseHelper.setReloadSections(reloadSections);
+		responseHelper.setSuccessStatusAndMessage("Item copied successfully.");
 		return responseHelper.getResponse();
 	}
 

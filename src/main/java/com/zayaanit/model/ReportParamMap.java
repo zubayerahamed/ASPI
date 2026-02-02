@@ -900,9 +900,10 @@ public class ReportParamMap {
 		R515.put("param1", "zid|" + ReportParamDataType.INTEGER.name());
 		R515.put("param2", "xbuid|" + ReportParamDataType.INTEGER.name());
 		R515.put("param3", "xwh|" + ReportParamDataType.INTEGER.name());
-		R515.put("param4", "xgitem|" + ReportParamDataType.STRING.name());
-		R515.put("param5", "xcatitem|" + ReportParamDataType.STRING.name());
-		R515.put("param6", "xitem|" + ReportParamDataType.INTEGER.name());
+		R515.put("param4", "xlot|" + ReportParamDataType.STRING.name());
+		R515.put("param5", "xgitem|" + ReportParamDataType.STRING.name());
+		R515.put("param6", "xcatitem|" + ReportParamDataType.STRING.name());
+		R515.put("param7", "xitem|" + ReportParamDataType.INTEGER.name());
 		R515.put("xtitle", "xtitle|" + ReportParamDataType.STRING.name());
 
 		R516.put("param1", "zid|" + ReportParamDataType.INTEGER.name());

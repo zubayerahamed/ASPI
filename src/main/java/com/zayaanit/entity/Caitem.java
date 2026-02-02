@@ -49,6 +49,9 @@ public class Caitem extends AbstractModel<String> {
 	@Column(name = "xdesc", length = 100)
 	private String xdesc;
 
+	@Column(name = "xlot", length = 25)
+	private String xlot;
+
 	@Column(name = "xgitem", length = 25)
 	private String xgitem;
 
