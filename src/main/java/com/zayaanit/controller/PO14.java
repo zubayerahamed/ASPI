@@ -1,9 +1,7 @@
 package com.zayaanit.controller;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -737,13 +735,13 @@ public class PO14 extends KitController {
 			return responseHelper.getResponse();
 		}
 
-		// Is current date
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String currentDate = sdf.format(new Date());
-		if(!(sdf.format(pogrnheader.getXdate()).equalsIgnoreCase(currentDate))) {
-			responseHelper.setErrorStatusAndMessage("Invalid date");
-			return responseHelper.getResponse();
-		}
+		// Is current date (Comment out for now for lake view)
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		String currentDate = sdf.format(new Date());
+//		if(!(sdf.format(pogrnheader.getXdate()).equalsIgnoreCase(currentDate))) {
+//			responseHelper.setErrorStatusAndMessage("Invalid date");
+//			return responseHelper.getResponse();
+//		}
 
 		// Call the procedure
 		try {

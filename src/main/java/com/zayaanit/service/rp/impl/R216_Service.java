@@ -28,7 +28,7 @@ public class R216_Service extends AbstractReportService {
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(4, "Business Unit", "/search/table/LAD17/0?hint=", "", false));
 
-		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", true));
+		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(5, "Account", "/search/table/LFA13/0?hint=", "", false));
 
 		fieldsList.add(FormFieldBuilder.generateAdvancedSearchField(6, "Sub Account", "/search/table/LFA14/0?hint=", "", true));
 
