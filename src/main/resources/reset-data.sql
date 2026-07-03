@@ -36,6 +36,10 @@ delete from imadjdetail;
 delete from imopenheader;
 delete from imopendetail;
 
+
+delete from imconvheader;
+delete from imconvdetail;
+
 delete from imtrn;
 
 delete from tempvoucher;

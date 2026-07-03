@@ -12,7 +12,7 @@ app:
   audit-enable: true
   tomcat-service: Tomcat9
   logging-path: C:/aspi/logs
-  template-path: C:/cr_live_reports
+  template-path: C:/aspi/cr_live_reports
   backup-location: C:/aspi/backup
   import-export: C:/aspi/import-export
   license-key: Q1VTVE9NRVI9U2FkbWFufExJQ0VOU0UtVFlQRT1QUkVNSVVNfFBST0RVQ1Q9QVNQSXxVU0VSUz01MHxWRVJTSU9OPTIuMHxFWFBJUlk9MjAyNjAyMTJ8U0lHPTk5OEJEMDcxN0QxREU2QjU
@@ -27,6 +27,10 @@ server:
   servlet:
     session:
       timeout: -1
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
 spring: 
   datasource: 
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
