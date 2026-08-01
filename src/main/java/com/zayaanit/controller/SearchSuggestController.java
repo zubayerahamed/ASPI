@@ -18,10 +18,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xprofiles;
+import com.zayaanit.entity.Xscreens;
 import com.zayaanit.model.DatatableRequestHelper;
 import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.service.XmenusService;
 import com.zayaanit.service.XprofilesService;
+import com.zayaanit.service.XscreensService;
 
 /**
  * @author Zubayer Ahamed
@@ -32,6 +34,7 @@ import com.zayaanit.service.XprofilesService;
 public class SearchSuggestController extends KitController {
 
 	@Autowired private XmenusService xmenusService;
+	@Autowired private XscreensService xscreensService;
 	@Autowired private XprofilesService profileService;
 
 	@PostMapping("/table/{fragmentcode}/{suffix}")
@@ -77,6 +80,22 @@ public class SearchSuggestController extends KitController {
 		int totalRows = xmenusService.LSA11(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
 
 		DatatableResponseHelper<Xmenus> response = new DatatableResponseHelper<>();
+		response.setDraw(helper.getDraw());
+		response.setRecordsTotal(totalRows);
+		response.setRecordsFiltered(totalRows);
+		response.setData(list);
+		return response;
+	}
+
+	@GetMapping("/LSA12/{suffix}")
+	public @ResponseBody DatatableResponseHelper<Xscreens> LSA12(@PathVariable int suffix) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		DatatableRequestHelper helper = new DatatableRequestHelper(request);
+
+		List<Xscreens> list = xscreensService.LSA12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+		int totalRows = xscreensService.LSA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), suffix);
+
+		DatatableResponseHelper<Xscreens> response = new DatatableResponseHelper<>();
 		response.setDraw(helper.getDraw());
 		response.setRecordsTotal(totalRows);
 		response.setRecordsFiltered(totalRows);

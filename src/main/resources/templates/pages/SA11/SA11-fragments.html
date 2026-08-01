@@ -52,7 +52,7 @@
 						<button type="reset" th:attr="data-reloadurl='/SA11?xmenu=RESET', data-reloadid='main-form-container', data-detailid='header-table-container', data-detailurl='/SA11/header-table'" class="btn btn-light btn-sm btn-reset">Clear</button>
 					</div>
 					<div>
-						<button th:if="${not #strings.isEmpty(xmenus.xmenu)}" th:attr="data-url=@{/SA11}, data-xmenu=${xmenus.xmenu}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
+						<button th:if="${not #strings.isEmpty(xmenus.xmenu)}" th:attr="data-url=@{/SA11?xmenu=} + ${xmenus.xmenu}" type="button" class="btn btn-danger btn-sm btn-delete"><i class="ph-trash me-2"></i> Delete</button>
 						<button th:if="${not #strings.isEmpty(xmenus.xmenu)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Update</button>
 						<button th:if="${#strings.isEmpty(xmenus.xmenu)}" type="submit" class="btn btn-primary btn-sm btn-submit"><i class="ph-floppy-disk me-2"></i> Add</button>
 					</div>
@@ -88,9 +88,7 @@
 				if(!confirm("Are you sure, to delete this?")){
 					return;
 				}
-				deleteRequest($(this).data('url'),{
-					"xmenu" : $(this).data('xmenu')
-				});
+				deleteRequest($(this).data('url'));
 			});
 	
 		})

@@ -8,26 +8,20 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.zayaanit.entity.Xscreens;
 import com.zayaanit.entity.pk.XscreensPK;
 import com.zayaanit.enums.SubmitFor;
-import com.zayaanit.model.DatatableRequestHelper;
-import com.zayaanit.model.DatatableResponseHelper;
 import com.zayaanit.model.ReloadSection;
-import com.zayaanit.service.XscreensService;
 
 /**
  * @author Zubayer Ahamed
@@ -36,8 +30,6 @@ import com.zayaanit.service.XscreensService;
 @Controller
 @RequestMapping("/SA12")
 public class SA12 extends KitController {
-
-	@Autowired private XscreensService xscreensService;
 
 	private String pageTitle = null;
 
@@ -56,42 +48,27 @@ public class SA12 extends KitController {
 	}
 
 	@GetMapping
-	public String index(Model model) {
-		model.addAttribute("xscreens", Xscreens.getDefaultInstance());
-		return "pages/SA12/SA12";
-	}
+	public String index(@RequestParam (required = false) String xscreen, HttpServletRequest request, Model model) {
+		if(isAjaxRequest(request)) {
+			if("RESET".equalsIgnoreCase(xscreen)) {
+				model.addAttribute("xscreens", Xscreens.getDefaultInstance());
+				return "pages/SA12/SA12-fragments::main-form";
+			}
 
-	@GetMapping("/{xscreen}")
-	public String loadFormFragment(@PathVariable String xscreen, Model model) {
-		if("RESET".equalsIgnoreCase(xscreen)) {
-			model.addAttribute("xscreens", Xscreens.getDefaultInstance());
+			Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), xscreen));
+			model.addAttribute("xscreens", op.isPresent() ? op.get() : Xscreens.getDefaultInstance());
 			return "pages/SA12/SA12-fragments::main-form";
 		}
 
 		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), xscreen));
 		model.addAttribute("xscreens", op.isPresent() ? op.get() : Xscreens.getDefaultInstance());
-		return "pages/SA12/SA12-fragments::main-form";
+		return "pages/SA12/SA12";
 	}
+
 
 	@GetMapping("/header-table")
 	public String loadHeaderTableFragment(Model model) {
 		return "pages/SA12/SA12-fragments::header-table";
-	}
-
-	@GetMapping("/all")
-	public @ResponseBody DatatableResponseHelper<Xscreens> getAll(){
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		DatatableRequestHelper helper = new DatatableRequestHelper(request);
-
-		List<Xscreens> students = xscreensService.LSA12(helper.getLength(), helper.getStart(), helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0);
-		int totalRows = xscreensService.LSA12(helper.getColumns().get(helper.getOrderColumnNo()).getName(), helper.getOrderType(), helper.getSearchValue(), 0);
-
-		DatatableResponseHelper<Xscreens> response = new DatatableResponseHelper<Xscreens>();
-		response.setDraw(helper.getDraw());
-		response.setRecordsTotal(totalRows);
-		response.setRecordsFiltered(totalRows);
-		response.setData(students);
-		return response;
 	}
 
 	@PostMapping("/store")
@@ -107,7 +84,7 @@ public class SA12 extends KitController {
 			xscreens = xscreenRepo.save(xscreens);
 
 			List<ReloadSection> reloadSections = new ArrayList<>();
-			reloadSections.add(new ReloadSection("main-form-container", "/SA12/" + xscreens.getXscreen()));
+			reloadSections.add(new ReloadSection("main-form-container", "/SA12?xscreen=RESET"));
 			reloadSections.add(new ReloadSection("header-table-container", "/SA12/header-table"));
 			responseHelper.setReloadSections(reloadSections);
 			responseHelper.setSuccessStatusAndMessage("Saved successfully");
@@ -126,15 +103,15 @@ public class SA12 extends KitController {
 		existObj = xscreenRepo.save(existObj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/SA12/" + existObj.getXscreen()));
+		reloadSections.add(new ReloadSection("main-form-container", "/SA12?xscreen=" + existObj.getXscreen()));
 		reloadSections.add(new ReloadSection("header-table-container", "/SA12/header-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Updated successfully");
 		return responseHelper.getResponse();
 	}
 
-	@DeleteMapping("/{xscreen}")
-	public @ResponseBody Map<String, Object> delete(@PathVariable String xscreen){
+	@DeleteMapping
+	public @ResponseBody Map<String, Object> delete(@RequestParam String xscreen){
 		Optional<Xscreens> op = xscreenRepo.findById(new XscreensPK(sessionManager.getBusinessId(), xscreen));
 		if(!op.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do delete");
@@ -145,7 +122,7 @@ public class SA12 extends KitController {
 		xscreenRepo.delete(obj);
 
 		List<ReloadSection> reloadSections = new ArrayList<>();
-		reloadSections.add(new ReloadSection("main-form-container", "/SA12/RESET"));
+		reloadSections.add(new ReloadSection("main-form-container", "/SA12?xscreen=RESET"));
 		reloadSections.add(new ReloadSection("header-table-container", "/SA12/header-table"));
 		responseHelper.setReloadSections(reloadSections);
 		responseHelper.setSuccessStatusAndMessage("Deleted successfully");

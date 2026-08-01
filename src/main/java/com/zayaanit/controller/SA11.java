@@ -117,7 +117,7 @@ public class SA11 extends KitController {
 
 
 	@DeleteMapping
-	public @ResponseBody Map<String, Object> delete(String xmenu){
+	public @ResponseBody Map<String, Object> delete(@RequestParam String xmenu){
 		Optional<Xmenus> op = xmenusRepo.findById(new XmenusPK(sessionManager.getBusinessId(), xmenu));
 		if(!op.isPresent()) {
 			responseHelper.setErrorStatusAndMessage("Data not found in this system to do delete");
