@@ -237,7 +237,7 @@ public class FA16ImportExport extends AbstractImportExport {
 		return tempvoucherRepo.insertTempvoucher(
 			t.getZid(), 
 			t.getXrow(), 
-			t.getVoucherDate(), 
+			t.getVoucherDate() == null ? null : new java.sql.Date(t.getVoucherDate().getTime()),
 			t.getBusinessUnit(),
 			t.getDebitAcc(), 
 			t.getDebitSubAcc(), 

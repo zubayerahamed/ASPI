@@ -1,29 +1,37 @@
 package com.zayaanit.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+
+import jakarta.servlet.DispatcherType;
 
 /**
  * @author Zubayer Ahamed
  * @since Dec 28, 2020
  */
-@SuppressWarnings("deprecation")
+@Configuration
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
-	@Autowired private UserDetailsService userDetailsService;
-
+	@SuppressWarnings("deprecation")
 	@Bean
 	public static NoOpPasswordEncoder passwordEncoder() {
 		return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
@@ -39,17 +47,32 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new CustomLogoutHandler();
 	}
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService)
-			.passwordEncoder(passwordEncoder());
+	@Bean
+	public AuthenticationFailureHandler authenticationFailureHandler() {
+		return new CustomAuthenticationFailureHandler();
 	}
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-			.authorizeRequests()
-				.antMatchers(
+	@Bean
+	public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+		provider.setPasswordEncoder(passwordEncoder());
+		return new ProviderManager(provider);
+	}
+
+	@Bean
+	public SecurityContextRepository securityContextRepository() {
+		return new DelegatingSecurityContextRepository(new RequestAttributeSecurityContextRepository(), new HttpSessionSecurityContextRepository());
+	}
+
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+		http.authenticationManager(authenticationManager)
+			.securityContext(sc -> sc.securityContextRepository(securityContextRepository()))
+			.addFilterBefore(authenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
+			.authorizeHttpRequests(auth -> auth
+				// Spring Security 5 only secured REQUEST dispatches; keep forwards and error pages open
+				.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+				.requestMatchers(
 					"/developer/**",
 					"/login/fakelogin",
 					"/login/directloginfragment",
@@ -67,48 +90,44 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					"/v2/api-docs/**",
 					"/v2/rest/**",
 					"/actuator/**"
-					).permitAll()
-				.antMatchers("/SA11/**").hasRole("ZADMIN")
-				.antMatchers("/SA12/**").hasRole("ZADMIN")
-				.antMatchers("/SA13/**").hasRole("ZADMIN")
-				.antMatchers("/SA14/**").hasRole("ZADMIN")
-				.antMatchers("/SA15/**").hasRole("ZADMIN")
-				.antMatchers("/SA16/**").hasRole("ZADMIN")
-				.antMatchers("/SA17/**").hasRole("ZADMIN")
+				).permitAll()
+				.requestMatchers("/SA11/**").hasRole("ZADMIN")
+				.requestMatchers("/SA12/**").hasRole("ZADMIN")
+				.requestMatchers("/SA13/**").hasRole("ZADMIN")
+				.requestMatchers("/SA14/**").hasRole("ZADMIN")
+				.requestMatchers("/SA15/**").hasRole("ZADMIN")
+				.requestMatchers("/SA16/**").hasRole("ZADMIN")
+				.requestMatchers("/SA17/**").hasRole("ZADMIN")
 				.anyRequest().authenticated()
-			.and()
-				.formLogin()
+			)
+			.formLogin(form -> form
 				.loginPage("/login")
 				.failureUrl("/login?error")
-				.permitAll()
 				.defaultSuccessUrl("/")
-			.and()
-				.logout()
+				.permitAll()
+			)
+			.logout(logout -> logout
 				.addLogoutHandler(logoutHandler())
 				.invalidateHttpSession(true)
 				.clearAuthentication(true)
 				.deleteCookies("JSESSIONID_ASPI")
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher("/logout"))
 				.logoutSuccessUrl("/login?logout")
-				
 				.logoutSuccessHandler(logoutSuccessHandler())
 				.permitAll()
-			.and()
-				.exceptionHandling()
-				.accessDeniedPage("/accessdenied")
-			.and()
-				.csrf().disable(); 
+			)
+			.exceptionHandling(ex -> ex.accessDeniedPage("/accessdenied"))
+			.csrf(AbstractHttpConfigurer::disable);
+
+		return http.build();
 	}
 
-	public SimpleAuthenticationFilter authenticationFilter() throws Exception {
+	private SimpleAuthenticationFilter authenticationFilter(AuthenticationManager authenticationManager) {
 		SimpleAuthenticationFilter filter = new SimpleAuthenticationFilter();
-		filter.setAuthenticationManager(authenticationManagerBean());
+		filter.setAuthenticationManager(authenticationManager);
 		filter.setAuthenticationFailureHandler(authenticationFailureHandler());
+		// Since Spring Security 6 the login must be stored in the session explicitly
+		filter.setSecurityContextRepository(securityContextRepository());
 		return filter;
-	}
-
-	@Bean
-	public AuthenticationFailureHandler authenticationFailureHandler() {
-		return new CustomAuthenticationFailureHandler();
 	}
 }

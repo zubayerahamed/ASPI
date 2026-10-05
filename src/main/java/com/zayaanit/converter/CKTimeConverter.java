@@ -1,7 +1,7 @@
 package com.zayaanit.converter;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Convert;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Convert;
 
 import com.zayaanit.util.CKTime;
 

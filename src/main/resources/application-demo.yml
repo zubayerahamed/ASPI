@@ -10,7 +10,7 @@ logging:
 
 app: 
   audit-enable: false
-  tomcat-service: Tomcat9
+  tomcat-service: Tomcat11
   logging-path: C:/KIT/ASPI/logs
   template-path: C:/cr_live_reports
   backup-location: C:/KIT/ASPI/backup
@@ -34,7 +34,7 @@ server:
 spring: 
   datasource: 
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost:2019;databaseName=aspi
+    url: jdbc:sqlserver://localhost:2019;databaseName=aspi;encrypt=false
     username: sa
     password: zubayer@123
     tomcat:
@@ -48,18 +48,14 @@ spring:
       ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    properties:
-      hibernate: 
-        dialect: org.hibernate.dialect.SQLServer2012Dialect
-        id:
-          new_generator_mappings: false
   jackson:
     serialization:
       indent-output: true
   thymeleaf:
     cache: true
-  resources:
-    cache:
-      period: 36000
-    chain:
-      cache: true
+  web:
+    resources:
+      cache:
+        period: 36000
+      chain:
+        cache: true

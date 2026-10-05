@@ -3,11 +3,10 @@ package com.zayaanit.repository;
 
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
-import javax.persistence.TemporalType;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +58,7 @@ public interface TempvoucherRepo extends JpaRepository<Tempvoucher, TempvoucherP
 	@Transactional
 	@Query(value = "INSERT INTO tempvoucher (zid, xrow, Voucher_Date, Business_Unit, Debit_Acc, Debit_SubAcc, Credit_Acc, Credit_SubAcc, Amount, Narration) "
 			+ "VALUES (?1, ?2, NULLIF(?3, ''), ?4, ?5, ?6, ?7, ?8, ?9, ?10)", nativeQuery = true)
-	int insertTempvoucher(Integer zid, Integer xrow, @org.springframework.data.jpa.repository.Temporal(TemporalType.DATE) Date voucherDate, Integer businessUnit, Integer debitAcc,
+	int insertTempvoucher(Integer zid, Integer xrow, Date voucherDate, Integer businessUnit, Integer debitAcc,
 			Integer debitSubAcc, Integer creditAcc, Integer creditSubAcc, BigDecimal amount, String narration);
 
 	@Modifying

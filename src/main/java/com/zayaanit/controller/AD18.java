@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +89,7 @@ public class AD18 extends KitController {
 		// Create storage path
 		String storage = storageLocation(cadoc.getXscreen(), cadoc.getXtrnnum().toString(), cadoc.getXdocid().toString(), cadoc.getXmmyyyy());
 		Path filePath = Paths.get(storage).resolve(filename);
-		Resource resource = new org.springframework.core.io.PathResource(filePath);
+		Resource resource = new org.springframework.core.io.FileSystemResource(filePath);
 		if (!resource.exists()) {
 			return ResponseEntity.notFound().build();
 		}

@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -22,7 +22,7 @@ import org.springframework.validation.ObjectError;
 public class ConstraintValidator {
 
 	/**
-	 * Validates a bean instance annotated with javax.validation constraints and store constraint violations in {@link Errors}.
+	 * Validates a bean instance annotated with jakarta.validation constraints and store constraint violations in {@link Errors}.
 	 * 
 	 * @param ob POJO instance
 	 * @param errors Spring validation {@link Errors} instance

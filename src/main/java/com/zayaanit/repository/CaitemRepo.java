@@ -23,7 +23,7 @@ public interface CaitemRepo extends JpaRepository<Caitem, CaitemPK> {
 	@Query(value = "select count(*) from caitem where zid=?1 and xisop=1 and xgitem != 'Services' and (xbarcode=?2 or xitem=?2)", nativeQuery = true)
 	public long searchItemCount(Integer zid, String searchtext);
 
-	@Query("SELECT c FROM Caitem c WHERE c.zid = :zid AND c.xisop = 1 AND c.xgitem != 'Services'")
+	@Query("SELECT c FROM Caitem c WHERE c.zid = :zid AND c.xisop = true AND c.xgitem != 'Services'")
 	List<Caitem> findByZidAndXisopAndNotXgitem(@Param("zid") Integer zid);
 
 	List<Caitem> findAllByZid(Integer zid);

@@ -10,7 +10,7 @@ logging:
 
 app: 
   audit-enable: true
-  tomcat-service: Tomcat9
+  tomcat-service: Tomcat11
   logging-path: C:/aspi/logs
   template-path: C:/aspi/cr_live_reports
   backup-location: C:/aspi/backup
@@ -34,7 +34,7 @@ server:
 spring: 
   datasource: 
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost;databaseName=aspi
+    url: jdbc:sqlserver://localhost;databaseName=aspi;encrypt=false
     username: sa
     password: zubayer@123
     tomcat:
@@ -52,9 +52,6 @@ spring:
     properties:
       hibernate: 
         format_sql: true
-        dialect: org.hibernate.dialect.SQLServer2012Dialect
-        id:
-          new_generator_mappings: false
   jackson:
     serialization:
       indent-output: true

@@ -1,10 +1,13 @@
 package com.zayaanit.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -62,6 +65,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractReportController extends KitController {
 
+	private static final String BUNDLED_REPORT_LOCATION = "static/cr/v2/";
+	private static Path extractedReportDir;
 
 	@Autowired protected XscreenrpdtRepo xscreendetailRepo;
 	@Autowired protected JdbcTemplate jdbcTemplate;
@@ -216,12 +221,11 @@ public abstract class AbstractReportController extends KitController {
 		String reportName = filePath(z.get().getXrptpath()).concat("/").concat(fileName);
 		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) reportName = filePath(z.get().getXrptdefautl()).concat("/").concat(fileName);
 		if(StringUtils.isBlank(reportName) || !fileExist(reportName)) {
-			try {
-				reportName = new StringBuilder(this.getClass().getClassLoader().getResource("static").toURI().getPath())
-								.append(File.separator).append("cr").append(File.separator).append("v2").append(File.separator)
-								.append(fileName).toString();
-			} catch (URISyntaxException e) {
-				log.error(ERROR, e.getMessage(), e);
+			reportName = bundledReportPath(fileName);
+			if(reportName == null) {
+				String error = "Report file not found : " + fileName;
+				String encodedString = Base64.getEncoder().encodeToString(error.getBytes());
+				return new ResponseEntity<>(encodedString, headers, HttpStatus.OK);
 			}
 		}
 
@@ -326,13 +330,9 @@ public abstract class AbstractReportController extends KitController {
 			message = "Can't generate PDF to print";
 			byt = message.getBytes();
 		} else {
-			final byte[] data = new byte[1024];
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			while (in.read(data) > -1) {
-				os.write(data);
+			try (InputStream is = in) {
+				byt = is.readAllBytes();
 			}
-
-			byt = os.toByteArray();
 
 			if(ReportType.EXCEL.equals(reportType) || ReportType.EXCEL_DATA.equals(reportType)) {
 				headers.add("Content-Disposition", "attachment; filename="+ reportTitle +".xls");
@@ -378,5 +378,42 @@ public abstract class AbstractReportController extends KitController {
 				reportParams.put(paramName, inputValue);
 				break;
 		}
+	}
+
+	/**
+	 * Resolve a report bundled in the application (static/cr/v2) to a file system path that Crystal can open.
+	 * When the war is unpacked the file is used in place, otherwise it is extracted once into a temp folder.
+	 */
+	private String bundledReportPath(String fileName) {
+		URL url = getClass().getClassLoader().getResource(BUNDLED_REPORT_LOCATION + fileName);
+		if(url == null) {
+			log.error("Report file not found in classpath : {}{}", BUNDLED_REPORT_LOCATION, fileName);
+			return null;
+		}
+
+		try {
+			if("file".equals(url.getProtocol())) return new File(url.toURI()).getAbsolutePath();
+
+			Path target = extractedReportDir().resolve(fileName);
+			if(!Files.exists(target)) {
+				Path tmp = Files.createTempFile(target.getParent(), fileName, ".tmp");
+				try (InputStream in = url.openStream()) {
+					Files.copy(in, tmp, StandardCopyOption.REPLACE_EXISTING);
+				}
+				Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+			}
+			return target.toString();
+		} catch (URISyntaxException | IOException e) {
+			log.error(ERROR, e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private static synchronized Path extractedReportDir() throws IOException {
+		if(extractedReportDir == null) {
+			extractedReportDir = Files.createTempDirectory("aspi-cr-");
+			extractedReportDir.toFile().deleteOnExit();
+		}
+		return extractedReportDir;
 	}
 }

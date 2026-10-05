@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.zayaanit.entity.Xlogsdt;
 import com.zayaanit.entity.Xmenus;
 import com.zayaanit.entity.Xmenuscreens;
@@ -281,7 +281,7 @@ public class AD12 extends KitController {
 		ObjectMapper obm = new ObjectMapper();
 		try {
 			dd = obm.readValue(json, DetailData.class);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			log.error(ERROR, e.getMessage(), e); 
 			responseHelper.setErrorStatusAndMessage(e.getMessage());
 			return responseHelper.getResponse();

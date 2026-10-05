@@ -17,7 +17,7 @@ public class AcbalPK implements Serializable {
 
 	private static final long serialVersionUID = -1038237708258853278L;
 
-	private String zid;
+	private Integer zid;
 	private Integer xvoucher;
 	private Integer xrow;
 }
